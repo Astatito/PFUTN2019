@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Login from "./componente/login/Login";
 
 class App extends Component{
   render(){
     return(
-      <div className="APP">
-        <h1>Pase al Country</h1>
+      <div className="app container">
+        <div className="jumbotron">
+          <p className="lead text-center">Pass Country</p>
+        </div>
+        <Login></Login>
       </div>
+
 
     );
   }
