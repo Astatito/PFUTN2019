@@ -5,30 +5,25 @@ class Login extends Component{
 
     render(){
         return(
-         <form>
-             <h2>Iniciar Sesion</h2>
-            <div className="row">                
-                <div className="form-group col-md-4">                
-                    <label > Numero de documento </label>
-                    <div className="form-group col-md-6">
-                        <input type="text" name="nrodocumento" placeholder="Numero documento" ></input>
-                    </div>
+            <div className="col-md-6 col-md-offset-3">
+            <h2>Iniciar sesion</h2>
+            <form name="form" >
+                <div className="form-group justify-content-center" >
+                    <label className="font-weight-bold" htmlFor="username">Username</label>
+                    <input type="text" className="form-control" name="username" value="" />
                 </div>
-            </div>
-            <div className="row"> 
-                <div className="form-group col-md-4">                
-                    <label >Contraseña </label>
-                    <div className="form-group col-md-6">
-                        <input type="password" name="password" placeholder="Contraseña" ></input>
-                    </div>
+                <div className='form-group' >
+                    <label className="font-weight-bold" htmlFor="password">Password</label>
+                    <input type="password" className="form-control" name="password" value=""/>
+                    
                 </div>
-            </div>
-            <div className="form-group">
-                    <div className="col-lg-offset-2 col-lg-10">
-                        <input type="submit" value="Iniciar Sesion" class="btn btn-primary  btn-block"></input>
-                    </div>
+                <div className="form-group">
+                    <button className="btn btn-primary">Iniciar Sesion</button>
+                   
+                
                 </div>
-         </form>
+            </form>
+        </div>
 
         );
     }
