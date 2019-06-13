@@ -7,9 +7,9 @@ class App extends Component{
     return(
       <div className="app container">
         <div className="jumbotron">
-          <p className="lead text-center">Pass Country</p>
+          <p className="lead text-center">Come in </p>
         </div>
-        <Login></Login>
+        <Login ></Login>
       </div>
 
 
