@@ -1,11 +1,5 @@
-CSS
-.abs-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+.jumbotron{
+background-color:rgb(255, 255, 255);
+height: 230px;
 }
 
-.form {
-  width: 450px;
-}
