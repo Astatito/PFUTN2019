@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import "./Login.css";
 
-class Login extends Component{
-
-
-  
+class Login extends Component{  
     render(){
         return(
             <div className="col-12">
@@ -15,13 +12,12 @@ class Login extends Component{
                 <h2 className="text-center" >Iniciar sesion</h2>
             <form name="form" >
                 <div className="form-group  " >
-                    <label className=" font-weight-bold " htmlFor="username">Numero de documento</label>
-                    <input type="text" className="form-control" name="username"placeholder ="NumberDocument" />
+                    <label className=" font-weight-bold " type="email" htmlFor="username">Email</label>
+                    <input type="text" className="form-control" name="username"placeholder ="Email" />
                 </div>
                 <div className='form-group' >
                     <label className="font-weight-bold" htmlFor="password">Password</label>
-                    <input type = "password" className = " form-control" id = "exampleInputPassword1" placeholder = "Password"/>
-                    
+                    <input type = "password" className = " form-control" id = "exampleInputPassword1" placeholder = "Password"/>   
                 </div>
                 <div className="form-group izquierda">
                     <button className="btn btn-primary">Iniciar Sesion</button>
