@@ -3,10 +3,11 @@ import Login from "./componente/login/Login";
 import Encabezado from "./componente/Encabezado/Encabezado";
 import "./estilo.css";
 import logo1 from "./logo1.jpg";
+import Alta from "./componente/Alta/Alta";
 
 // para probar encabezado poner <Encabezado></Encabezado>
 // <h1 className="display-3 text-center">Come in </h1>
-
+// <Login ></Login>
 class App extends Component{
   render(){
     return(
@@ -18,7 +19,7 @@ class App extends Component{
           </div>  
           <hr className="my-4"></hr>
         </div>
-        <Login ></Login>
+        <Alta></Alta>
         
       </div>
 
