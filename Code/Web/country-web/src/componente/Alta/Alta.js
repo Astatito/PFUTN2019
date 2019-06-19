@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "./componente/Estilo.css";
+import "./Alta.css";
 
 //      <small id = "emailHelp" class = "form-text text-muted"> Nunca compartiremos su correo electrónico con nadie más.  </small>
 
