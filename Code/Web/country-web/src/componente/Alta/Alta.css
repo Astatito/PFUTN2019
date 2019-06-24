@@ -5,3 +5,16 @@
   .izquierda {
     text-align: end;
   }
+
+  .derecha {
+    text-align:start;
+  }
+
+  .tabla{
+    border: 1px solid rgb(221, 221, 221);
+    
+  }
+  .contenedor{
+    display:inline;
+  }
+
