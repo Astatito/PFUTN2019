@@ -62,7 +62,7 @@ class Inicio extends Component{
             <div className="col-md-1"></div>            
             </div>
             <div>  
-          < hr className="my-4"></hr>
+            < hr className="my-4"></hr>
             </div>
             <div className="espacio"></div>
             <div className="row">
