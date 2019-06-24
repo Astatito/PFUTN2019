@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import AltaPropietario from "./AltaPropietario";
 import "./Alta.css";
+import Editar from "./Editar.png"
+import Eliminar from "./Eliminar.png"
 
 class Inicio extends Component{
 
@@ -50,15 +52,30 @@ class Inicio extends Component{
                     <td>Si</td>
                     <td> Activo </td>
                     <td> 351355866 </td>
-                    <td> Editar </td>
-                    <td> Eliminar </td>
+                    <td> <img className="text-center" src={Editar} width="30" height="30"></img> </td>
+                    <td> <img className="text-center" src={Eliminar} width="30" height="30"></img> </td>
                     </tr>
 
                 </tbody>
             </table>
             </div>
-            <div className="col-md-1"></div>
+            <div className="col-md-1"></div>            
             </div>
+            <div>  
+          < hr className="my-4"></hr>
+            </div>
+            <div className="espacio"></div>
+            <div className="row">
+                 <div className="col-1"></div>
+                    <div className="col-5">
+                    <label className="h2">Servicios</label>
+                    </div>                
+                    <div className="col-5 izquierda">
+                          <button className="btn btn-primary" onClick>Agregsr Servicio </button> 
+                    </div>
+                    
+             </div>
+            
         </div>
         );
     }
