@@ -54,7 +54,7 @@ class Login extends Component{
                 <div className="col-md-4"></div>
                 <div className="col-md-4 borde">
                 <h2 className="text-center" >Iniciar sesion</h2>
-            <form name="form" >
+            <div name="form" >
                 <div className="form-group  " >
                     <label className=" font-weight-bold " type="email" htmlFor="username">Email</label>
                     <input  type="text" className="form-control" name="username" placeholder ="Email"
@@ -72,12 +72,12 @@ class Login extends Component{
                     />   
                 </div>
                 <div className="form-group izquierda">
-                    <button className="btn btn-primary" onClick={this.onButtonPress.bind(this)}>Iniciar Sesion</button>
+                    <button className="btn btn-primary" onClick={this.onButtonPress}>Iniciar Sesion</button>
                 </div>
                 <div>
                     <span>{this.state.result}</span>
                 </div>
-            </form>
+            </div>
             </div>
             <div className="col-md-4"></div>
         </div>
