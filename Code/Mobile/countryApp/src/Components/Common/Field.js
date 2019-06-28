@@ -1,7 +1,7 @@
 import React from 'react';
-import { TextInput, View, Text } from 'react-native';
+import {TextInput, View, Text} from 'react-native';
 
-const Field = ({ label, value, onChangeText, placeholder, hidden }) => {
+const Field = ({label, value, onChangeText, placeholder, hidden}) => {
     const {inputStyle, labelStyle, containerStyle} = styles;
 
     return (
@@ -10,11 +10,11 @@ const Field = ({ label, value, onChangeText, placeholder, hidden }) => {
             <TextInput
                 autoCorrect={false}
                 placeholder={placeholder}
-                style={inputStyle} 
+                style={inputStyle}
                 value={value}
                 onChangeText={onChangeText}
                 secureTextEntry={hidden}
-            /> 
+            />
         </View>
     )
 };
@@ -40,4 +40,4 @@ const styles = {
     }
 }
 
-export { Field };
+export {Field};
