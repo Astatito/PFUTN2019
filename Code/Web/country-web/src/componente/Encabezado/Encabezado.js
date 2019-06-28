@@ -28,8 +28,8 @@ class Encabezado extends Component{
                     </li>                  
                 </ul>
                 <form className = "form-inline my-2 my-lg-0">
-                    <label  className = " color mr-sm-2"> Usuario </label>
-                    <button type="button" className="btn btn-secondary" type="submit" >Cerrar Sesion</button>
+                    <label  className = " color mr-sm-2"> </label>
+                    <button type="button" className="btn btn-secondary" type="submit" >Iniciar Sesion</button>
                    
                 </form>
                 </div>
