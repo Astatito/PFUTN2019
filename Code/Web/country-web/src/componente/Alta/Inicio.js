@@ -20,7 +20,8 @@ class Inicio extends Component{
                     <label className="h2">Propietario</label>
                     </div>                
                     <div className="col-5 izquierda">
-                          <button className="btn btn-primary" onClick>Nuevo Prpietario </button> 
+                        <input className = "mr-sm-2" control de formulario  tipo = "texto" placeholder = "Buscar"/>     
+                        <button className="btn btn-primary" onClick>Nuevo Prpietario </button> 
                     </div>
                     
              </div>
@@ -73,8 +74,41 @@ class Inicio extends Component{
                     <div className="col-5 izquierda">
                           <button className="btn btn-primary" onClick>Agregsr Servicio </button> 
                     </div>
-                    
              </div>
+             <div className="row">
+                
+            <div className="col-md-1"></div>
+            <div className="col-md-10 ">
+            
+            <br></br>
+
+            <table className="table table-hover  ">
+                <thead >
+                    <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">direccion</th>
+                    <th scope="col">Numero</th>
+                    <th scope="col">Telefono</th>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Eliminar</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <tr class="table-light">
+                    <th scope="row">Country</th>
+                    <td>Bahia blanca</td>
+                    <td>888</td>
+                    <td> 4525568 </td>
+                    <td> <img className="text-center" src={Editar} width="30" height="30"></img> </td>
+                    <td> <img className="text-center" src={Eliminar} width="30" height="30"></img> </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            </div>
+            <div className="col-md-1"></div>            
+            </div>
             
         </div>
         );

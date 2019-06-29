@@ -23,7 +23,7 @@ class App extends Component{
           </div>  
           <hr className="my-4"></hr>
         </div>
-        <Login></Login>
+        <Inicio></Inicio>
         
         
       </div>
