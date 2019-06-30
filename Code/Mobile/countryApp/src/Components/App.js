@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Text, View} from 'react-native';
 import {Field, Header, Card, CardSection, Button} from './Common';
-import Firebase from './Firebase';
-
+import Firebase from './Firebase';;
 class App extends Component {
 
     state = {email: '', password: '', result: ''};
