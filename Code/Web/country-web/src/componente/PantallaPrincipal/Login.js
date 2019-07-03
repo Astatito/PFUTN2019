@@ -1,17 +1,17 @@
 import React, { Component } from "react";
-import "./Login.css";
+import "../Style/Login.css";
 import firebase from 'firebase'; 
 import 'firebase/database'
 import { DB_CONFIG } from '../../config/config';
-import Home from "../home";
 import logo1 from '../../logo1.jpg'
+import { Link } from 'react-router-dom'
 
 class Login extends Component{  
 
     constructor(props){
         super(props);
 
-        this.state = {email:'', password:'', result:''};
+        this.state = {email:'', password:'', result:false};
 
         this.ChangeEmail = this.ChangeEmail.bind(this);
         this.ChangePass = this.ChangePass.bind(this);
@@ -40,14 +40,15 @@ class Login extends Component{
         
       firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
-        this.setState({result: "Logueo exitoso."})
+        this.setState({result: true})
       })
       .catch(() => {
           
-        this.setState({result: "Falló la autenticación."})
+        this.setState({result: false})
       })
     }
 
+    
 
 
     render(){
@@ -82,9 +83,7 @@ class Login extends Component{
                 <div className="form-group izquierda">
                     <button className="btn btn-primary" onClick={this.onButtonPress}>Iniciar Sesion</button>
                 </div>
-                <div>
-                    <span>{this.state.result}</span>
-                </div>
+                
             </div>
             </div>
             <div className="col-md-4"></div>
