@@ -8,8 +8,8 @@ import AltaPropietario from './Alta/AltaPropietario'
 const Router = () => (
    <main>
        <Switch>
-           <Route exact path='/' component={Home}/>
-           <Route path='/login' component={Login}/>
+           
+           <Route exact path='/' component={Login}/>
            <Route path='/propietarios' component={AltaPropietario}/>
        </Switch>
    </main>

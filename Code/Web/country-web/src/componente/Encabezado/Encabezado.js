@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom'
 class Encabezado extends Component{
    render(){
        return(
-        <div className="jumbotron "> 
+        <div className=" "> 
            <div className="fijado">
            <nav className = " navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
                
@@ -24,7 +24,7 @@ class Encabezado extends Component{
                <div className = "collapse navbar-collapse" id = "navbarColor01">
                <ul className = "navbar-nav mr-auto">
                    <li className = "nav-item ">
-                       <Link to='/' className="nav-link" >  Home </Link>
+                       <Link to='/' className="nav-link" >  Iniciar sesion </Link>
                    </li>
                                    
                </ul>

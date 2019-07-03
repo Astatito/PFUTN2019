@@ -3,6 +3,8 @@ import "./Login.css";
 import firebase from 'firebase'; 
 import 'firebase/database'
 import { DB_CONFIG } from '../../config/config';
+import Home from "../home";
+import logo1 from '../../logo1.jpg'
 
 class Login extends Component{  
 
@@ -51,8 +53,12 @@ class Login extends Component{
     render(){
         return(
           
-            <div className="col-12">  
-            <div className="row">
+            <div className="col-12"> 
+              <div className="text-center jumbotron">     
+                  <img src={logo1} width="300" height="129"></img>
+                  <hr className="my-4"></hr>
+              </div>              
+              <div className="row">
                 <div className="col-md-4"></div>
                 <div className="col-md-4 borde">
                 <h2 className="text-center" >Iniciar sesion</h2>
