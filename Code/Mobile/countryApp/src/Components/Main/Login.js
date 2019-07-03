@@ -6,6 +6,7 @@ import Firebase from '../Firebase'
 class Login extends Component {
 
     state = {email: '', password: '', result: ''} ;
+
     onButtonPress() {
         Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
             .then(() => {
@@ -15,6 +16,7 @@ class Login extends Component {
                 this.setState({result: "Falló la autenticación."})
             })
     }
+    
     render() {
         return (
             <View>
