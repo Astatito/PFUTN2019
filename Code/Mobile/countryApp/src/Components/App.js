@@ -4,7 +4,7 @@ import {Field, Header, Card, CardSection, Button} from './Common';
 import Firebase from './Firebase';
 class App extends Component {
 
-    state = {email: '', password: '', result: ''};
+    state = {email: '', password: '', result: ''} ;
 
 
 
