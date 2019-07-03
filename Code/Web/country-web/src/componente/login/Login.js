@@ -50,8 +50,8 @@ class Login extends Component{
 
     render(){
         return(
-            <div className="col-12">
-            
+          
+            <div className="col-12">  
             <div className="row">
                 <div className="col-md-4"></div>
                 <div className="col-md-4 borde">
