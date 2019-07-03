@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import AltaPropietario from "./AltaPropietario";
-import "./Alta.css";
-import Editar from "./Editar.png"
-import Eliminar from "./Eliminar.png"
+import AltaPropietario from "../AdministracionPropietario/AltaPropietario";
+import "../Style/Alta.css";
+import Editar from "../Img/Editar.png"
+import Eliminar from "../Img/Eliminar.png"
 
-class Inicio extends Component{
+class InicioAdministrador extends Component{
 
        
     render(){
@@ -115,4 +115,4 @@ class Inicio extends Component{
     }
 }
 
-export default Inicio;
+export default InicioAdministrador;

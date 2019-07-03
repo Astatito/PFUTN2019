@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "./Alta.css";
+import "../Style/Alta.css";
 
 //      <small id = "emailHelp" class = "form-text text-muted"> Nunca compartiremos su correo electrónico con nadie más.  </small>
 
@@ -7,7 +7,7 @@ import "./Alta.css";
 class AltaPropietario extends Component{
     render(){
         return(
-            <div className="col-12">
+            <div className="col-12 jumbotron">
             <div>
                 <div className="col-md-1"></div>
                 <div className="col-md-8 borde">
