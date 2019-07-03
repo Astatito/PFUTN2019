@@ -8,10 +8,9 @@ class AltaPropietario extends Component{
     render(){
         return(
             <div className="col-12">
-            
-            <div className="row">
-                <div className="col-md-3"></div>
-                <div className="col-md-6 borde">
+            <div>
+                <div className="col-md-1"></div>
+                <div className="col-md-8 borde">
             <form>
                     <legend>  Registrar Alta </legend>
                         <div className = "form-group">

@@ -71,7 +71,7 @@ class Inicio extends Component{
                     <label className="h2">Servicios</label>
                     </div>                
                     <div className="col-5 izquierda">
-                          <button className="btn btn-primary" onClick>Agregsr Servicio </button> 
+                          <button className="btn btn-primary" onClick>Agregar Servicio </button> 
                     </div>
                     
              </div>

@@ -27,8 +27,10 @@ class Login extends Component{
 
     componentWillMount() {
       // Inicialización de Firebase
-      
-      firebase.initializeApp(DB_CONFIG);
+      if (!firebase.apps.length) {
+        firebase.initializeApp(DB_CONFIG);
+    }
+      //firebase.initializeApp(DB_CONFIG);
   
     }
   
