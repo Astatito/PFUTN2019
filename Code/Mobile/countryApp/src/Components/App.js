@@ -5,8 +5,7 @@ class App extends Component {
 
     render() {
         return (
-            <Login></Login>
-            
+            <Login></Login>          
         );
     }
 }
