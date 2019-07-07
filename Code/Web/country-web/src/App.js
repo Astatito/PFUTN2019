@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import Login from "./componente/login/Login";
+import Login from "./componente/PantallaPrincipal/Login";
 import Encabezado from "./componente/Encabezado/Encabezado";
 import "./estilo.css";
 import logo1 from "./logo1.jpg";
 import firebase from 'firebase'; 
 import 'firebase/database'
 import { DB_CONFIG } from './config/config';
-import Inicio from "./componente/Alta/Inicio";
+import Inicio from "./componente/AdministracionAdministrador/InicioAdministrador";
 import Router from './componente/router';
 
 // para probar encabezado poner <Encabezado></Encabezado>
