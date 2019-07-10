@@ -76,7 +76,7 @@ class InicioAdministrador extends Component{
                         <label className="h2">Servicios</label>
                     </div>                
                     <div className="col-5 izquierda">
-                          <input className = "mr-sm-2" control de formulario  tipo = "texto" placeholder = "Buscar"/>
+                          <input className = "mr-sm-2 borde-button" control de formulario  tipo = "texto" placeholder = "Buscar"/>
                           <button className="btn btn-primary" onClick>Agregar Servicio </button> 
 
                     </div>
