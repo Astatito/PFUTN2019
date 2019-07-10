@@ -37,7 +37,6 @@ class Encabezado extends Component{
                </ul>
                <form className = "form-inline my-2 my-lg-0">
                    <label  className = " color mr-sm-2"> </label>
-                   
                    <button onClick={this.logout} className='btn btn-primary'>Cerrar Sesion</button>
                </form>
                </div>

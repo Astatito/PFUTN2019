@@ -29,11 +29,9 @@
 
   .boton{
     font-size:40px;
-    font-family:Verdana,Helvetica;
-    font-weight:bold;
-    color:rgb(221, 221, 221);
-    background:#d5d7da;
-    border:0px;
+    
+    font-weight:40px;
+    
     width:40px;
     height:40px;
    }
