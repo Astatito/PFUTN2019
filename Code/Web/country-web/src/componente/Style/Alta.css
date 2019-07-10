@@ -2,6 +2,10 @@
     border: 2px solid rgb(68, 76, 143);
     border-radius: 10px;
   }
+.borde-button{
+  border-radius: 3px;
+}
+
   .izquierda {
     text-align: end;
   }
@@ -21,3 +25,5 @@
   .espacio{
     height: 15px;
   }
+
+

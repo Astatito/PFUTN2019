@@ -1,7 +1,11 @@
-.borde {
+div.col-md-4.borde {
     border: 2px solid rgb(68, 76, 143);
-    border-radius: 10px;
+    border-radius: 5px;
   }
-  .izquierda {
-    text-align: end;
-  }
+.izquierda {
+  text-align: end;
+}
+
+div.espacio{
+  height: 50px;
+}

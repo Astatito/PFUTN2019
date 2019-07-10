@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import "./encabezado.css"
+import "../Style/encabezado.css"
 import { Link } from 'react-router-dom'
 
 
@@ -37,8 +37,10 @@ class Encabezado extends Component{
                </form>
                </div>
             </nav>
+            <div className="espacio"></div>
             </div>
         </div>
+
 
 
        );
