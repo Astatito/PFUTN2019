@@ -4,6 +4,8 @@ import "../Style/Alta.css";
 import Editar from "../Img/Editar.png"
 import Eliminar from "../Img/Eliminar.png"
 import Encabezado from "../Encabezado/Encabezado";
+import { Link } from 'react-router-dom'
+
 
 
 class InicioAdministrador extends Component{
@@ -23,7 +25,7 @@ class InicioAdministrador extends Component{
                     </div>                
                     <div className="col-5 izquierda">
                         <input className = "mr-sm-2 borde-button" control de formulario  tipo = "texto" placeholder = "Buscar"/>     
-                        <button className="btn btn-primary " onClick>Nuevo Prpietario </button> 
+                        <Link to='/propietario' type="button" className="btn btn-primary" type="submit" >Nuevo Propietario</Link>
                     </div>
                     
              </div>

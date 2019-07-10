@@ -24,15 +24,14 @@ class Encabezado extends Component{
                <div className = "collapse navbar-collapse" id = "navbarColor01">
                <ul className = "navbar-nav mr-auto">
                    <li className = "nav-item ">
-                       <Link to='/' className="nav-link" >  Iniciar sesion </Link>
+                       
                    </li>
                                    
                </ul>
                <form className = "form-inline my-2 my-lg-0">
                   
-                   <Link to='/propietarios' className='navbar-brand'  >Propietarios</Link>
+                   <Link to='/perfil' className='navbar-brand'  >Perfil</Link>
                    <label  className = " color mr-sm-2"> </label>
-                   <Link to='/login' type="button" className="btn btn-secondary" type="submit" >Iniciar sesion</Link>
 
                </form>
                </div>
