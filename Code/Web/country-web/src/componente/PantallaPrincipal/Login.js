@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import "../Style/Login.css";
 import firebase from 'firebase'; 
 import 'firebase/database'
-import { DB_CONFIG } from '../../config/config';
+import fire from '../../config/config';
 import Icono from "../Img/Icono.jpeg"
 import { Link } from 'react-router-dom'
+import InicioAdministrador from '../AdministracionAdministrador/InicioAdministrador';
+
 
 class Login extends Component{  
 
@@ -13,9 +15,10 @@ class Login extends Component{
 
         this.state = {
           email:'', 
-          password:'', 
+          password:'',
+          user: null, 
           result:false};
-
+        this.authListener = this.authListener.bind(this);
         this.ChangeEmail = this.ChangeEmail.bind(this);
         this.ChangePass = this.ChangePass.bind(this);
         this.onButtonPress = this.onButtonPress.bind(this);
@@ -29,16 +32,29 @@ class Login extends Component{
         this.setState({password: event.target.value});
       }
     
-
-    componentWillMount() {
-      // Inicialización de Firebase
-      if (!firebase.apps.length) {
-        firebase.initializeApp(DB_CONFIG);
+    componentDidMount() {
+      this.authListener();
     }
+    // componentWillMount() {
+    //   // Inicialización de Firebase
+    //   if (!firebase.apps.length) {
+    //     firebase.initializeApp(DB_CONFIG);
+    // }
       //firebase.initializeApp(DB_CONFIG);
   
+    
+    authListener() {
+      fire.auth().onAuthStateChanged((user) => {
+        console.log(user);
+        if (user) {
+          this.setState({ user });
+          localStorage.setItem('user', user.uid);
+        } else {
+          this.setState({ user: null });
+          localStorage.removeItem('user');
+        }
+      });
     }
-  
     onButtonPress() {
         
       firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
@@ -56,9 +72,9 @@ class Login extends Component{
 
 
     render(){
-      const { result}=this.state;
+      const {  user}=this.state;
+      if (!user){  
         return(
-          
             <div className="col-12  "> 
               <div className="text-center "> 
                   <div className="espacio"></div>    
@@ -91,17 +107,20 @@ class Login extends Component{
                     onClick={this.onButtonPress}>                      
                     Iniciar Sesion</button>
                 </div>
-                <div>
-                    {result && (
-                      <Link to='/inicioAdm' className="navbar-brand"></Link>
-                    )}</div>
+                
             </div>
             </div>
             <div className="col-md-4"></div>
         </div>
      </div>
 
-        );
+        );} else {
+          return(
+                <div>
+                  <InicioAdministrador></InicioAdministrador>
+                </div>
+          )
+        }
     }
 }
 

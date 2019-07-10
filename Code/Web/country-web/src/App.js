@@ -9,13 +9,16 @@ import Router from './componente/router';
 import InicioAdministrador from './componente/AdministracionAdministrador/InicioAdministrador';
 import AltaServicio from "./componente/Servicio/AltaServicio"
 
-// para probar encabezado poner <Encabezado></Encabezado>
-// <h1 className="display-3 text-center">Come in </h1>
 
-//<Router></Router>
+
 class App extends Component{
 
+  traerEncabezado(){
+    
+  }
+
   render(){
+
     return(
       <div className="app container-fluid ">        
         <Router></Router>

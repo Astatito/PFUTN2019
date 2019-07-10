@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import "../Style/encabezado.css"
 import { Link } from 'react-router-dom'
+import fire from '../../config/config';
 
 
 //<form className = "form-inline my-2 my-lg-0">
@@ -8,8 +9,14 @@ import { Link } from 'react-router-dom'
 //<button type="button" className="btn btn-secondary" type="submit" >Buscar</button>
 
 //</form>
+//<Link to='/perfil' className='navbar-brand'>Perfil</Link>
 
 class Encabezado extends Component{
+
+    logout() {
+        fire.auth().signOut();
+    }
+
    render(){
        return(
         <div className=" "> 
@@ -29,10 +36,9 @@ class Encabezado extends Component{
                                    
                </ul>
                <form className = "form-inline my-2 my-lg-0">
-                  
-                   <Link to='/perfil' className='navbar-brand'>Perfil</Link>
                    <label  className = " color mr-sm-2"> </label>
-
+                   
+                   <button onClick={this.logout} className='btn btn-primary'>Cerrar Sesion</button>
                </form>
                </div>
             </nav>

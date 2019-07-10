@@ -23,8 +23,7 @@ class AltaServicio extends Component{
                         </div>
                         <div className = "form-group">
                             <label for = "FechaNacimiento">  Dias disponibles  </label>
-                            <input type="date"className = "form-control" name="FechaNacimiento" step="1" min="1920-01-01" />
-                        </div>
+                            <button className="btn btn-primary boton">Lu</button>                       </div>
                         <fieldset className = "form-group">
                             <legend>  Estado  </legend>
                                 <div className = "form-check">
