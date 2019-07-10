@@ -30,7 +30,7 @@ class Encabezado extends Component{
                </ul>
                <form className = "form-inline my-2 my-lg-0">
                   
-                   <Link to='/perfil' className='navbar-brand'  >Perfil</Link>
+                   <Link to='/perfil' className='navbar-brand'>Perfil</Link>
                    <label  className = " color mr-sm-2"> </label>
 
                </form>
@@ -46,6 +46,5 @@ class Encabezado extends Component{
   
    }
 }
-
 export default Encabezado;
 
