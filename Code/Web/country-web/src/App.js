@@ -19,12 +19,7 @@ class App extends Component{
     return(
       <div className="app container-fluid ">        
         <Router></Router>
-        
       </div>
-        
-
-
-
     );
   }
 }

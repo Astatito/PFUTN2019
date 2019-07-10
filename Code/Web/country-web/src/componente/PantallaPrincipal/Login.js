@@ -93,7 +93,7 @@ class Login extends Component{
                 </div>
                 <div>
                     {result && (
-                      <Link to='/inicioAdm' ></Link>
+                      <Link to='/inicioAdm' className="navbar-brand"></Link>
                     )}</div>
             </div>
             </div>
