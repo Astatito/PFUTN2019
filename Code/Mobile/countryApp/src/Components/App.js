@@ -8,14 +8,10 @@ class App extends Component {
 
     render() {
         return (
-<<<<<<< HEAD
-            // <Login></Login>
+            <Login></Login>
             // <Encargado/>
             // <RegistroVisitante></RegistroVisitante>
-            <PruebaFirebase></PruebaFirebase>
-=======
-            <Login></Login>          
->>>>>>> development
+            //<PruebaFirebase></PruebaFirebase>
         );
     }
 }
