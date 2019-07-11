@@ -23,7 +23,16 @@ class AltaServicio extends Component{
                         </div>
                         <div className = "form-group">
                             <label for = "FechaNacimiento">  Dias disponibles  </label>
-                            <button className="btn btn-primary boton">Lu</button>                       </div>
+                            <div>
+                            <button type = "button" class = "btn btn-outline-primary boton">  Lun </button>
+                            <button type = "button" class = "btn btn-outline-primary boton">  Mar </button>
+                            <button type = "button" class = "btn btn-outline-primary boton">  Mie </button>
+                            <button type = "button" class = "btn btn-outline-primary boton">  Jue </button>
+                            <button type = "button" class = "btn btn-outline-primary boton">  Vir </button>
+                            <button type = "button" class = "btn btn-outline-primary boton">  Sab </button>
+                            <button type = "button" class = "btn btn-outline-primary boton">  Dom </button>
+                            </div>
+                        </div>
                         <fieldset className = "form-group">
                             <legend>  Estado  </legend>
                                 <div className = "form-check">
