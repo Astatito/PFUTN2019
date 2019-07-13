@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Text, View} from 'react-native';
 import {Field, Header, Card, CardSection, Button} from '../Common';
-import Firebase from '../Firebase'
+import {Firebase, Database} from '../Firebase'
 
 class Login extends Component {
 
@@ -10,7 +10,7 @@ class Login extends Component {
     onButtonPress() {
         Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
             .then(() => {
-                this.setState({result: "Logueo exitoso."})
+                this.setState({result: "Logueo exitoso."});
             })
             .catch(() => {
                 this.setState({result: "Falló la autenticación."})
