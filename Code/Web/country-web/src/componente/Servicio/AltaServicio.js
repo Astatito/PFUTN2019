@@ -19,7 +19,7 @@ class AltaServicio extends Component{
                     <legend>  Registrar Alta </legend>
                         <div className = "form-group">
                             <label for = "Nombre">  Nombre del Servicio </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name"/>
+                            <input type = "name" className = "form-control"   placeholder = "Name Service"/>
                         </div>
                         <div className = "form-group">
                             <label for = "FechaNacimiento">  Dias disponibles  </label>
