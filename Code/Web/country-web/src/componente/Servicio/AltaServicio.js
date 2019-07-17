@@ -17,11 +17,11 @@ class AltaServicio extends Component{
             <form>
             <div className="row">
                 <legend><h1>  Registrar Alta</h1> </legend>
-                    <div className = "col-md-6 flex-container form-group">
-                        <label for = "Nombre">  Nombre del Servicio </label>
-                        <input type = "name" className = "form-control"   placeholder = "Name Service"/>
+                    <div className = "col-md-12 flex-container form-group">
+                        <label for = "NombreServicio"> Nombre del Servicio  </label>
+                        <input  type = "name" className = "col-md-6 form-control"   placeholder = "Name Service"/>
                     </div>
-                    <div className = "col-md-6 flex-container form-group">
+                    <div className = "col-md-12 flex-container form-group">
                         <label for = "FechaNacimiento">  Dias disponibles  </label>
                         <div>
                         <button type = "button" className = " btn btn-outline-primary boton">  Lun </button>
@@ -33,7 +33,7 @@ class AltaServicio extends Component{
                         <button type = "button" className = "btn btn-outline-primary boton">  Dom </button>
                         </div>
                     </div>
-                    <fieldset className = "col-md-6 flex-container form-group">
+                    <fieldset className = "col-md-12 flex-container form-group">
                         <legend>  Estado  </legend>
                             <div className = "form-check">
                                 <label className = "form-check-label">
@@ -48,9 +48,9 @@ class AltaServicio extends Component{
                                 </label>
                             </div>
                     </fieldset>
-                    <div className = "col-md-6 flex-container form-group">
+                    <div className = "col-md-12 flex-container form-group">
                         <label for = "exampleTextarea"> Descripcion  </ label >
-                        <textarea className = "form-control" id = "exampleTextarea" rows = "3"> </textarea>
+                        <textarea className = "col-md-6 form-control" id = "exampleTextarea" rows = "3"> </textarea>
                     </div>
                 </div>
             </form>
