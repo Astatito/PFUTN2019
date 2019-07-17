@@ -6,6 +6,10 @@
     text-align: end;
   }
 
+  .button {
+   background-color: blue;
+  }
+
   .derecha {
     text-align:start;
   }
@@ -18,7 +22,7 @@
     display:inline;
   }
 
-  .espacio{
+  div.espacio{
     height: 15px;
   }
   .boton{
@@ -26,4 +30,13 @@
     padding:6px 10px;
     margin-right: 5px;
     
+  }
+
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .espacio-izquierda{
+    margin: 50;
   }
