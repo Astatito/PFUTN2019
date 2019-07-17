@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import "./encabezado.css"
+import "../Style/encabezado.css"
 import { Link } from 'react-router-dom'
+import fire from '../../config/config';
 
 
 //<form className = "form-inline my-2 my-lg-0">
@@ -8,8 +9,14 @@ import { Link } from 'react-router-dom'
 //<button type="button" className="btn btn-secondary" type="submit" >Buscar</button>
 
 //</form>
+//<Link to='/perfil' className='navbar-brand'>Perfil</Link>
 
 class Encabezado extends Component{
+
+    logout() {
+        fire.auth().signOut();
+    }
+
    render(){
        return(
         <div className=" "> 
@@ -24,27 +31,25 @@ class Encabezado extends Component{
                <div className = "collapse navbar-collapse" id = "navbarColor01">
                <ul className = "navbar-nav mr-auto">
                    <li className = "nav-item ">
-                       <Link to='/' className="nav-link" >  Iniciar sesion </Link>
+                       
                    </li>
                                    
                </ul>
                <form className = "form-inline my-2 my-lg-0">
-                  
-                   <Link to='/propietarios' className='navbar-brand'  >Propietarios</Link>
                    <label  className = " color mr-sm-2"> </label>
-                   <Link to='/login' type="button" className="btn btn-secondary" type="submit" >Iniciar sesion</Link>
-
+                   <button onClick={this.logout} className='btn btn-primary'>Cerrar Sesion</button>
                </form>
                </div>
             </nav>
+            <div className="espacio"></div>
             </div>
         </div>
+
 
 
        );
   
    }
 }
-
 export default Encabezado;
 

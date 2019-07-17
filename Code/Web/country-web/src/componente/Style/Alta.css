@@ -21,3 +21,9 @@
   .espacio{
     height: 15px;
   }
+  .boton{
+    cursor: pointer;
+    padding:6px 10px;
+    margin-right: 5px;
+    
+  }
