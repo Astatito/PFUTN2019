@@ -3,11 +3,12 @@ import "../Style/Alta.css";
 import Encabezado from "../Encabezado/Encabezado";
 import {Database} from '../../config/config';
 
-class AltaCountry extends Component{
+class EditarCountry extends Component{
 				
-				constructor(){
-					super();
-					this.state = {                
+				constructor(props){
+					super(props);
+					this.state = { 
+                        barrio: [],               
 						nombre: '',
 						calle: '',
 						numero: '',
@@ -16,7 +17,7 @@ class AltaCountry extends Component{
 						descripcion: '',
 						resultado: ''
 					}
-					this.addCountry = this.addCountry.bind(this);
+				this.editCountry = this.editCountry.bind(this);
 				this.ChangeNombre = this.ChangeNombre.bind(this);
 				this.ChangeCalle = this.ChangeCalle.bind(this);
 				this.ChangeNumero = this.ChangeNumero.bind(this);
@@ -24,21 +25,51 @@ class AltaCountry extends Component{
 				this.ChangeCelular = this.ChangeCelular.bind(this);
 				this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
 				this.registrar = this.registrar.bind(this);
-				
+                const url = this.props.location.pathname.split('/');
+                this.idBarrio  = url[url.length - 1];
+                
 				}
 
-				addCountry(){
-					var dbRef = Database.collection('Barrios')
-					dbRef.doc(this.state.nombre).set({
-						Nombre: this.state.nombre,
-						Calle: this.state.calle,
-						Numero: this.state.numero,
-						Titular: this.state.titular,
-						Celular: this.state.celular,
-						Descripcion: this.state.descripcion,
-					});
 
-	}
+    async componentDidMount(){
+        const { barrio } = this.state;
+        await Database.collection('Barrios').doc(this.idBarrio).get()
+            .then(doc => {
+                if (doc.exists) {
+                    console.log(doc.data());
+                    this.state.barrio.push(doc.data());
+                } else {
+                    //Si no existe, hacer esto...
+                }
+            })
+            .catch(err => {
+                //En caso de error, hacer esto...
+            })
+        this.setState({barrio});
+        const estrella = this.state.barrio[0];
+        this.setState({
+            nombre: estrella.Nombre,
+            calle: estrella.Calle,
+            numero: estrella.Numero,
+            titular: estrella.Titular,
+            celular: estrella.Celular,
+            descripcion: estrella.Descripcion,
+        })
+    }
+
+    editCountry(){
+        
+        var dbRef = Database.collection('Barrios')
+        dbRef.doc(this.idBarrio).set({
+            Nombre: this.state.nombre,
+            Calle: this.state.calle,
+            Numero: this.state.numero,
+            Titular: this.state.titular,
+            Celular: this.state.celular,
+            Descripcion: this.state.descripcion,
+        });
+
+}
 
 	ChangeNombre(event) {
 					this.setState({nombre : event.target.value});
@@ -63,7 +94,7 @@ ChangeDescripcion(event) {
 	registrar(){
 		//Agregar validaciones para no registrar cualquier gilada
 		if(true){
-						this.addCountry();
+						this.editCountry();
 						this.setState({
 							nombre: '',
 							calle: '',
@@ -71,7 +102,7 @@ ChangeDescripcion(event) {
 							titular: '',
 							celular: '',
 							descripcion: '',
-										resultado: 'Se registro con exito',
+										resultado: 'Se edito con exito',
 						})
 		}
 }
@@ -137,4 +168,4 @@ ChangeDescripcion(event) {
     }
 }
 
-export default AltaCountry;
+export default EditarCountry;

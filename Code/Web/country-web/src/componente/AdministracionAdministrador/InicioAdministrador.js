@@ -17,7 +17,7 @@ class InicioAdministrador extends Component{
             
 
             <div className="col-12">
-            <Encabezado></Encabezado>
+           
              <div className="row ">
                  <div className="col-1"></div>
                     <div className="col-5">
