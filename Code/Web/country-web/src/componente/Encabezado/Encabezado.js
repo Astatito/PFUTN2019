@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import "../Style/encabezado.css"
 import { Link } from 'react-router-dom'
-import fire from '../../config/config';
+import {Firebase} from '../../config/config';
 
 
 //<form className = "form-inline my-2 my-lg-0">
@@ -13,11 +13,34 @@ import fire from '../../config/config';
 
 class Encabezado extends Component{
 
+    constructor(props){
+        super(props);
+        this.state = { 
+            tipoUsuario : this.props.tipoU
+        }
+        this.funcion = this.funcion.bind(this);
+    }
+
     logout() {
-        fire.auth().signOut();
+        Firebase.auth().signOut();
+    }
+
+    funcion(){
+       console.log('asd', this.state.tipoUsuario);
+        if (this.state.tipoUsuario === 'Root'){
+            return (
+                <div><label>hola ¡sfhsfhmundo</label></div>
+            )
+        } else {
+            return (
+                <div><label>hola mundo</label></div>
+            )
+        }
+       
     }
 
    render(){
+
        return(
         <div className=" "> 
            <div className="fijado">
@@ -27,7 +50,7 @@ class Encabezado extends Component{
                <button className = "navbar-toggler" type = "button" data-toggle = "collapse" data-target = "# navbarColor01" aria-controls = "navbarColor01" aria-expand = "false" aria-label = "Navegación de palanca ">
                    <span className = "navbar-toggler-icon"> </span>
                </button>
-          
+                {this.funcion()}
                <div className = "collapse navbar-collapse" id = "navbarColor01">
                <ul className = "navbar-nav mr-auto">
                    <li className = "nav-item ">
@@ -36,6 +59,7 @@ class Encabezado extends Component{
                                    
                </ul>
                <form className = "form-inline my-2 my-lg-0">
+                  <Link to='/country'  className="navbar-brand">Country</Link>
                    <label  className = " color mr-sm-2"> </label>
                    <button onClick={this.logout} className='btn btn-primary'>Cerrar Sesion</button>
                </form>

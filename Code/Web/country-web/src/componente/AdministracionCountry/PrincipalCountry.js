@@ -1,20 +1,45 @@
 import React, { Component } from 'react';
-import AltaPropietario from "../AdministracionPropietario/AltaPropietario";
+import {Database} from '../../config/config';
 import "../Style/Alta.css";
 import Editar from "../Img/Editar.png"
 import Eliminar from "../Img/Eliminar.png"
-import Eliminar from "../Img/Lupa.png"
+import Lupa from "../Img/Lupa.png"
 import Encabezado from "../Encabezado/Encabezado";
 import { Link } from 'react-router-dom'
+import Country from './Country';
 
 
 
-class InicioAdmSistema extends Component{
+class PrincipalCountry extends Component{
 
+    constructor(){
+        super();
+        this.state= {
+            barrios: []
+        }
+       
+    }
+
+    async componentDidMount(){
+        const { barrios } = this.state;
+        await Database.collection('Barrios').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+
+                this.state.barrios.push(
+                   
+                    doc.data(),
+                   
+                )
+               
+            });
+        });
+        this.setState({barrios});
+        console.log(this.state.barrios);
+    }
     render(){
         return(          
             <div className="col-12">
-            <Encabezado></Encabezado>
+           
              <div className="row ">
                  <div className="col-1"></div>
                     <div className="col-5">
@@ -38,27 +63,34 @@ class InicioAdmSistema extends Component{
                 <thead >
                     <tr>
                     <th scope="col">Nombre</th>
-                    <th scope="col">Estado</th>
-                    <th scope="col">Domicilio</th>
+                    <th scope="col">Calle</th>
+                    <th scope="col">Calle</th>
                     <th scope="col">Titular</th>
                     <th scope="col">Celular</th>
                     <th scope="col">Editar</th>
                     <th scope="col">Eliminar</th>
-                    <th scope="col">Ampliar</th>
                     </tr>
                 </thead>
                 
                 <tbody>
-                    <tr class="table-light">
-                    <th scope="row">Los rosales</th>
-                    <td>Activo</td>
-                    <td>San Isidro 1234</td>
-                    <td> Matersky, Lilian </td>
-                    <td> 351355866 </td>
-                    <td> <img className="text-center" src={Editar} width="30" height="30"></img> </td>
-                    <td> <img className="text-center" src={Eliminar} width="30" height="30"></img> </td>
-                    <td> <img className="text-center" src={Lupa} width="30" height="30"></img> </td>
-                    </tr>
+                    { 
+                        
+                        this.state.barrios.map( barrio => {
+                            return(
+                                
+                                <Country
+                                nombre = {barrio.Nombre}
+                                calle = {barrio.Calle}
+                                numero = {barrio.Numero}
+                                titular = {barrio.Titular}
+                                celular = {barrio.Celular}
+                                >
+                                </Country>
+                            )
+                        }
+
+                        )
+                    }
 
                 </tbody>
             </table>
@@ -74,4 +106,4 @@ class InicioAdmSistema extends Component{
     }
 }
 
-export default InicioAdmSistema;
+export default PrincipalCountry;

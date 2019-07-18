@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import "../Style/Login.css";
 import firebase from 'firebase'; 
 import 'firebase/database'
-import fire from '../../config/config';
+import {Firebase} from '../../config/config';
+import {Database} from '../../config/config';
 import Icono from "../Img/Icono.jpeg"
 import { Link } from 'react-router-dom'
 import InicioAdministrador from '../AdministracionAdministrador/InicioAdministrador';
+import Encabezado from "../Encabezado/Encabezado";
 
 
 class Login extends Component{  
@@ -17,11 +19,14 @@ class Login extends Component{
           email:'', 
           password:'',
           user: null, 
-          result:false};
+          result:false,
+          tipoUsuario:''
+        };
         this.authListener = this.authListener.bind(this);
         this.ChangeEmail = this.ChangeEmail.bind(this);
         this.ChangePass = this.ChangePass.bind(this);
         this.onButtonPress = this.onButtonPress.bind(this);
+        this.obtenerTipoUsuario = this.obtenerTipoUsuario.bind(this)
 
     }
 
@@ -34,6 +39,8 @@ class Login extends Component{
     
     componentDidMount() {
       this.authListener();
+    
+      
     }
     // componentWillMount() {
     //   // Inicialización de Firebase
@@ -42,25 +49,45 @@ class Login extends Component{
     // }
       //firebase.initializeApp(DB_CONFIG);
   
+    obtenerTipoUsuario(){
+      Database.collection('Usuarios').doc(this.state.email).get()
+        .then(doc => {
     
+          if (doc.exists) {
+            this.state.tipoUsuario=doc.data().TipoUsuario.id
+           
+            console.log(this.state.tipoUsuario)
+          } else {
+            //Si no existe, hacer esto...
+          }
+        })
+        .catch(err => {
+          //En caso de error, hacer esto...
+        })
+      }
+      
+      
+
     authListener() {
-      fire.auth().onAuthStateChanged((user) => {
-        console.log(user);
+      Firebase.auth().onAuthStateChanged((user) => {
+        
         if (user) {
           this.setState({ user });
           localStorage.setItem('user', user.uid);
+          
         } else {
           this.setState({ user: null });
           localStorage.removeItem('user');
         }
       });
+      
     }
-    onButtonPress() {
+   async onButtonPress() {
         
       firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(() => {
         this.setState({result: true})
-        console.log("valido", this.state.result)
+        this.obtenerTipoUsuario();
       })
       .catch(() => {
           
@@ -117,6 +144,11 @@ class Login extends Component{
         );} else {
           return(
                 <div>
+                  <Encabezado
+                  tipoU = {this.state.tipoUsuario}></Encabezado>
+                  {/* <Link to={this.state.tipoUsuario} type="button" className="btn btn-primary" type="submit" >Agregar Servicio</Link>
+                 */}
+
                   <InicioAdministrador></InicioAdministrador>
                 </div>
           )
