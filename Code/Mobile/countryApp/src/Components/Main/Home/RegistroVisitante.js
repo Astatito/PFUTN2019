@@ -1,7 +1,7 @@
 //En este componente es donde se cargan los datos luego de escanear y se pueden modificar si es necesario.
 //Los datos serían Nombre, Apellido, Numero de Documento y fecha de nacimiento. Más patente del auto.
 import React, {Component} from 'react';
-import {View,Text,StyleSheet} from 'react-native';
+import {View,Text,StyleSheet,Picker} from 'react-native';
 import {Header,Card,CardSection,Field,Button,ButtonCancelar } from '../../Common';
 class RegistroVisitante extends Component {
     render () {
@@ -24,13 +24,13 @@ class RegistroVisitante extends Component {
                             hidden={false}
                         />
                     </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. DNI, Pasaporte"
-                            label="Tipo de documento"
-                            hidden={false}
-                        />
-                    </CardSection>
+                    <View style= {styles.picker}>
+                        <Picker style={{color: '#6A6666'}}>
+                            <Picker.Item label="DNI" value="DNI" />
+                            <Picker.Item label="Pasaporte" value="Pasaporte" />
+                            <Picker.Item label="Licencia de conducir" value="Licencia de conducir" />
+                        </Picker>
+                    </View>
                     <CardSection>
                         <Field
                             placeholder="Eg. 32645187"
@@ -84,6 +84,16 @@ const styles= StyleSheet.create({
         textAlign: 'right',
         color: '#000000',
         padding:8
+    },
+    picker: {
+        borderBottomWidth: 1,
+        padding: 5,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        borderColor: '#ddd',
+        position: 'relative',
+        marginTop:5,
     }
 });
 export default RegistroVisitante;

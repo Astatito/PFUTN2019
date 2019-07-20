@@ -11,7 +11,8 @@ class App extends Component {
             <Login></Login>
             // <Encargado/>
             // <RegistroVisitante></RegistroVisitante>
-            //<PruebaFirebase></PruebaFirebase>
+            // <PruebaFirebase></PruebaFirebase>
+
         );
     }
 }
