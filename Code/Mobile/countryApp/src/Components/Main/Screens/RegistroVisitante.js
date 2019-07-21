@@ -3,10 +3,35 @@
 import React, {Component} from 'react';
 import {View,Text,StyleSheet,Picker} from 'react-native';
 import {Header,Card,CardSection,Field,Button,ButtonCancelar } from '../../Common';
+import {Firebase, Database} from '../../Firebase';
+import RNPickerSelect from 'react-native-picker-select';
+import { ScrollView } from 'react-native-gesture-handler';
+
 class RegistroVisitante extends Component {
+
+    state= {picker: '', tiposDocumento: [], cantidad: 0 }
+
+    obtenerPickers= () => {
+        var dbRef = Database.collection('TipoDocumento')
+        var dbDocs = dbRef.get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    // this.state.tiposDocumento.push(doc.data().Nombre)
+                    this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
+                })
+                this.setState({cantidad: this.state.tiposDocumento.length})
+            })
+            .catch(err => {
+            })
+    }
+    
     render () {
+        if (this.state.tiposDocumento.length < 3) {
+            this.obtenerPickers()
+        }
         return (
-            <View >
+            <ScrollView>
+            <View style={{padding:5}}>
                 <Text style={styles.logueo}> Ud. se ha logueado como : Encargado </Text> 
                 <Header headerText="Registrar nuevo visitante"> </Header> 
                 <Card>
@@ -24,13 +49,17 @@ class RegistroVisitante extends Component {
                             hidden={false}
                         />
                     </CardSection>
+
                     <View style= {styles.picker}>
-                        <Picker style={{color: '#6A6666'}}>
-                            <Picker.Item label="DNI" value="DNI" />
-                            <Picker.Item label="Pasaporte" value="Pasaporte" />
-                            <Picker.Item label="Licencia de conducir" value="Licencia de conducir" />
-                        </Picker>
+                    <RNPickerSelect
+                        selectedValue= {this.state.picker}
+                        onValueChange={(itemValue, itemIndex) =>
+                            this.setState({picker: itemValue})
+                          }
+                        items = {this.state.tiposDocumento} >
+                    </RNPickerSelect>
                     </View>
+
                     <CardSection>
                         <Field
                             placeholder="Eg. 32645187"
@@ -69,9 +98,11 @@ class RegistroVisitante extends Component {
                     </View>
                 </Card> 
             </View>
+            </ScrollView>
         );
     }
 }
+
 const styles= StyleSheet.create({
     botones: {
         flexDirection: 'row',
@@ -83,7 +114,7 @@ const styles= StyleSheet.create({
     logueo: {
         textAlign: 'right',
         color: '#000000',
-        padding:8
+        paddingTop: 20,
     },
     picker: {
         borderBottomWidth: 1,
@@ -94,6 +125,7 @@ const styles= StyleSheet.create({
         borderColor: '#ddd',
         position: 'relative',
         marginTop:5,
+        paddingLeft:16
     }
 });
 export default RegistroVisitante;
