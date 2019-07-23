@@ -5,3 +5,7 @@
 div.espacio{
     height: 100px;
   }
+
+  button.btn.btn-primary.izquierda {
+    text-align: end;
+  }

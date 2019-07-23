@@ -1,30 +1,59 @@
 import React, { Component } from 'react';
-import Login from "./componente/PantallaPrincipal/Login";
-import "./estilo.css";
-import firebase from 'firebase'; 
-import 'firebase/database'
-import { DB_CONFIG } from './config/config';
-import Inicio from "./componente/AdministracionAdministrador/InicioAdministrador";
-import Router from './componente/router';
-import InicioAdministrador from './componente/AdministracionAdministrador/InicioAdministrador';
-import AltaServicio from "./componente/Servicio/AltaServicio"
 
+import "./estilo.css";
+
+import 'firebase/database'
+import Router from './componente/router';
+import './App.css'
+import Encabezado from './componente/Encabezado/Encabezado';
+import {Firebase} from "./config/config";
 
 
 class App extends Component{
 
-  traerEncabezado(){
-    
-  }
+    constructor(props){
+        super(props);
+        this.state = {
+            user: null,
+            tipoUsuario: null,
+            cargando: true,
+        };
 
-  render(){
+        this.authListener();
+    }
 
-    return(
-      <div className="app container-fluid ">        
-        <Router></Router>
-      </div>
-    );
-  }
+    authListener() {
+        Firebase.auth().onAuthStateChanged((user) => {
+
+            if (user) {
+                this.setState({ user });
+                this.setState({ tipoUsuario: user.email});
+                localStorage.setItem('user', user.uid);
+                console.log(user.email);
+
+
+            } else {
+                this.setState({ user: null });
+                localStorage.removeItem('user');
+
+            }
+        })
+        this.state.cargando = false;
+
+    }
+
+
+       render(){
+           const { cargando } = this.state;
+           if(cargando){return( <div>Loading...</div>)} else {
+           return(
+               <div className="app container-fluid ">
+                   <Encabezado tipoUsuario = { this.state.tipoUsuario }></Encabezado>
+                   <Router user={ this.state.user?true:false} ></Router>
+               </div>
+           );}
+}
+
 }
 
 export default App;

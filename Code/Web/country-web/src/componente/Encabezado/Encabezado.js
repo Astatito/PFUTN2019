@@ -16,53 +16,62 @@ class Encabezado extends Component{
     constructor(props){
         super(props);
         this.state = { 
-            tipoUsuario : this.props.tipoU
+            ocultar: true
         }
-        this.funcion = this.funcion.bind(this);
+        //this.botones = this.botones.bind(this);
+        this.authListener();
     }
 
     logout() {
         Firebase.auth().signOut();
     }
 
-    funcion(){
-       console.log('asd', this.state.tipoUsuario);
-        if (this.state.tipoUsuario === 'Root'){
-            return (
-                <div><label>hola ¡sfhsfhmundo</label></div>
-            )
-        } else {
-            return (
-                <div><label>hola mundo</label></div>
-            )
-        }
-       
+    async authListener() {
+        await Firebase.auth().onAuthStateChanged((user) => {
+
+            if (user) {
+                this.state.ocultar= false; 
+            } 
+        });
+
     }
 
-   render(){
+    // botones(){
+    //     if (this.state.tipoUsuario === 'root@countryapp.com'){
+    //         return (
+    //             <div className='form-inline'>
+    //                 <Link to='/country'  className="navbar-brand">Country</Link>
+    //                 <Link to='/propietario'  className="navbar-brand">Propietario</Link>
+    //             </div>
+    //         )
+    //     }
+    //     if (this.state.tipoUsuario == null) {
+    //         return (
+    //             <div className='form-inline'> </div>
+    //         )
+    //     }
+       
+    // }
 
+   render(){
+       const {ocultar} = this.state;
        return(
         <div className=" "> 
            <div className="fijado">
            <nav className = " navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
                
-               <Link to='/'  className="navbar-brand">Country</Link>
+               <Link to='/'  className="navbar-brand">Live Safe</Link>
                <button className = "navbar-toggler" type = "button" data-toggle = "collapse" data-target = "# navbarColor01" aria-controls = "navbarColor01" aria-expand = "false" aria-label = "Navegación de palanca ">
                    <span className = "navbar-toggler-icon"> </span>
                </button>
-                {this.funcion()}
-               <div className = "collapse navbar-collapse" id = "navbarColor01">
-               <ul className = "navbar-nav mr-auto">
-                   <li className = "nav-item ">
-                       
-                   </li>
-                                   
-               </ul>
-               <form className = "form-inline my-2 my-lg-0">
-                  <Link to='/country'  className="navbar-brand">Country</Link>
-                   <label  className = " color mr-sm-2"> </label>
-                   <button onClick={this.logout} className='btn btn-primary'>Cerrar Sesion</button>
-               </form>
+
+               <div className = "collapse navbar-collapse izquierda" id = "navbarColor01">
+                   <div className = " col-12 izquierda">
+
+                       <button onClick={this.logout} className='btn btn-primary izquierda'
+                       hidden={false}
+                       >Close</button>
+                   </div>
                </div>
             </nav>
             <div className="espacio"></div>

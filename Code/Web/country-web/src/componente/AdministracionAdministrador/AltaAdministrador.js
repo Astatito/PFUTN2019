@@ -8,7 +8,7 @@ import {Database, Firebase} from "../../config/config";
 //https://react-select.com/home
 //https://firebase.google.com/docs/auth/web/manage-users#create_a_user
 
-class AltaPropietario extends Component{
+class AltaAdministrador extends Component{
 
     constructor(){
         super();
@@ -17,20 +17,21 @@ class AltaPropietario extends Component{
             apellido: '',
             tipoDocumento: '',
             documento: '',
-            titular: '',
+            legajo: '',
             celular: '',
             descripcion: '',
             fechaNacimiento: '',
+            fechaAlta: '', 
             mail: '',
             pass: '',
             tipoD: [],// Para cargar el combo
             resultado: ''
         }
-        this.addPropietario = this.addPropietario.bind(this);
+        this.addAdministrador= this.addAdministrador.bind(this);
         this.ChangeNombre = this.ChangeNombre.bind(this);
         this.ChangeApellido = this.ChangeApellido.bind(this);
-        this.ChangeNumero = this.ChangeNumero.bind(this);
-        this.ChangeTitular = this.ChangeTitular.bind(this);
+        this.ChangeLegajo = this.ChangeLegajo.bind(this);
+        this.ChangeNumDocumento = this.ChangeNumDocumento.bind(this);
         this.ChangeCelular = this.ChangeCelular.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
         this.ChangeFechaNacimiento = this.ChangeFechaNacimiento.bind(this);
@@ -56,43 +57,45 @@ class AltaPropietario extends Component{
     }
 
 
-    addPropietario(){
-        var dbRef = Database.collection('Propietarios')
+    addAdministrador(){
+        var dbRef = Database.collection('Administradores')
         dbRef.add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
-            Titular: this.state.titular,
+            Legajo: this.state.legajo,
+            NumDocumento: this.state.documento,
             Celular: this.state.celular,
             Descripcion: this.state.descripcion,
             TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
             FechaNacimiento: this.state.fechaNacimiento,
+            FechaAlta: new Date(),
+            Mail: this.state.mail
+
         });
 
     }
 
     ChangeNombre(event) {
-        console.log(this.state.tipoDocumento.valueOf().value);
         this.setState({nombre : event.target.value});
     }
     ChangeApellido(event) {
         this.setState({apellido: event.target.value});
     }
-    ChangeNumero(event) {
-        this.setState({numero: event.target.value});
+    ChangeLegajo(event) {
+        this.setState({legajo: event.target.value});
     }
 
     ChangeCelular(event) {
         this.setState({celular : event.target.value});
     }
-    ChangeTitular(event) {
-        this.setState({titular : event.target.value});
+    ChangeNumDocumento(event) {
+        this.setState({documento : event.target.value});
     }
     ChangeDescripcion(event) {
         this.setState({descripcion : event.target.value});
     }
 
     ChangeSelect(value){
-        console.log(value.value);
         this.setState({tipoDocumento : value});
     }
     ChangeFechaNacimiento(event){
@@ -110,7 +113,7 @@ class AltaPropietario extends Component{
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
-            this.addPropietario();
+            this.addAdministrador();
 
         }
     }
@@ -122,7 +125,7 @@ class AltaPropietario extends Component{
             Firebase.auth().createUserWithEmailAndPassword(mail, pass).then(
                 Database.collection('Usuarios').doc(mail).set({
                     NombreUsuario: mail,
-                    TipoUsuario: Database.doc('/TiposUsuario/Propietario')
+                    TipoUsuario: Database.doc('/TiposUsuario/Administrador')
                 })
             )
             .catch(function(error) {
@@ -147,12 +150,14 @@ class AltaPropietario extends Component{
                         <div className = "form-group">
                             <label for = "Nombre">  Nombre  </label>
                             <input type = "name" className = "form-control"   placeholder = "Name"
+                            value={this.state.nombre}
                             onChange={this.ChangeNombre}
                             />
                         </div>
                         <div className = "form-group">
                             <label for = "Apellido">  Apellido  </label>
                             <input type = "family-name" className = "form-control"   placeholder = "Surname"
+                                    value={this.state.apellido}
                                    onChange= {this.ChangeApellido} />
                         </div>
                         <div className = "form-group">
@@ -170,7 +175,10 @@ class AltaPropietario extends Component{
                         </div>
                         <div className = "form-group">
                             <label for = "NumeroDocumento">  Numero de Documento  </label>
-                            <input type = "document" className = "form-control"   placeholder = "Document number"/>
+                            <input type = "document" className = "form-control" 
+                              placeholder = "Document number"
+                              value={this.state.documento}
+                              onChange={this.ChangeNumDocumento}/>
                         </div>
                         <div className = "form-group">
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
@@ -179,45 +187,39 @@ class AltaPropietario extends Component{
                                    onChange={this.ChangeFechaNacimiento}
                             />
                         </div>
-                        <fieldset className = "form-group">
-                            <legend>  Titular  </legend>
-                                <div className = "form-check">
-                                    <label className = "form-check-label">
-                                    <input type = "radio" className = "form-check-input" name = "optionsRadios" id = "optionsRadios1" value = "option1" /> 
-                                        Si
-                                    </label>
-                                </div>
-                                <div className = "form-check">
-                                    <label className = "form-check-label">
-                                        <input type = "radio" className = "form-check-input" name = "optionsRadios" id = "optionsRadios2" value = "option2"/> 
-                                            No
-                                    </label>
-                                </div>
-                        </fieldset>
+                        <div className = "form-group">
+                            <label for = "NumeroCelular">  Legajo  </label>
+                            <input type = "tel" className = "form-control"   placeholder = "Mobile number"
+                            value={this.state.legajo}
+                            onChange={this.ChangeLegajo}/>
+                        </div>
                         <div className = "form-group">
                             <label for = "NumeroCelular">  Celular  </label>
                             <input type = "tel" className = "form-control"   placeholder = "Mobile number"
+                            value={this.state.celular}
                             onChange={this.ChangeCelular}/>
-                        </div>
-                        <div className = "form-group">
-                            <label for = "NumeroTelefono">  Telefono Fijo  </label>
-                            <input type = "tel" className = "form-control"   placeholder = "Landline number"/>
                         </div>
                         <div className = "form-group">
                             <label for = "exampleInputEmail1">  Dirección de correo electrónico  </label>
                             <input type = "email" className = "form-control" id = "exampleInputEmail1"
                                    aria-describe by = "emailHelp" placeholder = "Enter email"
+                                   value={this.state.mail}
                                    onChange={this.ChangeMail}/>
                         </div>
                         <div className = "form-group">
                             <label for = "exampleInputPassword1">  Contraseña  </label>
                             <input type = "password" className = "form-control" id = "exampleInputPassword1"
                                    placeholder = "Password"
+                                   value={this.state.pass}
                                    onChange={this.ChangePass}/>
                         </div>        
                         <div className = "form-group">
                             <label for = "exampleTextarea"> Descripcion  </ label >
-                            <textarea className = "form-control" id = "exampleTextarea" rows = "3"> </textarea>
+                            <textarea className = "form-control" id = "exampleTextarea" rows = "3"
+                            value={this.state.descripcion}
+                            onChange={this.ChangeDescripcion}
+                            > </textarea>
+
                         </div>
                         <div className="form-group izquierda">
                             <button className="btn btn-primary" onClick={this.crearUsuario} >Crear Usuario</button>
@@ -236,4 +238,4 @@ class AltaPropietario extends Component{
 
     }
 }
-export default AltaPropietario;
+export default  AltaAdministrador;

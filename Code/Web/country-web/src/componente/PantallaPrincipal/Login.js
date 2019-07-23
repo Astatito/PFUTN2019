@@ -5,9 +5,11 @@ import 'firebase/database'
 import {Firebase} from '../../config/config';
 import {Database} from '../../config/config';
 import Icono from "../Img/Icono.jpeg"
-import { Link } from 'react-router-dom'
+import InicioRoot from '../AdministracionRoot/InicioRoot'
 import InicioAdministrador from '../AdministracionAdministrador/InicioAdministrador';
-import Encabezado from "../Encabezado/Encabezado";
+import InicioEncargado from '../AdministracionEncargadoIngresoEgreso/InicioEncargado'
+import InicioPropietario from '../AdministracionPropietario/PrincipalPropietario'
+
 
 
 class Login extends Component{  
@@ -20,6 +22,7 @@ class Login extends Component{
           password:'',
           user: null, 
           result:false,
+          tipo: false,
           tipoUsuario:''
         };
         this.authListener = this.authListener.bind(this);
@@ -27,11 +30,12 @@ class Login extends Component{
         this.ChangePass = this.ChangePass.bind(this);
         this.onButtonPress = this.onButtonPress.bind(this);
         this.obtenerTipoUsuario = this.obtenerTipoUsuario.bind(this)
-
+        this.inicio = this.inicio.bind(this);
     }
 
     ChangeEmail(event) {
         this.setState({email: event.target.value});
+        
       }
     ChangePass(event) {
         this.setState({password: event.target.value});
@@ -39,8 +43,6 @@ class Login extends Component{
     
     componentDidMount() {
       this.authListener();
-    
-      
     }
     // componentWillMount() {
     //   // Inicialización de Firebase
@@ -49,14 +51,14 @@ class Login extends Component{
     // }
       //firebase.initializeApp(DB_CONFIG);
   
-    obtenerTipoUsuario(){
-      Database.collection('Usuarios').doc(this.state.email).get()
+   async  obtenerTipoUsuario () {
+     
+    await Database.collection('Usuarios').doc(this.state.email).get()
         .then(doc => {
-    
           if (doc.exists) {
-            this.state.tipoUsuario=doc.data().TipoUsuario.id
-           
-            console.log(this.state.tipoUsuario)
+            this.setState({tipo: true})
+            this.state.tipoUsuario= doc.data().TipoUsuario.id;
+            localStorage.setItem('tipoUsuario', this.state.tipoUsuario);
           } else {
             //Si no existe, hacer esto...
           }
@@ -68,13 +70,11 @@ class Login extends Component{
       
       
 
-    authListener() {
+    async authListener() {
       Firebase.auth().onAuthStateChanged((user) => {
-        
-        if (user) {
+        if (user) {          
           this.setState({ user });
           localStorage.setItem('user', user.uid);
-          
         } else {
           this.setState({ user: null });
           localStorage.removeItem('user');
@@ -83,24 +83,41 @@ class Login extends Component{
       
     }
    async onButtonPress() {
+      await this.obtenerTipoUsuario();
+      console.log('email :', this.state.tipo);
+      if (this.state.tipo){
+        await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+        .then(() => {        
+            this.setState({result: true})
         
-      firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(() => {
-        this.setState({result: true})
-        this.obtenerTipoUsuario();
       })
       .catch(() => {
           
         this.setState({result: false})
       })
     }
+  }
 
-    
+    inicio(){
+      
+      const temp = localStorage.getItem('tipoUsuario')
+
+      console.log('obj :', temp);
+      if(this.state.tipoUsuario === 'Root' || temp === 'Root'){
+        return (<InicioRoot/>   )
+      } else if(this.state.tipoUsuario === 'Administrador'|| temp === 'Administrador'){
+        return (<InicioAdministrador/>)
+      }else if(this.state.tipoUsuario === 'Encargado'|| temp === 'Encargado'){
+        return (<InicioEncargado/>) 
+      }else if(this.state.tipoUsuario === 'Propietario'|| temp === 'Propietario'){
+        return (<InicioPropietario/>)
+      }
+    }
 
 
     render(){
       const {  user}=this.state;
-      if (!user){  
+      if (!user ){  
         return(
             <div className="col-12  "> 
               <div className="text-center "> 
@@ -130,8 +147,13 @@ class Login extends Component{
                     />   
                 </div>
                 <div className="form-group izquierda">
+                  
                     <button className="btn btn-primary" 
-                    onClick={this.onButtonPress}>                      
+                    onClick={() => {
+                      this.onButtonPress()
+                    }}
+                    >                    
+
                     Iniciar Sesion</button>
                 </div>
                 
@@ -141,15 +163,11 @@ class Login extends Component{
         </div>
      </div>
 
-        );} else {
+        );}
+         else   {
           return(
-                <div>
-                  <Encabezado
-                  tipoU = {this.state.tipoUsuario}></Encabezado>
-                  {/* <Link to={this.state.tipoUsuario} type="button" className="btn btn-primary" type="submit" >Agregar Servicio</Link>
-                 */}
-
-                  <InicioAdministrador></InicioAdministrador>
+                <div>                
+                 {this.inicio()}
                 </div>
           )
         }
