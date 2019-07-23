@@ -12,19 +12,18 @@ class Country extends Component{
 
     constructor(props){
         super(props);
-       
+       this.idCountry = props.idCountry
         this.nombre = props.nombre;
         this.calle = props.calle;
         this.numero = props.numero;
         this.titular = props.titular;
         this.celular = props.celular;
-        this.urlEditar = '/editarCountry/' + props.nombre; 
+        this.urlEditar = '/editarCountry/' + props.idCountry;
         this.eliminar = this.eliminar.bind(this);
     }
 
     eliminar(){
-        console.log(this.nombre)
-       Database.collection('Barrios').doc(this.nombre).delete()
+       Database.collection('Barrios').doc(this.idCountry).delete()
             .then( console.log('Elimino'))
             .catch(err => {
                 //En caso de error, hacer esto...
@@ -41,9 +40,9 @@ class Country extends Component{
                     <td>{this.numero}</td>
                     <td> {this.titular}</td>
                     <td>{this.celular}</td>
-                    <td> <Link to={this.urlEditar} type="button" className="btn btn-primary" 
+                    <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
                         >Editar</Link> </td>
-                    <td> <button className="btn" onClick={this.eliminar} >Eliminar</button> </td>
+                    <td> <button className="btn btn-primary" onClick={this.eliminar} >Eliminar</button> </td>
                     </tr>
 
                

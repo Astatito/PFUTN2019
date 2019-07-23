@@ -5,38 +5,39 @@ import {Database} from '../../config/config';
 
 class AltaCountry extends Component{
 				
-				constructor(){
-					super();
-					this.state = {                
-						nombre: '',
-						calle: '',
-						numero: '',
-						titular: '',
-						celular: '',
-						descripcion: '',
-						resultado: ''
-					}
-					this.addCountry = this.addCountry.bind(this);
-				this.ChangeNombre = this.ChangeNombre.bind(this);
-				this.ChangeCalle = this.ChangeCalle.bind(this);
-				this.ChangeNumero = this.ChangeNumero.bind(this);
-				this.ChangeTitular = this.ChangeTitular.bind(this);
-				this.ChangeCelular = this.ChangeCelular.bind(this);
-				this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
-				this.registrar = this.registrar.bind(this);
-				
-				}
+		constructor(){
+			super();
+			this.state = {
+				nombre: '',
+				calle: '',
+				numero: '',
+				titular: '',
+				celular: '',
+				descripcion: '',
+				resultado: ''
+			}
+			this.addCountry = this.addCountry.bind(this);
+		this.ChangeNombre = this.ChangeNombre.bind(this);
+		this.ChangeCalle = this.ChangeCalle.bind(this);
+		this.ChangeNumero = this.ChangeNumero.bind(this);
+		this.ChangeTitular = this.ChangeTitular.bind(this);
+		this.ChangeCelular = this.ChangeCelular.bind(this);
+		this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
+		this.registrar = this.registrar.bind(this);
 
-				addCountry(){
-					var dbRef = Database.collection('Barrios')
-					dbRef.doc(this.state.nombre).set({
-						Nombre: this.state.nombre,
-						Calle: this.state.calle,
-						Numero: this.state.numero,
-						Titular: this.state.titular,
-						Celular: this.state.celular,
-						Descripcion: this.state.descripcion,
-					});
+		}
+
+
+		addCountry(){
+			var dbRef = Database.collection('Barrios')
+			dbRef.add({
+				Nombre: this.state.nombre,
+				Calle: this.state.calle,
+				Numero: this.state.numero,
+				Titular: this.state.titular,
+				Celular: this.state.celular,
+				Descripcion: this.state.descripcion,
+			});
 
 	}
 
@@ -81,7 +82,7 @@ ChangeDescripcion(event) {
         return(
 
             <div className="col-12">
-                <Encabezado></Encabezado>
+                {/*<Encabezado></Encabezado>*/}
             <div>
             <div className="col-md-12 ">
 												<legend>  Registrar Alta de un Barrio </legend>

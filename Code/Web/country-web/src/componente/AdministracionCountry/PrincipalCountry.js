@@ -27,7 +27,7 @@ class PrincipalCountry extends Component{
 
                 this.state.barrios.push(
                    
-                    doc.data(),
+                    [doc.data(),doc.id]
                    
                 )
                
@@ -79,11 +79,12 @@ class PrincipalCountry extends Component{
                             return(
                                 
                                 <Country
-                                nombre = {barrio.Nombre}
-                                calle = {barrio.Calle}
-                                numero = {barrio.Numero}
-                                titular = {barrio.Titular}
-                                celular = {barrio.Celular}
+                                idCountry = {barrio[1]}
+                                nombre = {barrio[0].Nombre}
+                                calle = {barrio[0].Calle}
+                                numero = {barrio[0].Numero}
+                                titular = {barrio[0].Titular}
+                                celular = {barrio[0].Celular}
                                 >
                                 </Country>
                             )

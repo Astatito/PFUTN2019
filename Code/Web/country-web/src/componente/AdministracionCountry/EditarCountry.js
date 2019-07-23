@@ -36,7 +36,6 @@ class EditarCountry extends Component{
         await Database.collection('Barrios').doc(this.idBarrio).get()
             .then(doc => {
                 if (doc.exists) {
-                    console.log(doc.data());
                     this.state.barrio.push(doc.data());
                 } else {
                     //Si no existe, hacer esto...
@@ -112,7 +111,7 @@ ChangeDescripcion(event) {
         return(
 
             <div className="col-12">
-                <Encabezado></Encabezado>
+                {/*<Encabezado></Encabezado>*/}
             <div>
             <div className="col-md-12 ">
 												<legend>  Registrar Alta de un Barrio </legend>
