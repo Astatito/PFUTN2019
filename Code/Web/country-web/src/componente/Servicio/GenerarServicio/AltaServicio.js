@@ -12,25 +12,41 @@ class AltaServicio extends Component{
             nombre: '',
             estado: true,
             disponibilidad: '',
-            idCountry: 'REFERENCIA',
-            resultado: ''
+            idCountry: '',
+            resultado: '',
+            dias:['',''],
+            nombreDias:['Lun','Mar']
         }
         this.addServicio= this.addServicio.bind(this);
         this.ChangeNombre = this.ChangeNombre.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
+        this.ChangeRadio  = this.ChangeRadio.bind(this);
+        this.ChangeDias = this.ChangeDias.bind(this);
         this.registrar = this.registrar.bind(this);
 
     }
 
+    componentDidMount(){
+        Database.collection('Administradores').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                if(doc.data().Usuario === localStorage.getItem('mail')){
+                        this.state.idCountry = doc.data().IdCountry
+                }
+            });
+        })
+    }
 
+    componentDidUpdate(){
+        
+    }
 
     addServicio(){
         var dbRef = Database.collection('Servicios')
         dbRef.add({
             Nombre: this.state.nombre,
-            Estado: this.state.estado,
+            Estado: this.state.estado=== 'Si'?true:false,
             Disponibilidad: this.state.disponibilidad,
-            idCountry: Database.doc('Barrios/' + this.state.idCountry),
+            IdCountry: this.state.idCountry,
         });
 
     }
@@ -43,6 +59,9 @@ class AltaServicio extends Component{
         this.setState({descripcion : event.target.value});
     }
 
+    ChangeRadio(event){
+      this.setState({disponibilidad: event.currentTarget.value})
+  }
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
@@ -50,6 +69,15 @@ class AltaServicio extends Component{
         }
     }
 
+    ChangeDias(event){
+        const e = event.target;
+        if(e.checked){
+           this.state.dias[e.name] = this.state.nombreDias[e.name];
+            
+        } else{ 
+            this.state.dias[e.name] = '';
+        }
+    }
 
     render(){
         return(
@@ -70,30 +98,37 @@ class AltaServicio extends Component{
                     <div className = "col-md-12 flex-container form-group">
                         <label for = "FechaNacimiento">  Dias disponibles  </label>
                         <div>
-                            {/* <input className="checkbox">Lun</input>
-                            <input className="checkbox">Mar</input>
-                            <input className="checkbox">Mie</input>
-                            <input className="checkbox">Juv</input>
-                            <input className="checkbox">Vie</input>
-                            <input className="checkbox">Sab</input>
-                            <input className="checkbox">Dom</input> */}
+                        {/* checked={this.state.isGoing} onChange={this.handleInputChange} */}
+                        {/* <label><input name='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDias} />Lun </label>
+                        <label><input name='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} />Mar </label>
+                        <label><input name='2' value="Mie" type="checkbox" checked={this.state.dias[2] === 'Mie'} />Mie </label>
+                        <label><input name='3' value="Jue" type="checkbox" checked={this.state.dias[3] === 'Jue'} />Jue </label>
+                        <label><input name='4' value="Vie" type="checkbox" checked={this.state.dias[4] === 'Vie'} />Vie </label>
+                        <label><input name='5' value="Sab" type="checkbox" checked={this.state.dias[5] === 'Sab'} />Sab </label>
+                        <label><input name='6' value="Dom" type="checkbox" checked={this.state.dias[6] === 'Dom'} />Dom </label> */}
+                         <label><input name='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDias} />Lun </label>
+                        <label><input name='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} onChange={this.ChangeDias} />Mar </label>
+   
                         </div>
                     </div>
-                    <fieldset className = "col-md-12 flex-container form-group">
-                        <legend>  Estado  </legend>
-                            <div className = "form-check">
-                                <label className = "form-check-label">
-                                <input type = "radio" className = "form-check-input" name = "optionsRadios" id = "optionsRadios1" value = "option1" /> 
-                                    Disponible
-                                </label>
-                            </div>
-                            <div className = "form-check">
-                                <label className = "form-check-label">
-                                    <input type = "radio" className = "form-check-input" name = "optionsRadios" id = "optionsRadios2" value = "option2"/> 
-                                        No disponible
-                                </label>
-                            </div>
-                    </fieldset>
+                    <fieldset className = "form-group">
+                            <legend>  Estado  </legend>
+                                <div className = "form-check">
+                                    <label className = "form-check-label">
+                                    <input type = "radio" className = "form-check-input"  
+                                    value = 'Si' checked={this.state.disponibilidad === 'Si'}
+                                    onChange={this.ChangeRadio} />
+                                        Disponibile
+                                    </label>
+                                </div>
+                                <div className = "form-check">
+                                    <label className = "form-check-label">
+                                    <input type = "radio" className = "form-check-input" value = 'No'
+                                    onChange={this.ChangeRadio} checked={this.state.disponibilidad === 'No'} />
+                                            No Disponibile
+                                    </label>
+                                </div>
+                        </fieldset>
                     <div className = "col-md-12 flex-container form-group">
                         <label for = "exampleTextarea"> Descripcion  </ label >
                         <textarea className = "col-md-6 form-control" id = "exampleTextarea" rows = "3"

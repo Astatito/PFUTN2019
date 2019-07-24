@@ -54,7 +54,7 @@ class Encabezado extends Component{
     // }
 
    render(){
-       const {ocultar} = this.state;
+       
        return(
         <div className=" "> 
            <div className="fijado">

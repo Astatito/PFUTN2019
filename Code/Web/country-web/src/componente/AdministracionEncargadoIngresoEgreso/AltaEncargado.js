@@ -24,6 +24,7 @@ class AltaEncargado extends Component{
             fechaAlta: '', 
             mail: '',
             pass: '',
+            idCountry: '',
             tipoD: [],// Para cargar el combo
             resultado: ''
         }
@@ -31,7 +32,7 @@ class AltaEncargado extends Component{
         this.ChangeNombre = this.ChangeNombre.bind(this);
         this.ChangeApellido = this.ChangeApellido.bind(this);
         this.ChangeLegajo = this.ChangeLegajo.bind(this);
-        this.ChangeNumDocumento = this.ChangeNumDocumento.bind(this);
+        this.ChangeDocumento = this.ChangeDocumento.bind(this);
         this.ChangeCelular = this.ChangeCelular.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
         this.ChangeFechaNacimiento = this.ChangeFechaNacimiento.bind(this);
@@ -46,14 +47,23 @@ class AltaEncargado extends Component{
         const { tipoD } = this.state;
         await Database.collection('TipoDocumento').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-
                 this.state.tipoD.push(
                     {value: doc.id, label: doc.data().Nombre}
                 )
-
             });
         });
         this.setState({tipoD});
+        await Database.collection('Administradores').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                
+                if(doc.data().Usuario === localStorage.getItem('mail')){
+                        this.state.idCountry = doc.data().IdCountry
+                }
+            });
+        });
+        
+        
+        
     }
 
 
@@ -63,13 +73,14 @@ class AltaEncargado extends Component{
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Legajo: this.state.legajo,
-            NumDocumento: this.state.documento,
+            Documento: this.state.documento,
             Celular: this.state.celular,
             Descripcion: this.state.descripcion,
             TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
-            Mail: this.state.mail
+            Usuario: this.state.mail,
+            IdCountry: this.state.idCountry,
 
         });
 
@@ -88,7 +99,7 @@ class AltaEncargado extends Component{
     ChangeCelular(event) {
         this.setState({celular : event.target.value});
     }
-    ChangeNumDocumento(event) {
+    ChangeDocumento(event) {
         this.setState({documento : event.target.value});
     }
     ChangeDescripcion(event) {
@@ -114,7 +125,6 @@ class AltaEncargado extends Component{
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
             this.addEncargado();
-
         }
     }
 
@@ -145,7 +155,6 @@ class AltaEncargado extends Component{
             <div>
                 <div className="col-md-1"></div>
                 <div className="col-md-8 borde">
-
                     <legend>  Registrar Alta </legend>
                         <div className = "form-group">
                             <label for = "Nombre">  Nombre  </label>
@@ -161,6 +170,7 @@ class AltaEncargado extends Component{
                                    onChange= {this.ChangeApellido} />
                         </div>
                         <div className = "form-group">
+                        <label for = "TipoDocumento">  Tipo Documento  </label>
                             <Select
                                 className="select-documento"
                                 classNamePrefix="select"
@@ -178,7 +188,7 @@ class AltaEncargado extends Component{
                             <input type = "document" className = "form-control" 
                               placeholder = "Document number"
                               value={this.state.documento}
-                              onChange={this.ChangeNumDocumento}/>
+                              onChange={this.ChangeDocumento}/>
                         </div>
                         <div className = "form-group">
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
@@ -220,9 +230,6 @@ class AltaEncargado extends Component{
                             onChange={this.ChangeDescripcion}
                             > </textarea>
 
-                        </div>
-                        <div className="form-group izquierda">
-                            <button className="btn btn-primary" onClick={this.crearUsuario} >Crear Usuario</button>
                         </div>
                         <div className="form-group izquierda">
                             <button className="btn btn-primary" onClick={this.registrar} >Registrar</button>

@@ -76,7 +76,7 @@ class PrincipalEncargado extends Component{
                                                 nombre = {encargados[0].Nombre}
                                                 apellido = {encargados[0].Apellido}
                                                 legajo = {encargados[0].Legajo}
-                                                documento = {encargados[0].NumDocumento}
+                                                documento = {encargados[0].Documento}
                                                 celular = {encargados[0].Celular}
                                             >
                                             </Encargado>

@@ -12,19 +12,19 @@ class Propietario extends Component{
 
     constructor(props){
         super(props);
-
+        this.idPropietario = props.idPropietario;   
         this.nombre = props.nombre;
         this.apellido = props.apellido;
         this.numero = props.numero;
         this.titular = props.titular;
         this.celular = props.celular;
+        this.documento = props.documento;
         this.urlEditar = '/editarPropietario/' + props.idPropietario;
         this.eliminar = this.eliminar.bind(this);
     }
 
     eliminar(){
-        console.log(this.nombre)
-        Database.collection('Propietarios').doc(this.nombre).delete()
+        Database.collection('Propietarios').doc(this.idPropietario).delete()
             .then( console.log('Elimino'))
             .catch(err => {
                 //En caso de error, hacer esto...
@@ -37,7 +37,7 @@ class Propietario extends Component{
 
             <tr class="table-light">
                 <th scope="row">{this.nombre}, {this.apellido}</th>
-                <td>{this.celular}</td>
+                <td>{this.documento}</td>
                 <td> {this.titular?'Si':'No'}</td>
                 <td>{this.celular}</td>
                 <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"

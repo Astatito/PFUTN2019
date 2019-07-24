@@ -24,18 +24,21 @@ class AltaAdministrador extends Component{
             fechaAlta: '', 
             mail: '',
             pass: '',
+            idCountry: '',
             tipoD: [],// Para cargar el combo
+            countryList: [],
             resultado: ''
         }
         this.addAdministrador= this.addAdministrador.bind(this);
         this.ChangeNombre = this.ChangeNombre.bind(this);
         this.ChangeApellido = this.ChangeApellido.bind(this);
         this.ChangeLegajo = this.ChangeLegajo.bind(this);
-        this.ChangeNumDocumento = this.ChangeNumDocumento.bind(this);
+        this.ChangeDocumento = this.ChangeDocumento.bind(this);
         this.ChangeCelular = this.ChangeCelular.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
         this.ChangeFechaNacimiento = this.ChangeFechaNacimiento.bind(this);
         this.ChangeMail = this.ChangeMail.bind(this);
+        this.crearUsuario = this.crearUsuario.bind(this);
         this.ChangePass = this.ChangePass.bind(this);
         this.crearUsuario = this.crearUsuario.bind(this);
         this.registrar = this.registrar.bind(this);
@@ -43,7 +46,7 @@ class AltaAdministrador extends Component{
     }
 
     async componentDidMount(){
-        const { tipoD } = this.state;
+        const { tipoD, countryList } = this.state;
         await Database.collection('TipoDocumento').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
 
@@ -53,7 +56,17 @@ class AltaAdministrador extends Component{
 
             });
         });
+        await Database.collection('Barrios').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+
+                this.state.countryList.push(
+                    {value: doc.id, label: doc.data().Nombre}
+                )
+
+            });
+        });
         this.setState({tipoD});
+        this.setState({countryList});
     }
 
 
@@ -63,14 +76,14 @@ class AltaAdministrador extends Component{
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Legajo: this.state.legajo,
-            NumDocumento: this.state.documento,
+            Documento: this.state.documento,
             Celular: this.state.celular,
             Descripcion: this.state.descripcion,
             TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
-            Mail: this.state.mail
-
+            Usuario: this.state.mail, 
+            IdCountry: Database.doc('Barrios/' + this.state.idCountry.valueOf().value),
         });
 
     }
@@ -88,7 +101,7 @@ class AltaAdministrador extends Component{
     ChangeCelular(event) {
         this.setState({celular : event.target.value});
     }
-    ChangeNumDocumento(event) {
+    ChangeDocumento(event) {
         this.setState({documento : event.target.value});
     }
     ChangeDescripcion(event) {
@@ -97,6 +110,10 @@ class AltaAdministrador extends Component{
 
     ChangeSelect(value){
         this.setState({tipoDocumento : value});
+    }
+
+    ChangeSelectCountry(value){
+        this.setState({idCountry : value});
     }
     ChangeFechaNacimiento(event){
         this.setState({fechaNacimiento : event.target.value});
@@ -113,6 +130,7 @@ class AltaAdministrador extends Component{
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
+            this.crearUsuario();
             this.addAdministrador();
 
         }
@@ -161,7 +179,9 @@ class AltaAdministrador extends Component{
                                    onChange= {this.ChangeApellido} />
                         </div>
                         <div className = "form-group">
+                        <label for = "Tipo Documento">  Tipo Documento  </label>
                             <Select
+                            id = 'documento'
                                 className="select-documento"
                                 classNamePrefix="select"
                                 defaultValue={this.state.tipoD[0]}
@@ -178,7 +198,7 @@ class AltaAdministrador extends Component{
                             <input type = "document" className = "form-control" 
                               placeholder = "Document number"
                               value={this.state.documento}
-                              onChange={this.ChangeNumDocumento}/>
+                              onChange={this.ChangeDocumento}/>
                         </div>
                         <div className = "form-group">
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
@@ -192,6 +212,21 @@ class AltaAdministrador extends Component{
                             <input type = "tel" className = "form-control"   placeholder = "Mobile number"
                             value={this.state.legajo}
                             onChange={this.ChangeLegajo}/>
+                        </div>
+                        <div className = "form-group">
+                        <label for = "Country">  Country </label>
+                            <Select
+                                id = 'country'
+                                className="select-country"
+                                classNamePrefix="select"
+                                defaultValue={this.state.countryList[0]}
+                                isDisabled={false}
+                                isLoading={false}
+                                isClearable={true}
+                                isSearchable={true}
+                                options={this.state.countryList}
+                                onChange={this.ChangeSelectCountry.bind(this)}
+                            />
                         </div>
                         <div className = "form-group">
                             <label for = "NumeroCelular">  Celular  </label>
@@ -220,9 +255,6 @@ class AltaAdministrador extends Component{
                             onChange={this.ChangeDescripcion}
                             > </textarea>
 
-                        </div>
-                        <div className="form-group izquierda">
-                            <button className="btn btn-primary" onClick={this.crearUsuario} >Crear Usuario</button>
                         </div>
                         <div className="form-group izquierda">
                             <button className="btn btn-primary" onClick={this.registrar} >Registrar</button>

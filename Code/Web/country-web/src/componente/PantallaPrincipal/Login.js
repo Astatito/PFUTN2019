@@ -9,6 +9,7 @@ import InicioRoot from '../AdministracionRoot/InicioRoot'
 import InicioAdministrador from '../AdministracionAdministrador/InicioAdministrador';
 import InicioEncargado from '../AdministracionEncargadoIngresoEgreso/InicioEncargado'
 import InicioPropietario from '../AdministracionPropietario/PrincipalPropietario'
+import Spinner from 'react-spinner-material'
 
 
 
@@ -25,6 +26,7 @@ class Login extends Component{
           tipo: false,
           tipoUsuario:''
         };
+        this.log = false;
         this.authListener = this.authListener.bind(this);
         this.ChangeEmail = this.ChangeEmail.bind(this);
         this.ChangePass = this.ChangePass.bind(this);
@@ -75,12 +77,13 @@ class Login extends Component{
         if (user) {          
           this.setState({ user });
           localStorage.setItem('user', user.uid);
+          localStorage.setItem('mail', user.email)
         } else {
           this.setState({ user: null });
           localStorage.removeItem('user');
         }
       });
-      
+      this.log = true;
     }
    async onButtonPress() {
       await this.obtenerTipoUsuario();
@@ -116,12 +119,13 @@ class Login extends Component{
 
 
     render(){
-      const {  user}=this.state;
+      const {  user }=this.state;
+      if(this.log){
       if (!user ){  
         return(
             <div className="col-12  "> 
               <div className="text-center "> 
-                  <div className="espacio"></div>    
+                  <div className=""></div>    
                   <img  src={Icono} width="300" height="228"></img>
                   <hr className="my-4"></hr>
               </div>              
@@ -170,7 +174,11 @@ class Login extends Component{
                  {this.inicio()}
                 </div>
           )
-        }
+        }} else { return(
+          <div>
+            <Spinner size={120} spinnerColor={'#333'} spinnerWidth={2} visible={true} ></Spinner>
+          </div>
+        )}
     }
 }
 

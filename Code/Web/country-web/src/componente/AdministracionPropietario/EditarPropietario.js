@@ -12,27 +12,32 @@ class EditarPropietario extends Component{
     constructor(props){
         super(props);
         this.state = {
-            propietario: [],
+            propietario: [], 
             nombre: '',
             apellido: '',
             tipoDocumento: '',
             documento: '',
             titular: '',
+            telefonoFijo: '',
             celular: '',
             descripcion: '',
             fechaNacimiento: '',
+            usuario: '',
 
             tipoD: [],// Para cargar el combo
+            temp: '', // Puto el que lee
             resultado: ''
         }
-        this.addPropietario = this.addPropietario.bind(this);
+        this.editPropietario = this.editPropietario.bind(this);
         this.ChangeNombre = this.ChangeNombre.bind(this);
         this.ChangeApellido = this.ChangeApellido.bind(this);
         this.ChangeNumero = this.ChangeNumero.bind(this);
-        this.ChangeTitular = this.ChangeTitular.bind(this);
+        this.ChangeDocumento = this.ChangeDocumento.bind(this);
         this.ChangeCelular = this.ChangeCelular.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
         this.ChangeFechaNacimiento = this.ChangeFechaNacimiento.bind(this);
+        this.ChangeRadio  = this.ChangeRadio.bind(this);
+        this.ChangeTelefonoFijo = this.ChangeTelefonoFijo.bind(this);
         this.registrar = this.registrar.bind(this);
 
         this.idTD = '';
@@ -41,15 +46,12 @@ class EditarPropietario extends Component{
     }
 
     async componentDidMount(){
-        const { tipoD } = this.state;
-        const {propietario} = this.state
+        const { tipoD, propietario} = this.state;
         await Database.collection('TipoDocumento').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-
                 this.state.tipoD.push(
                     {value: doc.id, label: doc.data().Nombre}
                 )
-
             });
         });
         await Database.collection('Propietarios').doc(this.idPropietario).get()
@@ -57,7 +59,7 @@ class EditarPropietario extends Component{
                 if (doc.exists) {
                     this.state.propietario.push(doc.data());
                 } else {
-                    //Si no existe, hacer esto...
+                
                 }
             })
             .catch(err => {
@@ -66,27 +68,43 @@ class EditarPropietario extends Component{
         this.setState({tipoD});
         this.setState({propietario});
         const estrella = this.state.propietario[0];
+        await Database.collection('TipoDocumento').doc(estrella.TipoDocumento.id).get()
+            .then(doc => {
+                if (doc.exists) {
+                   this.state.tipoDocumento = {value : doc.id, label : doc.data().Nombre}
+                }
+            })
+    
         this.setState({
             nombre: estrella.Nombre,
             apellido: estrella.Apellido,
-            tipoDocumento: estrella.TipoDocumento
-        })
-        // const temp =this.state.tipoDocumento.split('/');
-        // this.idTD = temp[temp.length - 1];
+            titular: estrella.Titular?'Si':'No',
+            documento: estrella.Documento,
+            fechaNacimiento: estrella.FechaNacimiento,
+            fechaAlta: estrella.FechaAlta,
+            telefonoFijo: estrella.TelefonoFijo,
+            celular : estrella.Celular,
+            descripcion: estrella.Descripcion,
+            usuario: estrella.Usuario,
 
+        })
     }
 
 
-    addPropietario(){
+    editPropietario(){
         var dbRef = Database.collection('Propietarios')
-        dbRef.doc(this.state.nombre).set({
+        dbRef.doc(this.idPropietario).set({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
-            Titular: this.state.titular,
+            Titular: this.state.titular=== 'Si'?true:false,
             Celular: this.state.celular,
+            TelefonoFijo: this.state.telefonoFijo,
             Descripcion: this.state.descripcion,
-            TipoDocumento: 'TipoDocumento/' + this.state.tipoDocumento.valueOf().value,
+            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
+            Documento: this.state.documento,
             FechaNacimiento: this.state.fechaNacimiento,
+            FechaAlta: this.state.fechaAlta,
+            Usuario: this.state.usuario, 
         });
 
     }
@@ -100,12 +118,14 @@ class EditarPropietario extends Component{
     ChangeNumero(event) {
         this.setState({numero: event.target.value});
     }
-
+    ChangeTelefonoFijo(event) {
+        this.setState({telefonoFijo: event.target.value});
+    }
+    ChangeDocumento(event) {
+        this.setState({documento : event.target.value});
+    }
     ChangeCelular(event) {
         this.setState({celular : event.target.value});
-    }
-    ChangeTitular(event) {
-        this.setState({titular : event.target.value});
     }
     ChangeDescripcion(event) {
         this.setState({descripcion : event.target.value});
@@ -118,10 +138,14 @@ class EditarPropietario extends Component{
         this.setState({fechaNacimiento : event.target.value});
     }
 
+    ChangeRadio(event){
+        this.setState({titular: event.currentTarget.value})
+    }
+
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
-            this.addPropietario();
+            this.editPropietario();
 
         }
     }
@@ -132,8 +156,7 @@ class EditarPropietario extends Component{
                 <div>
                     <div className="col-md-1"></div>
                     <div className="col-md-8 borde">
-
-                        <legend>  Registrar Alta </legend>
+                        <legend> Editar Propietario </legend>
                         <div className = "form-group">
                             <label for = "Nombre">  Nombre  </label>
                             <input type = "name" className = "form-control"   placeholder = "Name"
@@ -148,8 +171,10 @@ class EditarPropietario extends Component{
                                    onChange= {this.ChangeApellido} />
                         </div>
                         <div className = "form-group">
+                        <label for = "TipoDocumento">  Tipo de Documento  </label>
                             <Select
                                 className="select-documento"
+                                value={this.state.tipoDocumento}
                                 classNamePrefix="Select"
                                 isDisabled={false}
                                 isLoading={false}
@@ -161,12 +186,15 @@ class EditarPropietario extends Component{
                         </div>
                         <div className = "form-group">
                             <label for = "NumeroDocumento">  Numero de Documento  </label>
-                            <input type = "document" className = "form-control"   placeholder = "Document number"/>
+                            <input type = "document" className = "form-control"   placeholder = "Document number"
+                            value={this.state.documento}
+                            onChange= {this.ChangeDocumento}/>
                         </div>
                         <div className = "form-group">
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
                             <input type="date"className = "form-control" name="FechaNacimiento"
                                    step="1" min="1920-01-01"
+                                   value={this.state.fechaNacimiento}
                                    onChange={this.ChangeFechaNacimiento}
                             />
                         </div>
@@ -174,13 +202,16 @@ class EditarPropietario extends Component{
                             <legend>  Titular  </legend>
                             <div className = "form-check">
                                 <label className = "form-check-label">
-                                    <input type = "radio" className = "form-check-input" name = "optionsRadios" id = "optionsRadios1" value = "option1" />
+                                    <input type = "radio" className = "form-check-input"  
+                                    value = 'Si' checked={this.state.titular === 'Si'}
+                                    onChange={this.ChangeRadio} />
                                     Si
                                 </label>
                             </div>
                             <div className = "form-check">
                                 <label className = "form-check-label">
-                                    <input type = "radio" className = "form-check-input" name = "optionsRadios" id = "optionsRadios2" value = "option2"/>
+                                    <input type = "radio" className = "form-check-input" value = 'No'
+                                    onChange={this.ChangeRadio} checked={this.state.titular === 'No'} />
                                     No
                                 </label>
                             </div>
@@ -188,23 +219,20 @@ class EditarPropietario extends Component{
                         <div className = "form-group">
                             <label for = "NumeroCelular">  Celular  </label>
                             <input type = "tel" className = "form-control"   placeholder = "Mobile number"
-                                   onChange={this.ChangeCelular}/>
+                                   value={this.state.celular}
+                                   onChange= {this.ChangeCelular} />
                         </div>
                         <div className = "form-group">
                             <label for = "NumeroTelefono">  Telefono Fijo  </label>
-                            <input type = "tel" className = "form-control"   placeholder = "Landline number"/>
-                        </div>
-                        <div className = "form-group">
-                            <label for = "exampleInputEmail1">  Dirección de correo electrónico  </label>
-                            <input type = "email" className = "form-control" id = "exampleInputEmail1" aria-describe by = "emailHelp" placeholder = "Enter email"/>
-                        </div>
-                        <div className = "form-group">
-                            <label for = "exampleInputPassword1">  Contraseña  </label>
-                            <input type = "password" className = "form-control" id = "exampleInputPassword1" placeholder = "Password"/>
+                            <input type = "tel" className = "form-control"   placeholder = "Landline number"
+                            value={this.state.telefonoFijo}
+                            onChange= {this.ChangeTelefonoFijo} />
                         </div>
                         <div className = "form-group">
                             <label for = "exampleTextarea"> Descripcion  </ label >
-                            <textarea className = "form-control" id = "exampleTextarea" rows = "3"> </textarea>
+                            <textarea className = "form-control" id = "exampleTextarea" rows = "3"
+                            value={this.state.descripcion}
+                            onChange= {this.ChangeDescripcion} > </textarea>
                         </div>
 
                         <div className="form-group izquierda">

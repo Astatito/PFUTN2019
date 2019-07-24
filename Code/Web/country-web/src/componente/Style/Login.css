@@ -9,3 +9,9 @@ div.col-md-4.borde {
 div.espacio{
   height: 50px;
 }
+
+div.spinner{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}

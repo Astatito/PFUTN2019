@@ -76,7 +76,7 @@ class PrincipalPropietario extends Component{
                                                 nombre = {administradores[0].Nombre}
                                                 apellido = {administradores[0].Apellido}
                                                 legajo = {administradores[0].Legajo}
-                                                documento = {administradores[0].NumDocumento}
+                                                documento = {administradores[0].Documento}
                                                 celular = {administradores[0].Celular}
                                             >
                                             </Administrador>
