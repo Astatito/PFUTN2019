@@ -1,13 +1,24 @@
-//En este componente es donde se cargan los datos luego de escanear y se pueden modificar si es necesario.
-//Los datos serían Nombre, Apellido, Numero de Documento y fecha de nacimiento. Más patente del auto.
-import React, {Component} from 'react';
-import {View,Text,StyleSheet,Picker} from 'react-native';
-import {Header,Card,CardSection,Field,Button,ButtonCancelar } from '../../Common';
+import React , {Component} from 'react';
+import {Text,View, StyleSheet} from 'react-native';
+import {Button, Card, CardSection, Header,Field,ButtonCancelar} from '../../Common';
 import {Database} from '../../Firebase';
 import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+class IngresoManual extends Component {
 
-class RegistroVisitante extends Component {
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Ingreso Manual',
+            headerLeft: (
+                <Icon
+                  style={{ paddingLeft: 10 }}
+                  onPress={() => navigation.goBack()}
+                  name="arrow-back"
+                  size={30}
+                />
+              ),
+        }}
 
     state= {picker: '', tiposDocumento: [], cantidad: 0 }
 
@@ -16,7 +27,6 @@ class RegistroVisitante extends Component {
         var dbDocs = dbRef.get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
-                    // this.state.tiposDocumento.push(doc.data().Nombre)
                     this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
                 })
                 this.setState({cantidad: this.state.tiposDocumento.length})
@@ -24,32 +34,17 @@ class RegistroVisitante extends Component {
             .catch(err => {
             })
     }
-    
-    render () {
+
+    render() {
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers()
         }
-        return (
-            <ScrollView>
-            <View style={{padding:5}}>
+      return (
+        <ScrollView>
+            <View style={styles.container}>
                 <Text style={styles.logueo}> Ud. se ha logueado como : Encargado </Text> 
-                <Header headerText="Registrar nuevo visitante"> </Header> 
+                <Header headerText="Registrar nuevo ingreso"> </Header> 
                 <Card>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. Juan Pablo"
-                            label="Nombre completo"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. Soria"
-                            label="Apellido"
-                            hidden={false}
-                        />
-                    </CardSection>
-
                     <View style= {styles.picker}>
                     <RNPickerSelect
                         selectedValue= {this.state.picker}
@@ -67,43 +62,24 @@ class RegistroVisitante extends Component {
                             hidden={false}
                         />
                     </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. 02/11/1992"
-                            label="Fecha de nacimiento"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. 491457"
-                            label="Teléfono fijo"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. +5493512071228"
-                            label="Celular"
-                            hidden={false}
-                        />
-                    </CardSection>
                     <View style={styles.botones}>
                         <CardSection>
                             <Button>Aceptar</Button>
                         </CardSection>
                         <CardSection>
-                            <ButtonCancelar>Cancelar</ButtonCancelar>
+                            <ButtonCancelar  onPress= {() => {this.props.navigation.goBack()}}>Cancelar</ButtonCancelar>
                         </CardSection>
                     </View>
                 </Card> 
             </View>
             </ScrollView>
-        );
+      );
     }
-}
-
-const styles= StyleSheet.create({
+  }
+  const styles= StyleSheet.create({
+    container: {
+        padding:5
+    },
     botones: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -128,4 +104,5 @@ const styles= StyleSheet.create({
         paddingLeft:16
     }
 });
-export default RegistroVisitante;
+
+export default IngresoManual;
