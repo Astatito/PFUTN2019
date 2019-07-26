@@ -1,7 +1,6 @@
 import React , {Component} from 'react';
 import {View,Text,StyleSheet, Image} from 'react-native';
-import {Header,Button,Card,CardSection} from '../../Common';
-import Logo from '../../Logo/Logo.jpeg';
+import {Header} from '../../Common';
 class Encargado extends Component {
 
     static navigationOptions = {
@@ -15,8 +14,7 @@ class Encargado extends Component {
                 <Header headerText="Bienvenido de nuevo !"> </Header> 
                 <Image
                  style={{width: '100%', height: '60%', paddingTop:90}}
-                 source={require('../../Logo/NuevoLogo.jpg')}
-        />
+                 source={require('../../Logo/NuevoLogo.jpg')}/>
             </View>
         );
     }
@@ -26,7 +24,7 @@ const styles= StyleSheet.create({
     logueo: {
         textAlign: 'right',
         color: '#000000',
-        paddingTop: 20,
+        paddingTop: 10,
         paddingBottom: 5
     },
     container:{

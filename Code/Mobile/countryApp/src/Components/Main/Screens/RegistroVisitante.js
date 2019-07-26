@@ -114,7 +114,7 @@ const styles= StyleSheet.create({
     logueo: {
         textAlign: 'right',
         color: '#000000',
-        paddingTop: 20,
+        paddingTop: 10,
     },
     picker: {
         borderBottomWidth: 1,

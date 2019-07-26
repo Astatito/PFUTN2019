@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import {Text, View} from 'react-native';
-import {Field, Header, Card, CardSection, Button} from '../Common';
-import {Firebase, Database} from '../Firebase'
+import {Field, Header, Card, CardSection, Button} from '../../Common';
+import {Firebase, Database} from '../../Firebase'
 
 class Login extends Component {
 
     state = {email: '', password: '', result: ''} ;
+
     static navigationOptions = {
         header: null
     }
+
     onButtonPress() {
         Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
             .then(() => {
@@ -21,7 +23,6 @@ class Login extends Component {
     }
     
     logueoUsuario = () => {
-        
         var dbRef = Database.collection('Usuarios')
         var dbDoc = dbRef.doc(this.state.email).get()
             .then(doc => {
@@ -40,7 +41,6 @@ class Login extends Component {
                 }
             })
             .catch(err => {
-                
             })
     }
     render() {
@@ -79,6 +79,4 @@ class Login extends Component {
         );
     }
 }
-
-
 export default Login;
