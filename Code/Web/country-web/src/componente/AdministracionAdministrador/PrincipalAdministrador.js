@@ -13,6 +13,8 @@ class PrincipalPropietario extends Component{
             administradores: []
         }
 
+        this.actualizar = this.actualizar.bind(this)
+
     }
 
     async componentDidMount(){
@@ -27,7 +29,18 @@ class PrincipalPropietario extends Component{
             });
         });
         this.setState({administradores});
-        console.log(this.state.administradores);
+
+    }
+
+
+    actualizar(id){
+        const {administradores}=this.state;
+        this.state.administradores.map( valor => {
+            if(valor[1]== id){
+                administradores.splice(administradores.indexOf(valor),1)
+            }
+        })
+        this.setState({administradores});
     }
 
     render(){
@@ -69,6 +82,7 @@ class PrincipalPropietario extends Component{
                             {
 
                                 this.state.administradores.map( administradores => {
+
                                         return(
 
                                             <Administrador
@@ -78,6 +92,8 @@ class PrincipalPropietario extends Component{
                                                 legajo = {administradores[0].Legajo}
                                                 documento = {administradores[0].Documento}
                                                 celular = {administradores[0].Celular}
+                                                idCountry = {administradores[0].IdCountry.id}
+                                                act = {this.actualizar}
                                             >
                                             </Administrador>
                                         )

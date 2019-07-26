@@ -24,7 +24,7 @@ class Country extends Component{
 
     eliminar(){
        Database.collection('Barrios').doc(this.idCountry).delete()
-            .then( console.log('Elimino'))
+            .then( this.props.act(this.idCountry))
             .catch(err => {
                 //En caso de error, hacer esto...
             })

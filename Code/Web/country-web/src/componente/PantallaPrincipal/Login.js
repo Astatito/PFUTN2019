@@ -8,8 +8,9 @@ import Icono from "../Img/Icono.jpeg"
 import InicioRoot from '../AdministracionRoot/InicioRoot'
 import InicioAdministrador from '../AdministracionAdministrador/InicioAdministrador';
 import InicioEncargado from '../AdministracionEncargadoIngresoEgreso/InicioEncargado'
-import InicioPropietario from '../AdministracionPropietario/PrincipalPropietario'
+import InicioPropietario from '../AdministracionPropietario/InicioPropietario'
 import Spinner from 'react-spinner-material'
+
 
 
 
@@ -46,13 +47,7 @@ class Login extends Component{
     componentDidMount() {
       this.authListener();
     }
-    // componentWillMount() {
-    //   // Inicialización de Firebase
-    //   if (!firebase.apps.length) {
-    //     firebase.initializeApp(DB_CONFIG);
-    // }
-      //firebase.initializeApp(DB_CONFIG);
-  
+
    async  obtenerTipoUsuario () {
      
     await Database.collection('Usuarios').doc(this.state.email).get()
@@ -70,7 +65,6 @@ class Login extends Component{
         })
       }
       
-      
 
     async authListener() {
       Firebase.auth().onAuthStateChanged((user) => {
@@ -85,9 +79,9 @@ class Login extends Component{
       });
       this.log = true;
     }
+    
    async onButtonPress() {
       await this.obtenerTipoUsuario();
-      console.log('email :', this.state.tipo);
       if (this.state.tipo){
         await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
         .then(() => {        
@@ -104,8 +98,7 @@ class Login extends Component{
     inicio(){
       
       const temp = localStorage.getItem('tipoUsuario')
-
-      console.log('obj :', temp);
+      console.log('tipoU :', temp);
       if(this.state.tipoUsuario === 'Root' || temp === 'Root'){
         return (<InicioRoot/>   )
       } else if(this.state.tipoUsuario === 'Administrador'|| temp === 'Administrador'){
@@ -150,9 +143,10 @@ class Login extends Component{
                      hidden={false}
                     />   
                 </div>
+
                 <div className="form-group izquierda">
                   
-                    <button className="btn btn-primary" 
+                    <button className="btn btn-primary"
                     onClick={() => {
                       this.onButtonPress()
                     }}
@@ -176,6 +170,7 @@ class Login extends Component{
           )
         }} else { return(
           <div>
+              
             <Spinner size={120} spinnerColor={'#333'} spinnerWidth={2} visible={true} ></Spinner>
           </div>
         )}

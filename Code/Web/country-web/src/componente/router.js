@@ -16,21 +16,8 @@ import AltaAdministrador from './AdministracionAdministrador/AltaAdministrador';
 import EditarAdministrador from './AdministracionAdministrador/EditarAdministrador'
 import AltaEncargado from './AdministracionEncargadoIngresoEgreso/AltaEncargado';
 import EditarEncargado from './AdministracionEncargadoIngresoEgreso/EditarEncargado'
-
-//           <Route exact path='/' component={Login}/>
-const valor = false;
-
-Firebase.auth().onAuthStateChanged((user) => {
-
-    if (user) {
-        const valor = true;
-
-    } else {
-        const valor = false;
-
-    }
-})   
-
+import AltaInvitado from './AdministracionInvitados/AltaInvitado';
+import EditarInvitado from './AdministracionInvitados/EditarInvitado'
 
 
     const Router = () => (
@@ -51,6 +38,8 @@ Firebase.auth().onAuthStateChanged((user) => {
                <Route path='/editarEncargado/:id' component={EditarEncargado}/>
                <Route path='/altaServicio' component={AltaServicio}/>
                <Route path='/editarServicio/:id' component={EditarServicio}/>
+               <Route path='/altaInvitado' component={AltaInvitado}/>
+               <Route path='/editarInvitado/:id' component={EditarInvitado}/>
 
            </Switch>
        </main>

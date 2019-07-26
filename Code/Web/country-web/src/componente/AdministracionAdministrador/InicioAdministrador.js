@@ -5,6 +5,7 @@ import PrincipalEncargado from '../AdministracionEncargadoIngresoEgreso/Principa
 import { Link } from 'react-router-dom'
 import { Database } from '../../config/config'
 import PrincipalServicio from '../Servicio/GenerarServicio/PrincipalServicio';
+import Modal from 'react-bootstrap/Modal'
 
 
 
@@ -12,10 +13,9 @@ class InicioAdministrador extends Component{
 
     constructor(props) {
         super(props);
-        this.state = { 
-            propietariosList: [ ]
-                    }; }
-    
+    }
+        
+
     render(){
         return(
             <div className="app container-fluid ">

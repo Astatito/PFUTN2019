@@ -10,24 +10,42 @@ class PrincipalServicio extends Component{
     constructor(){
         super();
         this.state= {
-            servicios: []
+            servicios: [],
+            idCountry: '',
         }
-
+        this.actualizar = this.actualizar.bind(this)
     }
 
     async componentDidMount(){
         const { servicios } = this.state;
+        await Database.collection('Administradores').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                if(doc.data().Usuario === localStorage.getItem('mail')){
+                    this.state.idCountry = doc.data().IdCountry
+                }
+            });
+        })
         await Database.collection('Servicios').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-
+                if(doc.data().IdCountry.id == this.state.idCountry.id){
                 this.state.servicios.push(
                     [doc.data(), doc.id]
-                )
+                )}
 
             });
         });
         this.setState({servicios});
-        console.log(this.state.servicios);
+
+    }
+
+    actualizar(id){
+        const {servicios}=this.state;
+        this.state.servicios.map( valor => {
+            if(valor[1]== id){
+                servicios.splice(servicios.indexOf(valor),1)            }
+        })
+        this.setState({servicios});
+        this.render();
     }
 
     render(){
@@ -66,7 +84,6 @@ class PrincipalServicio extends Component{
 
                             <tbody>
                             {
-
                                 this.state.servicios.map( servicios => {
                                         return(
 
@@ -75,13 +92,14 @@ class PrincipalServicio extends Component{
                                                 nombre = {servicios[0].Nombre}
                                                 estado = {servicios[0].Estado}
                                                 disponibilidad = {servicios[0].Disponibilidad}
-                                               
+                                                act = {this.actualizar}
                                             >
                                             </Servicio>
                                         )
                                     }
 
                                 )
+
                             }
 
                             </tbody>

@@ -145,12 +145,12 @@ class AltaAdministrador extends Component{
                     NombreUsuario: mail,
                     TipoUsuario: Database.doc('/TiposUsuario/Administrador')
                 })
+
             )
             .catch(function(error) {
               console.log('error :', error);
               //La pass debe tener al menos 6 caracteres wachina
             });
-           
 
         }
     }

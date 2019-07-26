@@ -1,24 +1,19 @@
 import React, { Component } from 'react';
 import "../Style/Alta.css";
-import Editar from "../Img/Editar.png"
-import Eliminar from "../Img/Eliminar.png"
 import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
+import ModalEliminar from '../ModalEliminar';
 
-
-
-
-class Propietario extends Component{
+class Invitado extends Component{
 
     constructor(props){
         super(props);
         this.idPersona = props.idPersona;   
+        this.grupo = props.grupo;
         this.nombre = props.nombre;
         this.apellido = props.apellido;
-        this.titular = props.titular; 
-        this.celular = props.celular;
-        this.documento = props.documento;
-        this.urlEditar = '/editarPropietario/' + props.idPersona;
+        this.estado = props.estado;
+        this.urlEditar = '/editarInvitado/' + props.idPersona;
         this.eliminar = this.eliminar.bind(this);
     }
 
@@ -38,9 +33,8 @@ class Propietario extends Component{
 
             <tr class="table-light">
                 <th scope="row">{this.nombre}, {this.apellido}</th>
-                <td>{this.documento}</td>
-                <td> {this.titular?'Si':'No'}</td>
-                <td>{this.celular}</td>
+                <td>{this.grupo}</td>
+                <td> {this.estado?'Activo':'Inactivo'}</td>
                 <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
                 >Editar</Link> </td>
                 <td> <button className="btn btn-primary" onClick={this.eliminar} >Eliminar</button> </td>
@@ -51,4 +45,4 @@ class Propietario extends Component{
     }
 }
 
-export default Propietario;
+export default Invitado;

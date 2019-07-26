@@ -124,6 +124,7 @@ class AltaEncargado extends Component{
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
+            this.crearUsuario();
             this.addEncargado();
         }
     }

@@ -15,43 +15,28 @@ class Encabezado extends Component{
 
     constructor(props){
         super(props);
-        this.state = { 
-            ocultar: true
-        }
-        //this.botones = this.botones.bind(this);
+        this.authListener = this.authListener.bind(this);
         this.authListener();
     }
 
     logout() {
         Firebase.auth().signOut();
+        localStorage.removeItem('user');
     }
 
     async authListener() {
-        await Firebase.auth().onAuthStateChanged((user) => {
-
+        Firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                this.state.ocultar= false; 
-            } 
+                this.setState({ user });
+                localStorage.setItem('user2', user.email);
+
+            } else {
+                this.setState({ user: null });
+                localStorage.removeItem('user2');
+            }
         });
 
     }
-
-    // botones(){
-    //     if (this.state.tipoUsuario === 'root@countryapp.com'){
-    //         return (
-    //             <div className='form-inline'>
-    //                 <Link to='/country'  className="navbar-brand">Country</Link>
-    //                 <Link to='/propietario'  className="navbar-brand">Propietario</Link>
-    //             </div>
-    //         )
-    //     }
-    //     if (this.state.tipoUsuario == null) {
-    //         return (
-    //             <div className='form-inline'> </div>
-    //         )
-    //     }
-       
-    // }
 
    render(){
        
@@ -67,7 +52,7 @@ class Encabezado extends Component{
 
                <div className = "collapse navbar-collapse izquierda" id = "navbarColor01">
                    <div className = " col-12 izquierda">
-
+                       {/*<label htmlFor="">{alert(localStorage.getItem('user2'))}</label>*/}
                        <button onClick={this.logout} className='btn btn-primary izquierda'
                        hidden={false}
                        >Close</button>

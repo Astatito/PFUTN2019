@@ -24,7 +24,9 @@ class Encargado extends Component{
     eliminar(){
         console.log(this.nombre)
         Database.collection('Encargados').doc(this.idEncargado).delete()
-            .then( console.log('Elimino'))
+            .then(
+                this.props.act(this.idServicio)
+            )
             .catch(err => {
                 //En caso de error, hacer esto...
             })

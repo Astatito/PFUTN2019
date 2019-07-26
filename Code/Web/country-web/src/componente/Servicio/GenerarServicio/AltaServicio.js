@@ -10,18 +10,16 @@ class AltaServicio extends Component{
         super();
         this.state = {
             nombre: '',
-            estado: true,
+            estado: 'Si',
             disponibilidad: '',
             idCountry: '',
-            resultado: '',
-            dias:['',''],
-            nombreDias:['Lun','Mar']
+            descripcion: '',
+            dias : ['','','','','','',''],
         }
         this.addServicio= this.addServicio.bind(this);
         this.ChangeNombre = this.ChangeNombre.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
         this.ChangeRadio  = this.ChangeRadio.bind(this);
-        this.ChangeDias = this.ChangeDias.bind(this);
         this.registrar = this.registrar.bind(this);
 
     }
@@ -36,16 +34,13 @@ class AltaServicio extends Component{
         })
     }
 
-    componentDidUpdate(){
-        
-    }
-
     addServicio(){
         var dbRef = Database.collection('Servicios')
         dbRef.add({
             Nombre: this.state.nombre,
             Estado: this.state.estado=== 'Si'?true:false,
-            Disponibilidad: this.state.disponibilidad,
+            Disponibilidad: this.state.dias,
+            Descripcion: this.state.descripcion,
             IdCountry: this.state.idCountry,
         });
 
@@ -60,7 +55,7 @@ class AltaServicio extends Component{
     }
 
     ChangeRadio(event){
-      this.setState({disponibilidad: event.currentTarget.value})
+      this.setState({estado: event.currentTarget.value})
   }
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
@@ -69,17 +64,31 @@ class AltaServicio extends Component{
         }
     }
 
-    ChangeDias(event){
-        const e = event.target;
-        if(e.checked){
-           this.state.dias[e.name] = this.state.nombreDias[e.name];
-            
-        } else{ 
-            this.state.dias[e.name] = '';
+
+    ChangeDiasDisponible(event){
+        let checkedArray = this.state.dias;
+        let selectedValue = event.target.value;
+        let id = event.target.id;
+        if (event.target.checked === true) {
+
+            checkedArray[id]=selectedValue;
+            this.setState({
+                dias: checkedArray
+            });
+
+        } else {
+
+            checkedArray[id]='';
+
+            this.setState({
+                dias: checkedArray
+            });
+
         }
     }
 
     render(){
+
         return(
             <div className="col-12">
                 
@@ -97,18 +106,14 @@ class AltaServicio extends Component{
                     </div>
                     <div className = "col-md-12 flex-container form-group">
                         <label for = "FechaNacimiento">  Dias disponibles  </label>
-                        <div>
-                        {/* checked={this.state.isGoing} onChange={this.handleInputChange} */}
-                        {/* <label><input name='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDias} />Lun </label>
-                        <label><input name='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} />Mar </label>
-                        <label><input name='2' value="Mie" type="checkbox" checked={this.state.dias[2] === 'Mie'} />Mie </label>
-                        <label><input name='3' value="Jue" type="checkbox" checked={this.state.dias[3] === 'Jue'} />Jue </label>
-                        <label><input name='4' value="Vie" type="checkbox" checked={this.state.dias[4] === 'Vie'} />Vie </label>
-                        <label><input name='5' value="Sab" type="checkbox" checked={this.state.dias[5] === 'Sab'} />Sab </label>
-                        <label><input name='6' value="Dom" type="checkbox" checked={this.state.dias[6] === 'Dom'} />Dom </label> */}
-                         <label><input name='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDias} />Lun </label>
-                        <label><input name='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} onChange={this.ChangeDias} />Mar </label>
-   
+                        <div >
+                         <label><input  id='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDiasDisponible.bind(this)} />Lun </label>
+                            <label><input id='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} onChange={this.ChangeDiasDisponible.bind(this)} />Mar </label>
+                        <label><input id='2' value="Mie" type="checkbox" checked={this.state.dias[2] === 'Mie'} onChange={this.ChangeDiasDisponible.bind(this)} />Mie </label>
+                        <label><input id='3' value="Jue" type="checkbox" checked={this.state.dias[3] === 'Jue'} onChange={this.ChangeDiasDisponible.bind(this)} />Jue </label>
+                        <label><input id='4' value="Vie" type="checkbox" checked={this.state.dias[4] === 'Vie'} onChange={this.ChangeDiasDisponible.bind(this)} />Vie </label>
+                        <label><input id='5' value="Sab" type="checkbox" checked={this.state.dias[5] === 'Sab'} onChange={this.ChangeDiasDisponible.bind(this)} />Sab </label>
+                        <label><input id='6' value="Dom" type="checkbox" checked={this.state.dias[6] === 'Dom'} onChange={this.ChangeDiasDisponible.bind(this)} />Dom </label>
                         </div>
                     </div>
                     <fieldset className = "form-group">
@@ -116,7 +121,7 @@ class AltaServicio extends Component{
                                 <div className = "form-check">
                                     <label className = "form-check-label">
                                     <input type = "radio" className = "form-check-input"  
-                                    value = 'Si' checked={this.state.disponibilidad === 'Si'}
+                                    value = 'Si' checked={this.state.estado === 'Si'}
                                     onChange={this.ChangeRadio} />
                                         Disponibile
                                     </label>
@@ -124,7 +129,7 @@ class AltaServicio extends Component{
                                 <div className = "form-check">
                                     <label className = "form-check-label">
                                     <input type = "radio" className = "form-check-input" value = 'No'
-                                    onChange={this.ChangeRadio} checked={this.state.disponibilidad === 'No'} />
+                                    onChange={this.ChangeRadio} checked={this.state.estado === 'No'} />
                                             No Disponibile
                                     </label>
                                 </div>

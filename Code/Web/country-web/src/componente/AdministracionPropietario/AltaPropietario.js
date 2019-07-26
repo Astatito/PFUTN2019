@@ -7,6 +7,7 @@ import {Database, Firebase} from "../../config/config";
 
 //https://react-select.com/home
 //https://firebase.google.com/docs/auth/web/manage-users#create_a_user
+// https://firebase.google.com/docs/admin/setup
 
 class AltaPropietario extends Component{
 
@@ -22,6 +23,7 @@ class AltaPropietario extends Component{
             celular: '',
             descripcion: '',
             fechaNacimiento: '',
+            idCountry:'',
             mail: '',
             pass: '',
             tipoD: [],// Para cargar el combo
@@ -56,12 +58,20 @@ class AltaPropietario extends Component{
             });
         });
         this.setState({tipoD});
+        await Database.collection('Administradores').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                if(doc.data().Usuario === localStorage.getItem('mail')){
+                    this.state.idCountry = doc.data().IdCountry
+                }
+            });
+        })
+
         
     }
-
+ 
 
     addPropietario(){
-        var dbRef = Database.collection('Propietarios')
+        var dbRef = Database.collection('Personas')
         dbRef.add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
@@ -73,7 +83,9 @@ class AltaPropietario extends Component{
             Documento: this.state.documento,
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
-            Usuario: this.state.mail, 
+            Usuario: this.state.mail,
+            IdCountry: this.state.idCountry,
+            IdTipoPersona: Database.doc('TipoPersona/Propietario'),
         });
 
     }

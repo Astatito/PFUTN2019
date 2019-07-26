@@ -10,28 +10,40 @@ class Administrador extends Component{
 
     constructor(props){
         super(props);
-        
+
         this.idAdministrador = props.idAdministrador;
         this.nombre = props.nombre;
         this.apellido = props.apellido;
         this.legajo = props.legajo;
         this.documento = props.documento;
         this.celular = props.celular;
+        this.idCountry = props.idCountry;
+        this.country = '';
         this.urlEditar = '/editarAdministrador/' + props.idAdministrador;
         this.eliminar = this.eliminar.bind(this);
     }
 
+    async componentWillMount(){
+
+        await Database.collection('Barrios').doc(this.idCountry).get()
+            .then(doc => {
+                if (doc.exists) {
+                    this.country = doc.data().Nombre;
+                }
+            })
+    }
+
     eliminar(){
-        console.log(this.nombre)
         Database.collection('Administradores').doc(this.idAdministrador).delete()
-            .then( console.log('Elimino'))
+            .then(
+                this.props.act(this.idAdministrador)
+            )
             .catch(err => {
                 //En caso de error, hacer esto...
             })
     }
 
     render(){
-
         return(
 
             <tr class="table-light">
@@ -39,6 +51,7 @@ class Administrador extends Component{
                 <td>{this.documento}</td>
                 <td> {this.legajo}</td>
                 <td>{this.celular}</td>
+
                 <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
                 >Editar</Link> </td>
                 <td> <button className="btn btn-primary" onClick={this.eliminar} >Eliminar</button> </td>

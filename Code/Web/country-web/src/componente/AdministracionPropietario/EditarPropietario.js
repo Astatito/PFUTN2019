@@ -23,6 +23,8 @@ class EditarPropietario extends Component{
             descripcion: '',
             fechaNacimiento: '',
             usuario: '',
+            idTipoPersona: '',
+            idCountry: '',
 
             tipoD: [],// Para cargar el combo
             temp: '', // Puto el que lee
@@ -54,9 +56,9 @@ class EditarPropietario extends Component{
                 )
             });
         });
-        await Database.collection('Propietarios').doc(this.idPropietario).get()
+        await Database.collection('Personas').doc(this.idPropietario).get()
             .then(doc => {
-                if (doc.exists) {
+                if (doc.exists && doc.data().IdTipoPersona.id === 'Propietario') {
                     this.state.propietario.push(doc.data());
                 } else {
                 
@@ -86,13 +88,15 @@ class EditarPropietario extends Component{
             celular : estrella.Celular,
             descripcion: estrella.Descripcion,
             usuario: estrella.Usuario,
+            idTipoPersona: estrella.IdTipoPersona,
+            idCountry: estrella.IdCountry,
 
         })
     }
-
+ 
 
     editPropietario(){
-        var dbRef = Database.collection('Propietarios')
+        var dbRef = Database.collection('Personas')
         dbRef.doc(this.idPropietario).set({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
@@ -105,6 +109,8 @@ class EditarPropietario extends Component{
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: this.state.fechaAlta,
             Usuario: this.state.usuario, 
+            IdCountry: this.state.idCountry,
+            IdTipoPersona: this.state.idTipoPersona,
         });
 
     }

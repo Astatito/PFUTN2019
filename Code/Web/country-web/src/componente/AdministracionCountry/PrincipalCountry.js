@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import {Database} from '../../config/config';
 import "../Style/Alta.css";
-import Editar from "../Img/Editar.png"
-import Eliminar from "../Img/Eliminar.png"
-import Lupa from "../Img/Lupa.png"
-import Encabezado from "../Encabezado/Encabezado";
 import { Link } from 'react-router-dom'
 import Country from './Country';
 
@@ -17,7 +13,7 @@ class PrincipalCountry extends Component{
         this.state= {
             barrios: []
         }
-       
+        this.actualizar = this.actualizar.bind(this)
     }
 
     async componentDidMount(){
@@ -36,6 +32,20 @@ class PrincipalCountry extends Component{
         this.setState({barrios});
         console.log(this.state.barrios);
     }
+
+
+    actualizar(id){
+        const {barrios}=this.state;
+        this.state.barrios.map( valor => {
+            if(valor[1]== id){
+                barrios.splice(barrios.indexOf(valor),1)
+            }
+        })
+        this.setState({barrios});
+        this.render();
+    }
+
+
     render(){
         return(          
             <div className="col-12">
@@ -85,6 +95,7 @@ class PrincipalCountry extends Component{
                                 numero = {barrio[0].Numero}
                                 titular = {barrio[0].Titular}
                                 celular = {barrio[0].Celular}
+                                act = {this.actualizar}
                                 >
                                 </Country>
                             )

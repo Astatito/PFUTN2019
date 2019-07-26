@@ -3,7 +3,7 @@ import "../Style/Alta.css";
 import Editar from "../Img/Editar.png"
 import Eliminar from "../Img/Eliminar.png"
 import { Link } from 'react-router-dom'
-import { Database } from '../../config/config'
+import {Database, Firebase} from '../../config/config'
 import PrincipalCountry from '../AdministracionCountry/PrincipalCountry'
 import PrincipalAdministrador from '../AdministracionAdministrador/PrincipalAdministrador'
 
@@ -16,12 +16,10 @@ class InicioRoot extends Component{
         this.state = { 
                         propietariosList: [ ]
                     };
-
-       
-
     }
        
     render(){
+
         return(
         <div className="app container-fluid ">
                 <PrincipalCountry></PrincipalCountry>

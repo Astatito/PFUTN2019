@@ -10,24 +10,44 @@ class PrincipalPropietario extends Component{
     constructor(){
         super();
         this.state= {
-            propietarios: []
+            propietarios: [],
+            idCountry: '',
         }
-
+        this.actualizar = this.actualizar.bind(this)
     }
 
     async componentDidMount(){
         const { propietarios } = this.state;
-        await Database.collection('Propietarios').get().then(querySnapshot => {
+        await Database.collection('Administradores').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-
+                if(doc.data().Usuario === localStorage.getItem('mail')){
+                    this.state.idCountry = doc.data().IdCountry
+                }
+            });
+        });
+        await Database.collection('Personas').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                if(doc.data().IdCountry.id == this.state.idCountry.id && 
+                doc.data().IdTipoPersona.id==='Propietario'){
                 this.state.propietarios.push(
-                    [doc.data(), doc.id]
-                )
+                    [doc.data(), doc.id] 
+                )}
 
             });
         });
         this.setState({propietarios});
         console.log(this.state.propietarios);
+    }
+
+    actualizar(id){
+        const {propietarios}=this.state;
+        this.state.propietarios.map( valor => {
+            if(valor[1]== id){
+                propietarios.splice(propietarios.indexOf(valor),1)
+            }
+        })
+        this.setState({propietarios});
+        this.render();
     }
 
     render(){
@@ -72,13 +92,14 @@ class PrincipalPropietario extends Component{
                                         return(
 
                                             <Propietario
-                                                idPropietario = {propietario[1]}
+                                                idPersona = {propietario[1]}
                                                 nombre = {propietario[0].Nombre}
                                                 apellido = {propietario[0].Apellido}
-                                                numero = {propietario[0].Numero}
+                                
                                                 titular = {propietario[0].Titular}
                                                 celular = {propietario[0].Celular}
                                                 documento = {propietario[0].Documento}
+                                                act = {this.actualizar}
                                             >
                                             </Propietario>
                                         )
