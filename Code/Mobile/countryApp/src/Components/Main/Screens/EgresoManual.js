@@ -34,7 +34,7 @@ class EgresoManual extends Component {
     //         />
     //       ),
     // }
-    state= {picker: '', tiposDocumento: [], cantidad: 0 }
+    state= {picker: '', tiposDocumento: [], cantidad: 0, documento: '' }
 
     obtenerPickers= () => {
         var dbRef = Database.collection('TipoDocumento')
@@ -48,7 +48,39 @@ class EgresoManual extends Component {
             .catch(err => {
             })
     }
-
+    
+    grabarEgreso = (idPersona) => {
+        var dbRef = Database.collection('Accesos');
+        dbRef.add({
+            Fecha : new Date(),
+            Persona: Database.doc('Personas/' + idPersona),
+            Tipo : 'Egreso'
+        });
+    }
+    
+    obtenerPersona = (numeroDocumento) => {  
+        var tipoDocumento = this.state.picker;
+        
+        var dbRef = Database.collection('Personas');
+        var dbDoc =
+        dbRef.where('Documento', '==', this.state.documento)
+        .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDocumento))
+        .get()
+            .then(snapshot => {
+                if (snapshot.empty) {
+                    console.log("No se encontró nada.")
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    this.grabarEgreso(doc.id);
+                    console.log("Egreso registrado correctamente.");                     
+                })
+            })
+            .catch(err => {
+                console.log("Se rompio todo buscando: " + this.state.documento)
+            })
+    }
+    
     render() {
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers()
@@ -73,12 +105,14 @@ class EgresoManual extends Component {
                         <Field
                             placeholder="Eg. 32645187"
                             label="Número de documento"
+                            value={this.state.documento}
                             hidden={false}
+                            onChangeText={(documento) => this.setState({documento})}
                         />
                     </CardSection>
                     <View style={styles.botones}>
                         <CardSection>
-                            <Button>Aceptar</Button>
+                            <Button onPress={() => {this.obtenerPersona(this.state.documento)}}>Aceptar</Button> 
                         </CardSection>
                         <CardSection>
                             <ButtonCancelar onPress= {() => {this.props.navigation.goBack()}}>Cancelar</ButtonCancelar>
