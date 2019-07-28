@@ -8,6 +8,8 @@ import IngresoManual from '../Main/Screens/IngresoManual';
 import Egreso from '../Main/Screens/Egreso';
 import EgresoManual from '../Main/Screens/EgresoManual';
 import EncargadoPerfil from '../Main/Screens/EncargadoPerfil';
+import Escaner from '../Main/Escaner';
+import RegistroVisitante from '../Main/Screens/RegistroVisitante';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import {View, Text,ScrollView, StyleSheet} from 'react-native';
 import {createDrawerNavigator,createBottomTabNavigator,
@@ -63,7 +65,9 @@ const EncargadoStackNavigator = createStackNavigator(
 const IngresoStackNavigator = createStackNavigator(
     {
       Ingreso: Ingreso,
-      IngresoManual: IngresoManual
+      IngresoManual: IngresoManual,
+      Escaner: Escaner,
+      RegistroVisitante, RegistroVisitante
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -95,7 +99,9 @@ const IngresoStackNavigator = createStackNavigator(
 const EgresoStackNavigator = createStackNavigator(
     {
       Egreso: Egreso,
-      EgresoManual: EgresoManual
+      EgresoManual: EgresoManual,
+      Escaner: Escaner,
+      RegistroVisitante, RegistroVisitante
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
