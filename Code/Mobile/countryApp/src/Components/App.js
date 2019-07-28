@@ -3,11 +3,7 @@ import Login from './Main/Screens/Login';
 import EncargadoNavigation from './Navigation/EncargadoNavigation';
 import Propietario from './Main/Screens/Propietario';
 import {createSwitchNavigator,createAppContainer} from 'react-navigation';
-import IngresoManual from './Main/Screens/IngresoManual';
-import EgresoManual from './Main/Screens/EgresoManual';
-import Ingreso from './Main/Screens/Ingreso';
-import Egreso from './Main/Screens/Egreso';
-
+import RegistroVisitante from './Main/Screens/RegistroVisitante'
 class App extends Component {
     render() {
         return (
@@ -22,13 +18,10 @@ export default App
 // La que se encuentra primero es la que se ejecuta.
 
 const AppSwitchNavigator = createSwitchNavigator({
+    Login: {screen: Login},
     Encargado: { screen: EncargadoNavigation },  
     Propietario: {screen: Propietario},  
-    Login: {screen: Login},
-    IngresoManual: {screen: IngresoManual},
-    EgresoManual: {screen: EgresoManual},
-    Ingreso : {screen: Ingreso},
-    Egreso: {screen: Egreso}
+    RegistroVisitante: {screen: RegistroVisitante}
   });
 
 const AppContainer = createAppContainer(AppSwitchNavigator);
