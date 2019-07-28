@@ -20,8 +20,10 @@ class IngresoManual extends Component {
               ),
         }}
 
-    state= {picker: '', tiposDocumento: [], cantidad: 0, documento: '' }
+    state= {picker: '', tiposDocumento: [], documento: '', showSpinner: false }
 
+    // Para activar el spinner, solo agregas esto dentro de un then. this.setState({showSpinner: true});
+    
     obtenerPickers= () => {
         var dbRef = Database.collection('TipoDocumento')
         var dbDocs = dbRef.get()
@@ -29,7 +31,6 @@ class IngresoManual extends Component {
                 snapshot.forEach(doc => {
                     this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
                 })
-                this.setState({cantidad: this.state.tiposDocumento.length})
             })
             .catch(err => {
             })
@@ -71,6 +72,15 @@ class IngresoManual extends Component {
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers()
         }
+        if (this.state.showSpinner) {
+            return(
+                <View style={styles.container}>
+                <ActivityIndicator size="large" color='#007aff' />
+                <Text style={{color:'#000', textAlign:'center', fontSize: 18}}> Loading ... </Text>
+           </View>
+            )
+        } else {
+
       return (
         <ScrollView>
             <View style={styles.container}>
@@ -107,7 +117,7 @@ class IngresoManual extends Component {
                 </Card> 
             </View>
             </ScrollView>
-      );
+      )};
     }
   }
   const styles= StyleSheet.create({

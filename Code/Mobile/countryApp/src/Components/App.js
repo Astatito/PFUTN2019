@@ -3,7 +3,7 @@ import Login from './Main/Screens/Login';
 import EncargadoNavigation from './Navigation/EncargadoNavigation';
 import Propietario from './Main/Screens/Propietario';
 import {createSwitchNavigator,createAppContainer} from 'react-navigation';
-
+import RegistroVisitante from './Main/Screens/RegistroVisitante'
 class App extends Component {
     render() {
         return (
@@ -21,6 +21,7 @@ const AppSwitchNavigator = createSwitchNavigator({
     Login: {screen: Login},
     Encargado: { screen: EncargadoNavigation },  
     Propietario: {screen: Propietario},  
+    RegistroVisitante: {screen: RegistroVisitante}
   });
 
 const AppContainer = createAppContainer(AppSwitchNavigator);

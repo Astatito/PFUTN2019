@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, ActivityIndicator, StyleSheet} from 'react-native';
 import {Field, Header, Card, CardSection, Button} from '../../Common';
 import {Firebase, Database} from '../../Firebase'
 
 class Login extends Component {
 
-    state = {email: '', password: '', result: ''} ;
+    state = {email: '', password: '', result: '', showSpinner: false} ;
 
     static navigationOptions = {
         header: null
@@ -14,8 +14,10 @@ class Login extends Component {
     onButtonPress() {
         Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
             .then(() => {
+                this.setState({showSpinner: true});
                 this.setState({result: "Logueo exitoso."});
                 this.logueoUsuario();
+                
             })
             .catch(() => {
                 this.setState({result: "Falló la autenticación."})
@@ -44,6 +46,15 @@ class Login extends Component {
             })
     }
     render() {
+        if (this.state.showSpinner){
+            return(
+                <View style={styles.container}>
+                <ActivityIndicator size="large" color='#007aff' />
+                <Text style={{color:'#000', textAlign:'center', fontSize: 18}}> Loading ... </Text>
+           </View>
+            )
+            
+        } else {
         return (
             <View>
                 <Header headerText="Welcome to CountryApp!"/>
@@ -76,7 +87,15 @@ class Login extends Component {
                     </CardSection>
                 </Card>
             </View>
-        );
+        )};
     }
 }
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      flexDirection: 'column',
+      
+    }
+  });
 export default Login;
