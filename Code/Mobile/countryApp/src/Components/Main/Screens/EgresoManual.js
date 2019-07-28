@@ -11,7 +11,7 @@ class EgresoManual extends Component {
     static navigationOptions = ({ navigation }) => {
         
         return {
-            
+
             title: 'Egreso Manual',
             headerLeft: (
                 <Icon
@@ -23,7 +23,7 @@ class EgresoManual extends Component {
               ),
         }}
 
-    state= {picker: '', tiposDocumento: [], documento: '', showSpinner: false }
+    state= {picker: '', tiposDocumento: [], cantidad:0, documento: '', showSpinner: false }
 
     // Para activar el spinner, solo agregas esto dentro de un then. this.setState({showSpinner: true});
 
@@ -32,8 +32,10 @@ class EgresoManual extends Component {
         var dbDocs = dbRef.get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
+                    // this.state.tiposDocumento.push(doc.data().Nombre)
                     this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
                 })
+                this.setState({cantidad: this.state.tiposDocumento.length})
             })
             .catch(err => {
             })
@@ -72,7 +74,7 @@ class EgresoManual extends Component {
     }
     
     render() {
-        if (this.state.tiposDocumento.length < 3) {
+        if (this.state.tiposDocumento.length < 3 ) {
             this.obtenerPickers()
         }
         if (this.state.showSpinner) {

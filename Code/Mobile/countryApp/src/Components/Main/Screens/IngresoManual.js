@@ -5,6 +5,7 @@ import {Database} from '../../Firebase';
 import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
 class IngresoManual extends Component {
 
     static navigationOptions = ({ navigation }) => {
@@ -20,7 +21,7 @@ class IngresoManual extends Component {
               ),
         }}
 
-    state= {picker: '', tiposDocumento: [], documento: '', showSpinner: false }
+    state= {picker: '', tiposDocumento: [],cantidad:0, documento: '', showSpinner: false }
 
     // Para activar el spinner, solo agregas esto dentro de un then. this.setState({showSpinner: true});
     
@@ -29,8 +30,10 @@ class IngresoManual extends Component {
         var dbDocs = dbRef.get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
+                    // this.state.tiposDocumento.push(doc.data().Nombre)
                     this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
                 })
+                this.setState({cantidad: this.state.tiposDocumento.length})
             })
             .catch(err => {
             })
