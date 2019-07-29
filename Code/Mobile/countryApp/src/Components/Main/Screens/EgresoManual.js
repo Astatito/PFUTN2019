@@ -31,11 +31,13 @@ class EgresoManual extends Component {
         var dbRef = Database.collection('TipoDocumento')
         var dbDocs = dbRef.get()
             .then(snapshot => {
+                var tiposDocumento = [];
                 snapshot.forEach(doc => {
-                    this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
+                    tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
                 })
+                this.setState({tiposDocumento});
             })
-            .catch(err => {
+            .catch(err => {console.log(err)
             })
     }
     
@@ -46,6 +48,13 @@ class EgresoManual extends Component {
             Persona: Database.doc('Personas/' + idPersona),
             Tipo : 'Egreso'
         });
+    }
+
+    registrarNuevoVisitante = () => {
+        this.props.navigation.navigate('RegistroVisitante', {
+            tipoDocumento: this.state.picker,
+            numeroDocumento: this.state.documento }
+        )
     }
     
     obtenerPersona = (numeroDocumento) => {  
@@ -58,8 +67,8 @@ class EgresoManual extends Component {
         .get()
             .then(snapshot => {
                 if (snapshot.empty) {
-                    console.log("No se encontró nada.")
-                    return;
+                    console.log('No se encontró nada.');
+                    this.registrarNuevoVisitante();
                 }
                 snapshot.forEach(doc => {
                     this.grabarEgreso(doc.id);

@@ -18,7 +18,7 @@ class Egreso extends Component {
               <Card>
               <View style={styles.botones}>
                 <CardSection>
-                  <Button onPress = {() => this.props.navigation.navigate('Escaner') }> Escaner </Button>
+                  <Button onPress = {() => this.props.navigation.navigate('Escaner', {tipo: 'Egreso'})}> Escaner </Button>
                 </CardSection>
                 <CardSection>
                   <Button onPress = {() => this.props.navigation.navigate('EgresoManual') }> Registro Manual  </Button>

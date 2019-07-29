@@ -9,19 +9,19 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 class RegistroVisitante extends Component {
 
-    state= {picker: '', tiposDocumento: [], cantidad: 0 }
+    state= {picker: '', tiposDocumento: [] }
 
     obtenerPickers= () => {
         var dbRef = Database.collection('TipoDocumento')
         var dbDocs = dbRef.get()
             .then(snapshot => {
+                var tiposDocumento = [];
                 snapshot.forEach(doc => {
-                    // this.state.tiposDocumento.push(doc.data().Nombre)
-                    this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
+                    tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
                 })
-                this.setState({cantidad: this.state.tiposDocumento.length})
+                this.setState({tiposDocumento});
             })
-            .catch(err => {
+            .catch(err => {console.log(err)
             })
     }
     

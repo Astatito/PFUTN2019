@@ -26,13 +26,17 @@ class IngresoManual extends Component {
     
     obtenerPickers= () => {
         var dbRef = Database.collection('TipoDocumento')
+        console.log('Voy a buscar los TipoDocumento.')
         var dbDocs = dbRef.get()
             .then(snapshot => {
+                var tiposDocumento = [];
                 snapshot.forEach(doc => {
-                    this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
+                    console.log(doc);
+                    tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
                 })
+                this.setState({tiposDocumento});
             })
-            .catch(err => {
+            .catch(err => {console.log(err)
             })
     }
 
@@ -45,6 +49,13 @@ class IngresoManual extends Component {
         });
     }
 
+    registrarNuevoVisitante = () => {
+        this.props.navigation.navigate('RegistroVisitante', {
+            tipoDocumento: this.state.picker,
+            numeroDocumento: this.state.documento }
+        )
+    }
+
     obtenerPersona = (numeroDocumento) => {  
         var tipoDocumento = this.state.picker;
         
@@ -55,8 +66,8 @@ class IngresoManual extends Component {
         .get()
             .then(snapshot => {
                 if (snapshot.empty) {
-                    console.log("No se encontró nada.")
-                    return;
+                    console.log("No se encontró nada.");
+                    this.registrarNuevoVisitante();
                 }
                 snapshot.forEach(doc => {
                     this.grabarIngreso(doc.id);

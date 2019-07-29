@@ -14,11 +14,11 @@ class Ingreso extends Component {
         <ScrollView>
           <View style={styles.container}>
               <Text style={styles.logueo}> Ud. se ha logueado como : Encargado </Text> 
-              <Header headerText='¿Escaner o registro manual? '></Header>
+              <Header headerText='¿Escaner o registro manual?'></Header>
               <Card>
               <View style={styles.botones}>
                 <CardSection>
-                  <Button onPress = {() => this.props.navigation.navigate('Escaner') }> Escaner </Button>
+                  <Button onPress = {() => this.props.navigation.navigate('Escaner', {tipo: 'Ingreso'}) }> Escaner </Button>
                 </CardSection>
                 <CardSection>
                   <Button onPress = {() => this.props.navigation.navigate('IngresoManual') }> Registro Manual  </Button>
