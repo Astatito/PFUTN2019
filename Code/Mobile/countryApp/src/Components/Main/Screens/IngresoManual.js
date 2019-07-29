@@ -17,6 +17,7 @@ class IngresoManual extends Component {
 
     // Para activar el spinner, solo agregas esto dentro de un then. this.setState({showSpinner: true});
 
+    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = () => {
         var dbRef = Database.collection('TipoDocumento');
         var dbDocs = dbRef
@@ -44,6 +45,7 @@ class IngresoManual extends Component {
 
     registrarNuevoVisitante = () => {
         this.props.navigation.navigate('RegistroVisitante', {
+            esAcceso: true,
             tipoDocumento: this.state.picker,
             numeroDocumento: this.state.documento
         });

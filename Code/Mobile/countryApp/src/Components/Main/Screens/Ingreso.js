@@ -12,37 +12,15 @@ class Ingreso extends Component {
         return (
             <ScrollView>
                 <View style={styles.container}>
-                    <Text style={styles.logueo}>
-                        
-                        Ud. se ha logueado como : Encargado
-                    </Text>
+                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
                     <Header headerText="¿Escaner o registro manual?" />
                     <Card>
                         <View style={styles.botones}>
                             <CardSection>
-                                <Button
-                                    onPress={() =>
-                                        this.props.navigation.navigate(
-                                            'Escaner',
-                                            { tipo: 'Ingreso' }
-                                        )
-                                    }
-                                >
-                                    
-                                    Escaner
-                                </Button>
+                                <Button onPress={() => this.props.navigation.navigate('Escaner', { tipo: 'Ingreso' })}>Escaner</Button>
                             </CardSection>
                             <CardSection>
-                                <Button
-                                    onPress={() =>
-                                        this.props.navigation.navigate(
-                                            'IngresoManual'
-                                        )
-                                    }
-                                >
-                                    
-                                    Registro Manual
-                                </Button>
+                                <Button onPress={() => this.props.navigation.navigate('IngresoManual')}>Registro Manual</Button>
                             </CardSection>
                         </View>
                     </Card>

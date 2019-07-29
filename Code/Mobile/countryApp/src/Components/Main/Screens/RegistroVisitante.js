@@ -6,10 +6,24 @@ import { Header, Card, CardSection, Field, Button, ButtonCancelar } from '../../
 import { Database } from '../../Firebase';
 import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class RegistroVisitante extends Component {
-    state = { picker: '', tiposDocumento: [] };
+    state = { picker: '', tiposDocumento: [], documento: '' };
 
+    componentWillMount() {
+        const { navigation } = this.props;
+        const esAcceso = navigation.getParam('esAcceso', false);
+
+        if (esAcceso) {
+            const tipoDoc = navigation.getParam('tipoDocumento');
+            const numeroDoc = navigation.getParam('numeroDocumento');
+
+            this.setearDatos(tipoDoc, numeroDoc);
+        }
+    }
+
+    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = () => {
         var dbRef = Database.collection('TipoDocumento');
         var dbDocs = dbRef
@@ -26,14 +40,22 @@ class RegistroVisitante extends Component {
             });
     };
 
+    setearDatos(tipo, numero) {
+        this.setState({
+            picker: tipo,
+            documento: numero
+        });
+    }
+
     render() {
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers();
         }
+
         return (
             <ScrollView>
                 <View style={{ padding: 5 }}>
-                    <Text style={styles.logueo}> Ud. se ha logueado como : Encargado </Text>
+                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
                     <Header headerText="Registrar nuevo visitante"> </Header>
                     <Card>
                         <CardSection>
@@ -52,7 +74,13 @@ class RegistroVisitante extends Component {
                         </View>
 
                         <CardSection>
-                            <Field placeholder="Eg. 32645187" label="Número de documento" hidden={false} />
+                            <Field
+                                placeholder="Eg. 32645187"
+                                label="Número de documento"
+                                hidden={false}
+                                value={this.state.documento}
+                                onChangeText={documento => this.setState({ documento })}
+                            />
                         </CardSection>
                         <CardSection>
                             <Field placeholder="Eg. 02/11/1992" label="Fecha de nacimiento" hidden={false} />
