@@ -1,14 +1,12 @@
 import React from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
-const ButtonCancelar = ({onPress, children}) => {
-    const {buttonStyle, textStyle} = styles;
+const ButtonCancelar = ({ onPress, children }) => {
+    const { buttonStyle, textStyle } = styles;
 
     return (
         <TouchableOpacity onPress={onPress} style={buttonStyle}>
-            <Text style={textStyle}>
-                {children}
-            </Text>
+            <Text style={textStyle}>{children}</Text>
         </TouchableOpacity>
     );
 };
@@ -33,8 +31,8 @@ const styles = {
         borderColor: '#DA2222',
         marginLeft: 5,
         marginRight: 5,
-        justifyContent: 'center',
+        justifyContent: 'center'
     }
 };
 
-export {ButtonCancelar};
+export { ButtonCancelar };
