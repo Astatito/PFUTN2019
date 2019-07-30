@@ -1,8 +1,8 @@
 import React from 'react';
-import {TextInput, View, Text} from 'react-native';
+import { TextInput, View, Text } from 'react-native';
 
-const Field = ({label, value, onChangeText, placeholder, hidden}) => {
-    const {inputStyle, labelStyle, containerStyle} = styles;
+const Field = ({ label, value, onChangeText, placeholder, hidden }) => {
+    const { inputStyle, labelStyle, containerStyle } = styles;
 
     return (
         <View style={containerStyle}>
@@ -16,7 +16,7 @@ const Field = ({label, value, onChangeText, placeholder, hidden}) => {
                 secureTextEntry={hidden}
             />
         </View>
-    )
+    );
 };
 
 const styles = {
@@ -29,7 +29,7 @@ const styles = {
     },
     labelStyle: {
         fontSize: 18,
-        color:'#000',
+        color: '#000',
         paddingLeft: 20,
         flex: 1
     },
@@ -39,6 +39,6 @@ const styles = {
         flexDirection: 'row',
         alignItems: 'center'
     }
-}
+};
 
-export {Field};
+export { Field };

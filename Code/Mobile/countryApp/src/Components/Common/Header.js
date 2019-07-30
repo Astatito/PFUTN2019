@@ -1,8 +1,8 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import { Text, View } from 'react-native';
 
-const Header = (props) => {
-    const {textStyle, viewStyle} = styles;
+const Header = props => {
+    const { textStyle, viewStyle } = styles;
 
     return (
         <View style={viewStyle}>
@@ -17,20 +17,20 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         height: 60,
-        paddingTop:20,
-        paddingBottom:20,
+        paddingTop: 20,
+        paddingBottom: 20,
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         elevation: 2,
-        position: 'relative',
+        position: 'relative'
     },
     textStyle: {
         fontSize: 25,
         color: '#2F2B2B',
-        fontWeight:'900',
+        fontWeight: '900',
         fontStyle: 'normal'
     }
 };
 
-export {Header};
+export { Header };
