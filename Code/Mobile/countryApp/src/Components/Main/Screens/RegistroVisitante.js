@@ -1,120 +1,123 @@
 //En este componente es donde se cargan los datos luego de escanear y se pueden modificar si es necesario.
 //Los datos serían Nombre, Apellido, Numero de Documento y fecha de nacimiento. Más patente del auto.
-import React, {Component} from 'react';
-import {View,Text,StyleSheet,Picker} from 'react-native';
-import {Header,Card,CardSection,Field,Button,ButtonCancelar } from '../../Common';
-import {Firebase, Database} from '../../Firebase';
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, Picker } from 'react-native';
+import { Header, Card, CardSection, Field, Button, ButtonCancelar } from '../../Common';
+import { Database } from '../../Firebase';
 import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class RegistroVisitante extends Component {
+    state = { picker: '', tiposDocumento: [], documento: '' };
 
-    state= {picker: '', tiposDocumento: [], cantidad: 0 }
+    componentWillMount() {
+        const { navigation } = this.props;
+        const esAcceso = navigation.getParam('esAcceso', false);
 
-    obtenerPickers= () => {
-        var dbRef = Database.collection('TipoDocumento')
-        var dbDocs = dbRef.get()
+        if (esAcceso) {
+            const tipoDoc = navigation.getParam('tipoDocumento');
+            const numeroDoc = navigation.getParam('numeroDocumento');
+
+            this.setearDatos(tipoDoc, numeroDoc);
+        }
+    }
+
+    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
+    obtenerPickers = () => {
+        var dbRef = Database.collection('TipoDocumento');
+        var dbDocs = dbRef
+            .get()
             .then(snapshot => {
+                var tiposDocumento = [];
                 snapshot.forEach(doc => {
-                    // this.state.tiposDocumento.push(doc.data().Nombre)
-                    this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
-                })
-                this.setState({cantidad: this.state.tiposDocumento.length})
+                    tiposDocumento.push({ value: doc.id, label: doc.data().Nombre });
+                });
+                this.setState({ tiposDocumento });
             })
             .catch(err => {
-            })
+                console.log(err);
+            });
+    };
+
+    setearDatos(tipo, numero) {
+        this.setState({
+            picker: tipo,
+            documento: numero
+        });
     }
-    
-    render () {
+
+    render() {
         if (this.state.tiposDocumento.length < 3) {
-            this.obtenerPickers()
+            this.obtenerPickers();
         }
+
         return (
             <ScrollView>
-            <View style={{padding:5}}>
-                <Text style={styles.logueo}> Ud. se ha logueado como : Encargado </Text> 
-                <Header headerText="Registrar nuevo visitante"> </Header> 
-                <Card>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. Juan Pablo"
-                            label="Nombre completo"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. Soria"
-                            label="Apellido"
-                            hidden={false}
-                        />
-                    </CardSection>
-
-                    <View style= {styles.picker}>
-                    <RNPickerSelect
-                        selectedValue= {this.state.picker}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({picker: itemValue})
-                          }
-                        items = {this.state.tiposDocumento} >
-                    </RNPickerSelect>
-                    </View>
-
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. 32645187"
-                            label="Número de documento"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. 02/11/1992"
-                            label="Fecha de nacimiento"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. 491457"
-                            label="Teléfono fijo"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <CardSection>
-                        <Field
-                            placeholder="Eg. +5493512071228"
-                            label="Celular"
-                            hidden={false}
-                        />
-                    </CardSection>
-                    <View style={styles.botones}>
+                <View style={{ padding: 5 }}>
+                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
+                    <Header headerText="Registrar nuevo visitante"> </Header>
+                    <Card>
                         <CardSection>
-                            <Button>Aceptar</Button>
+                            <Field placeholder="Eg. Juan Pablo" label="Nombre completo" hidden={false} />
                         </CardSection>
                         <CardSection>
-                            <ButtonCancelar>Cancelar</ButtonCancelar>
+                            <Field placeholder="Eg. Soria" label="Apellido" hidden={false} />
                         </CardSection>
-                    </View>
-                </Card> 
-            </View>
+
+                        <View style={styles.picker}>
+                            <RNPickerSelect
+                                selectedValue={this.state.picker}
+                                onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
+                                items={this.state.tiposDocumento}
+                            />
+                        </View>
+
+                        <CardSection>
+                            <Field
+                                placeholder="Eg. 32645187"
+                                label="Número de documento"
+                                hidden={false}
+                                value={this.state.documento}
+                                onChangeText={documento => this.setState({ documento })}
+                            />
+                        </CardSection>
+                        <CardSection>
+                            <Field placeholder="Eg. 02/11/1992" label="Fecha de nacimiento" hidden={false} />
+                        </CardSection>
+                        <CardSection>
+                            <Field placeholder="Eg. 491457" label="Teléfono fijo" hidden={false} />
+                        </CardSection>
+                        <CardSection>
+                            <Field placeholder="Eg. +5493512071228" label="Celular" hidden={false} />
+                        </CardSection>
+                        <View style={styles.botones}>
+                            <CardSection>
+                                <Button>Aceptar</Button>
+                            </CardSection>
+                            <CardSection>
+                                <ButtonCancelar>Cancelar</ButtonCancelar>
+                            </CardSection>
+                        </View>
+                    </Card>
+                </View>
             </ScrollView>
         );
     }
 }
 
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
     botones: {
         flexDirection: 'row',
         alignItems: 'center',
         width: '50%',
         justifyContent: 'flex-start',
-        padding:10
+        padding: 10
     },
     logueo: {
         textAlign: 'right',
         color: '#000000',
-        paddingTop: 20,
+        paddingTop: 10
     },
     picker: {
         borderBottomWidth: 1,
@@ -124,8 +127,8 @@ const styles= StyleSheet.create({
         flexDirection: 'column',
         borderColor: '#ddd',
         position: 'relative',
-        marginTop:5,
-        paddingLeft:16
+        marginTop: 5,
+        paddingLeft: 16
     }
 });
 export default RegistroVisitante;

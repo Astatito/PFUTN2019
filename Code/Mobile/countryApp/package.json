@@ -1,36 +1,36 @@
 {
-  "name": "countryapp",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest",
-    "ios": "react-native run-ios",
-    "android": "react-native run-android"
-  },
-  "dependencies": {
-    "@firebase/firestore": "^1.4.5",
-    "firebase": "^6.2.4",
-    "moment": "^2.24.0",
-    "react": "16.8.3",
-    "react-native": "0.59.8",
-    "react-native-gesture-handler": "^1.3.0",
-    "react-native-ignore-warnings": "^0.1.1",
-    "react-native-modal-datetime-picker": "^7.5.0",
-    "react-native-ionicons": "^4.6.1",
-    "react-native-picker-select": "^6.3.0",
-    "react-native-vector-icons": "^6.6.0",
-    "react-navigation": "^3.11.1"
-  },
-  "devDependencies": {
-    "@babel/core": "7.4.5",
-    "@babel/runtime": "7.4.5",
-    "babel-jest": "24.8.0",
-    "jest": "24.8.0",
-    "metro-react-native-babel-preset": "0.54.1",
-    "react-test-renderer": "16.8.3"
-  },
-  "jest": {
-    "preset": "react-native"
-  }
+    "name": "countryapp",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node node_modules/react-native/local-cli/cli.js start",
+        "test": "jest",
+        "ios": "react-native run-ios",
+        "android": "react-native run-android"
+    },
+    "dependencies": {
+        "@firebase/firestore": "^1.4.5",
+        "firebase": "^6.2.4",
+        "moment": "^2.24.0",
+        "react": "16.8.3",
+        "react-native": "0.59.8",
+        "react-native-gesture-handler": "^1.3.0",
+        "react-native-ignore-warnings": "^0.1.1",
+        "react-native-modal-datetime-picker": "^7.5.0",
+        "react-native-ionicons": "^4.6.1",
+        "react-native-picker-select": "^6.3.0",
+        "react-native-vector-icons": "^6.6.0",
+        "react-navigation": "^3.11.1"
+    },
+    "devDependencies": {
+        "@babel/core": "7.4.5",
+        "@babel/runtime": "7.4.5",
+        "babel-jest": "24.8.0",
+        "jest": "24.8.0",
+        "metro-react-native-babel-preset": "0.54.1",
+        "react-test-renderer": "16.8.3"
+    },
+    "jest": {
+        "preset": "react-native"
+    }
 }
