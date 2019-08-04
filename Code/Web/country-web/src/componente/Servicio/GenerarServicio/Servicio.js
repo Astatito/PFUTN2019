@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import "../../Style/Alta.css";
 import {Database} from '../../../config/config';
 import { Link } from 'react-router-dom'
-import Modal from 'react-bootstrap/Modal'
 import ModalEliminar from '../../ModalEliminar';
 
 

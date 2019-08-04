@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import "../Style/Alta.css";
-import ReactLightCalendar from '@lls/react-light-calendar'
-import '@lls/react-light-calendar/dist/index.css'
 import {Link} from 'react-router-dom'
 import {Database, Firebase} from "../../config/config";
+import  { DatePicker, RangeDatePicker} from '@y0c/react-datepicker'
 
 //https://react-select.com/home
 //https://firebase.google.com/docs/auth/web/manage-users#create_a_user
@@ -12,8 +11,8 @@ import {Database, Firebase} from "../../config/config";
 
 class AltaInvitado extends Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         const date = new Date()
         const startDate = date.getTime()
         this.state = {
@@ -22,6 +21,8 @@ class AltaInvitado extends Component{
             apellido: '',
             tipoDocumento: '',
             documento: '',
+            tipoDocumentoInvitado: '',
+            documentoInvitado: '',
             estado: true,
             descripcion: '',
             fechaNacimiento: '',
@@ -30,17 +31,23 @@ class AltaInvitado extends Component{
             startDate, // Today
             endDate: new Date(startDate).setDate(date.getDate() + 6), // Today + 6 days,
             tipoD: [],// Para cargar el combo
-            resultado: ''
+            resultado: '',
+            mensaje: '',
         }
         this.esPropietario = localStorage.getItem('tipoUsuario')==='Propietario'?true:false;
         this.addInvitado = this.addInvitado.bind(this);
         this.ChangeNombre = this.ChangeNombre.bind(this);
         this.ChangeApellido = this.ChangeApellido.bind(this);
         this.ChangeDocumento= this.ChangeDocumento.bind(this);
+        this.ChangeDocumentoInvitado= this.ChangeDocumentoInvitado.bind(this);
         this.ChangeFechaNacimiento = this.ChangeFechaNacimiento.bind(this);
         this.ChangeGrupo  = this.ChangeGrupo.bind(this);
         this.ChangeFechas = this.ChangeFechas.bind(this);
+        this.ChangeFechaDesde = this.ChangeFechaDesde.bind(this);
+        this.ChangeFechaHasta = this.ChangeFechaHasta.bind(this);
         this.registrar = this.registrar.bind(this);
+        this.buscarPropietario = this.buscarPropietario.bind(this)
+        this.registrarIngreso = this.registrarIngreso.bind(this)
     }
 
     async componentDidMount(){
@@ -65,13 +72,12 @@ class AltaInvitado extends Component{
  
 
     addInvitado(){
-        var dbRef = Database.collection('Personas')
-        dbRef.add({
+        Database.collection('Personas').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
-            estado: this.state.estado,
-            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
-            Documento: this.state.documento,
+            Estado: this.state.estado,
+            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumentoInvitado.valueOf().value),
+            Documento: this.state.documentoInvitado,
             Grupo: this.state.grupo,
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
@@ -92,12 +98,23 @@ class AltaInvitado extends Component{
     }
     
     ChangeFechas = (startDate, endDate) => this.setState({ startDate, endDate })
-
+ 
+    ChangeFechaDesde(event){
+        this.setState({startDate : event.target.value});
+    }
+    ChangeFechaHasta(event){
+        this.setState({endDate : event.target.value});
+    }
 
     ChangeSelect(value){
         this.setState({tipoDocumento : value});
     }
-
+    ChangeSelectInvitado(value){
+        this.setState({tipoDocumentoInvitado : value});
+    }
+    ChangeDocumentoInvitado(event) {
+        this.setState({documentoInvitado : event.target.value});
+    }
     ChangeFechaNacimiento(event){
         this.setState({fechaNacimiento : event.target.value});
     }
@@ -108,49 +125,62 @@ class AltaInvitado extends Component{
     ChangeGrupo(event) {
         this.setState({grupo : event.target.value});
     }
- 
+
+
+
+    buscarPropietario(){
+        Database.collection('Personas').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                if(doc.data().Documento === this.state.documento && 
+                doc.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value
+                && doc.data().IdTipoPersona.id === 'Propietario'){
+                        this.state.idPropietario =  doc.id
+                        this.state.idCountry = doc.data().IdCountry
+                        this.setState({
+                            mensaje: doc.data().Apellido + ', ' + doc.data().Nombre
+                        })
+                    } })
+    })}
+
+    registrarIngreso(){
+        Database.collection('Ingresos').add({
+            Nombre: this.state.nombre,
+            Apellido: this.state.apellido,
+            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumentoInvitado.valueOf().value),
+            Documento: this.state.documentoInvitado,
+            Hora: new Date(),
+            IdCountry: this.state.idCountry,
+            IdPropietario: Database.doc('Personas/' + this.state.idPropietario),
+            IdTipoPersona: Database.doc('TipoPersona/Invitado'),
+            IdEncargado: Database.doc('Encargados/' + localStorage.getItem('idEncargado')),
+            Estado: true,
+            Egreso: false,
+
+        });  
+    }
+
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
             this.addInvitado();
-
+            if(this.esPropietario){
+            this.props.cerrar();
+        }else{
+            this.registrarIngreso()
+        }
         }
     }
 
 
     render(){
         return(
-            <div className="col-12 jumbotron">
+            <div className="col-12 ">
             <div>
-                <div className="col-md-1"></div>
-                <div className="col-md-8 borde">
+                <div className="row">
 
-                    <legend>  Registrar Invitado </legend>
-                        <div className = "form-group">
-                            <label for = "Nombre">  Grupo  </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name"
-                            value = {this.state.grupo}
-                            onChange={this.ChangeGrupo}
-                           disabled={!this.esPropietario}
-                            />
-                        </div>
-                        <div className = "form-group" hidden={this.esPropietario}>
-                            <label for = "Nombre">  Nombre  </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name"
-                            value = {this.state.nombre}
-                            onChange={this.ChangeNombre}
-                           
-                            />
-                        </div>
-                        <div className = "form-group"  hidden={this.esPropietario}>
-                            <label for = "Apellido">  Apellido  </label>
-                            <input type = "family-name" className = "form-control"   placeholder = "Surname"
-                                   value = {this.state.apellido}
-                                   onChange= {this.ChangeApellido} 
-                                   
-                                   />
-                        </div>
-                        <div className = "form-group"  >
+                    <legend hidden={this.esPropietario}>  Nuevo Invitado </legend>
+                    <div className = "col-md-6  flex-container form-group"  
+                         hidden={this.esPropietario}>
                         <label for = "TipoDocumento">  Tipo Documento  </label>
                             <Select
                                 className="select-documento"
@@ -161,39 +191,121 @@ class AltaInvitado extends Component{
                                 isSearchable={true}
                                 options={this.state.tipoD}
                                 onChange={this.ChangeSelect.bind(this)}
-                                disabled={!this.esPropietario}
+                              
                             />
-                        </div>
-                        <div className = "form-group" >
-                            <label for = "NumeroDocumento">  Numero de Documento  </label>
-                            <input type = "document" className = "form-control"   placeholder = "Document number"
-                            value = {this.state.documento}
-                            onChange={this.ChangeDocumento}
-                            disabled={!this.esPropietario}
-                            />
-                        </div>
-                        <div className = "form-group" >
-                            <label >  Fecha Desde - Fecha Hasta  </label>
-                            <ReactLightCalendar startDate={this.state.startDate} endDate={this.state.endDate} 
-                            onChange={this.ChangeFechas} range displayTime 
-                            />
-                        </div>
+                    </div>
+                        
+                    <div className = "col-md-6  flex-container form-group"
+                        hidden={this.esPropietario} >
+                        <label for = "NumeroDocumento">  Numero de Documento  </label>
+                        <input type = "document" className = "form-control"   placeholder = "Document number"
+                        value = {this.state.documento}
+                        onChange={this.ChangeDocumento}
 
-                        <div className = "form-group" hidden={this.esPropietario}>
+                        />
+                        <label>{this.state.mensaje}</label>
+                    </div>
+                    <div className= "col-md-4  flex-container form-group"
+                    hidden={this.esPropietario}>
+                            <button type="button" className="btn btn-danger" variant="secondary" 
+                            onClick={this.buscarPropietario}
+                            
+                            >Buscar Propietario</button> 
+                        </div>
+                        <div className = "col-md-8  flex-container form-group"></div>
+                        
+                        <div className = "col-md-6  flex-container form-group">
+                            <label for = "Nombre">  Grupo  </label>
+                            <input type = "name" className = "form-control"   placeholder = "Name"
+                            value = {this.state.grupo}
+                            onChange={this.ChangeGrupo}
+                            />
+                        </div>
+                        <div className = "col-md-3  flex-container form-group " >
+                            <label >  Fecha Desde   </label>
+                           <input type="date"className = "form-control" name="FechaDesde"
+                         step="1" min="1920-01-01" value={this.state.startDate}
+                         onChange={this.ChangeFechaDesde}
+                         disabled={!this.esPropietario}
+                        />
+                        </div>
+                        <div className = "col-md-3  flex-container form-group " >
+                        <label >  Fecha Hasta  </label>
+                        <input type="date"className = "form-control" name="FechaHasta"
+                        step="1" min="1920-01-01" value={this.state.endDate}
+                        disabled={!this.esPropietario}
+                        onChange={this.ChangeFechaHasta}
+                             />
+                        </div>
+                        <div className = "col-md-6  flex-container form-group" hidden={this.esPropietario}>
+                            <label for = "Nombre">  Nombre  </label>
+                            <input type = "name" className = "form-control"   placeholder = "Name"
+                            value = {this.state.nombre}
+                            onChange={this.ChangeNombre}
+                           
+                            />
+                        </div>
+                        <div className = "col-md-6  flex-container form-group"  hidden={this.esPropietario}>
+                            <label for = "Apellido">  Apellido  </label>
+                            <input type = "family-name" className = "form-control"   placeholder = "Surname"
+                                   value = {this.state.apellido}
+                                   onChange= {this.ChangeApellido} 
+                                   
+                                   />
+                        </div>
+                       
+                        <div className = "col-md-6  flex-container form-group" >
+                        <label for = "TipoDocumento">  Tipo Documento Invitado </label>
+                            <Select
+                                className="select-documento"
+                                classNamePrefix="select"
+                                isDisabled={false}
+                                isLoading={false}
+                                isClearable={true}
+                                isSearchable={true}
+                                options={this.state.tipoD}
+                                onChange={this.ChangeSelectInvitado.bind(this)}
+                              
+                            />
+                        </div>
+                        <div className = "col-md-6  flex-container form-group">
+                            <label for = "NumeroDocumento">  Numero de Documento Invitado </label>
+                            <input type = "document" className = "form-control"   placeholder = "Document number"
+                            value = {this.state.documentoInvitado}
+                            onChange={this.ChangeDocumentoInvitado}
+                  
+                            />
+                        </div>
+                        
+                        {/* <div className = "col-md-6  flex-container form-group" >
+                            <label >  Fecha Desde - Fecha Hasta  </label>
+                            <div style={{height: '400px'}}>
+                            <RangeDatePicker />
+                            </div>
+                        </div> */}
+                        
+
+                        <div className = "col-md-6  flex-container form-group" hidden={this.esPropietario}>
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
                             <input type="date"className = "form-control" name="FechaNacimiento"
                                    step="1" min="1920-01-01"
                                    onChange={this.ChangeFechaNacimiento}
                             />
                         </div>
-                        <div className="form-group izquierda">
-                            <button className="btn btn-primary" onClick={this.registrar} >Registrar</button>
-                            <Link to="/" type="button" className="btn btn-primary"
-                        >Volver</Link> 
-                        </div>
+                      </div>
+                      </div>
 
-                </div>
-            </div>
+                      <div className="form-group izquierda">
+                        <button type="button" className="btn btn-primary boton" variant="secondary" onClick={this.props.cerrar}
+                         hidden= {!this.esPropietario}
+                         >Volver</button> 
+                        <Link to='/' type="button" className="btn btn-primary boton" variant="secondary"
+                         hidden= {this.esPropietario}
+                        >Volver</Link>
+                        <button className="btn btn-primary boton" variant="primary" onClick={this.registrar }
+                          >Registrar</button>
+                        
+                      </div>
             </div>
             )
         

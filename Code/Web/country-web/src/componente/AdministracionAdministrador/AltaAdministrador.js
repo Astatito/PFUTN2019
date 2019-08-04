@@ -159,26 +159,25 @@ class AltaAdministrador extends Component{
 
     render(){
         return(
-            <div className="col-12 jumbotron">
+            <div className="col-md-12 ">
             <div>
-                <div className="col-md-1"></div>
-                <div className="col-md-8 borde">
+                <div className="row">
 
-                    <legend>  Registrar Alta </legend>
-                        <div className = "form-group">
+                    <legend>  Registrar Administrador </legend>
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "Nombre">  Nombre  </label>
                             <input type = "name" className = "form-control"   placeholder = "Name"
                             value={this.state.nombre}
                             onChange={this.ChangeNombre}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "Apellido">  Apellido  </label>
                             <input type = "family-name" className = "form-control"   placeholder = "Surname"
                                     value={this.state.apellido}
                                    onChange= {this.ChangeApellido} />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                         <label for = "Tipo Documento">  Tipo Documento  </label>
                             <Select
                             id = 'documento'
@@ -193,27 +192,27 @@ class AltaAdministrador extends Component{
                                 onChange={this.ChangeSelect.bind(this)}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "NumeroDocumento">  Numero de Documento  </label>
                             <input type = "document" className = "form-control" 
                               placeholder = "Document number"
                               value={this.state.documento}
                               onChange={this.ChangeDocumento}/>
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
                             <input type="date"className = "form-control" name="FechaNacimiento"
                                    step="1" min="1920-01-01"
                                    onChange={this.ChangeFechaNacimiento}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "NumeroCelular">  Legajo  </label>
                             <input type = "tel" className = "form-control"   placeholder = "Mobile number"
                             value={this.state.legajo}
                             onChange={this.ChangeLegajo}/>
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                         <label for = "Country">  Country </label>
                             <Select
                                 id = 'country'
@@ -228,27 +227,27 @@ class AltaAdministrador extends Component{
                                 onChange={this.ChangeSelectCountry.bind(this)}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "NumeroCelular">  Celular  </label>
                             <input type = "tel" className = "form-control"   placeholder = "Mobile number"
                             value={this.state.celular}
                             onChange={this.ChangeCelular}/>
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "exampleInputEmail1">  Dirección de correo electrónico  </label>
                             <input type = "email" className = "form-control" id = "exampleInputEmail1"
                                    aria-describe by = "emailHelp" placeholder = "Enter email"
                                    value={this.state.mail}
                                    onChange={this.ChangeMail}/>
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "exampleInputPassword1">  Contraseña  </label>
                             <input type = "password" className = "form-control" id = "exampleInputPassword1"
                                    placeholder = "Password"
                                    value={this.state.pass}
                                    onChange={this.ChangePass}/>
                         </div>        
-                        <div className = "form-group">
+                        <div className = "col-md-6 flex-container form-group">
                             <label for = "exampleTextarea"> Descripcion  </ label >
                             <textarea className = "form-control" id = "exampleTextarea" rows = "3"
                             value={this.state.descripcion}
@@ -256,13 +255,12 @@ class AltaAdministrador extends Component{
                             > </textarea>
 
                         </div>
-                        <div className="form-group izquierda">
-                            <button className="btn btn-primary" onClick={this.registrar} >Registrar</button>
-                            <Link to="/" type="button" className="btn btn-primary"
-                        >Volver</Link> 
-                        </div>
-
-                </div>
+                    </div>
+                    <div className="form-group izquierda">
+                        <button className="btn btn-primary boton" onClick={this.registrar} >Registrar</button>
+                        <Link to="/" type="button" className="btn btn-primary boton"
+                    >Volver</Link> 
+                    </div>
             </div>
             </div>
             )

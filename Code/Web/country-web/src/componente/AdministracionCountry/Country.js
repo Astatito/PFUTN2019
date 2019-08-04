@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import "../Style/Alta.css";
-import Editar from "../Img/Editar.png"
-import Eliminar from "../Img/Eliminar.png"
 import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
+import ModalEliminar from '../ModalEliminar';
+
 
 
 
@@ -42,7 +42,7 @@ class Country extends Component{
                     <td>{this.celular}</td>
                     <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
                         >Editar</Link> </td>
-                    <td> <button className="btn btn-primary" onClick={this.eliminar} >Eliminar</button> </td>
+                    <td><ModalEliminar nombre='Country' elemento={this.nombre} borrar={this.eliminar} ></ModalEliminar>  </td>
                     </tr>
 
                

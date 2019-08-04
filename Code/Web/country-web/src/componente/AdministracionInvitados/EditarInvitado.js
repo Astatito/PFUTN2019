@@ -37,10 +37,12 @@ class EditarInvitado extends Component{
         this.ChangeFechaNacimiento = this.ChangeFechaNacimiento.bind(this);
         this.ChangeGrupo  = this.ChangeGrupo.bind(this);
         this.ChangeFechas = this.ChangeFechas.bind(this);
+        this.ChangeFechaDesde = this.ChangeFechaDesde.bind(this);
+        this.ChangeFechaHasta = this.ChangeFechaHasta.bind(this);
         this.registrar = this.registrar.bind(this);
         
         const url = this.props.location.pathname.split('/');
-        this.idInvitado  = url[url.length - 1];
+        this.idInvitado  =  url[url.length - 1];
     }
 
     async componentDidMount(){
@@ -78,7 +80,6 @@ class EditarInvitado extends Component{
             apellido: estrella.Apellido,
             estado: estrella.Estado,
             documento: estrella.Documento,
-            tipoDocumento: estrella.TipoDocumento,
             grupo: estrella.Grupo,
             fechaNacimiento: estrella.FechaNacimiento,
             fechaAlta:estrella.FechaAlta,
@@ -90,14 +91,13 @@ class EditarInvitado extends Component{
 
         })
     }
- 
 
-    editInvitado(){
-        var dbRef = Database.collection('Personas')
-        dbRef.doc(this.idInvitado).set({
+   editInvitado(){
+
+             Database.collection('Personas').doc(this.idInvitado).set({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
-            estado: this.state.estado,
+            Estado: this.state.estado,
             TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
             Documento: this.state.documento,
             Grupo: this.state.grupo,
@@ -138,25 +138,64 @@ class EditarInvitado extends Component{
         this.setState({grupo : event.target.value});
     }
   
+    ChangeFechaDesde(event){
+        this.setState({startDate : event.target.value});
+    }
+    ChangeFechaHasta(event){
+        this.setState({endDate : event.target.value});
+    }
 
-    registrar(){
+    registrarIngreso(){
+        Database.collection('Ingresos').doc(this.idInvitado).set({
+            Nombre: this.state.nombre,
+            Apellido: this.state.apellido,
+            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
+            Documento: this.state.documento,
+            Hora: new Date(),
+            IdCountry: this.state.idCountry,
+            IdPropietario: this.state.idPropietario,
+            IdTipoPersona: this.state.idTipoPersona,
+            IdEncargado: Database.doc('Encargados/' + localStorage.getItem('idEncargado'))
+        });  
+    }
+
+    registrarEgreso(){
+        Database.collection('Egresos').doc(this.idInvitado).set({
+            Nombre: this.state.nombre,
+            Apellido: this.state.apellido,
+            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
+            Documento: this.state.documento,
+            Hora: new Date(),
+            IdCountry: this.state.idCountry,
+            IdPropietario: this.state.idPropietario,
+            IdTipoPersona: this.state.idTipoPersona,
+            IdEncargado: Database.doc('Encargados/' + localStorage.getItem('idEncargado'))
+        });  
+    }
+
+    async registrar(){
         //Agregar validaciones para no registrar cualquier gilada
+        
         if(true){
-            this.editInvitado();
+            await this.editInvitado();
+            if (localStorage.getItem('tipoUsuario') === 'Encargado' && localStorage.getItem('editarInvitado')==='Ingreso'){
+                this.registrarIngreso()
+            } else if(localStorage.getItem('tipoUsuario') === 'Encargado' && localStorage.getItem('editarInvitado')==='Egreso'){
+                this.registrarEgreso()
 
         }
     }
+}
 
 
     render(){
         return(
-            <div className="col-12 jumbotron">
+            <div className="col-md-12">
             <div>
-                <div className="col-md-1"></div>
-                <div className="col-md-8 borde">
+                <div className="row">
 
-                    <legend>  Registrar Invitado </legend>
-                        <div className = "form-group">
+                   <legend>Editar Invitado</legend>
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "Nombre">  Grupo  </label>
                             <input type = "name" className = "form-control"   placeholder = "Name"
                             value = {this.state.grupo}
@@ -164,25 +203,45 @@ class EditarInvitado extends Component{
                             disabled={!this.esPropietario}
                             />
                         </div>
-                        <div className = "form-group">
+                        
+                        <div className = "col-md-3  flex-container form-group " >
+                            <label >  Fecha Desde   </label>
+                           <input type="date"className = "form-control" name="FechaDesde"
+                         step="1" min="1920-01-01" value={this.state.startDate}
+                         onChange={this.ChangeFechaDesde}
+                         disabled={!this.esPropietario}
+                        />
+                        </div>
+                        <div className = "col-md-3  flex-container form-group " >
+                        <label >  Fecha Hasta  </label>
+                        <input type="date"className = "form-control" name="FechaHasta"
+                        step="1" min="1920-01-01" value={this.state.endDate}
+                        disabled={!this.esPropietario}
+                        onChange={this.ChangeFechaHasta}
+                             />
+                        </div>
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "Nombre">  Nombre  </label>
                             <input type = "name" className = "form-control"   placeholder = "Name"
                             value = {this.state.nombre}
                             onChange={this.ChangeNombre}
+                            disabled={this.esPropietario}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "Apellido">  Apellido  </label>
                             <input type = "family-name" className = "form-control"   placeholder = "Surname"
                                    value = {this.state.apellido}
-                                   onChange= {this.ChangeApellido} />
+                                   onChange= {this.ChangeApellido} 
+                                   disabled={this.esPropietario}/>
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                         <label for = "TipoDocumento">  Tipo Documento  </label>
                             <Select
                                 className="select-documento"
                                 classNamePrefix="select"
-                                isDisabled={!this.esPropietario}
+                                value={this.state.tipoDocumento}
+                                isDisabled={true}
                                 isLoading={false}
                                 isClearable={true}
                                 isSearchable={true}
@@ -190,39 +249,31 @@ class EditarInvitado extends Component{
                                 onChange={this.ChangeSelect.bind(this)}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "NumeroDocumento">  Numero de Documento  </label>
                             <input type = "document" className = "form-control"   placeholder = "Document number"
                             value = {this.state.documento}
                             onChange={this.ChangeDocumento}
-                            disabled={!this.esPropietario}/>
+                            disabled={true}/>
                         </div>
-                        <div className = "form-group " hidden={!this.esPropietario}>
-                            <label >  Fecha Desde - Fecha Hasta  </label>
-                            <ReactLightCalendar startDate={this.state.startDate} endDate={this.state.endDate} 
-                            onChange={this.ChangeFechas} range displayTime 
-                         />
-                        </div>
-                        <div hidden={this.esPropietario}>
-                        <label >  Fecha Desde: {this.state.startDate}  </label>
-                        <label >  Fecha Hasta: {this.state.endDate}  </label>
-                        </div>
-
-                        <div className = "form-group">
-                            <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
+                        <div className = "col-md-6  flex-container form-group">
+                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
                             <input type="date"className = "form-control" name="FechaNacimiento"
-                                   step="1" min="1920-01-01"
+                                   step="1" min="1920-01-01" 
+                                   value = {this.state.fechaNacimiento}
                                    onChange={this.ChangeFechaNacimiento}
+                                   disabled={this.esPropietario}
                             />
                         </div>
-                        <div className="form-group izquierda">
-                            <button className="btn btn-primary" onClick={this.registrar} >Registrar</button>
-                            <Link to="/" type="button" className="btn btn-primary"
-                        >Volver</Link> 
-                        </div>
-
-                </div>
-            </div>
+                    </div>
+                    <div className="form-group izquierda">
+                        <Link to='/' type="button" className="btn boton btn-primary" variant="secondary" onClick={this.props.cerrar}
+                            >Volver</Link> 
+                    
+                        <button className="btn boton btn-primary" variant="primary" onClick={this.registrar }
+                            >Registrar</button>
+                    </div>
+              </div>
             </div>
             )
         

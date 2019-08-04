@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import "../Style/Alta.css"
-
-import EditarInvitado from '../AdministracionInvitados/EditarInvitado';
+import PrincialIngreso from '../Ingresos/PrincipalIngreso';
+import PrincialEgreso from '../Egresos/PrincipalEgreso'
 
 
 
@@ -15,7 +15,8 @@ class InicioAdministrador extends Component{
     render(){
         return(
             <div className="app container-fluid ">
-                <EditarInvitado></EditarInvitado>
+                <PrincialIngreso></PrincialIngreso>
+                <PrincialEgreso></PrincialEgreso>
             </div>
 
     )}

@@ -5,3 +5,9 @@
   .izquierda {
     text-align: end;
   }
+  .final{
+    align-content: space-around;  
+  }
+.derecha{
+  align-content: flex-start;
+}

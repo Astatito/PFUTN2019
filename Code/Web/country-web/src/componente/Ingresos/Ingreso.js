@@ -3,31 +3,29 @@ import "../Style/Alta.css";
 import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
 import ModalEliminar from '../ModalEliminar';
+import { strict } from 'assert';
 
-
-
-
-
-class Encargado extends Component{
+class Ingreso extends Component{
 
     constructor(props){
         super(props);
-        this.idEncargado = props.idEncargado;
+        this.idIngreso = props.idIngreso;
         this.nombre = props.nombre;
         this.apellido = props.apellido;
-        this.legajo = props.legajo;
+        this.persona = props.persona;
         this.documento = props.documento;
-        this.celular = props.celular;
-        this.urlEditar = '/editarEncargado/' + props.idEncargado;
+        this.descripcion = props.descripcion;
+        this.hora = props.hora;
+        this.urlEditar = '/editarIngreso/' + props.idIngreso;
         this.eliminar = this.eliminar.bind(this);
         
     }
 
     eliminar(){
         console.log(this.nombre)
-        Database.collection('Encargados').doc(this.idEncargado).delete()
+        Database.collection('Ingreso').doc(this.idIngreso).delete()
             .then(
-                this.props.act(this.idEncargado)
+                this.props.act(this.idIngreso)
             )
             .catch(err => {
                 //En caso de error, hacer esto...
@@ -40,12 +38,11 @@ class Encargado extends Component{
 
             <tr class="table-light">
                 <th scope="row">{this.nombre}, {this.apellido}</th>
-                <td>{this.documento}</td>
-                <td> {this.legajo}</td>
-                <td>{this.celular}</td>
-                <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
-                >Editar</Link> </td>
-                <td><ModalEliminar nombre='Encargado' elemento={this.nombre} borrar={this.eliminar} ></ModalEliminar> </td>
+                <td> {this.documento}</td>
+                <td>{this.persona}</td>
+                <td>{Date(this.hora).toLocaleString()}</td>
+                <td> {this.descripcion!=''&&this.descripcion!= undefined?'Si':'-'}</td>
+                <td><ModalEliminar nombre='Ingreso' elemento={this.nombre} borrar={this.eliminar} ></ModalEliminar> </td>
             </tr>
 
 
@@ -53,4 +50,4 @@ class Encargado extends Component{
     }
 }
 
-export default Encargado;
+export default Ingreso;

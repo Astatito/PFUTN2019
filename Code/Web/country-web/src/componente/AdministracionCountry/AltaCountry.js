@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import "../Style/Alta.css";
 import Encabezado from "../Encabezado/Encabezado";
 import {Database} from '../../config/config';
+import {Link} from 'react-router-dom'
+
 
 class AltaCountry extends Component{
 				
@@ -72,7 +74,7 @@ ChangeDescripcion(event) {
 							titular: '',
 							celular: '',
 							descripcion: '',
-										resultado: 'Se registro con exito',
+							resultado: 'Se registro con exito',
 						})
 		}
 }
@@ -82,57 +84,66 @@ ChangeDescripcion(event) {
         return(
 
             <div className="col-12">
-                {/*<Encabezado></Encabezado>*/}
-            <div>
+
             <div className="col-md-12 ">
-												<legend>  Registrar Alta de un Barrio </legend>
-                        <div className = "form-group">
-                            <label for = "Nombre">  Nombre del Barrio </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name Service"
-                            value={this.state.nombre}
-                            onChange ={this.ChangeNombre}/>
+			<div className="row">
+				<legend>  Registrar Alta de un Barrio </legend>
+					<div className = "col-md-6  flex-container form-group">
+						<label for = "Nombre">  Nombre del Barrio </label>
+						<input type = "name" className = "form-control"   placeholder = "Name Country"
+						value={this.state.nombre}
+						onChange ={this.ChangeNombre}/>
+					</div>
+					<div className = "col-md-6  flex-container form-group">
+						<label for = "Nombre">  Titular </label>
+						<input type = "name" className = "form-control"   placeholder = "Name Headline"
+						value={this.state.titular}
+						onChange ={this.ChangeTitular}/>
+					</div>
+					<div className = "col-md-6  flex-container form-group">
+						<label for = "Nombre"> Calle </label>
+						<input type = "name" className = "form-control"   placeholder = "Street"
+						value={this.state.calle}
+						onChange ={this.ChangeCalle}/>
+					</div>
+					<div className = "col-md-6  flex-container form-group">
+						<label for = "Nombre">  Celular </label>
+						<input type = "name" className = "form-control"   placeholder = "Mobile"
+						value={this.state.celular}
+						onChange ={this.ChangeCelular}/>
+					</div>
+					<div className = "col-md-6  flex-container form-group">
+						<label for = "Nombre">  Numero </label>
+						<input type = "name" className = "form-control"   placeholder = "Number"
+						value={this.state.numero}
+						onChange ={this.ChangeNumero}/>
+					</div>
+					
+					
+					<div className = "col-md-6  flex-container form-group">
+						<label for = "Nombre">  Descripcion </label>
+						<textarea className = "form-control" id = "exampleTextarea" rows = "3"  placeholder = "Description"
+                             value = {this.state.descripcion}
+                             onChange={this.ChangeDescripcion}> </textarea>
                         </div>
-                        <div className = "form-group">
-                            <label for = "Nombre"> Calle </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name Service"
-                            value={this.state.calle}
-                            onChange ={this.ChangeCalle}/>
-                        </div>
-																								<div className = "form-group">
-                            <label for = "Nombre">  Numero </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name Service"
-                            value={this.state.numero}
-                            onChange ={this.ChangeNumero}/>
-                        </div>
-																								<div className = "form-group">
-                            <label for = "Nombre">  Titular </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name Service"
-                            value={this.state.titular}
-                            onChange ={this.ChangeTitular}/>
-                        </div>
-																								<div className = "form-group">
-                            <label for = "Nombre">  Celular </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name Service"
-                            value={this.state.celular}
-                            onChange ={this.ChangeCelular}/>
-                        </div>
-																								<div className = "form-group">
-                            <label for = "Nombre">  Descripcion </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name Service"
-                            value={this.state.descripcion}
-                            onChange ={this.ChangeDescripcion}/>
-                        </div>
-                        <div>
-                            <span>
-                                <strong>{this.state.resultado}</strong>
-                            </span>
-                        </div>
-            <div className="form-group izquierda">
-                <button className="btn btn-primary" onClick= {this.registrar} >Registrar</button>                  
-            </div>
-            </div>
-            </div>
+					<div>
+						<span>
+							<strong>{this.state.resultado}</strong>
+						</span>
+					</div>
+          </div>
+		  	<div>
+				<span>
+					<strong>{this.state.resultado}</strong>
+				</span>
+			</div>
+          	<div className="form-group izquierda">
+			      <button className="btn btn-primary boton" onClick= {this.registrar} >Registrar</button> 
+            <Link to="/" type="button" className="btn btn-primary boton">Volver</Link>                 
+		    </div>
         </div>
+		
+      </div>
         
         );
     }

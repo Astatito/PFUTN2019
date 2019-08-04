@@ -25,7 +25,8 @@ class Login extends Component{
           user: null, 
           result:false,
           tipo: false,
-          tipoUsuario:''
+          tipoUsuario:'',
+          resultado: '',
         };
         this.log = false;
         this.authListener = this.authListener.bind(this);
@@ -62,6 +63,7 @@ class Login extends Component{
         })
         .catch(err => {
           //En caso de error, hacer esto...
+          
         })
       }
       
@@ -91,6 +93,7 @@ class Login extends Component{
       .catch(() => {
           
         this.setState({result: false})
+        this.setState({resultado : 'Fallo de autentificacion' })
       })
     }
   }
@@ -98,7 +101,6 @@ class Login extends Component{
     inicio(){
       
       const temp = localStorage.getItem('tipoUsuario')
-      console.log('tipoU :', temp);
       if(this.state.tipoUsuario === 'Root' || temp === 'Root'){
         return (<InicioRoot/>   )
       } else if(this.state.tipoUsuario === 'Administrador'|| temp === 'Administrador'){
@@ -143,7 +145,7 @@ class Login extends Component{
                      hidden={false}
                     />   
                 </div>
-
+                <div><label>{this.state.resultado}</label></div>
                 <div className="form-group izquierda">
                   
                     <button className="btn btn-primary"

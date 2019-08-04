@@ -36,7 +36,7 @@ class ModalEliminar extends Component{
                 <Modal.Header closeButton>
                 <Modal.Title>Eliminar {this.nombre}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>¿Esta seguro de eliminar el servicio "{this.elemento}" ? </Modal.Body>
+                <Modal.Body>¿Esta seguro de eliminar el {this.nombre.toLowerCase()} "{this.elemento}" ? </Modal.Body>
                 <Modal.Footer>
                 <button variant="secondary" onClick={handleClose} class="btn btn-danger">
                     Cancelar

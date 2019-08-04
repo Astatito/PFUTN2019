@@ -53,9 +53,9 @@ class Encabezado extends Component{
                <div className = "collapse navbar-collapse izquierda" id = "navbarColor01">
                    <div className = " col-12 izquierda">
                        {/*<label htmlFor="">{alert(localStorage.getItem('user2'))}</label>*/}
-                       <button onClick={this.logout} className='btn btn-primary izquierda'
-                       hidden={false}
-                       >Close</button>
+                       <Link to='/' onClick={this.logout} className='btn btn-primary izquierda'
+                       hidden={localStorage.getItem('user')==undefined}
+                       >Close</Link>
                    </div>
                </div>
             </nav>

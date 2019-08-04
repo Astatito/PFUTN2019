@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import "../Style/Alta.css";
 import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
+import ModalEliminar from '../ModalEliminar';
+
 
 
 
@@ -54,7 +56,7 @@ class Administrador extends Component{
 
                 <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
                 >Editar</Link> </td>
-                <td> <button className="btn btn-primary" onClick={this.eliminar} >Eliminar</button> </td>
+                <td><ModalEliminar nombre='Administrador' elemento={this.nombre} borrar={this.eliminar} ></ModalEliminar></td>
             </tr>
 
 

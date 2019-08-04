@@ -90,21 +90,17 @@ class AltaServicio extends Component{
     render(){
 
         return(
-            <div className="col-12">
-                
-            <div>
-            <div className="col-md-12 ">
-            
-            <div className="row">
+            <div className="col-12 ">
+                <div className="row">
                 <legend><h1>  Registrar Alta</h1> </legend>
-                    <div className = "col-md-12 flex-container form-group">
+                    <div className = "col-md-6  flex-container form-group">
                         <label for = "NombreServicio"> Nombre del Servicio  </label>
-                        <input  type = "name" className = "col-md-6 form-control"  
+                        <input  type = "name" className = "form-control"  
                          placeholder = "Name Service"
                          value={this.state.nombre}
                          onChange={this.ChangeNombre}/>
                     </div>
-                    <div className = "col-md-12 flex-container form-group">
+                    <div className = "col-md-6 flex-container form-group">
                         <label for = "FechaNacimiento">  Dias disponibles  </label>
                         <div >
                          <label><input  id='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDiasDisponible.bind(this)} />Lun </label>
@@ -116,7 +112,7 @@ class AltaServicio extends Component{
                         <label><input id='6' value="Dom" type="checkbox" checked={this.state.dias[6] === 'Dom'} onChange={this.ChangeDiasDisponible.bind(this)} />Dom </label>
                         </div>
                     </div>
-                    <fieldset className = "form-group">
+                    <fieldset className = "col-md-6 flex-container form-group">
                             <legend>  Estado  </legend>
                                 <div className = "form-check">
                                     <label className = "form-check-label">
@@ -134,18 +130,18 @@ class AltaServicio extends Component{
                                     </label>
                                 </div>
                         </fieldset>
-                    <div className = "col-md-12 flex-container form-group">
+                    <div className = "col-md-6 flex-container form-group">
                         <label for = "exampleTextarea"> Descripcion  </ label >
-                        <textarea className = "col-md-6 form-control" id = "exampleTextarea" rows = "3"
+                        <textarea className = "form-control" id = "exampleTextarea" rows = "3"
                          value={this.state.descripcion}
                          onChange={this.ChangeDescripcion}> </textarea>
                     </div>
                 </div>
             
             <div className="form-group izquierda">
-                <button className="btn btn-primary" onClick={this.registrar}>Registrar</button>                  
-            </div>
-            </div>
+                <button className="btn btn-primary boton" onClick={this.registrar}>Registrar</button>                  
+                <Link to="/" type="button" className="btn btn-primary boton"
+                >Volver</Link> 
             </div>
         </div>
         

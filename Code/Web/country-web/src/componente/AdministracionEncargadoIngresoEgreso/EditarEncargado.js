@@ -150,23 +150,22 @@ class EditarEncargado extends Component{
         return(
             <div className="col-12 jumbotron">
                 <div>
-                    <div className="col-md-1"></div>
-                    <div className="col-md-8 borde">
+                    <div className="row">
                         <legend> Editar Encargados </legend>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "Nombre">  Nombre  </label>
                             <input type = "name" className = "form-control"   placeholder = "Name"
                                    value={this.state.nombre}
                                    onChange={this.ChangeNombre}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "Apellido">  Apellido  </label>
                             <input type = "family-name" className = "form-control"   placeholder = "Surname"
                                    value={this.state.apellido}
                                    onChange= {this.ChangeApellido} />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                         <label for = "TipoDocumento">  Tipo de Documento  </label>
                             <Select
                                 className="select-documento"
@@ -180,13 +179,13 @@ class EditarEncargado extends Component{
                                 onChange={this.ChangeSelect.bind(this)}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "NumeroDocumento">  Numero de Documento  </label>
                             <input type = "document" className = "form-control"   placeholder = "Document number"
                             value={this.state.documento}
                             onChange= {this.ChangeDocumento}/>
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
                             <input type="date"className = "form-control" name="FechaNacimiento"
                                    step="1" min="1920-01-01"
@@ -194,31 +193,29 @@ class EditarEncargado extends Component{
                                    onChange={this.ChangeFechaNacimiento}
                             />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "NumeroTelefono">  Legajo  </label>
                             <input type = "tel" className = "form-control"   placeholder = "Landline number"
                             value={this.state.legajo}
                             onChange= {this.ChangeLegajo} />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "NumeroCelular">  Celular  </label>
                             <input type = "tel" className = "form-control"   placeholder = "Mobile number"
                                    value={this.state.celular}
                                    onChange= {this.ChangeCelular} />
                         </div>
-                        <div className = "form-group">
+                        <div className = "col-md-6  flex-container form-group">
                             <label for = "exampleTextarea"> Descripcion  </ label >
                             <textarea className = "form-control" id = "exampleTextarea" rows = "3"
                             value={this.state.descripcion}
                             onChange= {this.ChangeDescripcion} > </textarea>
                         </div>
-
-                        <div className="form-group izquierda">
-                        <Link to="/" type="button" className="btn btn-primary"
+                    </div>
+                    <div className="form-group izquierda">
+                        <Link to="/" type="button" className="btn btn-primary boton"
                         >Volver</Link> 
-                            <button className="btn btn-primary" onClick={this.registrar} >Registrar</button>
-                        </div>
-
+                        <button className="btn btn-primary boton" onClick={this.registrar} >Registrar</button>
                     </div>
                 </div>
             </div>

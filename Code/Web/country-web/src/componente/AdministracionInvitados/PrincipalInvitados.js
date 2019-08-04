@@ -3,6 +3,8 @@ import "../Style/Alta.css";
 import { Database } from "../../config/config";
 import { Link } from 'react-router-dom'
 import Invitado from "./Invitado";
+import AltaInvitado from './AltaInvitado'
+import Modal from 'react-bootstrap/Modal'
 
 
 class PrincipalInvitados extends Component{
@@ -13,8 +15,10 @@ class PrincipalInvitados extends Component{
             invitados: [],
             idPropietario: '',
             idCountry: '',
+            show:false,
         }
         this.actualizar = this.actualizar.bind(this)
+        this.agregarInvitado = this.agregarInvitado.bind(this)
     }
 
     async componentDidMount(){
@@ -40,8 +44,11 @@ class PrincipalInvitados extends Component{
         });
         this.setState({invitados});
 
-    }
+    } 
 
+    agregarInvitado(){
+      
+    }
     actualizar(id){
         const {invitados}=this.state;
         this.state.invitados.map( valor => {
@@ -53,6 +60,10 @@ class PrincipalInvitados extends Component{
     }
 
     render(){
+        const {show} = this.state;
+        
+        const handleClose = () => this.setState({show:false}); 
+        const handleShow = () => this.setState({show: true});
         return(
             <div className="col-12">
 
@@ -63,7 +74,17 @@ class PrincipalInvitados extends Component{
                     </div>
                     <div className="col-5 izquierda">
                         <input className = "mr-sm-2 borde-button" control de formulario  tipo = "texto" placeholder = "Buscar"/>
-                        <Link to='/altaInvitado' type="button" className="btn btn-primary" type="submit" >Nuevo Invitado</Link>
+                        <button  type="button" className="btn btn-primary"  
+                        onClick={handleShow}
+                        >Nuevo Invitado</button>
+                        <Modal show={show} onHide={handleClose}>
+                            <Modal.Header closeButton>
+                            <Modal.Title>Nuevo Invitado</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body><AltaInvitado cerrar={handleClose} ></AltaInvitado> </Modal.Body>
+                
+                        </Modal>
+                        
                     </div>
 
                 </div>
@@ -78,6 +99,7 @@ class PrincipalInvitados extends Component{
                         <table className="table table-hover  ">
                             <thead >
                             <tr>
+                                <th scope="col">Documento</th>
                                 <th scope="col">Apellido y Nombre </th>
                                 <th scope="col">Grupo</th>
                                 <th scope="col">Estado</th>
@@ -97,6 +119,7 @@ class PrincipalInvitados extends Component{
                                                 nombre = {invitados[0].Nombre}
                                                 apellido = {invitados[0].Apellido}
                                                 estado = {invitados[0].Estado}
+                                                documento = {invitados[0].Documento}
                                                 act = {this.actualizar}
                                             >
                                             </Invitado>
