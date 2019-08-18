@@ -3,6 +3,7 @@ import "../Style/Alta.css";
 import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
 import ModalEliminar from '../ModalEliminar';
+import moment from 'moment';
 
 class Egresos extends Component{
 
@@ -34,7 +35,8 @@ class Egresos extends Component{
                 <th scope="row">{this.nombre}, {this.apellido}</th>
                 <td> {this.documento}</td>
                 <td>{this.persona}</td>
-                <td>{Date(this.hora).toLocaleString()}</td>
+                {/* <td>{Date(this.hora).toLocaleString()}</td> */}
+                <td>{moment(Date(this.hora).toLocaleString()).format('HH:mm DD/MM/YYYY')}</td>
                 <td>{this.descripcion!='' && this.descripcion!= undefined?'Si':'-'}</td>
                 <td><ModalEliminar nombre='Egreso' elemento={this.nombre} borrar={this.cancelar} ></ModalEliminar> </td>
             </tr>
