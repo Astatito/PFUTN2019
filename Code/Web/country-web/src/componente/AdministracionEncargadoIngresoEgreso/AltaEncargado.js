@@ -4,8 +4,6 @@ import "../Style/Alta.css";
 import {Link} from 'react-router-dom'
 import {Database, Firebase} from "../../config/config";
 
-//https://react-select.com/home
-//https://firebase.google.com/docs/auth/web/manage-users#create_a_user
 
 class AltaEncargado extends Component{
 
@@ -52,22 +50,12 @@ class AltaEncargado extends Component{
             });
         });
         this.setState({tipoD});
-        await Database.collection('Administradores').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                        this.state.idCountry = doc.data().IdCountry
-                }
-            });
-        });
-        
-        
-        
     }
 
 
     addEncargado(){
-        Database.collection('Encargados').add({
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Encargados').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Legajo: this.state.legajo,

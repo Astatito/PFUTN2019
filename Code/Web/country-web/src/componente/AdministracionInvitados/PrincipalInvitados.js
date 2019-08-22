@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import "../Style/Alta.css";
 import { Database } from "../../config/config";
-import { Link } from 'react-router-dom'
 import Invitado from "./Invitado";
 import AltaInvitado from './AltaInvitado'
 import Modal from 'react-bootstrap/Modal'
@@ -18,37 +17,24 @@ class PrincipalInvitados extends Component{
             show:false,
         }
         this.actualizar = this.actualizar.bind(this)
-        this.agregarInvitado = this.agregarInvitado.bind(this)
     }
 
     async componentDidMount(){
         const { invitados } = this.state;
-        await Database.collection('Personas').get().then(querySnapshot => {
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').doc(localStorage.getItem('idPersona'))
+        .collection('Invitados').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                    this.state.idCountry = doc.data().IdCountry
-                    this.state.idPropietario = doc.id
-                    
-                }
-            });
-        })
-        await Database.collection('Personas').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                if(doc.data().IdTipoPersona.id === 'Invitado'&& 
-                doc.data().IdPropietario.id === this.state.idPropietario){
+                
                 this.state.invitados.push(
                     [doc.data(), doc.id]
-                );console.log('object :', doc.id);
-            }
+                )
+            })
             });
-        });
         this.setState({invitados});
-
     } 
+    
 
-    agregarInvitado(){
-      
-    }
     actualizar(id){
         const {invitados}=this.state;
         this.state.invitados.map( valor => {
@@ -77,7 +63,10 @@ class PrincipalInvitados extends Component{
                         <button  type="button" className="btn btn-primary"  
                         onClick={handleShow}
                         >Nuevo Invitado</button>
-                        <Modal show={show} onHide={handleClose}>
+                        <Modal show={show} onHide={handleClose}
+                         size="lg"
+                         aria-labelledby="contained-modal-title-vcenter"
+                         centered>
                             <Modal.Header closeButton>
                             <Modal.Title>Nuevo Invitado</Modal.Title>
                             </Modal.Header>

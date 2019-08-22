@@ -60,19 +60,15 @@ class AltaInvitado extends Component{
             });
         });
         this.setState({tipoD});
-        await Database.collection('Personas').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                    this.state.idCountry = doc.data().IdCountry
-                    this.state.idPropietario = doc.id
-                }
-            });
-        })
+        this.setState({idPropietario : localStorage.getItem('idPersona')})
+       
     }
  
 
     addInvitado(){
-        Database.collection('Personas').add({
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').doc(this.state.idPropietario)
+        .collection('Invitados').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Estado: this.state.estado,
@@ -84,8 +80,7 @@ class AltaInvitado extends Component{
             FechaDesde: this.state.startDate,
             FechaHasta: this.state.endDate,
             IdCountry: this.state.idCountry,
-            IdPropietario: Database.doc('Personas/' + this.state.idPropietario),
-            IdTipoPersona: Database.doc('TipoPersona/Invitado'),
+            IdPropietario: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Propietarios/' + this.state.idPropietario),
         });
 
     }
@@ -126,14 +121,12 @@ class AltaInvitado extends Component{
         this.setState({grupo : event.target.value});
     }
 
-
-
     buscarPropietario(){
-        Database.collection('Personas').get().then(querySnapshot => {
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 if(doc.data().Documento === this.state.documento && 
-                doc.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value
-                && doc.data().IdTipoPersona.id === 'Propietario'){
+                doc.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value){
                         this.state.idPropietario =  doc.id
                         this.state.idCountry = doc.data().IdCountry
                         this.setState({
@@ -143,19 +136,17 @@ class AltaInvitado extends Component{
     })}
 
     registrarIngreso(){
-        Database.collection('Ingresos').add({
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Ingresos').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumentoInvitado.valueOf().value),
             Documento: this.state.documentoInvitado,
             Hora: new Date(),
-            IdCountry: this.state.idCountry,
-            IdPropietario: Database.doc('Personas/' + this.state.idPropietario),
-            IdTipoPersona: Database.doc('TipoPersona/Invitado'),
-            IdEncargado: Database.doc('Encargados/' + localStorage.getItem('idEncargado')),
+            IdPropietario: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Propietarios/' + this.state.idPropietario),
+            IdEncargado: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Encargados/' + localStorage.getItem('idPersona')),
             Estado: true,
             Egreso: false,
-
         });  
     }
 
@@ -167,8 +158,7 @@ class AltaInvitado extends Component{
             this.props.cerrar();
         }else{
             this.registrarIngreso()
-        }
-        }
+        }}
     }
 
 
@@ -250,7 +240,6 @@ class AltaInvitado extends Component{
                             <input type = "family-name" className = "form-control"   placeholder = "Surname"
                                    value = {this.state.apellido}
                                    onChange= {this.ChangeApellido} 
-                                   
                                    />
                         </div>
                        
@@ -276,15 +265,6 @@ class AltaInvitado extends Component{
                   
                             />
                         </div>
-                        
-                        {/* <div className = "col-md-6  flex-container form-group" >
-                            <label >  Fecha Desde - Fecha Hasta  </label>
-                            <div style={{height: '400px'}}>
-                            <RangeDatePicker />
-                            </div>
-                        </div> */}
-                        
-
                         <div className = "col-md-6  flex-container form-group" hidden={this.esPropietario}>
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
                             <input type="date"className = "form-control" name="FechaNacimiento"
@@ -307,9 +287,6 @@ class AltaInvitado extends Component{
                         
                       </div>
             </div>
-            )
-        
-
-    }
+            )}
 }
 export default AltaInvitado;

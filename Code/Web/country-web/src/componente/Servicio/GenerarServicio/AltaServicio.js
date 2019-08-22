@@ -35,8 +35,7 @@ class AltaServicio extends Component{
     }
 
     addServicio(){
-        var dbRef = Database.collection('Servicios')
-        dbRef.add({
+        Database.collection('Country').doc(localStorage.getItem('idCountry')).collection('Servicios').add({
             Nombre: this.state.nombre,
             Estado: this.state.estado=== 'Si'?true:false,
             Disponibilidad: this.state.dias,

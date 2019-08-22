@@ -6,7 +6,6 @@ import Propietario from "./Propietario";
 
 
 class PrincipalPropietario extends Component{
-
     constructor(){
         super();
         this.state= {
@@ -18,28 +17,14 @@ class PrincipalPropietario extends Component{
 
     async componentDidMount(){
         const { propietarios } = this.state;
-        console.log('usuario :', localStorage.getItem('mail'));
-        await Database.collection('Administradores').get().then(querySnapshot => {
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-            
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                    this.state.idCountry = doc.data().IdCountry.id
-                }
-            });
-        });
-        await Database.collection('Personas').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                
-                if(doc.data().IdCountry.id == this.state.idCountry && 
-                doc.data().IdTipoPersona.id==='Propietario'){
                 this.state.propietarios.push(
                     [doc.data(), doc.id] 
-                )}
-
-            });
+                )})
         });
         this.setState({propietarios});
-        console.log(this.state.propietarios);
     }
 
     actualizar(id){

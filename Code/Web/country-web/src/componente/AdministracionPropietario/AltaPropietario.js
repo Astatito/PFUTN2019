@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import "../Style/Alta.css";
-
 import {Link} from 'react-router-dom'
 import {Database, Firebase} from "../../config/config";
 
-//https://react-select.com/home
-//https://firebase.google.com/docs/auth/web/manage-users#create_a_user
-// https://firebase.google.com/docs/admin/setup
-
 class AltaPropietario extends Component{
-
     constructor(){
         super();
         this.state = {
@@ -50,32 +44,17 @@ class AltaPropietario extends Component{
         const { tipoD } = this.state;
         await Database.collection('TipoDocumento').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-
                 this.state.tipoD.push(
                     {value: doc.id, label: doc.data().Nombre}
                 )
-
             });
         });
-        this.setState({tipoD});
-        await Database.collection('Administradores').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                console.log(' :', doc.data().Usuario, localStorage.getItem('mail'));
-
-                if(doc.data().Usuario == localStorage.getItem('mail')){
-                    console.log(' :', doc.data());
-                    this.state.idCountry = doc.data().IdCountry
-                }
-            });
-        })
-
-        
+        this.setState({tipoD})
     }
- 
 
     addPropietario(){
-        var dbRef = Database.collection('Personas')
-        dbRef.add({
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Titular: this.state.titular=== 'Si'?true:false,

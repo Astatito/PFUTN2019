@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import "../Style/Alta.css";
-import Encabezado from "../Encabezado/Encabezado";
-import {Database} from '../../config/config';
-import {Link} from 'react-router-dom'
+import { Database } from '../../config/config';
+import { Link } from 'react-router-dom'
 
 
 class AltaCountry extends Component{
@@ -30,16 +29,15 @@ class AltaCountry extends Component{
 		}
 
 
-		addCountry(){
-			var dbRef = Database.collection('Barrios')
-			dbRef.add({
-				Nombre: this.state.nombre,
-				Calle: this.state.calle,
-				Numero: this.state.numero,
-				Titular: this.state.titular,
-				Celular: this.state.celular,
-				Descripcion: this.state.descripcion,
-			});
+	addCountry(){
+		Database.collection('Country').add({
+			Nombre: this.state.nombre,
+			Calle: this.state.calle,
+			Numero: this.state.numero,
+			Titular: this.state.titular,
+			Celular: this.state.celular,
+			Descripcion: this.state.descripcion,
+		});
 
 	}
 
@@ -63,28 +61,26 @@ ChangeDescripcion(event) {
 	this.setState({descripcion : event.target.value});
 }	
 
-	registrar(){
-		//Agregar validaciones para no registrar cualquier gilada
-		if(true){
-						this.addCountry();
-						this.setState({
-							nombre: '',
-							calle: '',
-							numero: '',
-							titular: '',
-							celular: '',
-							descripcion: '',
-							resultado: 'Se registro con exito',
-						})
-		}
+registrar(){
+	//Agregar validaciones para no registrar cualquier gilada
+	if(true){
+		this.addCountry();
+		this.setState({
+			nombre: '',
+			calle: '',
+			numero: '',
+			titular: '',
+			celular: '',
+			descripcion: '',
+			resultado: 'Se registro con exito',
+		})
+	}
 }
 
 
     render(){
         return(
-
             <div className="col-12">
-
             <div className="col-md-12 ">
 			<div className="row">
 				<legend>  Registrar Alta de un Barrio </legend>

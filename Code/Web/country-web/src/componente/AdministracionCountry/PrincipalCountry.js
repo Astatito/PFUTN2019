@@ -18,21 +18,15 @@ class PrincipalCountry extends Component{
 
     async componentDidMount(){
         const { barrios } = this.state;
-        await Database.collection('Barrios').get().then(querySnapshot => {
+        await Database.collection('Country').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-
                 this.state.barrios.push(
-                   
                     [doc.data(),doc.id]
-                   
                 )
-               
             });
         });
         this.setState({barrios});
-        console.log(this.state.barrios);
     }
-
 
     actualizar(id){
         const {barrios}=this.state;
@@ -49,7 +43,6 @@ class PrincipalCountry extends Component{
     render(){
         return(          
             <div className="col-12">
-           
              <div className="row ">
                  <div className="col-1"></div>
                     <div className="col-5">
@@ -59,11 +52,9 @@ class PrincipalCountry extends Component{
                         <input className = "mr-sm-2 borde-button" control de formulario  tipo = "texto" placeholder = "Buscar"/>     
                         <Link to='/altaCountry' type="button" className="btn btn-primary" type="submit" >Nuevo Country</Link>
                     </div>
-                    
              </div>
                    
             <div className="row">
-                
             <div className="col-md-1"></div>
             <div className="col-md-10 ">
             

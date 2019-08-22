@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import "../Style/Alta.css";
-import Encabezado from "../Encabezado/Encabezado";
 import {Database} from '../../config/config';
 import {Link} from 'react-router-dom'
 
@@ -33,7 +32,7 @@ class EditarCountry extends Component{
 
     async componentDidMount(){
         const { barrio } = this.state;
-        await Database.collection('Barrios').doc(this.idBarrio).get()
+        await Database.collection('Country').doc(this.idBarrio).get()
             .then(doc => {
                 if (doc.exists) {
                     this.state.barrio.push(doc.data());
@@ -58,8 +57,7 @@ class EditarCountry extends Component{
 
     editCountry(){
         
-        var dbRef = Database.collection('Barrios')
-        dbRef.doc(this.idBarrio).set({
+         Database.collection('Country').doc(this.idBarrio).set({
             Nombre: this.state.nombre,
             Calle: this.state.calle,
             Numero: this.state.numero,
@@ -93,16 +91,16 @@ ChangeDescripcion(event) {
 	registrar(){
 		//Agregar validaciones para no registrar cualquier gilada
 		if(true){
-						this.editCountry();
-						this.setState({
-							nombre: '',
-							calle: '',
-							numero: '',
-							titular: '',
-							celular: '',
-							descripcion: '',
-										resultado: 'Se edito con exito',
-						})
+            this.editCountry();
+            this.setState({
+                nombre: '',
+                calle: '',
+                numero: '',
+                titular: '',
+                celular: '',
+                descripcion: '',
+                resultado: 'Se edito con exito',
+            })
 		}
 }
 

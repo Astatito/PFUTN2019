@@ -24,7 +24,9 @@ class Invitado extends Component{
     }
 
     eliminar(){
-        Database.collection('Personas').doc(this.idPersona).delete()
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').doc(localStorage.getItem('idPersona'))
+        .collection('Invitados').doc(this.idPersona).delete()
             .then(
                 this.props.act(this.idPersona)
             )
@@ -45,17 +47,7 @@ class Invitado extends Component{
                 <td >{this.nombre}, {this.apellido}</td>
                 <td>{this.grupo}</td>
                 <td> {this.estado?'Activo':'Inactivo'}</td>
-                {/* <td> <button  type="button" className="btn btn-primary"  
-                        onClick={handleShow}
-                        >Editar</button>
-                        <Modal show={show} onHide={handleClose}>
-                            <Modal.Header closeButton>
-                            <Modal.Title>Editar Invitado</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body><EditarInvitado  idInvitado={this.idPersona} cerrar={handleClose} ></EditarInvitado> </Modal.Body>
-                
-                        </Modal> </td> */}
-                       <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
+                <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
                 >Editar</Link></td>
                 <td> <ModalEliminar nombre='Invitado' elemento={this.nombre} borrar={this.eliminar} ></ModalEliminar> </td>
             </tr>

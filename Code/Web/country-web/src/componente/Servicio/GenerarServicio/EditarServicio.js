@@ -35,7 +35,7 @@ class EditarServicio extends Component{
                 }
             });
         })
-        await Database.collection('Servicios').doc(this.idServicio).get()
+        await Database.collection('Country').doc(localStorage.getItem('idCountry')).collection('Servicios').doc(this.idServicio).get()
             .then(doc => {
                 if (doc.exists) {
                     this.state.servicio.push(doc.data());
@@ -52,12 +52,10 @@ class EditarServicio extends Component{
             descripcion: estrella.Descripcion,
             dias : estrella.Disponibilidad,
         })
-        console.log(this.state.dias)
     }
 
     editServicio(){
-        var dbRef = Database.collection('Servicios')
-        dbRef.doc(this.idServicio).set({
+        Database.collection('Country').doc('nkB2OpDMe6znzVkQRCRf').collection('Servicios').doc(this.idServicio).set({
             Nombre: this.state.nombre,
             Estado: this.state.estado === 'Si'?true:false,
             Disponibilidad: this.state.dias,

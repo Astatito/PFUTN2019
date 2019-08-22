@@ -21,11 +21,9 @@ class PrincipalPropietario extends Component{
         const { administradores } = this.state;
         await Database.collection('Administradores').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-
                 this.state.administradores.push(
                     [doc.data(), doc.id]
                 )
-
             });
         });
         this.setState({administradores});

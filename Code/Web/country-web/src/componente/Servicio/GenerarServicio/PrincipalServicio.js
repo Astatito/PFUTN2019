@@ -16,7 +16,7 @@ class PrincipalServicio extends Component{
         this.actualizar = this.actualizar.bind(this)
     }
 
-    async componentDidMount(){
+    async componentWillMount(){
         const { servicios } = this.state;
         await Database.collection('Administradores').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
@@ -25,17 +25,15 @@ class PrincipalServicio extends Component{
                 }
             });
         })
-        await Database.collection('Servicios').get().then(querySnapshot => {
+        
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Servicios').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-                if(doc.data().IdCountry.id == this.state.idCountry.id){
                 this.state.servicios.push(
-                    [doc.data(), doc.id]
-                )}
-
+                    [doc.data(), doc.id])
             });
         });
-        this.setState({servicios});
-
+       this.setState({servicios});
     }
 
     actualizar(id){
@@ -51,7 +49,6 @@ class PrincipalServicio extends Component{
     render(){
         return(
             <div className="col-12">
-
                 <div className="row ">
                     <div className="col-1"></div>
                     <div className="col-5">
@@ -86,7 +83,6 @@ class PrincipalServicio extends Component{
                             {
                                 this.state.servicios.map( servicios => {
                                         return(
-
                                             <Servicio
                                                 idServicio = {servicios[1]}
                                                 nombre = {servicios[0].Nombre}
@@ -101,7 +97,6 @@ class PrincipalServicio extends Component{
                                 )
 
                             }
-
                             </tbody>
                         </table>
                     </div>
