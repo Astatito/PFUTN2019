@@ -24,8 +24,8 @@ class Encargado extends Component{
     }
 
     eliminar(){
-        console.log(this.nombre)
-        Database.collection('Encargados').doc(this.idEncargado).delete()
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Encargados').doc(this.idEncargado).delete()
             .then(
                 this.props.act(this.idEncargado)
             )

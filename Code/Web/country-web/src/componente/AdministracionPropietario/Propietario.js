@@ -4,10 +4,6 @@ import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
 import ModalEliminar from '../ModalEliminar';
 
-
-
-
-
 class Propietario extends Component{
 
     constructor(props){
@@ -23,7 +19,8 @@ class Propietario extends Component{
     }
 
     eliminar(){
-        Database.collection('Personas').doc(this.idPersona).delete()
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').doc(this.idPersona).delete()
             .then(
                 this.props.act(this.idPersona)
             )
@@ -33,9 +30,7 @@ class Propietario extends Component{
     }
 
     render(){
-
         return(
-
             <tr class="table-light">
                 <th scope="row">{this.nombre}, {this.apellido}</th>
                 <td>{this.documento}</td>
@@ -45,8 +40,6 @@ class Propietario extends Component{
                 >Editar</Link> </td>
                 <td> <ModalEliminar nombre='Propietario' elemento={this.nombre} borrar={this.eliminar} ></ModalEliminar> </td>
             </tr>
-
-
         );
     }
 }

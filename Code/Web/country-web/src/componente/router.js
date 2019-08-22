@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Login from './PantallaPrincipal/Login'
 import EditarPropietario from './AdministracionPropietario/EditarPropietario'
@@ -11,7 +11,6 @@ import EditarServicio from './Servicio/GenerarServicio/EditarServicio'
 import PrincipalCountry from './AdministracionCountry/PrincipalCountry';
 import AltaCountry from './AdministracionCountry/AltaCountry';
 import EditarCountry from './AdministracionCountry/EditarCountry';
-import {Firebase} from "../config/config";
 import AltaAdministrador from './AdministracionAdministrador/AltaAdministrador';
 import EditarAdministrador from './AdministracionAdministrador/EditarAdministrador'
 import AltaEncargado from './AdministracionEncargadoIngresoEgreso/AltaEncargado';
@@ -44,7 +43,4 @@ import EditarInvitado from './AdministracionInvitados/EditarInvitado'
            </Switch>
        </main>
     )
-
-
-
 export default Router

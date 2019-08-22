@@ -4,9 +4,6 @@ import "../Style/Alta.css";
 import {Database} from "../../config/config";
 import {Link} from "react-router-dom"
 
-//https://react-select.com/home
-// for(let i=0 , i < algo.length, i++  )
-
 class EditarPropietario extends Component{
 
     constructor(props){
@@ -56,12 +53,11 @@ class EditarPropietario extends Component{
                 )
             });
         });
-        await Database.collection('Personas').doc(this.idPropietario).get()
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').doc(this.idPropietario).get()
             .then(doc => {
-                if (doc.exists && doc.data().IdTipoPersona.id === 'Propietario') {
+                if (doc.exists) {
                     this.state.propietario.push(doc.data());
-                } else {
-                
                 }
             })
             .catch(err => {
@@ -96,8 +92,8 @@ class EditarPropietario extends Component{
  
 
     editPropietario(){
-        var dbRef = Database.collection('Personas')
-        dbRef.doc(this.idPropietario).set({
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').doc(this.idPropietario).set({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Titular: this.state.titular=== 'Si'?true:false,
@@ -152,7 +148,6 @@ class EditarPropietario extends Component{
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
             this.editPropietario();
-
         }
     }
 

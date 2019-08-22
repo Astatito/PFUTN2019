@@ -4,10 +4,6 @@ import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
 import ModalEliminar from '../ModalEliminar';
 
-
-
-
-
 class Country extends Component{
 
     constructor(props){
@@ -23,7 +19,7 @@ class Country extends Component{
     }
 
     eliminar(){
-       Database.collection('Barrios').doc(this.idCountry).delete()
+       Database.collection('Country').doc(this.idCountry).delete()
             .then( this.props.act(this.idCountry))
             .catch(err => {
                 //En caso de error, hacer esto...
@@ -31,9 +27,7 @@ class Country extends Component{
     }
 
     render(){
-       
         return(          
-           
                     <tr class="table-light">
                     <th scope="row">{this.nombre}</th>
                     <td>{this.calle}</td>
@@ -43,9 +37,7 @@ class Country extends Component{
                     <td> <Link to={this.urlEditar} type="button" className="btn btn-primary"
                         >Editar</Link> </td>
                     <td><ModalEliminar nombre='Country' elemento={this.nombre} borrar={this.eliminar} ></ModalEliminar>  </td>
-                    </tr>
-
-               
+                    </tr>             
     );
     }
 }

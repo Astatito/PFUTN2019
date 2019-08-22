@@ -54,7 +54,9 @@ class EditarInvitado extends Component{
                 )
             });
         });
-        await Database.collection('Personas').doc(this.idInvitado).get()
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').doc(localStorage.getItem('idPersona'))
+        .collection('Invitados').doc(this.idInvitado).get()
             .then(doc => {
                 if (doc.exists) {
                     this.state.invitado.push(doc.data());
@@ -94,7 +96,9 @@ class EditarInvitado extends Component{
 
    editInvitado(){
 
-             Database.collection('Personas').doc(this.idInvitado).set({
+            Database.collection('Country').doc(localStorage.getItem('idCountry'))
+            .collection('Propietarios').doc(localStorage.getItem('idPersona'))
+            .collection('Invitados').doc(this.idInvitado).set({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Estado: this.state.estado,
@@ -107,7 +111,6 @@ class EditarInvitado extends Component{
             FechaHasta: this.state.endDate,
             IdCountry: this.state.idCountry,
             IdPropietario: this.state.idPropietario,
-            IdTipoPersona: this.state.idTipoPersona,
         });
 
     }

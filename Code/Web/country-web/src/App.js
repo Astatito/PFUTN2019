@@ -29,17 +29,12 @@ class App extends Component{
                 this.setState({ user });
                 this.setState({ tipoUsuario: user.email});
                 localStorage.setItem('user', user.uid);
-                console.log(user.email);
-
-
             } else {
                 this.setState({ user: null });
                 localStorage.removeItem('user');
-
             }
         })
         this.state.cargando = false;
-
     }
 
 

@@ -19,20 +19,12 @@ class PrincipalEncargado extends Component{
 
     async componentDidMount(){
         const { encargados } = this.state;
-        await Database.collection('Administradores').get().then(querySnapshot => {
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Encargados').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                    this.state.idCountry = doc.data().IdCountry
-                }
-            });
-        });
-        await Database.collection('Encargados').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                if(doc.data().IdCountry.id == this.state.idCountry.id){
                 this.state.encargados.push(
                     [doc.data(), doc.id]
-                )}
-
+                )
             });
         });
         this.setState({encargados});

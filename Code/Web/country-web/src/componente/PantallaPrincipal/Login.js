@@ -33,7 +33,7 @@ class Login extends Component{
         this.ChangeEmail = this.ChangeEmail.bind(this);
         this.ChangePass = this.ChangePass.bind(this);
         this.onButtonPress = this.onButtonPress.bind(this);
-        this.obtenerTipoUsuario = this.obtenerTipoUsuario.bind(this)
+        this.obtenerValoresUsuario = this.obtenerValoresUsuario.bind(this)
         this.inicio = this.inicio.bind(this);
     }
 
@@ -49,24 +49,20 @@ class Login extends Component{
       this.authListener();
     }
 
-   async  obtenerTipoUsuario () {
-     
+   async obtenerValoresUsuario () {
     await Database.collection('Usuarios').doc(this.state.email).get()
         .then(doc => {
           if (doc.exists) {
             this.setState({tipo: true})
-            this.state.tipoUsuario= doc.data().TipoUsuario.id;
-            localStorage.setItem('tipoUsuario', this.state.tipoUsuario);
-          } else {
-            //Si no existe, hacer esto...
-          }
-        })
-        .catch(err => {
-          //En caso de error, hacer esto...
-          
+              this.state.tipoUsuario= doc.data().TipoUsuario.id;
+              localStorage.setItem('tipoUsuario', this.state.tipoUsuario);
+              localStorage.setItem('idCountry', doc.data().IdCountry.id);
+              localStorage.setItem('idPersona',doc.data().IdPersona.id);
+          } 
         })
       }
       
+ 
 
     async authListener() {
       Firebase.auth().onAuthStateChanged((user) => {
@@ -83,7 +79,7 @@ class Login extends Component{
     }
     
    async onButtonPress() {
-      await this.obtenerTipoUsuario();
+      await this.obtenerValoresUsuario();
       if (this.state.tipo){
         await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
         .then(() => {        
@@ -91,7 +87,6 @@ class Login extends Component{
         
       })
       .catch(() => {
-          
         this.setState({result: false})
         this.setState({resultado : 'Fallo de autentificacion' })
       })
@@ -99,7 +94,6 @@ class Login extends Component{
   }
 
     inicio(){
-      
       const temp = localStorage.getItem('tipoUsuario')
       if(this.state.tipoUsuario === 'Root' || temp === 'Root'){
         return (<InicioRoot/>   )
