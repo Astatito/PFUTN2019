@@ -10,6 +10,7 @@
     "express": "^4.17.1",
     "firebase": "^6.2.3",
     "formik": "^1.5.8",
+    "material-ui": "^0.20.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "rc-datepicker": "^5.0.14",
