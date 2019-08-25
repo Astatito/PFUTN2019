@@ -9,25 +9,17 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 class EgresoManual extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
-<<<<<<< HEAD
-
-=======
->>>>>>> development
             title: 'Egreso Manual',
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />
         };
     };
 
-<<<<<<< HEAD
-    state= {picker: '', tiposDocumento: [], cantidad:0, documento: '', showSpinner: false }
-=======
     state = {
         picker: '',
         tiposDocumento: [],
         documento: '',
         showSpinner: false
     };
->>>>>>> development
 
     // Para activar el spinner, solo agregas esto dentro de un then. this.setState({showSpinner: true});
 
@@ -39,19 +31,12 @@ class EgresoManual extends Component {
             .then(snapshot => {
                 var tiposDocumento = [];
                 snapshot.forEach(doc => {
-<<<<<<< HEAD
-                    // this.state.tiposDocumento.push(doc.data().Nombre)
-                    this.state.tiposDocumento.push({ value: doc.id, label: doc.data().Nombre })
-                })
-                this.setState({cantidad: this.state.tiposDocumento.length})
-=======
                     tiposDocumento.push({
                         value: doc.id,
                         label: doc.data().Nombre
                     });
                 });
                 this.setState({ tiposDocumento });
->>>>>>> development
             })
             .catch(err => {
                 console.log(err);
@@ -99,13 +84,8 @@ class EgresoManual extends Component {
     };
 
     render() {
-<<<<<<< HEAD
-        if (this.state.tiposDocumento.length < 3 ) {
-            this.obtenerPickers()
-=======
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers();
->>>>>>> development
         }
         if (this.state.showSpinner) {
             return (

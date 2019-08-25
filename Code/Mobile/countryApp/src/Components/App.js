@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Login from './Main/Screens/Login';
 import EncargadoNavigation from './Navigation/EncargadoNavigation';
-import Propietario from './Main/Screens/Propietario';
+import PropietarioNavigation from './Navigation/PropietarioNavigation';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
-import RegistroVisitante from './Main/Screens/RegistroVisitante';
 class App extends Component {
     render() {
         return <AppContainer />;
@@ -11,22 +10,13 @@ class App extends Component {
 }
 export default App;
 
-// Acá es dónde se registran todas las pantallas para poder acceder desde cualquier componenente.
-//Todas las pantallas que vamos haciendo hay que registrarlas acá.
 // La que se encuentra primero es la que se ejecuta.
 
 const AppSwitchNavigator = createSwitchNavigator({
-<<<<<<< HEAD
+    Propietario: {screen: PropietarioNavigation},
     Login: {screen: Login},
-    Encargado: { screen: EncargadoNavigation },
-    Propietario: {screen: Propietario}
+    Encargado: { screen: EncargadoNavigation }
+    
   });
-=======
-    Encargado: { screen: EncargadoNavigation },
-    Login: { screen: Login },
-    Propietario: { screen: Propietario },
-    RegistroVisitante: { screen: RegistroVisitante }
-});
->>>>>>> development
 
 const AppContainer = createAppContainer(AppSwitchNavigator);
