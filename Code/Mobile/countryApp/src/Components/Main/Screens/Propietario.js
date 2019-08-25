@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { Header, Button, Card, CardSection } from '../../Common';
-import Logo from '../../Logo/Logo.jpeg';
+import { Header } from '../../Common';
 class Propietario extends Component {
     static navigationOptions = {
         title: 'Home'

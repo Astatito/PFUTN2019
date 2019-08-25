@@ -2,14 +2,9 @@
 // Se lee de abajo hacia arriba.
 
 import React from 'react';
-import Encargado from '../Main/Screens/Encargado';
-import Ingreso from '../Main/Screens/Ingreso';
-import IngresoManual from '../Main/Screens/IngresoManual';
-import Egreso from '../Main/Screens/Egreso';
-import EgresoManual from '../Main/Screens/EgresoManual';
-import EncargadoPerfil from '../Main/Screens/EncargadoPerfil';
-import Escaner from '../Main/Escaner';
-import RegistroVisitante from '../Main/Screens/RegistroVisitante';
+import Propietario from '../Main/Screens/Propietario';
+import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
+import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
@@ -40,61 +35,9 @@ const CustomDrawerContentComponent = props => (
 );
 
 // Stack 1 - El stack navigator para el home del encargado.
-const EncargadoStackNavigator = createStackNavigator(
+const PropietarioStackNavigator = createStackNavigator(
     {
-        Encargado: Encargado
-    },
-    {
-        defaultNavigationOptions: ({ navigation }) => {
-            return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight: <View />,
-                headerStyle: {
-                    backgroundColor: '#1e90ff'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    textAlign: 'center',
-                    flex: 1
-                }
-            };
-        }
-    }
-);
-
-//Stack 2 - IngresoStackNavigator
-const IngresoStackNavigator = createStackNavigator(
-    {
-        Ingreso: Ingreso,
-        IngresoManual: IngresoManual,
-        Escaner: Escaner,
-        RegistroVisitante,
-    },
-    {
-        defaultNavigationOptions: ({ navigation }) => {
-            return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight: <View />,
-                headerStyle: {
-                    backgroundColor: '#1e90ff'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    textAlign: 'center',
-                    flex: 1
-                }
-            };
-        }
-    }
-);
-
-//Stack 3 - EgresoStackNavigator
-const EgresoStackNavigator = createStackNavigator(
-    {
-        Egreso: Egreso,
-        EgresoManual: EgresoManual,
-        Escaner: Escaner,
-        RegistroVisitante,
+        Propietario: Propietario
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -115,23 +58,17 @@ const EgresoStackNavigator = createStackNavigator(
 );
 
 //Este es el Tab Navigator. El titulo superior que se encuentra en la franja azul se pone automáticamente.
-// Este Tab tiene tres Stacks.
-const EncargadoTabNavigator = createBottomTabNavigator({
+
+const PropietarioTabNavigator = createBottomTabNavigator({
     Home: {
-        screen: EncargadoStackNavigator
-    },
-    'Nuevo Ingreso': {
-        screen: IngresoStackNavigator
-    },
-    'Nuevo Egreso': {
-        screen: EgresoStackNavigator
+        screen: PropietarioStackNavigator
     }
 });
 
 // Stack - El stack navigator para el apartado MiPerfil.
-const EncargadoPerfilStackNavigator = createStackNavigator(
+const PropietarioPerfilStackNavigator = createStackNavigator(
     {
-        EncargadoPerfil: EncargadoPerfil
+        PropietarioPerfil: PropietarioPerfil
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -151,15 +88,40 @@ const EncargadoPerfilStackNavigator = createStackNavigator(
     }
 );
 
+// Stack - El stack navigator para el apartado de mi ubicación.
+const PropietarioUbicacionStackNavigator = createStackNavigator(
+    {
+        UbicacionPropietario : UbicacionPropietario
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerRight: <View />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+            };
+        }
+    }
+);
 //Este es el Drawer del Encargado. Registros, Mi Perfil y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
 // Este drawer a su vez tiene un TabNavigator y un Stack..
-const EncargadoNavigation = createDrawerNavigator(
+const PropietarioNavigation = createDrawerNavigator(
     {
         Registros: {
-            screen: EncargadoTabNavigator
+            screen: PropietarioTabNavigator
         },
         'Mi Perfil': {
-            screen: EncargadoPerfilStackNavigator
+            screen: PropietarioPerfilStackNavigator
+        },
+        'Mi ubicación' : {
+            screen: PropietarioUbicacionStackNavigator
         }
     },
     {
@@ -173,4 +135,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default EncargadoNavigation;
+export default PropietarioNavigation;
