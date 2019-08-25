@@ -5,6 +5,7 @@ import React from 'react';
 import Propietario from '../Main/Screens/Propietario';
 import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
 import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
+import ModalForImage from '../Main/Screens/ModalForImage';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
@@ -91,7 +92,8 @@ const PropietarioPerfilStackNavigator = createStackNavigator(
 // Stack - El stack navigator para el apartado de mi ubicación.
 const PropietarioUbicacionStackNavigator = createStackNavigator(
     {
-        UbicacionPropietario : UbicacionPropietario
+        UbicacionPropietario : UbicacionPropietario,
+        ModalForImage : ModalForImage
     },
     {
         defaultNavigationOptions: ({ navigation }) => {

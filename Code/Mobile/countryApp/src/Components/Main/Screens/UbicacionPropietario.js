@@ -1,25 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, Modal, TouchableHighlight, BackHandler} from 'react-native';
+import { View, Image, StyleSheet} from 'react-native';
 import { Button, CardSection} from '../../Common';
-import {ImageViewer} from 'react-native-image-zoom-viewer'
 import Share from 'react-native-share'
 import RNFetchBlob from 'rn-fetch-blob';
 
-const image = [
-    {
-        props: {
-            // Or you can set source directory.
-            url: '',
-            source: require('../../Logo/countrymapa.jpg')
-        }
-    }
-]
-
 class MiUbicacion extends Component {
-    state= {
-        modalVisible:false,
-        };
-
+    
     static navigationOptions = {
         title: 'Mi Ubicación',
         headerRight: <View />
@@ -54,34 +40,16 @@ class MiUbicacion extends Component {
             });
         };
         };
-
-     setModalVisible = visible => {
-        this.setState({modalVisible: visible});
-      }
+    
 
     render() {
+        
         return (
-            <View
-                style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                <Text>Bienvenido a mi Ubicación!</Text>
-                
-                <Modal visible={this.state.modalVisible} transparent={true}>
-                    <ImageViewer imageUrls={image}/>
-                    <TouchableHighlight
-                        onPress={() => {
-                            this.setModalVisible(!this.state.modalVisible);
-                        }}>
-                        <Text>Hide Modal</Text>
-                    </TouchableHighlight>
-                </Modal>
-                
+            <View style={styles.container}>
+                <Image style={{ width: '95%', height: '75%' }} source={require('../../Logo/ubicacionhome.jpg')} />
                 <CardSection>
                     <Button onPress={() => {
-                        this.setModalVisible(!this.state.modalVisible);
+                        this.props.navigation.navigate('ModalForImage',{visible:true})
                     }}> Ver Ubicación </Button>
                 </CardSection>
                 <CardSection>
@@ -91,5 +59,13 @@ class MiUbicacion extends Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+});
 
 export default MiUbicacion;
