@@ -4,6 +4,7 @@ import "../Style/Alta.css";
 import {Link} from 'react-router-dom'
 import {Database, Firebase} from "../../config/config";
 import  { DatePicker, RangeDatePicker} from '@y0c/react-datepicker'
+import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
 //https://react-select.com/home
 //https://firebase.google.com/docs/auth/web/manage-users#create_a_user
@@ -164,6 +165,11 @@ class AltaInvitado extends Component{
 
     render(){
         return(
+            <ValidatorForm
+              ref="form"
+              onError={errors => console.log("hola",errors)}
+              onSubmit={this.registrar}
+              >
             <div className="col-12 ">
             <div>
                 <div className="row">
@@ -171,104 +177,154 @@ class AltaInvitado extends Component{
                     <legend hidden={this.esPropietario}>  Nuevo Invitado </legend>
                     <div className = "col-md-6  flex-container form-group"  
                          hidden={this.esPropietario}>
-                        <label for = "TipoDocumento">  Tipo Documento  </label>
-                            <Select
-                                className="select-documento"
-                                classNamePrefix="select"
-                                isDisabled={false}
-                                isLoading={false}
-                                isClearable={true}
-                                isSearchable={true}
-                                options={this.state.tipoD}
-                                onChange={this.ChangeSelect.bind(this)}
-                              
-                            />
+                             <SelectValidator
+                    label="Tipo Documento (*)"
+                    validators={["required"]}
+					errorMessages={["Campo requerido"]}
+                    id = 'documento'
+                        // className="select-documento"
+                        // classNamePrefix="select"
+                        // defaultValue={this.state.tipoD[0]}
+                        // isDisabled={false}
+                        // isLoading={false}
+                        // isClearable={true}
+                        // isSearchable={true}
+                        name="tipoD"
+                        //value={this.state.tipoD}
+                        
+                        SelectProps={{
+                            native: true
+                          }}
+                        onChange={this.ChangeSelect.bind(this)}
+                    >
+                                                        <option value=""></option>
+
+                     {this.state.tipoD.map(tipos =>{
+                         return(
+                            <option key={tipos.value} value={tipos.value}>
+                                {tipos.name}
+                            </option>
+                         );
+                     })}
+                    </SelectValidator>
                     </div>
                         
                     <div className = "col-md-6  flex-container form-group"
                         hidden={this.esPropietario} >
-                        <label for = "NumeroDocumento">  Numero de Documento  </label>
-                        <input type = "document" className = "form-control"   placeholder = "Document number"
+                        <TextValidator type = "document" className = "form-control"   
+                        label = "Numero de Documento  (*)"
                         value = {this.state.documento}
+                        validators={["required"]}
+					            	errorMessages={["Campo requerido"]}
                         onChange={this.ChangeDocumento}
 
                         />
                         <label>{this.state.mensaje}</label>
                     </div>
                     <div className= "col-md-4  flex-container form-group"
-                    hidden={this.esPropietario}>
-                            <button type="button" className="btn btn-danger" variant="secondary" 
-                            onClick={this.buscarPropietario}
-                            
+                        hidden={this.esPropietario}>
+                        <button type="button" className="btn btn-danger" variant="secondary" 
+                        onClick={this.buscarPropietario}
                             >Buscar Propietario</button> 
                         </div>
                         <div className = "col-md-8  flex-container form-group"></div>
                         
                         <div className = "col-md-6  flex-container form-group">
-                            <label for = "Nombre">  Grupo  </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name"
+                            <TextValidator type = "name" className = "form-control"   
+                            label = "Grupo"
                             value = {this.state.grupo}
                             onChange={this.ChangeGrupo}
                             />
                         </div>
                         <div className = "col-md-3  flex-container form-group " >
-                            <label >  Fecha Desde   </label>
-                           <input type="date"className = "form-control" name="FechaDesde"
+                            <label >  Fecha Desde  (*)  </label>
+                           <TextValidator type="date"className = "form-control" name="FechaDesde"
                          step="1" min="1920-01-01" value={this.state.startDate}
                          onChange={this.ChangeFechaDesde}
+                         validators={["required"]}
+						              errorMessages={["Campo requerido"]}
                          disabled={!this.esPropietario}
                         />
                         </div>
                         <div className = "col-md-3  flex-container form-group " >
-                        <label >  Fecha Hasta  </label>
-                        <input type="date"className = "form-control" name="FechaHasta"
+                        <label >  Fecha Hasta  (*) </label>
+                        <TextValidator type="date"className = "form-control" name="FechaHasta"
                         step="1" min="1920-01-01" value={this.state.endDate}
                         disabled={!this.esPropietario}
+                        validators={["required"]}
+						            errorMessages={["Campo requerido"]}
                         onChange={this.ChangeFechaHasta}
                              />
                         </div>
                         <div className = "col-md-6  flex-container form-group" hidden={this.esPropietario}>
-                            <label for = "Nombre">  Nombre  </label>
-                            <input type = "name" className = "form-control"   placeholder = "Name"
+                            <TextValidator type = "name" className = "form-control"   
+                            label = "Nombre (*)"
                             value = {this.state.nombre}
+                            validators={["required"]}
+						                errorMessages={["Campo requerido"]}
                             onChange={this.ChangeNombre}
                            
                             />
                         </div>
                         <div className = "col-md-6  flex-container form-group"  hidden={this.esPropietario}>
-                            <label for = "Apellido">  Apellido  </label>
-                            <input type = "family-name" className = "form-control"   placeholder = "Surname"
+                            <TextValidator type = "family-name" className = "form-control"   
+                                   label = "Apellido (*)"
                                    value = {this.state.apellido}
+                                   validators={["required"]}
+						                       errorMessages={["Campo requerido"]}
                                    onChange= {this.ChangeApellido} 
                                    />
                         </div>
                        
                         <div className = "col-md-6  flex-container form-group" >
-                        <label for = "TipoDocumento">  Tipo Documento Invitado </label>
-                            <Select
-                                className="select-documento"
-                                classNamePrefix="select"
-                                isDisabled={false}
-                                isLoading={false}
-                                isClearable={true}
-                                isSearchable={true}
-                                options={this.state.tipoD}
-                                onChange={this.ChangeSelectInvitado.bind(this)}
+                        <SelectValidator
+                          label="Tipo Documento Invitado (*)"
+                          validators={["required"]}
+                          errorMessages={["Campo requerido"]}
+                          id = 'documento'
+                              // className="select-documento"
+                              // classNamePrefix="select"
+                              // defaultValue={this.state.tipoD[0]}
+                              // isDisabled={false}
+                              // isLoading={false}
+                              // isClearable={true}
+                              // isSearchable={true}
+                              name="tipoD"
+                              //value={this.state.tipoD}
                               
-                            />
+                              SelectProps={{
+                                  native: true
+                                }}
+                                onChange={this.ChangeSelectInvitado.bind(this)}
+                          >
+                                                              <option value=""></option>
+
+                          {this.state.tipoD.map(tipos =>{
+                              return(
+                                  <option key={tipos.value} value={tipos.value}>
+                                      {tipos.name}
+                                  </option>
+                              );
+                          })}
+                    </SelectValidator>
+                            
                         </div>
                         <div className = "col-md-6  flex-container form-group">
-                            <label for = "NumeroDocumento">  Numero de Documento Invitado </label>
-                            <input type = "document" className = "form-control"   placeholder = "Document number"
+                            <TextValidator type = "document" className = "form-control"   
+                            label = "Numero de Documento Invitado (*)"
                             value = {this.state.documentoInvitado}
+                            validators={["required"]}
+						                errorMessages={["Campo requerido"]}
                             onChange={this.ChangeDocumentoInvitado}
                   
                             />
                         </div>
                         <div className = "col-md-6  flex-container form-group" hidden={this.esPropietario}>
                             <label for = "FechaNacimiento">  Fecha de Nacimiento  </label>
-                            <input type="date"className = "form-control" name="FechaNacimiento"
+                            <TextValidator type="date"className = "form-control" name="FechaNacimiento"
                                    step="1" min="1920-01-01"
+                                   validators={["required"]}
+						                       errorMessages={["Campo requerido"]}
                                    onChange={this.ChangeFechaNacimiento}
                             />
                         </div>
@@ -282,11 +338,11 @@ class AltaInvitado extends Component{
                         <Link to='/' type="button" className="btn btn-primary boton" variant="secondary"
                          hidden= {this.esPropietario}
                         >Volver</Link>
-                        <button className="btn btn-primary boton" variant="primary" onClick={this.registrar }
-                          >Registrar</button>
+                        <button className="btn btn-primary boton" variant="primary" type="submit">Registrar</button>
                         
                       </div>
             </div>
+            </ValidatorForm>
             )}
 }
 export default AltaInvitado;

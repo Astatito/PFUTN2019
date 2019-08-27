@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import "../../Style/Alta.css";
 import {Database} from "../../../config/config"
 import {Link} from 'react-router-dom'
+import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 
 
 class AltaServicio extends Component{
@@ -89,21 +90,27 @@ class AltaServicio extends Component{
     render(){
 
         return(
+            <ValidatorForm
+            ref="form"
+            onError={errors => console.log("hola",errors)}
+            onSubmit={this.registrar}
+            >
             <div className="col-12 ">
                 <div className="row">
                 <legend><h1>  Registrar Alta</h1> </legend>
                     <div className = "col-md-6  flex-container form-group">
-                        <label for = "NombreServicio"> Nombre del Servicio  </label>
-                        <input  type = "name" className = "form-control"  
-                         placeholder = "Name Service"
+                        <TextValidator  type = "name" className = "form-control"  
+                         label = "Nombre del Servicio (*)"
                          value={this.state.nombre}
+                         validators={["required"]}
+                        errorMessages={["Campo requerido"]}
                          onChange={this.ChangeNombre}/>
                     </div>
                     <div className = "col-md-6 flex-container form-group">
-                        <label for = "FechaNacimiento">  Dias disponibles  </label>
+                        <TextValidator label="Dias disponibles (*)" disabled={true} ></TextValidator>
                         <div >
                          <label><input  id='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDiasDisponible.bind(this)} />Lun </label>
-                            <label><input id='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} onChange={this.ChangeDiasDisponible.bind(this)} />Mar </label>
+                        <label><input id='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} onChange={this.ChangeDiasDisponible.bind(this)} />Mar </label>
                         <label><input id='2' value="Mie" type="checkbox" checked={this.state.dias[2] === 'Mie'} onChange={this.ChangeDiasDisponible.bind(this)} />Mie </label>
                         <label><input id='3' value="Jue" type="checkbox" checked={this.state.dias[3] === 'Jue'} onChange={this.ChangeDiasDisponible.bind(this)} />Jue </label>
                         <label><input id='4' value="Vie" type="checkbox" checked={this.state.dias[4] === 'Vie'} onChange={this.ChangeDiasDisponible.bind(this)} />Vie </label>
@@ -112,7 +119,7 @@ class AltaServicio extends Component{
                         </div>
                     </div>
                     <fieldset className = "col-md-6 flex-container form-group">
-                            <legend>  Estado  </legend>
+                    <TextValidator label="Estado (*)" disabled={true} ></TextValidator>
                                 <div className = "form-check">
                                     <label className = "form-check-label">
                                     <input type = "radio" className = "form-check-input"  
@@ -130,20 +137,20 @@ class AltaServicio extends Component{
                                 </div>
                         </fieldset>
                     <div className = "col-md-6 flex-container form-group">
-                        <label for = "exampleTextarea"> Descripcion  </ label >
-                        <textarea className = "form-control" id = "exampleTextarea" rows = "3"
+                        <TextValidator className = "form-control" id = "exampleTextarea" rows = "3"
                          value={this.state.descripcion}
-                         onChange={this.ChangeDescripcion}> </textarea>
+                         label="Descripcion"
+                         onChange={this.ChangeDescripcion}> </TextValidator>
                     </div>
                 </div>
             
             <div className="form-group izquierda">
-                <button className="btn btn-primary boton" onClick={this.registrar}>Registrar</button>                  
+                <button className="btn btn-primary boton" type="submit">Registrar</button>                  
                 <Link to="/" type="button" className="btn btn-primary boton"
                 >Volver</Link> 
             </div>
         </div>
-        
+        </ValidatorForm>
         );
     }
 }
