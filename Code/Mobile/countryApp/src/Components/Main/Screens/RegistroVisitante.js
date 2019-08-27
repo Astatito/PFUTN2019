@@ -9,7 +9,17 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class RegistroVisitante extends Component {
-    state = { picker: '', tiposDocumento: [], documento: '' };
+    state = {
+        picker: '',
+        tiposDocumento: [],
+        documento: '',
+        tipoAcceso: '',
+        nombre: '',
+        apellido: '',
+        fechaNacimiento: '',
+        telefono: '',
+        celular: ''
+    };
 
     componentWillMount() {
         const { navigation } = this.props;
@@ -18,9 +28,13 @@ class RegistroVisitante extends Component {
         if (esAcceso) {
             const tipoDoc = navigation.getParam('tipoDocumento');
             const numeroDoc = navigation.getParam('numeroDocumento');
-
-            this.setearDatos(tipoDoc, numeroDoc);
+            const tipoAcceso = navigation.getParam('tipoAcceso');
+            this.setearDatos(tipoDoc, numeroDoc, tipoAcceso);
         }
+    }
+
+    componentDidMount() {
+        alert('El visitante no está registrado; por favor, complete el siguiente formulario.');
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
@@ -40,11 +54,36 @@ class RegistroVisitante extends Component {
             });
     };
 
-    setearDatos(tipo, numero) {
+    setearDatos(tipo, numero, acceso) {
         this.setState({
             picker: tipo,
-            documento: numero
+            documento: numero,
+            tipoAcceso: acceso
         });
+    }
+
+    registrarDatos() {
+        var idPersona = Database.collection('PersonasDB').doc().id;
+
+        var dbRef = Database.collection('PersonasDB');
+        dbRef.doc(idPersona).set({
+            Nombre: this.state.nombre,
+            Apellido: this.state.apellido,
+            Documento: this.state.documento,
+            FechaNacimiento: this.state.fechaNacimiento,
+            Telefono: this.state.telefono,
+            Celular: this.state.celular,
+            TipoDocumento: Database.doc('TipoDocumento/' + this.state.picker)
+        });
+
+        var dbRef = Database.collection('AccesosDB');
+        dbRef.add({
+            Fecha: new Date(),
+            Persona: Database.doc('PersonasDB/' + idPersona),
+            Tipo: this.state.tipoAcceso
+        });
+
+        alert('Se registró el ' + this.state.tipoAcceso.toLowerCase() + ' del nuevo visitante correctamente.');
     }
 
     render() {
@@ -59,10 +98,22 @@ class RegistroVisitante extends Component {
                     <Header headerText="Registrar nuevo visitante"> </Header>
                     <Card>
                         <CardSection>
-                            <Field placeholder="Eg. Juan Pablo" label="Nombre completo" hidden={false} />
+                            <Field
+                                placeholder="Eg. Juan Pablo"
+                                label="Nombre completo"
+                                hidden={false}
+                                value={this.state.nombre}
+                                onChangeText={nombre => this.setState({ nombre })}
+                            />
                         </CardSection>
                         <CardSection>
-                            <Field placeholder="Eg. Soria" label="Apellido" hidden={false} />
+                            <Field
+                                placeholder="Eg. Soria"
+                                label="Apellido"
+                                hidden={false}
+                                value={this.state.apellido}
+                                onChangeText={apellido => this.setState({ apellido })}
+                            />
                         </CardSection>
 
                         <View style={styles.picker}>
@@ -83,17 +134,40 @@ class RegistroVisitante extends Component {
                             />
                         </CardSection>
                         <CardSection>
-                            <Field placeholder="Eg. 02/11/1992" label="Fecha de nacimiento" hidden={false} />
+                            <Field
+                                placeholder="Eg. 02/11/1992"
+                                label="Fecha de nacimiento"
+                                hidden={false}
+                                value={this.state.fechaNacimiento}
+                                onChangeText={fechaNacimiento => this.setState({ fechaNacimiento })}
+                            />
                         </CardSection>
                         <CardSection>
-                            <Field placeholder="Eg. 491457" label="Teléfono fijo" hidden={false} />
+                            <Field
+                                placeholder="Eg. 491457"
+                                label="Teléfono fijo"
+                                hidden={false}
+                                value={this.state.telefono}
+                                onChangeText={telefono => this.setState({ telefono })}
+                            />
                         </CardSection>
                         <CardSection>
-                            <Field placeholder="Eg. +5493512071228" label="Celular" hidden={false} />
+                            <Field
+                                placeholder="Eg. +5493512071228"
+                                label="Celular"
+                                hidden={false}
+                                value={this.state.celular}
+                                onChangeText={celular => this.setState({ celular })}
+                            />
                         </CardSection>
                         <View style={styles.botones}>
                             <CardSection>
-                                <Button>Aceptar</Button>
+                                <Button
+                                    onPress={() => {
+                                        this.registrarDatos();
+                                    }}>
+                                    Aceptar
+                                </Button>
                             </CardSection>
                             <CardSection>
                                 <ButtonCancelar>Cancelar</ButtonCancelar>

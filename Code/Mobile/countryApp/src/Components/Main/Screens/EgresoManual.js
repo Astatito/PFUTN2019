@@ -44,17 +44,19 @@ class EgresoManual extends Component {
     };
 
     grabarEgreso = idPersona => {
-        var dbRef = Database.collection('Accesos');
+        var dbRef = Database.collection('AccesosDB');
         dbRef.add({
             Fecha: new Date(),
-            Persona: Database.doc('Personas/' + idPersona),
+            Persona: Database.doc('PersonasDB/' + idPersona),
             Tipo: 'Egreso'
         });
+        alert('Egreso registrado correctamente.');
     };
 
     registrarNuevoVisitante = () => {
         this.props.navigation.navigate('RegistroVisitante', {
             esAcceso: true,
+            tipoAcceso: 'Egreso',
             tipoDocumento: this.state.picker,
             numeroDocumento: this.state.documento
         });
@@ -63,7 +65,7 @@ class EgresoManual extends Component {
     obtenerPersona = numeroDocumento => {
         var tipoDocumento = this.state.picker;
 
-        var dbRef = Database.collection('Personas');
+        var dbRef = Database.collection('PersonasDB');
         var dbDoc = dbRef
             .where('Documento', '==', this.state.documento)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDocumento))

@@ -24,18 +24,19 @@ class Login extends Component {
     }
 
     logueoUsuario = () => {
-        var dbRef = Database.collection('Usuarios');
+        var dbRef = Database.collection('UsuariosBD');
         var dbDoc = dbRef
-            .doc(this.state.email)
+            .doc(this.state.email.toLowerCase())
             .get()
             .then(doc => {
                 if (doc.exists) {
+                    console.log(doc.data().TipoUsuario.id);
                     this.setState({ result2: doc.data().TipoUsuario.id });
                     switch (doc.data().TipoUsuario.id) {
                         case 'Propietario':
                             this.props.navigation.navigate('Propietario');
                             break;
-                        case 'Guardia':
+                        case 'Encargado':
                             this.props.navigation.navigate('Encargado');
                             break;
                     }
