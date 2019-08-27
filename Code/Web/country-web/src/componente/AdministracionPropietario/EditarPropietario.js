@@ -3,6 +3,7 @@ import Select from 'react-select';
 import "../Style/Alta.css";
 import {Database} from "../../config/config";
 import {Link} from "react-router-dom"
+import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
 class EditarPropietario extends Component{
 
