@@ -82,8 +82,8 @@ registrar(){
         return(
 			<ValidatorForm
 			ref="form"
-      onError={errors => console.log("hola",errors)}
-      onSubmit={this.registrar}
+      		onError={errors => console.log("hola",errors)}
+      		onSubmit={this.registrar}
 			>
             <div className="col-12">
             <div className="col-md-12 ">
