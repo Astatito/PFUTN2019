@@ -3,7 +3,7 @@ import Select from 'react-select';
 import "../Style/Alta.css";
 import {Link} from 'react-router-dom'
 import {Database, Firebase} from "../../config/config";
-import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
+import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
 
 class AltaEncargado extends Component{
@@ -46,7 +46,7 @@ class AltaEncargado extends Component{
         await Database.collection('TipoDocumento').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 this.state.tipoD.push(
-                    {value: doc.id, label: doc.data().Nombre}
+                    {value: doc.id, name: doc.data().Nombre}
                 )
             });
         });
@@ -146,7 +146,7 @@ class AltaEncargado extends Component{
           >
         <div className="col-12">
           <div className="row">
-            <legend>  Registrar Alta </legend>
+            <legend>  Registrar Alta de un Encargado</legend>
               <div className = "col-md-6  flex-container form-group">
                   <TextValidator type = "name" className = "form-control"   
                   label = "Nombre (*)"
@@ -166,7 +166,35 @@ class AltaEncargado extends Component{
               </div>
               <div className = "col-md-6  flex-container form-group">
               <label for = "TipoDocumento (*)">  Tipo Documento  </label>
-                  <Select
+              <SelectValidator
+                            label="Tipo Documento (*)"
+                            validators={["required"]}
+                            errorMessages={["Campo requerido"]}
+                            id = 'documento'
+                                className="select-documento"
+                                classNamePrefix="select"
+                                isDisabled={false}
+                                isLoading={false}
+                                isClearable={true}
+                                isSearchable={true}
+                                name="tipoD"
+                                //value={this.state.tipoD}
+                                
+                                 SelectProps={{
+                                     native: true
+                                   }}
+                                onChange={this.ChangeSelect.bind(this)}
+                            >
+                                <option value=""></option>
+                            {this.state.tipoD.map(tipos =>{
+                                return(
+                                    <option key={tipos.value} value={tipos.value}>
+                                        {tipos.name}
+                                    </option>
+                                );
+                            })}
+                    </SelectValidator>
+                  {/* <Select
                       className="select-documento"
                       classNamePrefix="select"
                       defaultValue={this.state.tipoD[0]}
@@ -176,7 +204,7 @@ class AltaEncargado extends Component{
                       isSearchable={true}
                       options={this.state.tipoD}
                       onChange={this.ChangeSelect.bind(this)}
-                  />
+                  /> */}
               </div>
               <div className = "col-md-6  flex-container form-group">
                   <TextValidator type = "document" className = "form-control" 

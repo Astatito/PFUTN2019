@@ -193,11 +193,13 @@ class EditarPropietario extends Component{
                             name="tipoD"
                             //value={this.state.tipoD}
                             
-                            // SelectProps={{
-                            //     native: true
-                            //   }}
+                            SelectProps={{
+                                 native: true
+                               }}
                             onChange={this.ChangeSelect.bind(this)}
                         >
+                                <option value=""></option>
+
                         {this.state.tipoD.map(tipos =>{
                             return(
                                 <option key={tipos.value} value={tipos.value}>
