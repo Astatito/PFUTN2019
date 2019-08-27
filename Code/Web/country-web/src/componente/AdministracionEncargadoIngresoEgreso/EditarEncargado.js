@@ -3,7 +3,7 @@ import Select from 'react-select';
 import "../Style/Alta.css";
 import {Database} from "../../config/config";
 import {Link} from "react-router-dom"
-import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
+import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
 
 class EditarEncargado extends Component{
@@ -157,7 +157,7 @@ class EditarEncargado extends Component{
           >
         <div className="col-12">
           <div className="row">
-            <legend>  Registrar Alta </legend>
+            <legend>  Editar Encargado </legend>
               <div className = "col-md-6  flex-container form-group">
                   <TextValidator type = "name" className = "form-control"   
                   label = "Nombre (*)"
@@ -177,17 +177,34 @@ class EditarEncargado extends Component{
               </div>
               <div className = "col-md-6  flex-container form-group">
               <label for = "TipoDocumento (*)">  Tipo Documento  </label>
-                  <Select
-                      className="select-documento"
-                      classNamePrefix="select"
-                      defaultValue={this.state.tipoD[0]}
-                      isDisabled={false}
-                      isLoading={false}
-                      isClearable={true}
-                      isSearchable={true}
-                      options={this.state.tipoD}
-                      onChange={this.ChangeSelect.bind(this)}
-                  />
+              <SelectValidator
+                            label="Tipo Documento (*)"
+                            validators={["required"]}
+                            errorMessages={["Campo requerido"]}
+                            id = 'documento'
+                                className="select-documento"
+                                classNamePrefix="select"
+                                isDisabled={false}
+                                isLoading={false}
+                                isClearable={true}
+                                isSearchable={true}
+                                name="tipoD"
+                                //value={this.state.tipoD}
+                                
+                                 SelectProps={{
+                                     native: true
+                                   }}
+                                onChange={this.ChangeSelect.bind(this)}
+                            >                           
+                                 <option value=""></option>
+                            {this.state.tipoD.map(tipos =>{
+                                return(
+                                    <option key={tipos.value} value={tipos.value}>
+                                        {tipos.name}
+                                    </option>
+                                );
+                            })}
+                    </SelectValidator>
               </div>
               <div className = "col-md-6  flex-container form-group">
                   <TextValidator type = "document" className = "form-control" 

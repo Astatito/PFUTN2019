@@ -187,11 +187,13 @@ class AltaPropietario extends Component{
                                 name="tipoD"
                                 //value={this.state.tipoD}
                                 
-                                // SelectProps={{
-                                //     native: true
-                                //   }}
+                                 SelectProps={{
+                                     native: true
+                                   }}
                                 onChange={this.ChangeSelect.bind(this)}
                             >
+                                                                <option value=""></option>
+
                             {this.state.tipoD.map(tipos =>{
                                 return(
                                     <option key={tipos.value} value={tipos.value}>
@@ -218,10 +220,10 @@ class AltaPropietario extends Component{
                             />
                         </div>
                         <fieldset className = "col-md-6  flex-container form-group">
-                            <legend>  Titular (*)  </legend>
+                            <TextValidator label="Titular (*)" disabled={true}>    </TextValidator>
                                 <div className = "form-check">
                                     <label className = "form-check-label">
-                                    <TextValidator type = "radio" className = "form-check-input"  
+                                    <input type = "radio" className = "form-check-input"  
                                     value = 'Si' checked={this.state.titular === 'Si'}
                                     validators={["required"]}
                                     errorMessages={["Campo requerido"]}
@@ -231,7 +233,7 @@ class AltaPropietario extends Component{
                                 </div>
                                 <div className = "form-check">
                                     <label className = "form-check-label">
-                                    <TextValidator type = "radio" className = "form-check-input" value = 'No'
+                                    <input type = "radio" className = "form-check-input" value = 'No'
                                     validators={["required"]}
                                     errorMessages={["Campo requerido"]}
                                     onChange={this.ChangeRadio} checked={this.state.titular === 'No'} />

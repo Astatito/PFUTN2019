@@ -199,9 +199,9 @@ class AltaAdministrador extends Component{
                         name="tipoD"
                         //value={this.state.tipoD}
                         
-                        // SelectProps={{
-                        //     native: true
-                        //   }}
+                        SelectProps={{
+                            native: true
+                          }}
                         onChange={this.ChangeSelect.bind(this)}
                     >
                      {this.state.tipoD.map(tipos =>{
@@ -253,8 +253,13 @@ class AltaAdministrador extends Component{
                         isLoading={false}
                         isClearable={true}
                         isSearchable={true}
+                        SelectProps={{
+                            native: true
+                          }}
                         // options={this.state.countryList}
                         onChange={this.ChangeSelectCountry.bind(this)}>
+                         <option value=""></option>
+
                         {this.state.countryList.map(countrys =>{
                             return(
                                <option key={countrys.value} value={countrys.value}>

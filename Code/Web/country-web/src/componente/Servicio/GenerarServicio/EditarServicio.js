@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import "../../Style/Alta.css";
 import {Database} from "../../../config/config"
 import {Link} from 'react-router-dom'
+import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 
 
 class EditarServicio extends Component{
@@ -109,20 +110,26 @@ class EditarServicio extends Component{
     render(){
 
         return(
+            <ValidatorForm
+            ref="form"
+            onError={errors => console.log("hola",errors)}
+            onSubmit={this.registrar}
+            >
             <div className="col-12">
 
                         <div className="row">
                             <legend><h1> Editar Servicio</h1> </legend>
                             <div className = "col-md-6 flex-container form-group">
-                                <label for = "NombreServicio"> Nombre del Servicio  </label>
-                                <input  type = "name" className = "col-md-6 form-control"
-                                        placeholder = "Name Service"
+                                <TextValidator  type = "name" className = "col-md-6 form-control"
+                                        label = "Nombre del Servicio (*)"
+                                        validators={["required"]}
+                                        errorMessages={["Campo requerido"]}
                                         value={this.state.nombre}
                                         onChange={this.ChangeNombre}/>
                             </div>
                             <div className = "col-md-6 flex-container form-group">
-                                <label for = "FechaNacimiento">  Dias disponibles  </label>
-                                <div>
+                            <TextValidator label="Dias disponibles (*)" disabled={true} ></TextValidator>
+                                <div >
                                     <label><input id='0' value="Lun" type="checkbox" checked={this.state.dias[0] === 'Lun'} onChange={this.ChangeDiasDisponible.bind(this)} />Lun </label>
                                     <label><input id='1' value="Mar" type="checkbox" checked={this.state.dias[1] === 'Mar'} onChange={this.ChangeDiasDisponible.bind(this)} />Mar </label>
                                     <label><input id='2' value="Mie" type="checkbox" checked={this.state.dias[2] === 'Mie'} onChange={this.ChangeDiasDisponible.bind(this)} />Mie </label>
@@ -133,8 +140,7 @@ class EditarServicio extends Component{
                                 </div>
                             </div>
                             <fieldset className = "col-md-6 flex-container form-group">
-                                <legend>  Estado  </legend>
-                                <div className = "form-check">
+                            <TextValidator label="Estado (*)" disabled={true} ></TextValidator>                                <div className = "form-check">
                                     <label className = "form-check-label">
                                         <input type = "radio" className = "form-check-input"
                                                value = 'Si' checked={this.state.estado === 'Si'}
@@ -151,20 +157,20 @@ class EditarServicio extends Component{
                                 </div>
                             </fieldset>
                             <div className = "col-md-6 flex-container form-group">
-                                <label for = "exampleTextarea"> Descripcion  </ label >
-                                <textarea className = "col-md-6 form-control" id = "exampleTextarea" rows = "3"
+                                <TextValidator className = "col-md-6 form-control" id = "exampleTextarea" rows = "3"
                                           value={this.state.descripcion}
-                                          onChange={this.ChangeDescripcion}> </textarea>
+                                          label="Descripcion"
+                                          onChange={this.ChangeDescripcion}> </TextValidator>
                             </div>
                         </div>
 
                         <div className="form-group izquierda">
                           <Link to="/" type="button" className="btn btn-primary"
                           >Volver</Link>
-                          <button className="btn btn-primary" onClick={this.registrar}>Registrar</button>
+                          <button className="btn btn-primary" type="submit">Editar</button>
                         </div>
                     </div>
-
+                    </ValidatorForm>
         );
     }
 }

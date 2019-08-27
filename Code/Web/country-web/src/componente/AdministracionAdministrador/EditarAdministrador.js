@@ -268,7 +268,12 @@ class EditarAdministrador extends Component{
                         // isClearable={true}
                         // isSearchable={true}
                         // options={this.state.countryList}
+                        SelectProps={{
+                            native: true
+                          }}
                         onChange={this.ChangeSelectCountry.bind(this)}>
+                          <option value=""></option>
+
                         {this.state.countryList.map(countrys =>{
                             return(
                                <option key={countrys.value} value={countrys.value}>

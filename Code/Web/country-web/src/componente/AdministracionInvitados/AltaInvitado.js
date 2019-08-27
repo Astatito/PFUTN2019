@@ -197,6 +197,8 @@ class AltaInvitado extends Component{
                           }}
                         onChange={this.ChangeSelect.bind(this)}
                     >
+                                                        <option value=""></option>
+
                      {this.state.tipoD.map(tipos =>{
                          return(
                             <option key={tipos.value} value={tipos.value}>
@@ -295,6 +297,8 @@ class AltaInvitado extends Component{
                                 }}
                                 onChange={this.ChangeSelectInvitado.bind(this)}
                           >
+                                                              <option value=""></option>
+
                           {this.state.tipoD.map(tipos =>{
                               return(
                                   <option key={tipos.value} value={tipos.value}>
