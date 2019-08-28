@@ -7,7 +7,7 @@ import { Database } from '../../Firebase';
 import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import {DatePicker} from  'native-base';
 class RegistroVisitante extends Component {
     state = { picker: '', tiposDocumento: [], documento: '' };
 
@@ -83,8 +83,23 @@ class RegistroVisitante extends Component {
                             />
                         </CardSection>
                         <CardSection>
-                            <Field placeholder="Eg. 02/11/1992" label="Fecha de nacimiento" hidden={false} />
+                            <DatePicker
+                                defaultDate={new Date(2018, 4, 4)}
+                                minimumDate={new Date(2018, 1, 1)}
+                                maximumDate={new Date(2018, 12, 31)}
+                                locale={"en"}
+                                timeZoneOffsetInMinutes={undefined}
+                                modalTransparent={false}
+                                animationType={"fade"}
+                                androidMode={"default"}
+                                placeHolderText="Select date"
+                                textStyle={{ color: "green" }}
+                                placeHolderTextStyle={{ color: "#d3d3d3" }}
+                                onDateChange={this.setDate}
+                                disabled={false}
+                                />
                         </CardSection>
+                        
                         <CardSection>
                             <Field placeholder="Eg. 491457" label="Teléfono fijo" hidden={false} />
                         </CardSection>
