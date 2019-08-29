@@ -12,6 +12,7 @@ import Escaner from '../Main/Escaner';
 import RegistroVisitante from '../Main/Screens/RegistroVisitante';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons'
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -123,13 +124,28 @@ const EgresoStackNavigator = createStackNavigator(
 // Este Tab tiene tres Stacks.
 const EncargadoTabNavigator = createBottomTabNavigator({
     Home: {
-        screen: EncargadoStackNavigator
+        screen: EncargadoStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconEntypo name="home" size={24} color="#346ECD" />
+            )
+          },
     },
     'Nuevo Ingreso': {
-        screen: IngresoStackNavigator
+        screen: IngresoStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconCommunity name="run" size={24} color="#346ECD" />
+            )
+          },
     },
     'Nuevo Egreso': {
-        screen: EgresoStackNavigator
+        screen: EgresoStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconCommunity name="exit-run" size={24} color="#346ECD" />
+            )
+          },
     }
 });
 
@@ -181,7 +197,7 @@ const EncargadoNavigation = createDrawerNavigator(
     {
         contentComponent: CustomDrawerContentComponent,
         contentOptions : {
-            activeTintColor:'blue'
+            activeTintColor:'#346ECD'
         }
     }
 );

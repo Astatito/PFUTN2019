@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { Header } from '../../Common';
+import { View, StyleSheet, Image, StatusBar } from 'react-native';
+import {Text, Content} from 'native-base';
+
 class Encargado extends Component {
     static navigationOptions = {
         title: 'Home'
@@ -8,27 +9,43 @@ class Encargado extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
-                <Header headerText="Bienvenido de nuevo !"> </Header>
-                <Image style={{ width: '100%', height: '60%', paddingTop: 90 }} source={require('../../Logo/NuevoLogo.jpg')} />
-            </View>
+            <Content>
+                <View style={styles.container}>
+                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
+                    <StatusBar backgroundColor='#1e90ff'></StatusBar>
+                    <Text style={styles.header}> Bienvenido de nuevo !</Text>
+                    <View style={{ height:380, width: 380, backgroundColor: '#fff', alignItems:'center',justifyContent:'center'}}>
+                            <Image source={require('../../Logo/LogoTransparente.png')} style={{height:380, width:380, borderRadius:0}}></Image>
+                    </View>
+                </View>
+            </Content>
+            
         );
     }
 }
 
 const styles = StyleSheet.create({
-    logueo: {
-        textAlign: 'right',
-        color: '#000000',
-        paddingTop: 10,
-        paddingBottom: 5
-    },
     container: {
         flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        padding: 10
+        alignItems:'center',
+        justifyContent: 'center',
+        backgroundColor:'#fff',
+        paddingLeft: 10,
+        paddingRight: 10
+    },
+    logueo: {
+        textAlign: 'right',
+        alignSelf: 'flex-end',
+        paddingTop:28,
+        color: '#000'
+    },
+    header:{
+        fontSize: 28,
+        marginBottom:10,
+        marginTop:30,
+        color:'#35383D',
+        fontWeight:'normal',
+        fontStyle: 'normal'
     }
 });
 export default Encargado;
