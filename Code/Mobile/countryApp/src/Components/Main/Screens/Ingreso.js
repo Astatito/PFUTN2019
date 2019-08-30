@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, StatusBar } from 'react-native';
 import { Content, Button, Icon, Text } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -13,16 +13,19 @@ class Ingreso extends Component {
             <ScrollView>
                 <Content >
                     <View style={styles.container}>
+                        <StatusBar backgroundColor='#1e90ff'></StatusBar>
                         <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
                         <Text style={styles.header}> ¿Escáner o registro manual?</Text>
                         <View style={styles.button}>
-                            <Button iconLeft bordered success large style={{padding:50}}>
+                            <Button iconLeft bordered success large style={{padding:50}}
+                                    onPress={() => this.props.navigation.navigate('Escaner', { tipo: 'Ingreso' })}>
                                 <Icon name='camera' />
                                 <Text>Escáner</Text>
                             </Button>
                         </View>
                         <View style={styles.button}>
-                            <Button iconLeft bordered primary large style={{padding:50}}>
+                            <Button iconLeft bordered primary large style={{padding:50}}
+                                    onPress={() => this.props.navigation.navigate('IngresoManual')}>
                                 <Icon name='search' />
                                 <Text>Manual</Text>
                             </Button>
@@ -33,6 +36,7 @@ class Ingreso extends Component {
         );
     }
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -52,7 +56,7 @@ const styles = StyleSheet.create({
         fontSize: 26,
         marginBottom:85,
         marginTop:50,
-        color:'#35383D',
+        color:'#08477A',
         fontWeight:'normal',
         fontStyle: 'normal'
     },

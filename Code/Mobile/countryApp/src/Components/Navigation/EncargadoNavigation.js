@@ -136,7 +136,7 @@ const EncargadoTabNavigator = createBottomTabNavigator({
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => (
               <IconCommunity name="run" size={24} color="#346ECD" />
-            )
+            ), 
           },
     },
     'Nuevo Egreso': {

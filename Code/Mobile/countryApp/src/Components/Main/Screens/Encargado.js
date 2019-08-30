@@ -11,8 +11,8 @@ class Encargado extends Component {
         return (
             <Content>
                 <View style={styles.container}>
-                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
                     <StatusBar backgroundColor='#1e90ff'></StatusBar>
+                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
                     <Text style={styles.header}> Bienvenido de nuevo !</Text>
                     <View style={{ height:380, width: 380, backgroundColor: '#fff', alignItems:'center',justifyContent:'center'}}>
                             <Image source={require('../../Logo/LogoTransparente.png')} style={{height:380, width:380, borderRadius:0}}></Image>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         marginBottom:10,
         marginTop:30,
-        color:'#35383D',
+        color:'#08477A',
         fontWeight:'normal',
         fontStyle: 'normal'
     }
