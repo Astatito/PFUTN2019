@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, ActivityIndicator, StyleSheet, StatusBar,TextInput,TouchableOpacity,Image} from 'react-native';
 import { Firebase, Database } from '../../Firebase';
-
+import Spinner from 'react-native-loading-spinner-overlay';
 class Login extends Component {
     state = { email: '', password: '', result: '', showSpinner: false };
 
@@ -54,24 +54,22 @@ class Login extends Component {
             })
     };
 
+    componentDidMount() {
+        setInterval(() => {
+          this.setState({
+            showSpinner: false
+          });
+        }, 3000);
+      }
+
     render() {
-        if (this.state.showSpinner) {
-            return (
-                <View style={styles.container}>
-                    <ActivityIndicator size="large" color="#007aff" />
-                    <Text
-                        style={{
-                            color: '#000',
-                            textAlign: 'center',
-                            fontSize: 18
-                        }}>
-                        Loading ...
-                    </Text>
-                </View>
-            );
-        } else {
             return (
                     <View style={styles.container}>
+                        <Spinner
+                            visible={this.state.showSpinner}
+                            textContent={'Loading...'}
+                            textStyle={styles.spinnerTextStyle}
+                        />
                         <StatusBar backgroundColor='#96D0E8'></StatusBar>
                         <Text style={styles.header}> -  LOGIN  -  </Text>
                         
@@ -101,11 +99,16 @@ class Login extends Component {
             );
         }
     }
-}
+
 const styles = StyleSheet.create({
     wrapper: {
         flex:1
     },
+    spinnerTextStyle: {
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: '#FFF'
+      },
     container: {
         flex: 1,
         alignItems:'center',
