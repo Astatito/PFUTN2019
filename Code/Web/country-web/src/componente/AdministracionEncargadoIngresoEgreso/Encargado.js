@@ -4,10 +4,6 @@ import {Database} from '../../config/config';
 import { Link } from 'react-router-dom'
 import ModalEliminar from '../ModalEliminar';
 
-
-
-
-
 class Encargado extends Component{
 
     constructor(props){

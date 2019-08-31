@@ -11,6 +11,7 @@ class AltaEncargado extends Component{
     constructor(){
         super();
         this.state = {
+            idEncargadoCreado: '',
             nombre: '',
             apellido: '',
             tipoDocumento: '',
@@ -54,8 +55,8 @@ class AltaEncargado extends Component{
     }
 
 
-    addEncargado(){
-        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+    async addEncargado(){
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
         .collection('Encargados').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
@@ -67,9 +68,10 @@ class AltaEncargado extends Component{
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
             Usuario: this.state.mail,
-            IdCountry: this.state.idCountry,
-
-        });
+        }).then(doc => {
+                this.setState({ idEncargadoCreado: doc.id })
+            });
+        await this.crearUsuario();
 
     }
 
@@ -111,19 +113,20 @@ class AltaEncargado extends Component{
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
-            this.crearUsuario();
             this.addEncargado();
         }
     }
 
-    crearUsuario(){
+    async crearUsuario(){
         const {mail} = this.state;
         const {pass} = this.state;
         if (true){
             Firebase.auth().createUserWithEmailAndPassword(mail, pass).then(
-                Database.collection('Usuarios').doc(mail).set({
+                await  Database.collection('Usuarios').doc(mail).set({
                     NombreUsuario: mail,
-                    TipoUsuario: Database.doc('/TiposUsuario/Encargado')
+                    TipoUsuario: Database.doc('/TiposUsuario/Encargado'),
+                    IdCountry: Database.doc('Country/'+ localStorage.getItem('idCountry')),
+                    IdPersona: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Encargados/' + this.state.idEncargadoCreado),
                 })
             )
             .catch(function(error) {
@@ -168,8 +171,8 @@ class AltaEncargado extends Component{
               <label for = "TipoDocumento (*)">  Tipo Documento  </label>
               <SelectValidator
                             label="Tipo Documento (*)"
-                            validators={["required"]}
-                            errorMessages={["Campo requerido"]}
+                            // validators={["required"]}
+                            // errorMessages={["Campo requerido"]}
                             id = 'documento'
                                 className="select-documento"
                                 classNamePrefix="select"

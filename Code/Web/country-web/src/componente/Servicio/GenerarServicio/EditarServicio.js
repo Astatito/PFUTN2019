@@ -29,13 +29,6 @@ class EditarServicio extends Component{
     }
 
     async componentDidMount(){
-        await Database.collection('Administradores').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                    this.state.idCountry = doc.data().IdCountry
-                }
-            });
-        })
         await Database.collection('Country').doc(localStorage.getItem('idCountry')).collection('Servicios').doc(this.idServicio).get()
             .then(doc => {
                 if (doc.exists) {
@@ -56,12 +49,11 @@ class EditarServicio extends Component{
     }
 
     editServicio(){
-        Database.collection('Country').doc('nkB2OpDMe6znzVkQRCRf').collection('Servicios').doc(this.idServicio).set({
+        Database.collection('Country').doc(localStorage.getItem('idCountry')).collection('Servicios').doc(this.idServicio).set({
             Nombre: this.state.nombre,
             Estado: this.state.estado === 'Si'?true:false,
             Disponibilidad: this.state.dias,
             Descripcion: this.state.descripcion,
-            IdCountry: this.state.idCountry,
         });
 
     }

@@ -7,8 +7,6 @@ import ReactLightCalendar from '@lls/react-light-calendar'
 import '@lls/react-light-calendar/dist/index.css'
 import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
-//https://react-select.com/home
-// for(let i=0 , i < algo.length, i++  )
 
 class EditarInvitado extends Component{
 
@@ -31,6 +29,8 @@ class EditarInvitado extends Component{
             tipoD: [],// Para cargar el combo
             resultado: ''
         }
+        this.valor = (localStorage.getItem('tipoUsuario') == 'Propietario')?
+        localStorage.getItem('idPersona'):localStorage.getItem('propietarioId')
         this.esPropietario = localStorage.getItem('tipoUsuario')==='Propietario'?true:false;
         this.editInvitado = this.editInvitado.bind(this);
         this.ChangeNombre = this.ChangeNombre.bind(this);
@@ -56,8 +56,9 @@ class EditarInvitado extends Component{
                 )
             });
         });
+        
         await Database.collection('Country').doc(localStorage.getItem('idCountry'))
-        .collection('Propietarios').doc(localStorage.getItem('idPersona'))
+        .collection('Propietarios').doc(this.valor)
         .collection('Invitados').doc(this.idInvitado).get()
             .then(doc => {
                 if (doc.exists) {
@@ -89,9 +90,6 @@ class EditarInvitado extends Component{
             fechaAlta:estrella.FechaAlta,
             startDate:estrella.FechaDesde,
             endDate: estrella.FechaHasta,
-            idTipoPersona: estrella.IdTipoPersona,
-            idCountry: estrella.IdCountry,
-            idPropietario: estrella.IdPropietario
 
         })
     }
@@ -99,7 +97,7 @@ class EditarInvitado extends Component{
    editInvitado(){
 
             Database.collection('Country').doc(localStorage.getItem('idCountry'))
-            .collection('Propietarios').doc(localStorage.getItem('idPersona'))
+            .collection('Propietarios').doc(this.valor)
             .collection('Invitados').doc(this.idInvitado).set({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
@@ -111,8 +109,6 @@ class EditarInvitado extends Component{
             FechaAlta: this.state.fechaAlta,
             FechaDesde: this.state.startDate,
             FechaHasta: this.state.endDate,
-            IdCountry: this.state.idCountry,
-            IdPropietario: this.state.idPropietario,
         });
 
     }
@@ -151,30 +147,32 @@ class EditarInvitado extends Component{
     }
 
     registrarIngreso(){
-        Database.collection('Ingresos').doc(this.idInvitado).set({
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Ingresos').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
             Documento: this.state.documento,
             Hora: new Date(),
-            IdCountry: this.state.idCountry,
-            IdPropietario: this.state.idPropietario,
-            IdTipoPersona: this.state.idTipoPersona,
-            IdEncargado: Database.doc('Encargados/' + localStorage.getItem('idEncargado'))
+            Egreso: false,
+            Estado: this.state.estado,
+            Descripcion: '',
+            IdEncargado: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Encargados/' + localStorage.getItem('idPersona'))
         });  
     }
 
     registrarEgreso(){
-        Database.collection('Egresos').doc(this.idInvitado).set({
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Egresos').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
             Documento: this.state.documento,
             Hora: new Date(),
-            IdCountry: this.state.idCountry,
-            IdPropietario: this.state.idPropietario,
-            IdTipoPersona: this.state.idTipoPersona,
-            IdEncargado: Database.doc('Encargados/' + localStorage.getItem('idEncargado'))
+            Egreso: true,
+            Estado: this.state.estado,
+            Descripcion: '',
+            IdEncargado: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Encargados/' + localStorage.getItem('idPersona'))
         });  
     }
 
@@ -256,8 +254,8 @@ class EditarInvitado extends Component{
                         <div className = "col-md-6  flex-container form-group">
                         <SelectValidator
                             label="Tipo Documento (*)"
-                            validators={["required"]}
-                            errorMessages={["Campo requerido"]}
+                            // validators={["required"]}
+                            // errorMessages={["Campo requerido"]}
                             id = 'documento'
                                 // className="select-documento"
                                 // classNamePrefix="select"

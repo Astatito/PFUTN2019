@@ -13,7 +13,6 @@ class AltaServicio extends Component{
             nombre: '',
             estado: 'Si',
             disponibilidad: '',
-            idCountry: '',
             descripcion: '',
             dias : ['','','','','','',''],
         }
@@ -25,15 +24,6 @@ class AltaServicio extends Component{
 
     }
 
-    componentDidMount(){
-        Database.collection('Administradores').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                        this.state.idCountry = doc.data().IdCountry
-                }
-            });
-        })
-    }
 
     addServicio(){
         Database.collection('Country').doc(localStorage.getItem('idCountry')).collection('Servicios').add({
@@ -41,7 +31,6 @@ class AltaServicio extends Component{
             Estado: this.state.estado=== 'Si'?true:false,
             Disponibilidad: this.state.dias,
             Descripcion: this.state.descripcion,
-            IdCountry: this.state.idCountry,
         });
 
     }

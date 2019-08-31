@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import "../Style/Alta.css";
 import {Database} from '../../config/config';
-import EditarInvitado from './EditarInvitado'
 import ModalEliminar from '../ModalEliminar';
-import Modal from 'react-bootstrap/Modal'
 import {Link} from 'react-router-dom'
 
 class Invitado extends Component{
@@ -36,10 +34,6 @@ class Invitado extends Component{
     }
 
     render(){
-        const {show} = this.state;
-        
-        const handleClose = () => this.setState({show:false});
-        const handleShow = () => this.setState({show: true});
         return(
 
             <tr class="table-light">

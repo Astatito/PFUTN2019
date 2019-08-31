@@ -6,7 +6,6 @@ import Egresos from "./Egresos";
 import {Link} from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import Select from 'react-select'
-import EditarInvitado from '../AdministracionInvitados/EditarInvitado'
 
 class PrincialEgreso extends Component{
 
@@ -42,20 +41,13 @@ class PrincialEgreso extends Component{
 
     async componentDidMount(){
         const { egresos } = this.state;
-        await Database.collection('Encargados').get().then(querySnapshot => {
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Egresos').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
-                if(doc.data().Usuario === localStorage.getItem('mail')){
-                    this.state.idCountry = doc.data().IdCountry;
-                    this.state.idEncargado = doc.id;
-                }
-            });
-        });
-        await Database.collection('Egresos').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                if(doc.data().IdCountry.id == this.state.idCountry.id){
+                
                 this.state.egresos.push(
                     [doc.data(), doc.id]
-                )}
+                )
 
             });
         });
@@ -66,8 +58,7 @@ class PrincialEgreso extends Component{
                     {value: doc.id, label: doc.data().Nombre}
                 )
             });
-        });//.where('Egreso','==',true)this.state.invitadoTemp.push(querySnapshot.docs[0].data(), querySnapshot.docs[0].id) 
-        
+        });
     }
 
     ChangeDescripcion(event){
@@ -84,7 +75,8 @@ class PrincialEgreso extends Component{
 
     async buscar(){
         
-       await Database.collection('Ingresos').orderBy('Hora', 'asc').get().then(querySnapshot => {
+       await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+       .collection('Ingresos').orderBy('Hora', 'asc').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 if(doc.data().Documento === this.state.documento && 
                 doc.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value){
@@ -117,71 +109,100 @@ class PrincialEgreso extends Component{
         // })
         // this.setState({observacion: false});
         if(this.state.invitadoTemp.length == 0){
-       
+            //Buscar persona porque no esta regstrado un ingreso de la misma
             await this.buscarPersonas();
         }
         this.setState({ busqueda : false})
     }
 
-    buscarPersonas(){
-       Database.collection('Personas').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                if(doc.data().Documento === this.state.documento && 
-                doc.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value){
-                    if(doc.data().IdTipoPersona.id === 'Propietario'){
-                        this.state.invitadoTemp.push(doc.data(), doc.id)
+    async buscarPersonas(){
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Propietarios').get().then(querySnapshot => {
+        querySnapshot.forEach(prop => {
+                Database.collection('Country').doc(localStorage.getItem('idCountry'))
+                .collection('Propietarios').doc(prop.id).collection('Invitados').get()
+                .then(querySnapshot => { querySnapshot.forEach(doc => {
+                    if(prop.data().Documento === this.state.documento &&
+                        prop.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value){
+                        this.state.invitadoTemp.push(prop.data(), prop.id)
                         this.setState({
-                            mensaje2: 'No se encuentra ingreso de ' + doc.data().Apellido + '. Indique observaciones.'
+                            mensaje2: 'No se encuentra ingreso de ' + prop.data().Apellido + '. Indique observaciones.'
                         })
                         this.setState({observacion: false})
-                    } else{
-                        if (doc.data().Nombre !=''){
-                            this.state.invitadoTemp.push(doc.data(), doc.id)
+                    } else if(doc.data().Documento === this.state.documento &&
+                    doc.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value){
+                        this.state.invitadoTemp.push(doc.data(), doc.id)
+                        if(doc.data().Nombre !=''){
                             this.setState({
                                 mensaje2: 'No se encuentra ingreso de ' + doc.data().Apellido + '. Indique observaciones.'
                             })
                             this.setState({observacion: false})
-                        }else{
-                            this.state.invitadoTemp.push(doc.data(), doc.id)
+                        } else {
                             this.setState({virgen: true, mensaje: 'Falta autentificar el invitado'})
                         }
                     }
-                } 
-            })})
+                })
+            })
+               
+
+            })
+        })
+           
+            
+    //    Database.collection('Personas').get().then(querySnapshot => {
+    //         querySnapshot.forEach(doc => {
+    //             if(doc.data().Documento === this.state.documento && 
+    //             doc.data().TipoDocumento.id === this.state.tipoDocumento.valueOf().value){
+    //                 if(doc.data().IdTipoPersona.id === 'Propietario'){
+    //                     this.state.invitadoTemp.push(doc.data(), doc.id)
+    //                     this.setState({
+    //                         mensaje2: 'No se encuentra ingreso de ' + doc.data().Apellido + '. Indique observaciones.'
+    //                     })
+    //                     this.setState({observacion: false})
+    //                 } else{
+    //                     if (doc.data().Nombre !=''){
+    //                         this.state.invitadoTemp.push(doc.data(), doc.id)
+    //                         this.setState({
+    //                             mensaje2: 'No se encuentra ingreso de ' + doc.data().Apellido + '. Indique observaciones.'
+    //                         })
+    //                         this.setState({observacion: false})
+    //                     }else{
+    //                         this.state.invitadoTemp.push(doc.data(), doc.id)
+    //                         this.setState({virgen: true, mensaje: 'Falta autentificar el invitado'})
+    //                     }
+    //                 }
+    //             } 
+    //         })})
         if (this.state.invitadoTemp.length == 0 && !this.state.virgen && this.state.observacion){
             this.setState({noExisteInvitado : true })
         }
     }
 
     seteoEgreso(){
-        Database.collection('Ingresos').doc(this.state.invitadoTemp[1]).set(
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Ingresos').doc(this.state.invitadoTemp[1]).set(
            { Nombre: this.state.invitadoTemp[0].Nombre,
             Apellido: this.state.invitadoTemp[0].Apellido,
             TipoDocumento: this.state.invitadoTemp[0].TipoDocumento,
             Documento: this.state.invitadoTemp[0].Documento,
             Hora: this.state.invitadoTemp[0].Hora,
-            IdCountry: this.state.invitadoTemp[0].IdCountry,
-            IdPropietario: this.state.invitadoTemp[0].IdPropietario?this.state.invitadoTemp[0].IdPropietario:'',
-            IdTipoPersona: this.state.invitadoTemp[0].IdPropietario? Database.doc('Personas/Invitado'):Database.doc('Personas/Propietario'),
             Egreso: true,
             Estado: this.state.invitadoTemp[0].Estado,
-            IdEncargado: Database.doc('Encargados/' + this.state.idEncargado),
+            IdEncargado:Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Encargados/' + localStorage.getItem('idPersona'))
         })
     }
 
    async registrar(){
        
-        await Database.collection('Egresos').add({
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+        .collection('Egresos').add({
            Nombre: this.state.invitadoTemp[0].Nombre,
            Apellido: this.state.invitadoTemp[0].Apellido,
            TipoDocumento: this.state.invitadoTemp[0].TipoDocumento,
            Documento: this.state.invitadoTemp[0].Documento,
            Hora: new Date(),
-           IdCountry: this.state.invitadoTemp[0].IdCountry,
-           IdPropietario: this.state.invitadoTemp[0].IdPropietario?this.state.invitadoTemp[0].IdPropietario:'',
-           IdTipoPersona: this.state.invitadoTemp[0].IdPropietario? Database.doc('Personas/Invitado'):Database.doc('Personas/Propietario'),
            Descripcion: this.state.descripcion,
-           IdEncargado: Database.doc('Encargados/' + this.state.idEncargado),
+           IdEncargado: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Encargados/' + localStorage.getItem('idPersona'))
        });  
        if(this.state.observacion){
            this.seteoEgreso();
@@ -338,7 +359,6 @@ class PrincialEgreso extends Component{
                                                 idEgreso = {egresos[1]}
                                                 nombre = {egresos[0].Nombre}
                                                 apellido = {egresos[0].Apellido}
-                                                persona = {egresos[0].IdTipoPersona.id}
                                                 documento = {egresos[0].Documento}
                                                 hora = {egresos[0].Hora}
                                                 descripcion= {egresos[0].Descripcion}

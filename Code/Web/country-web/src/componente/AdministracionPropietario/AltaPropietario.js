@@ -9,6 +9,7 @@ class AltaPropietario extends Component{
     constructor(){
         super();
         this.state = {
+            idPropietarioCreado: '',
             nombre: '',
             apellido: '',
             tipoDocumento: '',
@@ -53,8 +54,8 @@ class AltaPropietario extends Component{
         this.setState({tipoD})
     }
 
-    addPropietario(){
-        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+    async addPropietario(){
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
         .collection('Propietarios').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
@@ -67,10 +68,10 @@ class AltaPropietario extends Component{
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
             Usuario: this.state.mail,
-            IdCountry: this.state.idCountry,
-            IdTipoPersona: Database.doc('TipoPersona/Propietario'),
+        }).then(doc => {
+            this.setState({ idPropietarioCreado: doc.id })
         });
-
+        await this.crearUsuario();
     }
 
     ChangeNombre(event) {
@@ -119,28 +120,26 @@ class AltaPropietario extends Component{
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
-            this.crearUsuario();
             this.addPropietario();
-
         }
     }
 
-    crearUsuario(){
+   async  crearUsuario(){
         const {mail} = this.state;
         const {pass} = this.state;
         if (true){
             Firebase.auth().createUserWithEmailAndPassword(mail, pass).then(
-                Database.collection('Usuarios').doc(mail).set({
+                await Database.collection('Usuarios').doc(mail).set({
                     NombreUsuario: mail,
-                    TipoUsuario: Database.doc('/TiposUsuario/Propietario')
+                    TipoUsuario: Database.doc('/TiposUsuario/Propietario'),
+                    IdCountry: Database.doc('Country/'+ localStorage.getItem('idCountry')),
+                    IdPersona: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Propietarios/' + this.state.idPropietarioCreado),
                 })
             )
             .catch(function(error) {
               console.log('error :', error);
               //La pass debe tener al menos 6 caracteres wachina
             });
-           
-
         }
     }
 
@@ -175,8 +174,8 @@ class AltaPropietario extends Component{
                         <div className = "col-md-6  flex-container form-group">
                         <SelectValidator
                             label="Tipo Documento (*)"
-                            validators={["required"]}
-                            errorMessages={["Campo requerido"]}
+                            // validators={["required"]}
+                            // errorMessages={["Campo requerido"]}
                             id = 'documento'
                                 className="select-documento"
                                 classNamePrefix="select"
@@ -214,8 +213,8 @@ class AltaPropietario extends Component{
                             <label for = "FechaNacimiento">  Fecha de Nacimiento (*)  </label>
                             <TextValidator type="date"className = "form-control" name="FechaNacimiento"
                                    step="1" min="1920-01-01"
-                                   validators={["required"]}
-                                  errorMessages={["Campo requerido"]}
+                                //    validators={["required"]}
+                                //   errorMessages={["Campo requerido"]}
                                    onChange={this.ChangeFechaNacimiento}
                             />
                         </div>

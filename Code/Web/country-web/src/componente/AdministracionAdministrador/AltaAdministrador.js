@@ -5,14 +5,13 @@ import {Link} from 'react-router-dom'
 import {Database, Firebase} from "../../config/config";
 import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
-//https://react-select.com/home
-//https://firebase.google.com/docs/auth/web/manage-users#create_a_user
 
 class AltaAdministrador extends Component{
 
     constructor(){
         super();
         this.state = {
+            idAdminCreado: '',
             nombre: '',
             apellido: '',
             tipoDocumento: '',
@@ -56,7 +55,7 @@ class AltaAdministrador extends Component{
 
             });
         });
-        await Database.collection('Barrios').get().then(querySnapshot => {
+        await Database.collection('Country').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
 
                 this.state.countryList.push(
@@ -70,9 +69,9 @@ class AltaAdministrador extends Component{
     }
 
 
-    addAdministrador(){
-        var dbRef = Database.collection('Administradores')
-        dbRef.add({
+    async addAdministrador(){
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+            .collection('Administradores').add({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Legajo: this.state.legajo,
@@ -83,8 +82,10 @@ class AltaAdministrador extends Component{
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
             Usuario: this.state.mail, 
-            IdCountry: Database.doc('Barrios/' + this.state.idCountry.valueOf().value),
+        }).then(doc => {
+            this.setState({ idAdminCreado: doc.id })
         });
+        await this.crearUsuario();
 
     }
 
@@ -130,20 +131,20 @@ class AltaAdministrador extends Component{
     registrar(){
         //Agregar validaciones para no registrar cualquier gilada
         if(true){
-            this.crearUsuario();
             this.addAdministrador();
-
         }
     }
 
-    crearUsuario(){
+    async crearUsuario(){
         const {mail} = this.state;
         const {pass} = this.state;
         if (true){
             Firebase.auth().createUserWithEmailAndPassword(mail, pass).then(
-                Database.collection('Usuarios').doc(mail).set({
+                await Database.collection('Usuarios').doc(mail).set({
                     NombreUsuario: mail,
-                    TipoUsuario: Database.doc('/TiposUsuario/Administrador')
+                    TipoUsuario: Database.doc('/TiposUsuario/Administrador'),
+                    IdCountry: Database.doc('Country/'+ localStorage.getItem('idCountry')),
+                    IdPersona: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Propietarios/' + this.state.idAdminCreado),
                 })
 
             )
@@ -187,8 +188,8 @@ class AltaAdministrador extends Component{
                 <div className = "col-md-6 flex-container form-group">
                     <SelectValidator
                     label="Tipo Documento (*)"
-                    validators={["required"]}
-					errorMessages={["Campo requerido"]}
+                    // validators={["required"]}
+					// errorMessages={["Campo requerido"]}
                     id = 'documento'
                         className="select-documento"
                         classNamePrefix="select"
@@ -224,8 +225,8 @@ class AltaAdministrador extends Component{
                 <div className = "col-md-6 flex-container form-group">
                     <label for = "FechaNacimiento (*)">  Fecha de Nacimiento  </label>
                     <TextValidator type="date"className = "form-control" name="FechaNacimiento"
-                            validators={["required"]}
-						    errorMessages={["Campo requerido"]}
+                            // validators={["required"]}
+						    // errorMessages={["Campo requerido"]}
                             step="1" min="1920-01-01"
                             onChange={this.ChangeFechaNacimiento}
                     />
@@ -241,9 +242,9 @@ class AltaAdministrador extends Component{
                 <div className = "col-md-6 flex-container form-group">
                     <SelectValidator
                         label="Country (*)"
-                        required
-                        validators={["required"]}
-						errorMessages={["Campo requerido"]}
+                        //required
+                        // validators={["required"]}
+						// errorMessages={["Campo requerido"]}
                         id = 'country'
                         name="countryList"
                         className="select-country"

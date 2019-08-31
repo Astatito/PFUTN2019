@@ -12,7 +12,6 @@ class Egresos extends Component{
         this.idEgreso = props.idEgreso;
         this.nombre = props.nombre;
         this.apellido = props.apellido;
-        this.persona = props.persona;
         this.documento = props.documento;
         this.hora = props.hora;
         this.descripcion = props.descripcion;
@@ -34,7 +33,7 @@ class Egresos extends Component{
             <tr class="table-light">
                 <th scope="row">{this.nombre}, {this.apellido}</th>
                 <td> {this.documento}</td>
-                <td>{this.persona}</td>
+                <td>{'sd'}</td>
                 {/* <td>{Date(this.hora).toLocaleString()}</td> */}
                 <td>{moment(Date(this.hora).toLocaleString()).format('HH:mm DD/MM/YYYY')}</td>
                 <td>{this.descripcion!='' && this.descripcion!= undefined?'Si':'-'}</td>

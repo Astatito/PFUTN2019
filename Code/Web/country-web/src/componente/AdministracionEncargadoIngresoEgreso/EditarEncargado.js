@@ -84,14 +84,13 @@ class EditarEncargado extends Component{
             celular : estrella.Celular,
             descripcion: estrella.Descripcion,
             usuario: estrella.Usuario,
-            idCountry: estrella.IdCountry,
         })
     }
 
 
     editEncargado(){
         Database.collection('Country').doc(localStorage.getItem('idCountry'))
-        .collection('Encargados').doc(this.idEncargados).set({
+        .collection('Encargados').doc(this.idEncargado).set({
             Nombre: this.state.nombre,
             Apellido: this.state.apellido,
             Legajo: this.state.legajo,
@@ -102,7 +101,6 @@ class EditarEncargado extends Component{
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: this.state.fechaAlta,
             Usuario: this.state.usuario, 
-            IdCountry: this.state.idCountry,
         });
 
     }
@@ -179,8 +177,8 @@ class EditarEncargado extends Component{
               <label for = "TipoDocumento (*)">  Tipo Documento  </label>
               <SelectValidator
                             label="Tipo Documento (*)"
-                            validators={["required"]}
-                            errorMessages={["Campo requerido"]}
+                            // validators={["required"]}
+                            // errorMessages={["Campo requerido"]}
                             id = 'documento'
                                 className="select-documento"
                                 classNamePrefix="select"

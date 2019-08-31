@@ -26,17 +26,17 @@ class Administrador extends Component{
     }
 
     async componentWillMount(){
-
-        await Database.collection('Barrios').doc(this.idCountry).get()
-            .then(doc => {
-                if (doc.exists) {
-                    this.country = doc.data().Nombre;
-                }
-            })
+        // await Database.collection('Barrios').doc(this.idCountry).get()
+        //     .then(doc => {
+        //         if (doc.exists) {
+        //             this.country = doc.data().Nombre;
+        //         }
+        //     })
     }
 
     eliminar(){
-        Database.collection('Administradores').doc(this.idAdministrador).delete()
+        Database.collection('Country').doc(localStorage.getItem('idCountry'))
+            .collection('Administradores').doc(this.idAdministrador).delete()
             .then(
                 this.props.act(this.idAdministrador)
             )
