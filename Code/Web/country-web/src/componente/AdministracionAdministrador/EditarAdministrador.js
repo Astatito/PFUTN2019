@@ -6,9 +6,6 @@ import {Link} from "react-router-dom"
 import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
 
-//https://react-select.com/home
-// for(let i=0 , i < algo.length, i++  )
-
 class EditarAdministrador extends Component{
 
     constructor(props){
@@ -49,7 +46,7 @@ class EditarAdministrador extends Component{
 
     async componentDidMount(){
         const { tipoD, administrador, countryList} = this.state;
-        await Database.collection('Barrios').get().then(querySnapshot => {
+        await Database.collection('Country').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
 
                 this.state.countryList.push(
@@ -65,7 +62,8 @@ class EditarAdministrador extends Component{
                 )
             });
         });
-        await Database.collection('Administradores').doc(this.idAdministrador).get()
+        await Database.collection('Country').doc(localStorage.getItem('idCountry'))
+            .collection('Administradores').doc(this.idAdministrador).get()
             .then(doc => {
                 if (doc.exists) {
                     this.state.administrador.push(doc.data());
@@ -86,7 +84,7 @@ class EditarAdministrador extends Component{
                    this.state.tipoDocumento = {value : doc.id, label : doc.data().Nombre}
                 }
             })
-            await Database.collection('Barrios').doc(estrella.IdCountry.id).get()
+            await Database.collection('Counrty').doc(estrella.IdCountry.id).get()
             .then(doc => {
                 if (doc.exists) {
                    this.state.idCountry = {value : doc.id, label : doc.data().Nombre}
@@ -119,7 +117,6 @@ class EditarAdministrador extends Component{
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: this.state.fechaAlta,
             Usuario: this.state.usuario, 
-            IdCountry: Database.doc('Barrios/' + this.state.idCountry.valueOf().value),
         });
 
     }
@@ -199,8 +196,8 @@ class EditarAdministrador extends Component{
                 <label for = "Tipo Documento (*)">  Tipo Documento  </label>
                 <SelectValidator
                     label="Tipo Documento (*)"
-                    validators={["required"]}
-					errorMessages={["Campo requerido"]}
+                    // validators={["required"]}
+					// errorMessages={["Campo requerido"]}
                     id = 'documento'
                         // className="select-documento"
                         // classNamePrefix="select"
@@ -237,8 +234,8 @@ class EditarAdministrador extends Component{
                 <div className = "col-md-6 flex-container form-group">
                     <label for = "FechaNacimiento (*)">  Fecha de Nacimiento  </label>
                     <TextValidator type="date"className = "form-control" name="FechaNacimiento"
-                      validators={["required"]}
-						        errorMessages={["Campo requerido"]}
+                    //   validators={["required"]}
+					// 	        errorMessages={["Campo requerido"]}
                             step="1" min="1920-01-01"
                             onChange={this.ChangeFechaNacimiento}
                     />
@@ -255,9 +252,9 @@ class EditarAdministrador extends Component{
                 <label for = "Country (*)">  Country </label>
                 <SelectValidator
                         label="Country (*)"
-                        required
-                        validators={["required"]}
-						errorMessages={["Campo requerido"]}
+                        // required
+                        // validators={["required"]}
+						// errorMessages={["Campo requerido"]}
                         id = 'country'
                         name="countryList"
                         // className="select-country"

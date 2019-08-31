@@ -6,9 +6,7 @@ import {Database, Firebase} from "../../config/config";
 import  { DatePicker, RangeDatePicker} from '@y0c/react-datepicker'
 import {ValidatorForm, TextValidator, SelectValidator} from 'react-material-ui-form-validator';
 
-//https://react-select.com/home
-//https://firebase.google.com/docs/auth/web/manage-users#create_a_user
-// https://firebase.google.com/docs/admin/setup
+
 
 class AltaInvitado extends Component{
 
@@ -56,7 +54,7 @@ class AltaInvitado extends Component{
         await Database.collection('TipoDocumento').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 this.state.tipoD.push(
-                    {value: doc.id, label: doc.data().Nombre}
+                    {value: doc.id, name: doc.data().Nombre}
                 )
             });
         });
@@ -80,7 +78,6 @@ class AltaInvitado extends Component{
             FechaAlta: new Date(),
             FechaDesde: this.state.startDate,
             FechaHasta: this.state.endDate,
-            IdCountry: this.state.idCountry,
             IdPropietario: Database.doc('Country/'+ localStorage.getItem('idCountry') + '/Propietarios/' + this.state.idPropietario),
         });
 
@@ -179,8 +176,8 @@ class AltaInvitado extends Component{
                          hidden={this.esPropietario}>
                              <SelectValidator
                     label="Tipo Documento (*)"
-                    validators={["required"]}
-					errorMessages={["Campo requerido"]}
+                    // validators={["required"]}
+					// errorMessages={["Campo requerido"]}
                     id = 'documento'
                         // className="select-documento"
                         // classNamePrefix="select"
@@ -279,8 +276,8 @@ class AltaInvitado extends Component{
                         <div className = "col-md-6  flex-container form-group" >
                         <SelectValidator
                           label="Tipo Documento Invitado (*)"
-                          validators={["required"]}
-                          errorMessages={["Campo requerido"]}
+                        //   validators={["required"]}
+                        //   errorMessages={["Campo requerido"]}
                           id = 'documento'
                               // className="select-documento"
                               // classNamePrefix="select"

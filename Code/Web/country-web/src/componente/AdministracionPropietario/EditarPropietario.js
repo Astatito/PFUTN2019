@@ -85,9 +85,6 @@ class EditarPropietario extends Component{
             celular : estrella.Celular,
             descripcion: estrella.Descripcion,
             usuario: estrella.Usuario,
-            idTipoPersona: estrella.IdTipoPersona,
-            idCountry: estrella.IdCountry,
-
         })
     }
  
@@ -105,9 +102,7 @@ class EditarPropietario extends Component{
             Documento: this.state.documento,
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: this.state.fechaAlta,
-            Usuario: this.state.usuario, 
-            IdCountry: this.state.idCountry,
-            IdTipoPersona: this.state.idTipoPersona,
+            Usuario: this.state.usuario,
         });
 
     }
@@ -181,8 +176,8 @@ class EditarPropietario extends Component{
                     <div className = "col-md-6  flex-container form-group">
                     <SelectValidator
                         label="Tipo Documento (*)"
-                        validators={["required"]}
-                        errorMessages={["Campo requerido"]}
+                        // validators={["required"]}
+                        // errorMessages={["Campo requerido"]}
                         id = 'documento'
                             className="select-documento"
                             classNamePrefix="select"
@@ -220,8 +215,8 @@ class EditarPropietario extends Component{
                         <label for = "FechaNacimiento">  Fecha de Nacimiento (*)  </label>
                         <TextValidator type="date"className = "form-control" name="FechaNacimiento"
                                step="1" min="1920-01-01"
-                               validators={["required"]}
-                              errorMessages={["Campo requerido"]}
+                            //    validators={["required"]}
+                            //   errorMessages={["Campo requerido"]}
                                onChange={this.ChangeFechaNacimiento}
                         />
                     </div>

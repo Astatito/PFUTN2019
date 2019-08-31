@@ -17,18 +17,22 @@ class PrincipalPropietario extends Component{
 
     }
 
-    async componentDidMount(){
+    async componentWillMount(){
         const { administradores } = this.state;
-        await Database.collection('Administradores').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                this.state.administradores.push(
-                    [doc.data(), doc.id]
-                )
-            });
-        });
+        await Database.collection('Country').get().then(querySnapshot => {
+            querySnapshot.forEach(country => {
+                    Database.collection('Country').doc(country.id)
+                        .collection('Administradores').get()
+                        .then(querySnapshot => { querySnapshot.forEach(doc => {
+                            console.log(doc.data());
+                            this.state.administradores.push(
+                                [doc.data(), doc.id]
+                            )
+                        })
+                        })})})
         this.setState({administradores});
-
     }
+
 
 
     actualizar(id){
@@ -90,7 +94,6 @@ class PrincipalPropietario extends Component{
                                                 legajo = {administradores[0].Legajo}
                                                 documento = {administradores[0].Documento}
                                                 celular = {administradores[0].Celular}
-                                                idCountry = {administradores[0].IdCountry.id}
                                                 act = {this.actualizar}
                                             >
                                             </Administrador>
