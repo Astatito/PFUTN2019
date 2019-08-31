@@ -41,11 +41,6 @@ class Login extends Component {
             .get()
             .then(doc => {
                 if (doc.exists) {
-<<<<<<< HEAD
-                    console.log(doc.data().TipoUsuario.id);
-                    this.setState({ result2: doc.data().TipoUsuario.id });
-=======
->>>>>>> dev/Alexis/ingreso
                     switch (doc.data().TipoUsuario.id) {
                         case 'Propietario':
                             this.props.navigation.navigate('Propietario');
