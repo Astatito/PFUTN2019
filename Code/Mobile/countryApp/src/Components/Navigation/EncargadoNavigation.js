@@ -10,8 +10,10 @@ import EgresoManual from '../Main/Screens/EgresoManual';
 import EncargadoPerfil from '../Main/Screens/EncargadoPerfil';
 import Escaner from '../Main/Escaner';
 import RegistroVisitante from '../Main/Screens/RegistroVisitante';
-import Icon from 'react-native-vector-icons/EvilIcons';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import IconEvil from 'react-native-vector-icons/EvilIcons';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons'
+import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -19,16 +21,20 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
+            <View style={{height: 150, backgroundColor: 'white', alignItems:'center',justifyContent:'center'}}>
+                <Image source={require('../Logo/guardia.jpg')} style={{height:120, width:120, borderRadius:60}}></Image>
+            </View>
             <DrawerItems {...props} />
             <TouchableOpacity
                 onPress={() => {
                     props.navigation.closeDrawer();
                     props.navigation.navigate('Login');
-                }}>
+                }} style={{flex:1,flexDirection:'row'}}>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:18,paddingTop:350, color:'gray'}}></IconEntypo>
                 <Text
                     style={{
-                        paddingTop: 12,
-                        paddingLeft: 12,
+                        paddingTop: 355,
+                        paddingLeft: 30,
                         color: '#000',
                         fontWeight: 'bold'
                     }}>
@@ -47,7 +53,7 @@ const EncargadoStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
@@ -73,7 +79,7 @@ const IngresoStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
@@ -99,7 +105,7 @@ const EgresoStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
@@ -118,13 +124,28 @@ const EgresoStackNavigator = createStackNavigator(
 // Este Tab tiene tres Stacks.
 const EncargadoTabNavigator = createBottomTabNavigator({
     Home: {
-        screen: EncargadoStackNavigator
+        screen: EncargadoStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconEntypo name="home" size={24} color="#346ECD" />
+            )
+          },
     },
     'Nuevo Ingreso': {
-        screen: IngresoStackNavigator
+        screen: IngresoStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconCommunity name="run" size={24} color="#346ECD" />
+            ), 
+          },
     },
     'Nuevo Egreso': {
-        screen: EgresoStackNavigator
+        screen: EgresoStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconCommunity name="exit-run" size={24} color="#346ECD" />
+            )
+          },
     }
 });
 
@@ -136,12 +157,13 @@ const EncargadoPerfilStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },
                 headerTintColor: '#fff',
+                
                 headerTitleStyle: {
                     textAlign: 'center',
                     flex: 1
@@ -156,14 +178,27 @@ const EncargadoPerfilStackNavigator = createStackNavigator(
 const EncargadoNavigation = createDrawerNavigator(
     {
         Registros: {
-            screen: EncargadoTabNavigator
+            screen: EncargadoTabNavigator,
+            navigationOptions:{
+                drawerIcon : ({tintColor}) => (
+                    <IconEntypo name= "home" style={{fontSize:25,color: tintColor}}></IconEntypo>
+                ),
+            }
         },
         'Mi Perfil': {
-            screen: EncargadoPerfilStackNavigator
+            screen: EncargadoPerfilStackNavigator,
+            navigationOptions:{
+                drawerIcon : ({tintColor}) => (
+                    <IconEntypo name= "user" style={{fontSize:25,color: tintColor}}></IconEntypo>
+                ),
+            }
         }
     },
     {
-        contentComponent: CustomDrawerContentComponent
+        contentComponent: CustomDrawerContentComponent,
+        contentOptions : {
+            activeTintColor:'#346ECD'
+        }
     }
 );
 

@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { Button, Card, CardSection, Header, Field, ButtonCancelar } from '../../Common';
+import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../Firebase';
-import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Content, Button,Text, Picker } from 'native-base';
+import Spinner from 'react-native-loading-spinner-overlay';
+
+const BLUE = '#428AF8'
+const LIGHT_GRAY = '#D3D3D3'
 
 class EgresoManual extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -13,17 +16,9 @@ class EgresoManual extends Component {
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />
         };
     };
+    
+    state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused:false};
 
-    state = {
-        picker: '',
-        tiposDocumento: [],
-        documento: '',
-        showSpinner: false
-    };
-
-    // Para activar el spinner, solo agregas esto dentro de un then. this.setState({showSpinner: true});
-
-    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = () => {
         var dbRef = Database.collection('TipoDocumento');
         var dbDocs = dbRef
@@ -31,24 +26,27 @@ class EgresoManual extends Component {
             .then(snapshot => {
                 var tiposDocumento = [];
                 snapshot.forEach(doc => {
-                    tiposDocumento.push({
-                        value: doc.id,
-                        label: doc.data().Nombre
-                    });
+                    tiposDocumento.push(doc.data().Nombre);
                 });
                 this.setState({ tiposDocumento });
             })
-            .catch(err => {
-                console.log(err);
-            });
     };
 
+<<<<<<< HEAD
     grabarEgreso = idPersona => {
         var dbRef = Database.collection('AccesosDB');
         dbRef.add({
             Fecha: new Date(),
             Persona: Database.doc('PersonasDB/' + idPersona),
             Tipo: 'Egreso'
+=======
+    grabarIngreso = idPersona => {
+        var dbRef = Database.collection('Accesos');
+        dbRef.add({
+            Fecha: new Date(),
+            Persona: Database.doc('Personas/' + idPersona),
+            Tipo: 'Ingreso'
+>>>>>>> dev/Alexis/ingreso
         });
         alert('Egreso registrado correctamente.');
     };
@@ -76,8 +74,8 @@ class EgresoManual extends Component {
                     this.registrarNuevoVisitante();
                 }
                 snapshot.forEach(doc => {
-                    this.grabarEgreso(doc.id);
-                    console.log('Egreso registrado correctamente.');
+                    this.grabarIngreso(doc.id);
+                    console.log('Ingreso registrado correctamente.');
                 });
             })
             .catch(err => {
@@ -85,100 +83,126 @@ class EgresoManual extends Component {
             });
     };
 
+    handleFocus = event => {
+        this.setState({isFocused:true});
+        if(this.props.onFocus) {
+            this.props.onFocus(event);
+        }
+    }
+    handleBlur = event => {
+        this.setState({isFocused:false});
+        if (this.props.onBlur) {
+            this.props.onBlur(event);
+        }
+    }
+
     render() {
+        const {isFocused} = this.state
+        
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers();
         }
-        if (this.state.showSpinner) {
-            return (
-                <View style={styles.container}>
-                    <ActivityIndicator size="large" color="#007aff" />
-                    <Text
-                        style={{
-                            color: '#000',
-                            textAlign: 'center',
-                            fontSize: 18
-                        }}>
-                        Loading ...
-                    </Text>
-                </View>
-            );
-        } else {
-            return (
-                <ScrollView>
-                    <View style={styles.container}>
-                        <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
-                        <Header headerText="Registrar nuevo egreso"> </Header>
-                        <Card>
-                            <View style={styles.picker}>
-                                <RNPickerSelect
-                                    selectedValue={this.state.picker}
-                                    onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
-                                    items={this.state.tiposDocumento}
-                                />
-                            </View>
 
-                            <CardSection>
-                                <Field
-                                    placeholder="Eg. 32645187"
-                                    label="Número de documento"
-                                    value={this.state.documento}
-                                    hidden={false}
-                                    onChangeText={documento => this.setState({ documento })}
-                                />
-                            </CardSection>
-                            <View style={styles.botones}>
-                                <CardSection>
-                                    <Button
-                                        onPress={() => {
-                                            this.obtenerPersona(this.state.documento);
-                                        }}>
-                                        Aceptar
-                                    </Button>
-                                </CardSection>
-                                <CardSection>
-                                    <ButtonCancelar
-                                        onPress={() => {
-                                            this.props.navigation.goBack();
-                                        }}>
-                                        Cancelar
-                                    </ButtonCancelar>
-                                </CardSection>
-                            </View>
-                        </Card>
+        return (
+            <ScrollView>
+                <Content>
+                <View style={styles.container}>
+                    <Spinner
+                            visible={this.state.showSpinner}
+                            textContent={'Loading...'}
+                            textStyle={styles.spinnerTextStyle}
+                        />
+                    <StatusBar backgroundColor='#1e90ff'></StatusBar>
+                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
+                    <Text style={styles.header}> Registrar nuevo egreso</Text>
+
+                    <Picker
+                        note
+                        mode="dropdown"
+                        style={{ width: '88%', marginBottom:30, fontSize: 18 }}
+                        selectedValue={this.state.picker}
+                        onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
+                        >
+                        <Picker.Item label='Tipo de documento' value='-1' color='#7B7C7E'  />
+                        {this.state.tiposDocumento.map((item, index) => {
+                        return (< Picker.Item label={item} value={item} key={index} />);
+                        })}
+                    </Picker>
+                    
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder='Número de documento'
+                        onChangeText= {(documento) => this.setState({documento})}
+                        underlineColorAndroid={
+                            isFocused ? BLUE : LIGHT_GRAY
+                        }
+                        onFocus = {this.handleFocus}
+                        onBlur={this.handleBlur}
+                        keyboardType={'numeric'}
+                    />
+                    <View style={{flexDirection:'row'}}>
+                        <View style={styles.buttons}>
+                        <Button bordered success style={{padding:20}} onPress={() => {this.obtenerPersona(this.state.documento)}}>
+                            <Text>Aceptar</Text>
+                        </Button>
+                        </View>
+                        <View style={styles.buttons}>
+                        <Button bordered danger style={{padding:20}} onPress={() => {this.props.navigation.goBack()}}>
+                            <Text>Cancelar</Text>
+                        </Button>
+                        </View>
                     </View>
-                </ScrollView>
-            );
-        }
-    }
+
+                </View>
+                </Content>
+            </ScrollView>    
+        )}
 }
 const styles = StyleSheet.create({
     container: {
-        padding: 5
+        flex: 1,
+        alignItems:'center',
+        justifyContent: 'center',
+        backgroundColor:'#fff',
+        paddingLeft: 10,
+        paddingRight: 10
     },
-    botones: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '50%',
-        justifyContent: 'flex-start',
-        padding: 10
-    },
+    spinnerTextStyle: {
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: '#FFF'
+      },
     logueo: {
         textAlign: 'right',
-        color: '#000000',
-        paddingTop: 10
+        alignSelf: 'flex-end',
+        paddingTop:28,
+        color: '#000'
     },
-    picker: {
-        borderBottomWidth: 1,
-        padding: 5,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        borderColor: '#ddd',
-        position: 'relative',
-        marginTop: 5,
-        paddingLeft: 16
-    }
+    header:{
+        textAlign:'center',
+        fontSize: 26,
+        marginBottom:50,
+        marginTop:50,
+        color:'#08477A',
+        fontWeight:'normal',
+        fontStyle: 'normal'
+    },
+    buttons: {
+        alignItems: 'flex-start',
+        justifyContent:'center',
+        padding: 15,
+        width: '45%'
+    },
+    textInput: {
+        fontSize: 16,
+        alignSelf:'stretch',
+        height:40,
+        width: '85%',
+        marginLeft: 30,
+        marginRight: 30,
+        marginBottom: 30,
+       
+    },
 });
 
 export default EgresoManual;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { Button, Card, CardSection, Header } from '../../Common';
+import { View, StyleSheet, StatusBar } from 'react-native';
+import { Content, Button, Icon, Text } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
 
 class Egreso extends Component {
@@ -11,40 +11,60 @@ class Egreso extends Component {
     render() {
         return (
             <ScrollView>
-                <View style={styles.container}>
-                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
-                    <Header headerText="¿Escaner o registro manual? " />
-                    <Card>
-                        <View style={styles.botones}>
-                            <CardSection>
-                                <Button onPress={() => this.props.navigation.navigate('Escaner', { tipo: 'Egreso' })}>Escaner</Button>
-                            </CardSection>
-                            <CardSection>
-                                <Button onPress={() => this.props.navigation.navigate('EgresoManual')}>Registro Manual</Button>
-                            </CardSection>
+                <Content >
+                    <View style={styles.container}>
+                        <StatusBar backgroundColor='#1e90ff'></StatusBar>
+                        <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
+                        <Text style={styles.header}> ¿Escáner o registro manual?</Text>
+                        <View style={styles.button}>
+                            <Button iconLeft bordered success large style={{padding:50}}
+                                    onPress={() => this.props.navigation.navigate('Escaner', { tipo: 'Egreso' })}>
+                                <Icon name='camera' />
+                                <Text>Escáner</Text>
+                            </Button>
                         </View>
-                    </Card>
-                </View>
+                        <View style={styles.button}>
+                            <Button iconLeft bordered primary large style={{padding:50}}
+                                    onPress={() => this.props.navigation.navigate('EgresoManual')}>
+                                <Icon name='search' />
+                                <Text>Manual</Text>
+                            </Button>
+                        </View>
+                    </View>
+                </Content>
             </ScrollView>
         );
     }
 }
+
 const styles = StyleSheet.create({
     container: {
-        padding: 5
+        flex: 1,
+        alignItems:'center',
+        justifyContent: 'center',
+        backgroundColor:'#fff',
+        paddingLeft: 10,
+        paddingRight: 10
     },
     logueo: {
         textAlign: 'right',
-        color: '#000000',
-        paddingTop: 10
+        alignSelf: 'flex-end',
+        paddingTop:28,
+        color: '#000'
     },
-    botones: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        justifyContent: 'center',
-        padding: 5
-    }
+    header:{
+        fontSize: 26,
+        marginBottom:85,
+        marginTop:50,
+        color:'#08477A',
+        fontWeight:'normal',
+        fontStyle: 'normal'
+    },
+    button:{
+        alignSelf:'center',
+        marginBottom:85,
+        alignItems:'center',
+    },
 });
 
 export default Egreso;

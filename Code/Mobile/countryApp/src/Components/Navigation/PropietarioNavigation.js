@@ -6,8 +6,9 @@ import Propietario from '../Main/Screens/Propietario';
 import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
 import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
 import ModalForImage from '../Main/Screens/ModalForImage';
-import Icon from 'react-native-vector-icons/EvilIcons';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import IconEvil from 'react-native-vector-icons/EvilIcons';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -15,16 +16,20 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
+            <View style={{height: 150, backgroundColor: 'white', alignItems:'center',justifyContent:'center'}}>
+                <Image source={require('../Logo/propietario.jpg')} style={{height:120, width:120, borderRadius:60}}></Image>
+            </View>
             <DrawerItems {...props} />
             <TouchableOpacity
                 onPress={() => {
                     props.navigation.closeDrawer();
                     props.navigation.navigate('Login');
-                }}>
+                }} style={{flex:1,flexDirection:'row'}}>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:18,paddingTop:300, color:'gray'}}></IconEntypo>
                 <Text
                     style={{
-                        paddingTop: 12,
-                        paddingLeft: 12,
+                        paddingTop: 305,
+                        paddingLeft: 30,
                         color: '#000',
                         fontWeight: 'bold'
                     }}>
@@ -43,7 +48,7 @@ const PropietarioStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
@@ -62,7 +67,12 @@ const PropietarioStackNavigator = createStackNavigator(
 
 const PropietarioTabNavigator = createBottomTabNavigator({
     Home: {
-        screen: PropietarioStackNavigator
+        screen: PropietarioStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconEntypo name="home" size={24} color="#346ECD" />
+            )
+          },
     }
 });
 
@@ -74,7 +84,7 @@ const PropietarioPerfilStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
@@ -98,7 +108,7 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
@@ -117,17 +127,35 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
 const PropietarioNavigation = createDrawerNavigator(
     {
         Registros: {
-            screen: PropietarioTabNavigator
+            screen: PropietarioTabNavigator,
+            navigationOptions:{
+                drawerIcon : ({tintColor}) => (
+                    <IconEntypo name= "home" style={{fontSize:25,color: tintColor}}></IconEntypo>
+                ),
+            }
         },
         'Mi Perfil': {
-            screen: PropietarioPerfilStackNavigator
+            screen: PropietarioPerfilStackNavigator,
+            navigationOptions:{
+                drawerIcon : ({tintColor}) => (
+                    <IconEntypo name= "user" style={{fontSize:25,color: tintColor}}></IconEntypo>
+                ),
+            }
         },
-        'Mi ubicación' : {
-            screen: PropietarioUbicacionStackNavigator
+        'Mi Ubicación' : {
+            screen: PropietarioUbicacionStackNavigator,
+            navigationOptions:{
+                drawerIcon : ({tintColor}) => (
+                    <IconEntypo name= "location-pin" style={{fontSize:25,color: tintColor}}></IconEntypo>
+                ),
+            }
         }
     },
     {
-        contentComponent: CustomDrawerContentComponent
+        contentComponent: CustomDrawerContentComponent,
+        contentOptions : {
+            activeTintColor:'#346ECD'
+        }
     }
 );
 
