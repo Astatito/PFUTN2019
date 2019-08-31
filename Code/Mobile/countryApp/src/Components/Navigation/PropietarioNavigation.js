@@ -5,12 +5,17 @@ import React from 'react';
 import Propietario from '../Main/Screens/Propietario';
 import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
 import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
+import Reservas from '../Main/Screens/Reservas';
+import Invitaciones from '../Main/Screens/Invitaciones';
 import ModalForImage from '../Main/Screens/ModalForImage';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-elements';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = props => (
@@ -40,7 +45,7 @@ const CustomDrawerContentComponent = props => (
     </ScrollView>
 );
 
-// Stack 1 - El stack navigator para el home del encargado.
+// Stack - El stack navigator para el home del encargado.
 const PropietarioStackNavigator = createStackNavigator(
     {
         Propietario: Propietario
@@ -63,8 +68,7 @@ const PropietarioStackNavigator = createStackNavigator(
     }
 );
 
-//Este es el Tab Navigator. El titulo superior que se encuentra en la franja azul se pone automáticamente.
-
+// Tab Navigator - Este es el Tab Navigator de Registros.
 const PropietarioTabNavigator = createBottomTabNavigator({
     Home: {
         screen: PropietarioStackNavigator,
@@ -122,8 +126,74 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
         }
     }
 );
-//Este es el Drawer del Encargado. Registros, Mi Perfil y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
-// Este drawer a su vez tiene un TabNavigator y un Stack..
+
+// Stack - El stack navigator para el apartado de reserva de eventos.
+const PropietarioEventosStackNavigator = createStackNavigator(
+    {
+        Reservas: Reservas
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerRight: <View />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+            };
+        }
+    }
+);
+
+// Stack - El stack navigator para el apartado de invitaciones.
+const PropietarioInvitacionesStackNavigator = createStackNavigator(
+    {
+        Invitaciones : Invitaciones,
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerRight: <View />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+            };
+        }
+    }
+);
+
+// Tab Navigator - Este es el Tab Navigator de Eventos.
+const PropietarioEventosTabNavigator = createBottomTabNavigator({
+    Reservas: {
+        screen: PropietarioEventosStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconIonicons name="ios-list" size={24} color="#346ECD" />
+            )
+          },
+    },
+    Invitaciones: {
+        screen: PropietarioInvitacionesStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconAntDesign name="addusergroup" size={24} color="#346ECD" />
+            )
+          },
+    }
+});
+
+//Este es el Drawer del Encargado. Registros, Mi Perfil, Eventos y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
 const PropietarioNavigation = createDrawerNavigator(
     {
         Registros: {
@@ -147,6 +217,14 @@ const PropietarioNavigation = createDrawerNavigator(
             navigationOptions:{
                 drawerIcon : ({tintColor}) => (
                     <IconEntypo name= "location-pin" style={{fontSize:25,color: tintColor}}></IconEntypo>
+                ),
+            }
+        },
+        'Eventos' : {
+            screen: PropietarioEventosTabNavigator,
+            navigationOptions:{
+                drawerIcon : ({tintColor}) => (
+                    <IconIonicons name= "ios-people" style={{fontSize:25,color: tintColor}}></IconIonicons>
                 ),
             }
         }
