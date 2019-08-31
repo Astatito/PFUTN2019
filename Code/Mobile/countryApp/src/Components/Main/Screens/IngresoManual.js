@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, StatusBar, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Content, Button,Text, Picker } from 'native-base';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const BLUE = '#428AF8'
 const LIGHT_GRAY = '#D3D3D3'
@@ -92,66 +93,61 @@ class IngresoManual extends Component {
             this.obtenerPickers();
         }
 
-        if (this.state.showSpinner) {
-            return (
+        return (
+            <ScrollView>
+                <Content>
                 <View style={styles.container}>
-                    <ActivityIndicator size="large" color="#007aff" />
-                    <Text style={{ color: '#000', textAlign: 'center', fontSize: 18 }}> Loading ... </Text>
-                </View>
-            );
-        } else {
-            return (
-                <ScrollView>
-                    <Content>
-                    <View style={styles.container}>
-                        <StatusBar backgroundColor='#1e90ff'></StatusBar>
-                        <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
-                        <Text style={styles.header}> Registrar nuevo ingreso</Text>
-
-                        <Picker
-                            note
-                            mode="dropdown"
-                            style={{ width: '88%', marginBottom:30, fontSize: 18 }}
-                            selectedValue={this.state.picker}
-                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
-                            >
-                            <Picker.Item label='Tipo de documento' value='-1' color='#7B7C7E'  />
-                            {this.state.tiposDocumento.map((item, index) => {
-                            return (< Picker.Item label={item} value={item} key={index} />);
-                            })}
-                        </Picker>
-                        
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder='Número de documento'
-                            onChangeText= {(documento) => this.setState({documento})}
-                            underlineColorAndroid={
-                                isFocused ? BLUE : LIGHT_GRAY
-                            }
-                            onFocus = {this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'numeric'}
+                    <Spinner
+                            visible={this.state.showSpinner}
+                            textContent={'Loading...'}
+                            textStyle={styles.spinnerTextStyle}
                         />
-                        <View style={{flexDirection:'row'}}>
-                            <View style={styles.buttons}>
-                            <Button bordered success style={{padding:20}} onPress={() => {this.obtenerPersona(this.state.documento)}}>
-                                <Text>Aceptar</Text>
-                            </Button>
-                            </View>
-                            <View style={styles.buttons}>
-                            <Button bordered danger style={{padding:20}} onPress={() => {this.props.navigation.goBack()}}>
-                                <Text>Cancelar</Text>
-                            </Button>
-                            </View>
-                        </View>
+                    <StatusBar backgroundColor='#1e90ff'></StatusBar>
+                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
+                    <Text style={styles.header}> Registrar nuevo ingreso</Text>
 
+                    <Picker
+                        note
+                        mode="dropdown"
+                        style={{ width: '88%', marginBottom:30, fontSize: 18 }}
+                        selectedValue={this.state.picker}
+                        onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
+                        >
+                        <Picker.Item label='Tipo de documento' value='-1' color='#7B7C7E'  />
+                        {this.state.tiposDocumento.map((item, index) => {
+                        return (< Picker.Item label={item} value={item} key={index} />);
+                        })}
+                    </Picker>
+                    
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder='Número de documento'
+                        onChangeText= {(documento) => this.setState({documento})}
+                        underlineColorAndroid={
+                            isFocused ? BLUE : LIGHT_GRAY
+                        }
+                        onFocus = {this.handleFocus}
+                        onBlur={this.handleBlur}
+                        keyboardType={'numeric'}
+                    />
+                    <View style={{flexDirection:'row'}}>
+                        <View style={styles.buttons}>
+                        <Button bordered success style={{padding:20}} onPress={() => {this.obtenerPersona(this.state.documento)}}>
+                            <Text>Aceptar</Text>
+                        </Button>
+                        </View>
+                        <View style={styles.buttons}>
+                        <Button bordered danger style={{padding:20}} onPress={() => {this.props.navigation.goBack()}}>
+                            <Text>Cancelar</Text>
+                        </Button>
+                        </View>
                     </View>
-                    </Content>
-                </ScrollView>    
-            );
-        }
+
+                </View>
+                </Content>
+            </ScrollView>    
+            )}
     }
-}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -161,6 +157,11 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10
     },
+    spinnerTextStyle: {
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: '#FFF'
+      },
     logueo: {
         textAlign: 'right',
         alignSelf: 'flex-end',
