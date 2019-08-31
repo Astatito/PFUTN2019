@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, ActivityIndicator, StyleSheet, StatusBar,TextInput,TouchableOpacity,Image} from 'react-native';
 import { Firebase, Database } from '../../Firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
+
 class Login extends Component {
     state = { email: '', password: '', result: '', showSpinner: false };
 

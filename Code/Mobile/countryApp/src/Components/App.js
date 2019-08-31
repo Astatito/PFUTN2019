@@ -16,13 +16,13 @@ export default App;
 // La que se encuentra primero es la que se ejecuta.
 
 const AppSwitchNavigator = createSwitchNavigator({
-    
+
+    Propietario: { screen: PropietarioNavigation },
     Encargado: { screen: EncargadoNavigation },
     Login: { screen: Login},
     RegistrarVisitante: {screen: RegistrarVisitante },
     
-    Propietario: { screen: PropietarioNavigation },
-    
+   
     
 });
 

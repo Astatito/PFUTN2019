@@ -67,7 +67,12 @@ const PropietarioStackNavigator = createStackNavigator(
 
 const PropietarioTabNavigator = createBottomTabNavigator({
     Home: {
-        screen: PropietarioStackNavigator
+        screen: PropietarioStackNavigator,
+        navigationOptions: {
+            tabBarIcon: ({ tintColor }) => (
+              <IconEntypo name="home" size={24} color="#346ECD" />
+            )
+          },
     }
 });
 
@@ -149,7 +154,7 @@ const PropietarioNavigation = createDrawerNavigator(
     {
         contentComponent: CustomDrawerContentComponent,
         contentOptions : {
-            activeTintColor:'blue'
+            activeTintColor:'#346ECD'
         }
     }
 );
