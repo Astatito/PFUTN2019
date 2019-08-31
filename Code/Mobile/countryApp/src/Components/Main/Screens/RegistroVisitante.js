@@ -134,15 +134,6 @@ class RegistroVisitante extends Component {
                             />
                         </CardSection>
                         <CardSection>
-<<<<<<< HEAD
-                            <Field
-                                placeholder="Eg. 02/11/1992"
-                                label="Fecha de nacimiento"
-                                hidden={false}
-                                value={this.state.fechaNacimiento}
-                                onChangeText={fechaNacimiento => this.setState({ fechaNacimiento })}
-                            />
-=======
                             <DatePicker
                                 defaultDate={new Date(2018, 4, 4)}
                                 minimumDate={new Date(2018, 1, 1)}
@@ -158,7 +149,6 @@ class RegistroVisitante extends Component {
                                 onDateChange={this.setDate}
                                 disabled={false}
                                 />
->>>>>>> dev/Alexis/ingreso
                         </CardSection>
                         
                         <CardSection>

@@ -32,21 +32,12 @@ class EgresoManual extends Component {
             })
     };
 
-<<<<<<< HEAD
-    grabarEgreso = idPersona => {
-        var dbRef = Database.collection('AccesosDB');
-        dbRef.add({
-            Fecha: new Date(),
-            Persona: Database.doc('PersonasDB/' + idPersona),
-            Tipo: 'Egreso'
-=======
     grabarIngreso = idPersona => {
         var dbRef = Database.collection('Accesos');
         dbRef.add({
             Fecha: new Date(),
             Persona: Database.doc('Personas/' + idPersona),
             Tipo: 'Ingreso'
->>>>>>> dev/Alexis/ingreso
         });
         alert('Egreso registrado correctamente.');
     };
