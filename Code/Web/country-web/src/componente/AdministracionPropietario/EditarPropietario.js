@@ -34,6 +34,7 @@ class EditarPropietario extends Component{
         this.ChangeNumero = this.ChangeNumero.bind(this);
         this.ChangeDocumento = this.ChangeDocumento.bind(this);
         this.ChangeCelular = this.ChangeCelular.bind(this);
+        this.ChangeSelect = this.ChangeSelect.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
         this.ChangeFechaNacimiento = this.ChangeFechaNacimiento.bind(this);
         this.ChangeRadio  = this.ChangeRadio.bind(this);
@@ -50,7 +51,7 @@ class EditarPropietario extends Component{
         await Database.collection('TipoDocumento').get().then(querySnapshot => {
             querySnapshot.forEach(doc => {
                 this.state.tipoD.push(
-                    {value: doc.id, label: doc.data().Nombre}
+                    {value: doc.id, name: doc.data().Nombre}
                 )
             });
         });
@@ -67,18 +68,21 @@ class EditarPropietario extends Component{
         this.setState({tipoD});
         this.setState({propietario});
         const estrella = this.state.propietario[0];
-        await Database.collection('TipoDocumento').doc(estrella.TipoDocumento.id).get()
-            .then(doc => {
-                if (doc.exists) {
-                   this.state.tipoDocumento = {value : doc.id, label : doc.data().Nombre}
-                }
-            })
+        console.log('estrella :', estrella);
+        // await Database.collection('TipoDocumento').doc(estrella.TipoDocumento).get()
+        //     .then(doc => {
+        //         if (doc.exists) {
+        //             console.log('doc.Data():', doc.data());
+        //            this.setState=({tipoDocumento : doc.data().Nombre})
+        //         }
+        //     })
     
         this.setState({
             nombre: estrella.Nombre,
             apellido: estrella.Apellido,
             titular: estrella.Titular?'Si':'No',
             documento: estrella.Documento,
+            tipoDocumento: estrella.TipoDocumento,
             fechaNacimiento: estrella.FechaNacimiento,
             fechaAlta: estrella.FechaAlta,
             telefonoFijo: estrella.TelefonoFijo,
@@ -98,7 +102,7 @@ class EditarPropietario extends Component{
             Celular: this.state.celular,
             TelefonoFijo: this.state.telefonoFijo,
             Descripcion: this.state.descripcion,
-            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
+            TipoDocumento: this.state.tipoDocumento,
             Documento: this.state.documento,
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: this.state.fechaAlta,
@@ -129,8 +133,8 @@ class EditarPropietario extends Component{
         this.setState({descripcion : event.target.value});
     }
 
-    ChangeSelect(value){
-        this.setState({tipoDocumento : value});
+    ChangeSelect(event){
+        this.setState({tipoDocumento : event.target.value});
     }
     ChangeFechaNacimiento(event){
         this.setState({fechaNacimiento : event.target.value});
@@ -175,10 +179,10 @@ class EditarPropietario extends Component{
                     </div>
                     <div className = "col-md-6  flex-container form-group">
                     <SelectValidator
-                        label="Tipo Documento (*)"
-                        // validators={["required"]}
-                        // errorMessages={["Campo requerido"]}
-                        id = 'documento'
+                            label="Tipo Documento (*)"
+                            validators={["required"]}
+                            errorMessages={["Campo requerido"]}
+                            id = 'documento'
                             className="select-documento"
                             classNamePrefix="select"
                             isDisabled={false}
@@ -186,23 +190,24 @@ class EditarPropietario extends Component{
                             isClearable={true}
                             isSearchable={true}
                             name="tipoD"
-                            //value={this.state.tipoD}
+                            value={this.state.tipoDocumento}
                             
-                            SelectProps={{
-                                 native: true
-                               }}
+                                SelectProps={{
+                                    native: true
+                                }}
                             onChange={this.ChangeSelect.bind(this)}
-                        >
-                                <option value=""></option>
-
-                        {this.state.tipoD.map(tipos =>{
-                            return(
-                                <option key={tipos.value} value={tipos.value}>
-                                    {tipos.name}
-                                </option>
-                            );
-                        })}
-                </SelectValidator>
+                            >
+                               <option value="0"></option>
+                               {
+                                this.state.tipoD.map(tipos =>{
+                                    return(
+                                        <option key={tipos.value} value={tipos.value}>
+                                            {tipos.name}
+                                        </option>
+                                    );
+                                })
+                                }
+                    </SelectValidator>
                     </div>
                     <div className = "col-md-6  flex-container form-group">
                         <TextValidator type = "document" className = "form-control"   label = "Numero de Documento (*)"
@@ -257,8 +262,9 @@ class EditarPropietario extends Component{
                     </div>
                     <div className = "col-md-6  flex-container form-group">
                         <TextValidator type = "email" className = "form-control" id = "exampleInputEmail1"
-                               aria-describe by = "emailHelp" label = "Dirección de correo electrónico (*)"
+                               aria-describe  label = "Dirección de correo electrónico (*)"
                                validators={["required"]}
+                               value = {this.state.usuario}
                         errorMessages={["Campo requerido"]}
                                value = {this.state.mail}
                                onChange={this.ChangeMail}/>

@@ -30,6 +30,7 @@ class AltaPropietario extends Component{
         this.ChangeApellido = this.ChangeApellido.bind(this);
         this.ChangeDocumento= this.ChangeDocumento.bind(this);
         this.ChangeNumero = this.ChangeNumero.bind(this);
+        this.ChangeSelect = this.ChangeSelect.bind(this);
         this.ChangeTelefonoFijo = this.ChangeTelefonoFijo.bind(this);
         this.ChangeCelular = this.ChangeCelular.bind(this);
         this.ChangeDescripcion = this.ChangeDescripcion.bind(this);
@@ -63,7 +64,7 @@ class AltaPropietario extends Component{
             Celular: this.state.celular,
             TelefonoFijo: this.state.telefonoFijo,
             Descripcion: this.state.descripcion,
-            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento.valueOf().value),
+            TipoDocumento: this.state.tipoDocumento,
             Documento: this.state.documento,
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
@@ -71,6 +72,7 @@ class AltaPropietario extends Component{
         }).then(doc => {
             this.setState({ idPropietarioCreado: doc.id })
         });
+        console.log('object :', this.state.tipoDocumento);
         await this.crearUsuario();
     }
 
@@ -143,15 +145,7 @@ class AltaPropietario extends Component{
         }
     }
 
-    pintarSelect = () => {
-        this.state.tipoD.map(tipos =>{
-            return(
-                <option key={tipos.value} value={tipos.value}>
-                    {tipos.name}
-                </option>
-            );
-        })
-    }
+   
 
 
 
@@ -188,12 +182,12 @@ class AltaPropietario extends Component{
                             validators={["required"]}
                             errorMessages={["Campo requerido"]}
                             id = 'documento'
-                            // className="select-documento"
-                            // classNamePrefix="select"
-                            // isDisabled={false}
-                            // isLoading={false}
-                            // isClearable={true}
-                            // isSearchable={true}
+                            className="select-documento"
+                            classNamePrefix="select"
+                            isDisabled={false}
+                            isLoading={false}
+                            isClearable={true}
+                            isSearchable={true}
                             name="tipoD"
                             value={this.state.tipoDocumento}
                             
@@ -202,8 +196,16 @@ class AltaPropietario extends Component{
                                 }}
                             onChange={this.ChangeSelect.bind(this)}
                             >
-                               <option value=""></option>
-                            {this.pintarSelect()}
+                               <option value="0"></option>
+                               {
+                                this.state.tipoD.map(tipos =>{
+                                    return(
+                                        <option key={tipos.value} value={tipos.value}>
+                                            {tipos.name}
+                                        </option>
+                                    );
+                                })
+                                }
                     </SelectValidator>
                         </div>
                         <div className = "col-md-6  flex-container form-group">
