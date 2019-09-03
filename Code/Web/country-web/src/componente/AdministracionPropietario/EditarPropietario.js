@@ -25,7 +25,7 @@ class EditarPropietario extends Component{
             idCountry: '',
 
             tipoD: [],// Para cargar el combo
-            temp: '', // Puto el que lee
+            temp: '', 
             resultado: ''
         }
         this.editPropietario = this.editPropietario.bind(this);
@@ -69,20 +69,19 @@ class EditarPropietario extends Component{
         this.setState({propietario});
         const estrella = this.state.propietario[0];
         console.log('estrella :', estrella);
-        // await Database.collection('TipoDocumento').doc(estrella.TipoDocumento).get()
-        //     .then(doc => {
-        //         if (doc.exists) {
-        //             console.log('doc.Data():', doc.data());
-        //            this.setState=({tipoDocumento : doc.data().Nombre})
-        //         }
-        //     })
-    
+        await Database.collection('TipoDocumento').doc(estrella.TipoDocumento.id).get()
+            .then(doc => {
+                if (doc.exists) {
+                    
+                    this.state.tipoDocumento = {value : doc.id, name : doc.data().Nombre}
+                    console.log('object :', this.state.tipoDocumento.name);
+                 }
+            })
         this.setState({
             nombre: estrella.Nombre,
             apellido: estrella.Apellido,
             titular: estrella.Titular?'Si':'No',
             documento: estrella.Documento,
-            tipoDocumento: estrella.TipoDocumento,
             fechaNacimiento: estrella.FechaNacimiento,
             fechaAlta: estrella.FechaAlta,
             telefonoFijo: estrella.TelefonoFijo,
@@ -178,7 +177,7 @@ class EditarPropietario extends Component{
                                onChange= {this.ChangeApellido} />
                     </div>
                     <div className = "col-md-6  flex-container form-group">
-                    <SelectValidator
+                    {/* <SelectValidator
                             label="Tipo Documento (*)"
                             validators={["required"]}
                             errorMessages={["Campo requerido"]}
@@ -189,15 +188,16 @@ class EditarPropietario extends Component{
                             isLoading={false}
                             isClearable={true}
                             isSearchable={true}
-                            name="tipoD"
-                            value={this.state.tipoDocumento}
+                            name="tipoDocumento"
+                            value={this.state.tipoDocumento.value}
+                            
                             
                                 SelectProps={{
                                     native: true
                                 }}
                             onChange={this.ChangeSelect.bind(this)}
                             >
-                               <option value="0"></option>
+                               <option value="0">Seleccionar</option>
                                {
                                 this.state.tipoD.map(tipos =>{
                                     return(
@@ -207,7 +207,27 @@ class EditarPropietario extends Component{
                                     );
                                 })
                                 }
-                    </SelectValidator>
+                    </SelectValidator> */}
+                    <Field
+                        label={}
+                        component={Select}
+                        onChange={ev => {
+                            setFieldValue(
+                                'tipoDoc.idTipoDoc',
+                                parseInt(ev.target.options[ev.target.selectedIndex].value)
+                            );
+                        }}
+                        id="cmb-documento"
+                    >
+                        <option value="" />
+                        {Object.keys(appConstants.typeDocument).filter(key => Number(key) !== 5).map(key => {
+                            return (
+                                <option key={key} value={key}>
+                                    {t(appConstants.typeDocument[key])}
+                                </option>
+                            );
+                        })}
+                    </Field>
                     </div>
                     <div className = "col-md-6  flex-container form-group">
                         <TextValidator type = "document" className = "form-control"   label = "Numero de Documento (*)"

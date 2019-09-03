@@ -64,7 +64,7 @@ class AltaPropietario extends Component{
             Celular: this.state.celular,
             TelefonoFijo: this.state.telefonoFijo,
             Descripcion: this.state.descripcion,
-            TipoDocumento: this.state.tipoDocumento,
+            TipoDocumento: Database.doc('TipoDocumento/' + this.state.tipoDocumento),
             Documento: this.state.documento,
             FechaNacimiento: this.state.fechaNacimiento,
             FechaAlta: new Date(),
