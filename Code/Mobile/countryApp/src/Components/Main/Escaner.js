@@ -26,7 +26,14 @@ class Escaner extends Component {
                         buttonNegative: 'Cancel'
                     }}
                     onGoogleVisionBarcodesDetected={({ barcodes }) => {
-                        console.log(barcodes);
+                        var data = barcodes[0].rawData.split('@');
+                        var persona = {
+                            Apellido: data[1],
+                            Nombre: data[2],
+                            Documento: data[4],
+                            FechaNacimiento: data[6]
+                        };
+                        console.log(persona);
                     }}
                 />
                 <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
