@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
-class Reservas extends Component {
+class Reservar extends Component {
     static navigationOptions = {
-        title: 'Reservas',
+        title: 'Reservar',
         headerRight: <View />
     };
     render() {
@@ -14,10 +14,10 @@ class Reservas extends Component {
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
-                <Text>Bienvenido a mis reservas !</Text>
+                <Text>Bienvenido a Reservar !</Text>
             </View>
         );
     }
 }
 
-export default Reservas;
+export default Reservar;

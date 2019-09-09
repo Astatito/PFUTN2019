@@ -5,7 +5,7 @@ import React from 'react';
 import Propietario from '../Main/Screens/Propietario';
 import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
 import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
-import Reservas from '../Main/Screens/Reservas';
+import Reservar from '../Main/Screens/Reservar';
 import Invitaciones from '../Main/Screens/Invitaciones';
 import ModalForImage from '../Main/Screens/ModalForImage';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
@@ -30,10 +30,10 @@ const CustomDrawerContentComponent = props => (
                     props.navigation.closeDrawer();
                     props.navigation.navigate('Login');
                 }} style={{flex:1,flexDirection:'row'}}>
-                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:18,paddingTop:300, color:'gray'}}></IconEntypo>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:18,paddingTop:205, color:'gray'}}></IconEntypo>
                 <Text
                     style={{
-                        paddingTop: 305,
+                        paddingTop: 210,
                         paddingLeft: 30,
                         color: '#000',
                         fontWeight: 'bold'
@@ -130,7 +130,7 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
 // Stack - El stack navigator para el apartado de reserva de eventos.
 const PropietarioEventosStackNavigator = createStackNavigator(
     {
-        Reservas: Reservas
+        Reservar: Reservar
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -159,7 +159,7 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
         defaultNavigationOptions: ({ navigation }) => {
             return {
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight: <View />,
+                headerRight:  <IconAntDesign style={{ paddingRight: 10 }}  name="plus" size={25} />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },
@@ -175,7 +175,7 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
 
 // Tab Navigator - Este es el Tab Navigator de Eventos.
 const PropietarioEventosTabNavigator = createBottomTabNavigator({
-    Reservas: {
+    Reservar: {
         screen: PropietarioEventosStackNavigator,
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => (
@@ -183,6 +183,10 @@ const PropietarioEventosTabNavigator = createBottomTabNavigator({
             )
           },
     },
+});
+
+// Tab Navigator - Este es el Tab Navigator de Eventos.
+const PropietarioInvitacionesTabNavigator = createBottomTabNavigator({
     Invitaciones: {
         screen: PropietarioInvitacionesStackNavigator,
         navigationOptions: {
@@ -192,7 +196,6 @@ const PropietarioEventosTabNavigator = createBottomTabNavigator({
           },
     }
 });
-
 //Este es el Drawer del Encargado. Registros, Mi Perfil, Eventos y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
 const PropietarioNavigation = createDrawerNavigator(
     {
@@ -225,6 +228,14 @@ const PropietarioNavigation = createDrawerNavigator(
             navigationOptions:{
                 drawerIcon : ({tintColor}) => (
                     <IconIonicons name= "ios-people" style={{fontSize:25,color: tintColor}}></IconIonicons>
+                ),
+            }
+        },
+        'Invitaciones' : {
+            screen: PropietarioInvitacionesTabNavigator,
+            navigationOptions:{
+                drawerIcon : ({tintColor}) => (
+                    <IconAntDesign name= "addusergroup" style={{fontSize:25,color: tintColor}}></IconAntDesign>
                 ),
             }
         }
