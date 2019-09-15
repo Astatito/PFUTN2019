@@ -7,6 +7,7 @@ import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
 import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
 import Reservar from '../Main/Screens/Reservar';
 import Invitaciones from '../Main/Screens/Invitaciones';
+import NuevoInvitado from '../Main/Screens/NuevoInvitado';
 import ModalForImage from '../Main/Screens/ModalForImage';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
@@ -15,7 +16,6 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-elements';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = props => (
@@ -30,11 +30,11 @@ const CustomDrawerContentComponent = props => (
                     props.navigation.closeDrawer();
                     props.navigation.navigate('Login');
                 }} style={{flex:1,flexDirection:'row'}}>
-                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:18,paddingTop:205, color:'gray'}}></IconEntypo>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'55%', color:'gray'}}></IconEntypo>
                 <Text
                     style={{
-                        paddingTop: 210,
-                        paddingLeft: 30,
+                        paddingTop: '57%',
+                        paddingLeft: '8%',
                         color: '#000',
                         fontWeight: 'bold'
                     }}>
@@ -154,12 +154,13 @@ const PropietarioEventosStackNavigator = createStackNavigator(
 const PropietarioInvitacionesStackNavigator = createStackNavigator(
     {
         Invitaciones : Invitaciones,
+        NuevoInvitado : NuevoInvitado
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight:  <IconAntDesign style={{ paddingRight: 10 }}  name="plus" size={25} />,
+                headerRight:  <IconAntDesign style={{ paddingRight: 10 }}  name="plus" size={25} onPress={() => navigation.navigate('NuevoInvitado')} />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },
@@ -196,6 +197,7 @@ const PropietarioInvitacionesTabNavigator = createBottomTabNavigator({
           },
     }
 });
+
 //Este es el Drawer del Encargado. Registros, Mi Perfil, Eventos y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
 const PropietarioNavigation = createDrawerNavigator(
     {
@@ -232,7 +234,7 @@ const PropietarioNavigation = createDrawerNavigator(
             }
         },
         'Invitaciones' : {
-            screen: PropietarioInvitacionesTabNavigator,
+            screen: PropietarioInvitacionesStackNavigator,
             navigationOptions:{
                 drawerIcon : ({tintColor}) => (
                     <IconAntDesign name= "addusergroup" style={{fontSize:25,color: tintColor}}></IconAntDesign>

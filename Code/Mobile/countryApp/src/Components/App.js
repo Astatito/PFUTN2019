@@ -18,9 +18,8 @@ export default App;
 const AppSwitchNavigator = createSwitchNavigator({
     Propietario: { screen: PropietarioNavigation },
     Encargado: { screen: EncargadoNavigation },
-    Login: { screen: Login},
-    RegistrarVisitante: {screen: RegistrarVisitante },
-    
+    Login: { screen: Login },
+    RegistrarVisitante: { screen: RegistrarVisitante }
 });
 
 const AppContainer = createAppContainer(AppSwitchNavigator);

@@ -72,7 +72,6 @@ class Login extends Component {
                             textStyle={styles.spinnerTextStyle}
                         />
                         <StatusBar backgroundColor='#96D0E8'></StatusBar>
-                        <Text style={styles.header}> -  LOGIN  -  </Text>
                         
                         <View style={{ height:250, width:250, backgroundColor: '#96D0E8', alignItems:'center',justifyContent:'center'}}>
                             <Image source={require('../../Logo/LogoTransparente.png')} style={{height:250, width:300, borderRadius:0, marginBottom:50}}></Image>
@@ -96,6 +95,7 @@ class Login extends Component {
                             <Text style={{color:'#fff', fontSize:18}}>Log in</Text>
                         </TouchableOpacity>
                         <Text style={styles.result}>{this.state.result}</Text>
+                       
                     </View>
             );
         }
@@ -115,31 +115,23 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent: 'center',
         backgroundColor:'#96D0E8',
-        paddingLeft: 40,
-        paddingRight: 40
-    },
-    header:{
-        fontSize: 30,
-        marginBottom:30,
-        color:'#35383D',
-        fontWeight:'bold',
-        fontStyle: 'italic',
-        
+        paddingLeft: '10%',
+        paddingRight: '10%'
     },
     textInput:{
         alignSelf:'stretch',
-        padding:16,
-        marginBottom: 20,
+        padding:'5%',
+        marginBottom: '10%',
         backgroundColor:'#fff'
     },
     btn: {
         alignSelf:'stretch',
-        padding:20,
+        padding:'5%',
         alignItems:'center',
         backgroundColor:'#15692C'
     },
     result: {
-        paddingTop:15,
+        paddingTop:'10%',
          fontWeight:'bold',
          color:'#35383D',
          alignSelf:'flex-start'
