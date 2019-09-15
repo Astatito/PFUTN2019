@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View,StyleSheet, StatusBar,TextInput,TouchableOpacity,Image} from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image } from 'react-native';
 import { Firebase, Database } from '../../Firebase';
+import { LocalStorage } from '../../Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 class Login extends Component {
@@ -18,7 +19,7 @@ class Login extends Component {
                 flex: 1
             }
         };
-    }
+    };
 
     onButtonPress() {
         this.setState({ showSpinner: true });
@@ -35,12 +36,21 @@ class Login extends Component {
     }
 
     logueoUsuario = () => {
-        var dbRef = Database.collection('UsuariosBD');
+        var dbRef = Database.collection('Usuarios');
         var dbDoc = dbRef
             .doc(this.state.email.toLowerCase())
             .get()
             .then(doc => {
                 if (doc.exists) {
+                    LocalStorage.save({
+                        key: 'UsuarioLogueado',
+                        data: {
+                            usuario: doc.data().NombreUsuario,
+                            tipoUsuario: doc.data().TipoUsuario.id,
+                            country: doc.data().IdCountry.id,
+                            datos: doc.data().IdPersona.id
+                        }
+                    });
                     switch (doc.data().TipoUsuario.id) {
                         case 'Propietario':
                             this.props.navigation.navigate('Propietario');
@@ -51,98 +61,93 @@ class Login extends Component {
                             this.setState({ showSpinner: false });
                             break;
                     }
-                } 
-            })
+                }
+            });
     };
 
     componentDidMount() {
         setInterval(() => {
-          this.setState({
-            showSpinner: false
-          });
+            this.setState({
+                showSpinner: false
+            });
         }, 3000);
-      }
+    }
 
     render() {
-            return (
-                    <View style={styles.container}>
-                        <Spinner
-                            visible={this.state.showSpinner}
-                            textContent={'Loading...'}
-                            textStyle={styles.spinnerTextStyle}
-                        />
-                        <StatusBar backgroundColor='#96D0E8'></StatusBar>
-                        <Text style={styles.header}> -  LOGIN  -  </Text>
-                        
-                        <View style={{ height:250, width:250, backgroundColor: '#96D0E8', alignItems:'center',justifyContent:'center'}}>
-                            <Image source={require('../../Logo/LogoTransparente.png')} style={{height:250, width:300, borderRadius:0, marginBottom:50}}></Image>
-                        </View>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder='Usuario'
-                            onChangeText= {(email) => this.setState({email})}
-                            underlineColorAndroid='transparent'
-                        />
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder='Contraseña'
-                            onChangeText= {(password) => this.setState({password})}
-                            underlineColorAndroid='transparent'
-                            secureTextEntry={true}
-                        />
-                        <TouchableOpacity
-                            style={styles.btn}
-                            onPress={this.onButtonPress.bind(this)}>
-                            <Text style={{color:'#fff', fontSize:18}}>Log in</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.result}>{this.state.result}</Text>
-                    </View>
-            );
-        }
+        return (
+            <View style={styles.container}>
+                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                <StatusBar backgroundColor="#96D0E8"></StatusBar>
+                <Text style={styles.header}> - LOGIN - </Text>
+
+                <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
+                    <Image
+                        source={require('../../Logo/LogoTransparente.png')}
+                        style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
+                </View>
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="Usuario"
+                    onChangeText={email => this.setState({ email })}
+                    underlineColorAndroid="transparent"
+                />
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="Contraseña"
+                    onChangeText={password => this.setState({ password })}
+                    underlineColorAndroid="transparent"
+                    secureTextEntry={true}
+                />
+                <TouchableOpacity style={styles.btn} onPress={this.onButtonPress.bind(this)}>
+                    <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
+                </TouchableOpacity>
+                <Text style={styles.result}>{this.state.result}</Text>
+            </View>
+        );
     }
+}
 
 const styles = StyleSheet.create({
     wrapper: {
-        flex:1
+        flex: 1
     },
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
-      },
+    },
     container: {
         flex: 1,
-        alignItems:'center',
+        alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor:'#96D0E8',
+        backgroundColor: '#96D0E8',
         paddingLeft: 40,
         paddingRight: 40
     },
-    header:{
+    header: {
         fontSize: 30,
-        marginBottom:30,
-        color:'#35383D',
-        fontWeight:'bold',
-        fontStyle: 'italic',
-        
+        marginBottom: 30,
+        color: '#35383D',
+        fontWeight: 'bold',
+        fontStyle: 'italic'
     },
-    textInput:{
-        alignSelf:'stretch',
-        padding:16,
+    textInput: {
+        alignSelf: 'stretch',
+        padding: 16,
         marginBottom: 20,
-        backgroundColor:'#fff'
+        backgroundColor: '#fff'
     },
     btn: {
-        alignSelf:'stretch',
-        padding:20,
-        alignItems:'center',
-        backgroundColor:'#15692C'
+        alignSelf: 'stretch',
+        padding: 20,
+        alignItems: 'center',
+        backgroundColor: '#15692C'
     },
     result: {
-        paddingTop:15,
-         fontWeight:'bold',
-         color:'#35383D',
-         alignSelf:'flex-start'
+        paddingTop: 15,
+        fontWeight: 'bold',
+        color: '#35383D',
+        alignSelf: 'flex-start'
     }
 });
 export default Login;
