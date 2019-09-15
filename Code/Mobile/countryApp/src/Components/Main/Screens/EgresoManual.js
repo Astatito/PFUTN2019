@@ -19,6 +19,7 @@ class EgresoManual extends Component {
     
     state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused:false};
 
+    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = () => {
         var dbRef = Database.collection('TipoDocumento');
         var dbDocs = dbRef
@@ -32,12 +33,12 @@ class EgresoManual extends Component {
             })
     };
 
-    grabarIngreso = idPersona => {
-        var dbRef = Database.collection('Accesos');
+    grabarEgreso = idPersona => {
+        var dbRef = Database.collection('AccesosDB');
         dbRef.add({
             Fecha: new Date(),
-            Persona: Database.doc('Personas/' + idPersona),
-            Tipo: 'Ingreso'
+            Persona: Database.doc('PersonasDB/' + idPersona),
+            Tipo: 'Egreso'
         });
         alert('Egreso registrado correctamente.');
     };
@@ -65,8 +66,8 @@ class EgresoManual extends Component {
                     this.registrarNuevoVisitante();
                 }
                 snapshot.forEach(doc => {
-                    this.grabarIngreso(doc.id);
-                    console.log('Ingreso registrado correctamente.');
+                    this.grabarEgreso(doc.id);
+                    console.log('Egreso registrado correctamente.');
                 });
             })
             .catch(err => {
@@ -104,13 +105,12 @@ class EgresoManual extends Component {
                             textStyle={styles.spinnerTextStyle}
                         />
                     <StatusBar backgroundColor='#1e90ff'></StatusBar>
-                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
-                    <Text style={styles.header}> Registrar nuevo egreso</Text>
+                    <Text style={styles.header}> Registrar nuevo Egreso</Text>
 
                     <Picker
                         note
                         mode="dropdown"
-                        style={{ width: '88%', marginBottom:30, fontSize: 18 }}
+                        style={styles.picker}
                         selectedValue={this.state.picker}
                         onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
                         >
@@ -131,14 +131,15 @@ class EgresoManual extends Component {
                         onBlur={this.handleBlur}
                         keyboardType={'numeric'}
                     />
+
                     <View style={{flexDirection:'row'}}>
                         <View style={styles.buttons}>
-                        <Button bordered success style={{padding:20}} onPress={() => {this.obtenerPersona(this.state.documento)}}>
+                        <Button bordered success style={{paddingHorizontal:'5%'}}>
                             <Text>Aceptar</Text>
                         </Button>
                         </View>
                         <View style={styles.buttons}>
-                        <Button bordered danger style={{padding:20}} onPress={() => {this.props.navigation.goBack()}}>
+                        <Button bordered danger style={{paddingHorizontal:'5%'}} onPress={() => {this.props.navigation.goBack()}}>
                             <Text>Cancelar</Text>
                         </Button>
                         </View>
@@ -147,53 +148,49 @@ class EgresoManual extends Component {
                 </View>
                 </Content>
             </ScrollView>    
-        )}
-}
+            )}
+    }
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         alignItems:'center',
         justifyContent: 'center',
         backgroundColor:'#fff',
-        paddingLeft: 10,
-        paddingRight: 10
+        marginHorizontal:'3%',
+        marginVertical:'5%',
+        flex:1
     },
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
       },
-    logueo: {
-        textAlign: 'right',
-        alignSelf: 'flex-end',
-        paddingTop:28,
-        color: '#000'
-    },
     header:{
         textAlign:'center',
         fontSize: 26,
-        marginBottom:50,
-        marginTop:50,
+        marginHorizontal:'5%',
+        marginTop:'13%',
         color:'#08477A',
         fontWeight:'normal',
         fontStyle: 'normal'
     },
-    buttons: {
-        alignItems: 'flex-start',
-        justifyContent:'center',
-        padding: 15,
-        width: '45%'
+    picker : {
+        width:'85%',
+        fontSize: 18,
+        marginTop:'15%',
+        alignItems:'flex-start',
     },
     textInput: {
+        width:'80%',
         fontSize: 16,
-        alignSelf:'stretch',
-        height:40,
-        width: '85%',
-        marginLeft: 30,
-        marginRight: 30,
-        marginBottom: 30,
-       
+        alignItems:'flex-start',
+        marginTop:'13%',    
     },
+    buttons: {
+        alignItems: 'center',
+        justifyContent:'center',
+        width:'45%',
+        marginTop:'13%'
+    }
 });
 
 export default EgresoManual;

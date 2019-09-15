@@ -12,10 +12,9 @@ class Encargado extends Component {
             <Content>
                 <View style={styles.container}>
                     <StatusBar backgroundColor='#1e90ff'></StatusBar>
-                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
                     <Text style={styles.header}> Bienvenido de nuevo !</Text>
-                    <View style={{ height:380, width: 380, backgroundColor: '#fff', alignItems:'center',justifyContent:'center'}}>
-                            <Image source={require('../../Logo/LogoTransparente.png')} style={{height:380, width:380, borderRadius:0}}></Image>
+                    <View style={{ height:340, width: 340, backgroundColor: '#fff', alignItems:'center',justifyContent:'center'}}>
+                            <Image source={require('../../Logo/LogoTransparente.png')} style={{height:340, width:340}}></Image>
                     </View>
                 </View>
             </Content>
@@ -30,19 +29,13 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent: 'center',
         backgroundColor:'#fff',
-        paddingLeft: 10,
-        paddingRight: 10
-    },
-    logueo: {
-        textAlign: 'right',
-        alignSelf: 'flex-end',
-        paddingTop:28,
-        color: '#000'
+        paddingLeft: '5%',
+        paddingRight: '5%'
     },
     header:{
-        fontSize: 28,
-        marginBottom:10,
-        marginTop:30,
+        fontSize: 30,
+        marginBottom:'15%',
+        marginTop:'15%',
         color:'#08477A',
         fontWeight:'normal',
         fontStyle: 'normal'

@@ -14,17 +14,16 @@ class Egreso extends Component {
                 <Content >
                     <View style={styles.container}>
                         <StatusBar backgroundColor='#1e90ff'></StatusBar>
-                        <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
                         <Text style={styles.header}> ¿Escáner o registro manual?</Text>
                         <View style={styles.button}>
-                            <Button iconLeft bordered success large style={{padding:50}}
+                            <Button iconLeft bordered success large style={{padding:'10%'}}
                                     onPress={() => this.props.navigation.navigate('Escaner', { tipo: 'Egreso' })}>
                                 <Icon name='camera' />
                                 <Text>Escáner</Text>
                             </Button>
                         </View>
                         <View style={styles.button}>
-                            <Button iconLeft bordered primary large style={{padding:50}}
+                            <Button iconLeft bordered primary large style={{padding:'10%'}}
                                     onPress={() => this.props.navigation.navigate('EgresoManual')}>
                                 <Icon name='search' />
                                 <Text>Manual</Text>
@@ -43,26 +42,20 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent: 'center',
         backgroundColor:'#fff',
-        paddingLeft: 10,
-        paddingRight: 10
-    },
-    logueo: {
-        textAlign: 'right',
-        alignSelf: 'flex-end',
-        paddingTop:28,
-        color: '#000'
+        marginLeft: '3%',
+        marginRight: '3%'
     },
     header:{
         fontSize: 26,
-        marginBottom:85,
-        marginTop:50,
+        marginBottom:'25%',
+        marginTop:'20%',
         color:'#08477A',
         fontWeight:'normal',
         fontStyle: 'normal'
     },
     button:{
         alignSelf:'center',
-        marginBottom:85,
+        marginBottom:'25%',
         alignItems:'center',
     },
 });

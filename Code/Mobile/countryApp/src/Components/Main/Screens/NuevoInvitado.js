@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff',
         marginHorizontal:'3%',
         marginVertical:'5%',
-
         flex:1
     },
     spinnerTextStyle: {
@@ -175,7 +174,7 @@ const styles = StyleSheet.create({
         textAlign:'center',
         fontSize: 26,
         marginHorizontal:'5%',
-        marginVertical:'6%',
+        marginVertical:'9%',
         color:'#08477A',
         fontWeight:'normal',
         fontStyle: 'normal'
@@ -204,7 +203,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         width:'45%',
         marginVertical:'5%'
-    },
+    }
 });
 
 export default NuevoInvitado;

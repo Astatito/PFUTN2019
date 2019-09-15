@@ -14,7 +14,7 @@ class Reservar extends Component {
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
-                <Text>Bienvenido a Reservar !</Text>
+                <Text>Bienvenido a mis reservas !</Text>
             </View>
         );
     }

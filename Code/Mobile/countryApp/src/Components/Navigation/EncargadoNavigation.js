@@ -30,11 +30,11 @@ const CustomDrawerContentComponent = props => (
                     props.navigation.closeDrawer();
                     props.navigation.navigate('Login');
                 }} style={{flex:1,flexDirection:'row'}}>
-                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:18,paddingTop:350, color:'gray'}}></IconEntypo>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'110%', color:'gray'}}></IconEntypo>
                 <Text
                     style={{
-                        paddingTop: 355,
-                        paddingLeft: 30,
+                        paddingTop: '112%',
+                        paddingLeft: '8%',
                         color: '#000',
                         fontWeight: 'bold'
                     }}>
