@@ -16,21 +16,24 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { LocalStorage } from '../Storage';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
-            <View style={{height: 150, backgroundColor: 'white', alignItems:'center',justifyContent:'center'}}>
-                <Image source={require('../Logo/propietario.jpg')} style={{height:120, width:120, borderRadius:60}}></Image>
+            <View style={{ height: 150, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
+                <Image source={require('../Logo/propietario.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
             <DrawerItems {...props} />
             <TouchableOpacity
                 onPress={() => {
                     props.navigation.closeDrawer();
+                    LocalStorage.remove({ key: 'UsuarioLogueado' });
                     props.navigation.navigate('Login');
-                }} style={{flex:1,flexDirection:'row'}}>
-                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'55%', color:'gray'}}></IconEntypo>
+                }}
+                style={{ flex: 1, flexDirection: 'row' }}>
+                <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '55%', color: 'gray' }}></IconEntypo>
                 <Text
                     style={{
                         paddingTop: '57%',
@@ -73,10 +76,8 @@ const PropietarioTabNavigator = createBottomTabNavigator({
     Home: {
         screen: PropietarioStackNavigator,
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => (
-              <IconEntypo name="home" size={24} color="#346ECD" />
-            )
-          },
+            tabBarIcon: ({ tintColor }) => <IconEntypo name="home" size={24} color="#346ECD" />
+        }
     }
 });
 
@@ -106,8 +107,8 @@ const PropietarioPerfilStackNavigator = createStackNavigator(
 // Stack - El stack navigator para el apartado de mi ubicación.
 const PropietarioUbicacionStackNavigator = createStackNavigator(
     {
-        UbicacionPropietario : UbicacionPropietario,
-        ModalForImage : ModalForImage
+        UbicacionPropietario: UbicacionPropietario,
+        ModalForImage: ModalForImage
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -153,14 +154,21 @@ const PropietarioEventosStackNavigator = createStackNavigator(
 // Stack - El stack navigator para el apartado de invitaciones.
 const PropietarioInvitacionesStackNavigator = createStackNavigator(
     {
-        Invitaciones : Invitaciones,
-        NuevoInvitado : NuevoInvitado
+        Invitaciones: Invitaciones,
+        NuevoInvitado: NuevoInvitado
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight:  <IconAntDesign style={{ paddingRight: 10 }}  name="plus" size={25} onPress={() => navigation.navigate('NuevoInvitado')} />,
+                headerRight: (
+                    <IconAntDesign
+                        style={{ paddingRight: 10 }}
+                        name="plus"
+                        size={25}
+                        onPress={() => navigation.navigate('NuevoInvitado')}
+                    />
+                ),
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },
@@ -179,11 +187,9 @@ const PropietarioEventosTabNavigator = createBottomTabNavigator({
     Reservar: {
         screen: PropietarioEventosStackNavigator,
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => (
-              <IconIonicons name="ios-list" size={24} color="#346ECD" />
-            )
-          },
-    },
+            tabBarIcon: ({ tintColor }) => <IconIonicons name="ios-list" size={24} color="#346ECD" />
+        }
+    }
 });
 
 // Tab Navigator - Este es el Tab Navigator de Eventos.
@@ -191,10 +197,8 @@ const PropietarioInvitacionesTabNavigator = createBottomTabNavigator({
     Invitaciones: {
         screen: PropietarioInvitacionesStackNavigator,
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => (
-              <IconAntDesign name="addusergroup" size={24} color="#346ECD" />
-            )
-          },
+            tabBarIcon: ({ tintColor }) => <IconAntDesign name="addusergroup" size={24} color="#346ECD" />
+        }
     }
 });
 
@@ -203,49 +207,41 @@ const PropietarioNavigation = createDrawerNavigator(
     {
         Registros: {
             screen: PropietarioTabNavigator,
-            navigationOptions:{
-                drawerIcon : ({tintColor}) => (
-                    <IconEntypo name= "home" style={{fontSize:25,color: tintColor}}></IconEntypo>
-                ),
+            navigationOptions: {
+                drawerIcon: ({ tintColor }) => <IconEntypo name="home" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
             }
         },
         'Mi Perfil': {
             screen: PropietarioPerfilStackNavigator,
-            navigationOptions:{
-                drawerIcon : ({tintColor}) => (
-                    <IconEntypo name= "user" style={{fontSize:25,color: tintColor}}></IconEntypo>
-                ),
+            navigationOptions: {
+                drawerIcon: ({ tintColor }) => <IconEntypo name="user" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
             }
         },
-        'Mi Ubicación' : {
+        'Mi Ubicación': {
             screen: PropietarioUbicacionStackNavigator,
-            navigationOptions:{
-                drawerIcon : ({tintColor}) => (
-                    <IconEntypo name= "location-pin" style={{fontSize:25,color: tintColor}}></IconEntypo>
-                ),
+            navigationOptions: {
+                drawerIcon: ({ tintColor }) => <IconEntypo name="location-pin" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
             }
         },
-        'Eventos' : {
+        Eventos: {
             screen: PropietarioEventosTabNavigator,
-            navigationOptions:{
-                drawerIcon : ({tintColor}) => (
-                    <IconIonicons name= "ios-people" style={{fontSize:25,color: tintColor}}></IconIonicons>
-                ),
+            navigationOptions: {
+                drawerIcon: ({ tintColor }) => <IconIonicons name="ios-people" style={{ fontSize: 25, color: tintColor }}></IconIonicons>
             }
         },
-        'Invitaciones' : {
+        Invitaciones: {
             screen: PropietarioInvitacionesStackNavigator,
-            navigationOptions:{
-                drawerIcon : ({tintColor}) => (
-                    <IconAntDesign name= "addusergroup" style={{fontSize:25,color: tintColor}}></IconAntDesign>
-                ),
+            navigationOptions: {
+                drawerIcon: ({ tintColor }) => (
+                    <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}></IconAntDesign>
+                )
             }
         }
     },
     {
         contentComponent: CustomDrawerContentComponent,
-        contentOptions : {
-            activeTintColor:'#346ECD'
+        contentOptions: {
+            activeTintColor: '#346ECD'
         }
     }
 );
