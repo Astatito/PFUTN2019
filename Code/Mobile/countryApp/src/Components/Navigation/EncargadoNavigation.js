@@ -74,7 +74,7 @@ const IngresoStackNavigator = createStackNavigator(
         Ingreso: Ingreso,
         IngresoManual: IngresoManual,
         Escaner: Escaner,
-        RegistroVisitante,
+        RegistroVisitante: RegistroVisitante,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {

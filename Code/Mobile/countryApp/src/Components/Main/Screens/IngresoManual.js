@@ -10,6 +10,7 @@ const BLUE = '#428AF8'
 const LIGHT_GRAY = '#D3D3D3'
 
 class IngresoManual extends Component {
+
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Ingreso Manual',
@@ -134,7 +135,7 @@ class IngresoManual extends Component {
 
                     <View style={{flexDirection:'row'}}>
                         <View style={styles.buttons}>
-                        <Button bordered success style={{paddingHorizontal:'5%'}}>
+                        <Button bordered success style={{paddingHorizontal:'5%'}} onPress={() => {this.props.navigation.navigate('RegistroVisitante')}}>
                             <Text>Aceptar</Text>
                         </Button>
                         </View>
@@ -144,7 +145,6 @@ class IngresoManual extends Component {
                         </Button>
                         </View>
                     </View>
-
                 </View>
                 </Content>
             </ScrollView>    

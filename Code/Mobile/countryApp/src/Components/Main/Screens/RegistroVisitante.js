@@ -1,14 +1,26 @@
-//En este componente es donde se cargan los datos luego de escanear y se pueden modificar si es necesario.
-//Los datos serían Nombre, Apellido, Numero de Documento y fecha de nacimiento. Más patente del auto.
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Picker } from 'react-native';
-import { Header, Card, CardSection, Field, Button, ButtonCancelar } from '../../Common';
+import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../Firebase';
-import RNPickerSelect from 'react-native-picker-select';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {DatePicker} from  'native-base';
+import { Content, Button,Text, Picker } from 'native-base';
+import Spinner from 'react-native-loading-spinner-overlay';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import moment from 'moment';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+
+const BLUE = '#428AF8'
+const LIGHT_GRAY = '#D3D3D3'
+
 class RegistroVisitante extends Component {
+
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Registrar visitante',
+            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />
+        };
+    };
+
     state = {
         picker: '',
         tiposDocumento: [],
@@ -16,9 +28,14 @@ class RegistroVisitante extends Component {
         tipoAcceso: '',
         nombre: '',
         apellido: '',
-        fechaNacimiento: '',
         telefono: '',
-        celular: ''
+        celular: '',
+        isFocused:false,
+        showSpinner: false,
+        isVisible: false,
+        esDesde:null,
+        fechaDesde: moment(Date.now()).format('MMM Do YY '),
+        fechaHasta: moment(Date.now()).format('MMM Do YY ')
     };
 
     componentWillMount() {
@@ -34,7 +51,13 @@ class RegistroVisitante extends Component {
     }
 
     componentDidMount() {
-        alert('El visitante no está registrado; por favor, complete el siguiente formulario.');
+        Alert.alert(
+            'Atención',
+            'El visitante no está registrado; por favor, complete el siguiente formulario. ',
+            [
+                {text: 'Aceptar', onPress: () => console.log('Cancel pressed'), style: 'cancel'},
+            ],
+        )
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
@@ -45,13 +68,10 @@ class RegistroVisitante extends Component {
             .then(snapshot => {
                 var tiposDocumento = [];
                 snapshot.forEach(doc => {
-                    tiposDocumento.push({ value: doc.id, label: doc.data().Nombre });
+                    tiposDocumento.push(doc.data().Nombre);
                 });
                 this.setState({ tiposDocumento });
             })
-            .catch(err => {
-                console.log(err);
-            });
     };
 
     setearDatos(tipo, numero, acceso) {
@@ -86,132 +106,186 @@ class RegistroVisitante extends Component {
         alert('Se registró el ' + this.state.tipoAcceso.toLowerCase() + ' del nuevo visitante correctamente.');
     }
 
+    handleFocus = event => {
+        this.setState({isFocused:true});
+        if(this.props.onFocus) {
+            this.props.onFocus(event);
+        }
+    }
+
+    handleBlur = event => {
+        this.setState({isFocused:false});
+        if (this.props.onBlur) {
+            this.props.onBlur(event);
+        }
+    }
+
+    handlePicker = (datetime) => {
+        if (this.state.esDesde == true ) {
+            this.setState({
+                isVisible: false,
+                fechaDesde : moment(datetime).format('MMM Do YY')
+            })
+        } 
+    }
+
+    hidePicker = () => {
+        this.setState({isVisible: false})
+    }
+
+    showPicker = () => {
+        this.setState({isVisible: true})
+    }
+
     render() {
+        const {isFocused} = this.state
+
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers();
         }
 
         return (
             <ScrollView>
-                <View style={{ padding: 5 }}>
-                    <Text style={styles.logueo}>Ud. se ha logueado como : Encargado</Text>
-                    <Header headerText="Registrar nuevo visitante"> </Header>
-                    <Card>
-                        <CardSection>
-                            <Field
-                                placeholder="Eg. Juan Pablo"
-                                label="Nombre completo"
-                                hidden={false}
-                                value={this.state.nombre}
-                                onChangeText={nombre => this.setState({ nombre })}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Field
-                                placeholder="Eg. Soria"
-                                label="Apellido"
-                                hidden={false}
-                                value={this.state.apellido}
-                                onChangeText={apellido => this.setState({ apellido })}
-                            />
-                        </CardSection>
+                <Content>
+                <View style={styles.container}>
+                    <Spinner
+                            visible={this.state.showSpinner}
+                            textContent={'Loading...'}
+                            textStyle={styles.spinnerTextStyle}
+                        />
+                    <StatusBar backgroundColor='#1e90ff'></StatusBar>
+                    <Text style={styles.header}> Registrar nuevo visitante</Text>
 
-                        <View style={styles.picker}>
-                            <RNPickerSelect
-                                selectedValue={this.state.picker}
-                                onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
-                                items={this.state.tiposDocumento}
-                            />
-                        </View>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder='Nombre'
+                        onChangeText= {(documento) => this.setState({nombre})}
+                        underlineColorAndroid={
+                            isFocused ? BLUE : LIGHT_GRAY
+                        }
+                        onFocus = {this.handleFocus}
+                        onBlur={this.handleBlur}
+                        keyboardType={'default'}
+                    />
 
-                        <CardSection>
-                            <Field
-                                placeholder="Eg. 32645187"
-                                label="Número de documento"
-                                hidden={false}
-                                value={this.state.documento}
-                                onChangeText={documento => this.setState({ documento })}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <DatePicker
-                                defaultDate={new Date(2018, 4, 4)}
-                                minimumDate={new Date(2018, 1, 1)}
-                                maximumDate={new Date(2018, 12, 31)}
-                                locale={"en"}
-                                timeZoneOffsetInMinutes={undefined}
-                                modalTransparent={false}
-                                animationType={"fade"}
-                                androidMode={"default"}
-                                placeHolderText="Select date"
-                                textStyle={{ color: "green" }}
-                                placeHolderTextStyle={{ color: "#d3d3d3" }}
-                                onDateChange={this.setDate}
-                                disabled={false}
-                                />
-                        </CardSection>
-                        
-                        <CardSection>
-                            <Field
-                                placeholder="Eg. 491457"
-                                label="Teléfono fijo"
-                                hidden={false}
-                                value={this.state.telefono}
-                                onChangeText={telefono => this.setState({ telefono })}
-                            />
-                        </CardSection>
-                        <CardSection>
-                            <Field
-                                placeholder="Eg. +5493512071228"
-                                label="Celular"
-                                hidden={false}
-                                value={this.state.celular}
-                                onChangeText={celular => this.setState({ celular })}
-                            />
-                        </CardSection>
-                        <View style={styles.botones}>
-                            <CardSection>
-                                <Button
-                                    onPress={() => {
-                                        this.registrarDatos();
-                                    }}>
-                                    Aceptar
-                                </Button>
-                            </CardSection>
-                            <CardSection>
-                                <ButtonCancelar>Cancelar</ButtonCancelar>
-                            </CardSection>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder='Apellido'
+                        onChangeText= {(documento) => this.setState({apellido})}
+                        underlineColorAndroid={
+                            isFocused ? BLUE : LIGHT_GRAY
+                        }
+                        onFocus = {this.handleFocus}
+                        onBlur={this.handleBlur}
+                        keyboardType={'default'}
+                    />
+
+                    <Picker
+                        note
+                        mode="dropdown"
+                        style={styles.picker}
+                        selectedValue={this.state.picker}
+                        onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
+                        >
+                        <Picker.Item label='Tipo de documento' value='-1' color='#7B7C7E'  />
+                        {this.state.tiposDocumento.map((item, index) => {
+                        return (< Picker.Item label={item} value={item} key={index} />);
+                        })}
+                    </Picker>
+                    
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder='Número de documento'
+                        onChangeText= {(documento) => this.setState({documento})}
+                        underlineColorAndroid={
+                            isFocused ? BLUE : LIGHT_GRAY
+                        }
+                        onFocus = {this.handleFocus}
+                        onBlur={this.handleBlur}
+                        keyboardType={'numeric'}
+                    />
+
+                    <View style={styles.datetime}>
+                        <Text style={{alignSelf:'center', color: '#8F8787'}}>Fecha de nacimiento</Text>
+                        <Text style={{alignSelf:'center', color:'#1e90ff', paddingHorizontal: '7%', fontSize:15}}> {this.state.fechaHasta} </Text>
+                        <IconFontAwesome style={{alignSelf:'center'}} onPress={() => {this.showPicker() ; this.setState({esDesde:false})}} name="calendar" size={25} />
+                    </View>
+
+                    <DateTimePicker 
+                        isVisible={this.state.isVisible}
+                        onConfirm={this.handlePicker}
+                        onCancel={this.hidePicker}
+                        mode={'date'}
+                        is24Hour={true}>
+                    </DateTimePicker>
+
+                    <View style={{flexDirection:'row'}}>
+                        <View style={styles.buttons}>
+                        <Button bordered success style={{paddingHorizontal:'5%'}}>
+                            <Text>Aceptar</Text>
+                        </Button>
                         </View>
-                    </Card>
+                        <View style={styles.buttons}>
+                        <Button bordered danger style={{paddingHorizontal:'5%'}} onPress={() => {this.props.navigation.goBack()}}>
+                            <Text>Cancelar</Text>
+                        </Button>
+                        </View>
+                    </View>
                 </View>
-            </ScrollView>
+                </Content>
+            </ScrollView>    
         );
     }
 }
 
 const styles = StyleSheet.create({
-    botones: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '50%',
-        justifyContent: 'flex-start',
-        padding: 10
-    },
-    logueo: {
-        textAlign: 'right',
-        color: '#000000',
-        paddingTop: 10
-    },
-    picker: {
-        borderBottomWidth: 1,
-        padding: 5,
-        backgroundColor: '#fff',
+    container: {
+        alignItems:'center',
         justifyContent: 'center',
-        flexDirection: 'column',
-        borderColor: '#ddd',
-        position: 'relative',
-        marginTop: 5,
-        paddingLeft: 16
+        backgroundColor:'#fff',
+        marginHorizontal:'3%',
+        marginVertical:'5%',
+        flex:1
+    },
+    spinnerTextStyle: {
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: '#FFF'
+      },
+    header:{
+        textAlign:'center',
+        fontSize: 26,
+        marginHorizontal:'5%',
+        marginTop:'7%',
+        color:'#08477A',
+        fontWeight:'normal',
+        fontStyle: 'normal'
+    },
+    picker : {
+        width:'85%',
+        fontSize: 18,
+        marginTop:'7%',
+        alignItems:'flex-start',
+    },
+    textInput: {
+        width:'82%',
+        fontSize: 16,
+        alignItems:'flex-start',
+        marginTop:'7%',    
+    },
+    buttons: {
+        alignItems: 'center',
+        justifyContent:'center',
+        width:'45%',
+        marginTop:'7%'
+    },
+    datetime: {
+        flexDirection:'row',
+        alignItems:'flex-start',
+        marginTop:'10%',
+        width:'80%',
+
     }
 });
+
 export default RegistroVisitante;
