@@ -35,6 +35,18 @@ class Login extends Component {
             });
     }
 
+    storeUsuario = (keyStore, obj) => {
+        LocalStorage.save({
+            key: keyStore,
+            data: {
+                usuario: obj.NombreUsuario,
+                tipoUsuario: obj.TipoUsuario.id,
+                country: obj.IdCountry.id,
+                datos: obj.IdPersona.id
+            }
+        });
+    };
+
     logueoUsuario = () => {
         var dbRef = Database.collection('Usuarios');
         var dbDoc = dbRef
@@ -42,15 +54,8 @@ class Login extends Component {
             .get()
             .then(doc => {
                 if (doc.exists) {
-                    LocalStorage.save({
-                        key: 'UsuarioLogueado',
-                        data: {
-                            usuario: doc.data().NombreUsuario,
-                            tipoUsuario: doc.data().TipoUsuario.id,
-                            country: doc.data().IdCountry.id,
-                            datos: doc.data().IdPersona.id
-                        }
-                    });
+                    this.storeUsuario('UsuarioLogueado', doc.data());
+
                     switch (doc.data().TipoUsuario.id) {
                         case 'Propietario':
                             this.props.navigation.navigate('Propietario');
@@ -71,6 +76,25 @@ class Login extends Component {
                 showSpinner: false
             });
         }, 3000);
+
+        LocalStorage.load({
+            key: 'UsuarioLogueado'
+        })
+            .then(response => {
+                console.log(response.usuario);
+                console.log(response.tipoUsuario);
+                console.log(response.country);
+                console.log(response.datos);
+            })
+            .catch(error => {
+                switch (error.name) {
+                    case 'NotFoundError':
+                        console.log('La key solicitada no existe.');
+                        break;
+                    default:
+                        console.warn('Error inesperado: ', error.message);
+                }
+            });
     }
 
     render() {
