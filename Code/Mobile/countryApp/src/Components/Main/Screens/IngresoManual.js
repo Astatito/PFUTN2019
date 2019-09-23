@@ -158,7 +158,8 @@ class IngresoManual extends Component {
 
                                 var invitacion = this.obtenerInvitacionValida(snapshot.docs);
                                 if (invitacion != -1) {
-                                    console.log('Se encontró una invitación válida: ', result);
+                                    //Si hay una invitación válida, verifica que esté autenticado.
+
                                     if (this.estaAutenticado(invitacion)) {
                                         //Si está autenticado, registra el ingreso.
                                         var result = this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
@@ -172,17 +173,18 @@ class IngresoManual extends Component {
                                         console.log('El visitante no está autenticado, se debe autenticar primero.');
                                     }
                                 } else {
-                                    console.log('No hay ninguna invitación válida.');                                    
+                                    //Si no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
+                                    console.log('No hay ninguna invitación válida.');
                                 }
                             } else {
-                                //Si no tiene invitaciones, TODO:que hacemos?
+                                //Si no tiene invitaciones, TODO:se debe generar una nueva invitación por ese día.
                                 console.log('No tiene invitaciones.');
                             }
                         });
                 }
             })
-            .catch(err => {
-                //En caso de error, hacer esto...
+            .catch(error => {
+                alert('Ocurrió un error: ', error);
             });
     };
 
