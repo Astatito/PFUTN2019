@@ -5,7 +5,7 @@ import React from 'react';
 import Propietario from '../Main/Screens/Propietario';
 import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
 import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
-import Reservar from '../Main/Screens/Reservar';
+import MisReservas from '../Main/Screens/MisReservas';
 import Invitaciones from '../Main/Screens/Invitaciones';
 import NuevoInvitado from '../Main/Screens/NuevoInvitado';
 import ModalForImage from '../Main/Screens/ModalForImage';
@@ -26,17 +26,23 @@ const CustomDrawerContentComponent = props => (
                 <Image source={require('../Logo/propietario.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
             <DrawerItems {...props} />
+            <Text style= {{marginTop:'45%'}}> </Text>
             <TouchableOpacity
                 onPress={() => {
                     props.navigation.closeDrawer();
                     LocalStorage.remove({ key: 'UsuarioLogueado' });
                     props.navigation.navigate('Login');
+<<<<<<< HEAD
                 }}
                 style={{ flex: 1, flexDirection: 'row' }}>
                 <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '55%', color: 'gray' }}></IconEntypo>
+=======
+                }} style={{flex:1,flexDirection:'row'}}>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'5%', color:'gray'}}></IconEntypo>
+>>>>>>> dev/Alexis/ingreso
                 <Text
                     style={{
-                        paddingTop: '57%',
+                        paddingTop: '7%',
                         paddingLeft: '8%',
                         color: '#000',
                         fontWeight: 'bold'
@@ -131,7 +137,7 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
 // Stack - El stack navigator para el apartado de reserva de eventos.
 const PropietarioEventosStackNavigator = createStackNavigator(
     {
-        Reservar: Reservar
+        MisReservas: MisReservas
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -184,7 +190,7 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
 
 // Tab Navigator - Este es el Tab Navigator de Eventos.
 const PropietarioEventosTabNavigator = createBottomTabNavigator({
-    Reservar: {
+    MisReservas: {
         screen: PropietarioEventosStackNavigator,
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <IconIonicons name="ios-list" size={24} color="#346ECD" />

@@ -27,17 +27,23 @@ const CustomDrawerContentComponent = props => (
                 <Image source={require('../Logo/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
             <DrawerItems {...props} />
+            <Text style= {{marginTop:'95%'}}> </Text>
             <TouchableOpacity
                 onPress={() => {
                     props.navigation.closeDrawer();
                     LocalStorage.remove({ key: 'UsuarioLogueado' });
                     props.navigation.navigate('Login');
+<<<<<<< HEAD
                 }}
                 style={{ flex: 1, flexDirection: 'row' }}>
                 <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '110%', color: 'gray' }}></IconEntypo>
+=======
+                }} style={{flex:1,flexDirection:'row'}}>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'10%', color:'gray'}}></IconEntypo>
+>>>>>>> dev/Alexis/ingreso
                 <Text
                     style={{
-                        paddingTop: '112%',
+                        paddingTop: '12%',
                         paddingLeft: '8%',
                         color: '#000',
                         fontWeight: 'bold'

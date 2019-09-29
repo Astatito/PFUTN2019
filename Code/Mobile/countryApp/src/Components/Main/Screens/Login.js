@@ -97,6 +97,10 @@ class Login extends Component {
             });
     }
 
+    componentWillUnmount(){
+        
+    }
+    
     render() {
         return (
             <View style={styles.container}>
