@@ -33,9 +33,7 @@ class RegistroVisitante extends Component {
         isFocused:false,
         showSpinner: false,
         isVisible: false,
-        esDesde:null,
-        fechaDesde: moment(Date.now()).format('MMM Do YY '),
-        fechaHasta: moment(Date.now()).format('MMM Do YY ')
+        fechaNacimiento: moment(Date.now()).format('MMM Do YY '),
     };
 
     componentWillMount() {
@@ -112,7 +110,7 @@ class RegistroVisitante extends Component {
             this.props.onFocus(event);
         }
     }
-
+    
     handleBlur = event => {
         this.setState({isFocused:false});
         if (this.props.onBlur) {
@@ -121,12 +119,10 @@ class RegistroVisitante extends Component {
     }
 
     handlePicker = (datetime) => {
-        if (this.state.esDesde == true ) {
-            this.setState({
-                isVisible: false,
-                fechaDesde : moment(datetime).format('MMM Do YY')
-            })
-        } 
+        this.setState({
+            isVisible: false,
+            fechaNacimiento : moment(datetime).format('MMM Do YY')
+        })
     }
 
     hidePicker = () => {
@@ -207,8 +203,8 @@ class RegistroVisitante extends Component {
 
                     <View style={styles.datetime}>
                         <Text style={{alignSelf:'center', color: '#8F8787'}}>Fecha de nacimiento</Text>
-                        <Text style={{alignSelf:'center', color:'#1e90ff', paddingHorizontal: '7%', fontSize:15}}> {this.state.fechaHasta} </Text>
-                        <IconFontAwesome style={{alignSelf:'center'}} onPress={() => {this.showPicker() ; this.setState({esDesde:false})}} name="calendar" size={25} />
+                        <Text style={{alignSelf:'center', color:'#1e90ff', paddingHorizontal: '7%', fontSize:15}}> {this.state.fechaNacimiento} </Text>
+                        <IconFontAwesome style={{alignSelf:'center'}} onPress={() => {this.showPicker()}} name="calendar" size={25} />
                     </View>
 
                     <DateTimePicker 

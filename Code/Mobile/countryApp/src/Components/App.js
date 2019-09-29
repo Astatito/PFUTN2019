@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Login from './Main/Screens/Login';
+import RegistroVisitante from './Main/Screens/RegistroVisitante'
 import EncargadoNavigation from './Navigation/EncargadoNavigation';
 import PropietarioNavigation from './Navigation/PropietarioNavigation';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';

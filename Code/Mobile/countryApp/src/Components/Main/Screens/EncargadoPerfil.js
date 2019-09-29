@@ -101,7 +101,7 @@ showPicker = () => {
 
     render() {
 
-        const {isFocused} = this.state.isFocused
+        const {isFocused} = this.state
 
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers();
