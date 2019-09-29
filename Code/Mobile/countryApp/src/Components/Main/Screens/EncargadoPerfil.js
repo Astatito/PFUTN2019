@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
 import { LocalStorage } from '../../Storage';
-import { Text, View } from 'react-native';
-=======
 import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -15,13 +12,11 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const BLUE = '#428AF8'
 const LIGHT_GRAY = '#D3D3D3'
->>>>>>> dev/Alexis/ingreso
 
 // import Icon from 'react-native-vector-icons/EvilIcons';
 class MiPerfil extends Component {
     static navigationOptions = {
-<<<<<<< HEAD
-        title: 'Mi perfil',
+        title: 'Actualizar Datos',
         headerRight: <View />
     };
 
@@ -45,10 +40,7 @@ class MiPerfil extends Component {
                 }
             });
     }
-=======
-        title: 'Actualizar datos',
-        headerRight: <View />,
-}
+
 
 state = {
     tiposDocumento: [],
@@ -106,10 +98,10 @@ hidePicker = () => {
 showPicker = () => {
     this.setState({isVisible: true})
 }
->>>>>>> dev/Alexis/ingreso
 
     render() {
-        const {isFocused} = this.state
+
+        const {isFocused} = this.state.isFocused
 
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers();

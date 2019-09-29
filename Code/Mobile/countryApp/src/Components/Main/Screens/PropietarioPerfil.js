@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
 import { LocalStorage } from '../../Storage';
-import { Text, View } from 'react-native';
-=======
 import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -11,16 +8,15 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
->>>>>>> dev/Alexis/ingreso
 
 const BLUE = '#428AF8'
 const LIGHT_GRAY = '#D3D3D3'
 
 // import Icon from 'react-native-vector-icons/EvilIcons';
 class MiPerfil extends Component {
+
     static navigationOptions = {
-<<<<<<< HEAD
-        title: 'Mi perfil',
+        title: 'Actualizar Datos',
         headerRight: <View />
     };
 
@@ -44,10 +40,8 @@ class MiPerfil extends Component {
                 }
             });
     }
-=======
-        title: 'Actualizar datos',
-        headerRight: <View />,
-}
+        
+
 
 state = {
     tiposDocumento: [],
@@ -104,7 +98,6 @@ hidePicker = () => {
 showPicker = () => {
     this.setState({isVisible: true})
 }
->>>>>>> dev/Alexis/ingreso
 
     render() {
         const {isFocused} = this.state
@@ -238,6 +231,8 @@ showPicker = () => {
         );
     }
 }
+
+
 
 const styles = StyleSheet.create({
     container: {

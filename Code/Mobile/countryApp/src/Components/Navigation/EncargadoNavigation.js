@@ -16,7 +16,6 @@ import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Firebase } from '/../Firebase';
 import { LocalStorage } from '../Storage';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
@@ -33,14 +32,8 @@ const CustomDrawerContentComponent = props => (
                     props.navigation.closeDrawer();
                     LocalStorage.remove({ key: 'UsuarioLogueado' });
                     props.navigation.navigate('Login');
-<<<<<<< HEAD
-                }}
-                style={{ flex: 1, flexDirection: 'row' }}>
-                <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '110%', color: 'gray' }}></IconEntypo>
-=======
                 }} style={{flex:1,flexDirection:'row'}}>
                 <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'10%', color:'gray'}}></IconEntypo>
->>>>>>> dev/Alexis/ingreso
                 <Text
                     style={{
                         paddingTop: '12%',
