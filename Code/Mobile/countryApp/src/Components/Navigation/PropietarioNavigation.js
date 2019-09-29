@@ -5,7 +5,7 @@ import React from 'react';
 import Propietario from '../Main/Screens/Propietario';
 import PropietarioPerfil from '../Main/Screens/PropietarioPerfil';
 import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
-import Reservar from '../Main/Screens/Reservar';
+import MisReservas from '../Main/Screens/MisReservas';
 import Invitaciones from '../Main/Screens/Invitaciones';
 import NuevoInvitado from '../Main/Screens/NuevoInvitado';
 import ModalForImage from '../Main/Screens/ModalForImage';
@@ -131,7 +131,7 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
 // Stack - El stack navigator para el apartado de reserva de eventos.
 const PropietarioEventosStackNavigator = createStackNavigator(
     {
-        Reservar: Reservar
+        MisReservas: MisReservas
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -177,7 +177,7 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
 
 // Tab Navigator - Este es el Tab Navigator de Eventos.
 const PropietarioEventosTabNavigator = createBottomTabNavigator({
-    Reservar: {
+    MisReservas: {
         screen: PropietarioEventosStackNavigator,
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => (
