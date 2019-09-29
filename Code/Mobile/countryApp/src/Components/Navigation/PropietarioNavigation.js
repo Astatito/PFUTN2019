@@ -25,15 +25,16 @@ const CustomDrawerContentComponent = props => (
                 <Image source={require('../Logo/propietario.jpg')} style={{height:120, width:120, borderRadius:60}}></Image>
             </View>
             <DrawerItems {...props} />
+            <Text style= {{marginTop:'45%'}}> </Text>
             <TouchableOpacity
                 onPress={() => {
                     props.navigation.closeDrawer();
                     props.navigation.navigate('Login');
                 }} style={{flex:1,flexDirection:'row'}}>
-                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'55%', color:'gray'}}></IconEntypo>
+                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'5%', color:'gray'}}></IconEntypo>
                 <Text
                     style={{
-                        paddingTop: '57%',
+                        paddingTop: '7%',
                         paddingLeft: '8%',
                         color: '#000',
                         fontWeight: 'bold'
