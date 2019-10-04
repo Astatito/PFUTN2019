@@ -81,6 +81,7 @@ class IngresoManual extends Component {
         for (var i = 0; i < invitaciones.length; i++) {
             var docInvitacion = invitaciones[i].data();
             if (now >= docInvitacion.FechaDesde.seconds && now <= docInvitacion.FechaHasta.seconds) {
+                docInvitacion.id = invitaciones[i].id;
                 return docInvitacion;
             }
         }
@@ -88,42 +89,24 @@ class IngresoManual extends Component {
         return -1;
     };
 
+    //Verifica si el visitante está autenticado o no
     estaAutenticado = invitacion => {
         return invitacion.Nombre != '' && invitacion.Apellido != '';
     };
 
-    registrarNuevoVisitante = () => {
+    //Redirige al formulario para autenticar el visitante
+    autenticarVisitante = (tipoDocumento, numeroDocumento, usuario, invitacion) => {
         this.props.navigation.navigate('RegistroVisitante', {
             esAcceso: true,
             tipoAcceso: 'Ingreso',
-            tipoDocumento: this.state.picker,
-            numeroDocumento: this.state.documento
+            tipoDocumento: tipoDocumento,
+            numeroDocumento: numeroDocumento,
+            usuario: usuario,
+            invitacion: invitacion
         });
     };
 
-    obtenerPersona = numeroDocumento => {
-        var tipoDocumento = this.state.picker;
-
-        var dbRef = Database.collection('PersonasDB');
-        var dbDoc = dbRef
-            .where('Documento', '==', this.state.documento)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDocumento))
-            .get()
-            .then(snapshot => {
-                if (snapshot.empty) {
-                    console.log('No se encontró nada.');
-                    this.registrarNuevoVisitante();
-                }
-                snapshot.forEach(doc => {
-                    this.grabarIngreso(doc.id);
-                    console.log('Ingreso registrado correctamente.');
-                });
-            })
-            .catch(err => {
-                console.log('Se rompio todo buscando: ' + this.state.documento);
-            });
-    };
-
+    //Registra el ingreso según tipo y número de documento
     registrarIngreso = (tipoDoc, numeroDoc) => {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
@@ -171,14 +154,18 @@ class IngresoManual extends Component {
                                     } else {
                                         //Si no está autenticado, se debe autenticar.
                                         console.log('El visitante no está autenticado, se debe autenticar primero.');
+                                        console.log(invitacion);
+                                        this.autenticarVisitante(tipoDoc, numeroDoc, this.state.usuario, invitacion.id);
                                     }
                                 } else {
                                     //Si no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
                                     console.log('No hay ninguna invitación válida.');
+                                    alert('No se encontró ninguna invitación válida.');
                                 }
                             } else {
                                 //Si no tiene invitaciones, TODO:se debe generar una nueva invitación por ese día.
                                 console.log('No tiene invitaciones.');
+                                alert('No se encontró ninguna invitación válida.');
                             }
                         });
                 }

@@ -3,17 +3,16 @@ import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Content, Button,Text, Picker } from 'native-base';
+import { Content, Button, Text, Picker } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const BLUE = '#428AF8'
-const LIGHT_GRAY = '#D3D3D3'
+const BLUE = '#428AF8';
+const LIGHT_GRAY = '#D3D3D3';
 
 class RegistroVisitante extends Component {
-
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Registrar visitante',
@@ -26,16 +25,20 @@ class RegistroVisitante extends Component {
         tiposDocumento: [],
         documento: '',
         tipoAcceso: '',
+        usuario: {},
         nombre: '',
         apellido: '',
+        fechaNacimiento: moment(new Date()),
         telefono: '',
         celular: '',
-        isFocused:false,
+        isFocused: false,
         showSpinner: false,
         isVisible: false,
-        esDesde:null,
-        fechaDesde: moment(Date.now()).format('MMM Do YY '),
-        fechaHasta: moment(Date.now()).format('MMM Do YY ')
+        isEditable: true,
+        esDesde: null,
+        fechaDesde: new Date(),
+        fechaHasta: new Date(),
+        idInvitacion: ''
     };
 
     componentWillMount() {
@@ -46,99 +49,133 @@ class RegistroVisitante extends Component {
             const tipoDoc = navigation.getParam('tipoDocumento');
             const numeroDoc = navigation.getParam('numeroDocumento');
             const tipoAcceso = navigation.getParam('tipoAcceso');
-            this.setearDatos(tipoDoc, numeroDoc, tipoAcceso);
+            const usuario = navigation.getParam('usuario');
+            const autenticado = false;
+            const invitacion = navigation.getParam('invitacion');
+            this.setearDatos(tipoDoc, numeroDoc, tipoAcceso, usuario, autenticado, invitacion);
         }
     }
 
     componentDidMount() {
-        Alert.alert(
-            'Atención',
-            'El visitante no está registrado; por favor, complete el siguiente formulario. ',
-            [
-                {text: 'Aceptar', onPress: () => console.log('Cancel pressed'), style: 'cancel'},
-            ],
-        )
+        Alert.alert('Atención', 'El visitante no está registrado; por favor, complete el siguiente formulario. ', [
+            { text: 'Aceptar', onPress: () => console.log('Cancel pressed'), style: 'cancel' }
+        ]);
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = () => {
         var dbRef = Database.collection('TipoDocumento');
-        var dbDocs = dbRef
-            .get()
-            .then(snapshot => {
-                var tiposDocumento = [];
-                snapshot.forEach(doc => {
-                    tiposDocumento.push(doc.data().Nombre);
-                });
-                this.setState({ tiposDocumento });
-            })
+        var dbDocs = dbRef.get().then(snapshot => {
+            var tiposDocumento = [];
+            snapshot.forEach(doc => {
+                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
+            });
+            this.setState({ tiposDocumento });
+        });
     };
 
-    setearDatos(tipo, numero, acceso) {
+    setearDatos(tipo, numero, acceso, user, autent, invit) {
         this.setState({
             picker: tipo,
             documento: numero,
-            tipoAcceso: acceso
+            tipoAcceso: acceso,
+            usuario: user,
+            isEditable: autent,
+            idInvitacion: invit
         });
     }
 
-    registrarDatos() {
-        var idPersona = Database.collection('PersonasDB').doc().id;
+    //Graba los datos referidos a la autenticación y el ingreso en Firestore
+    grabarDatos = () => {
+        var resultAut = this.autenticarVisitante();
+        var resultGrab = this.grabarIngreso(this.state.nombre, this.state.apellido, this.state.picker, this.state.documento);
 
-        var dbRef = Database.collection('PersonasDB');
-        dbRef.doc(idPersona).set({
-            Nombre: this.state.nombre,
-            Apellido: this.state.apellido,
-            Documento: this.state.documento,
-            FechaNacimiento: this.state.fechaNacimiento,
-            Telefono: this.state.telefono,
-            Celular: this.state.celular,
-            TipoDocumento: Database.doc('TipoDocumento/' + this.state.picker)
-        });
+        if (resultAut == 0) {
+            if (resultGrab == 0) {
+                alert('El ingreso se registró correctamente. (VISITANTE SIN AUTENTICAR)');
+            } else {
+                alert('Ocurrió un error: ' + resultGrab);
+            }
+        } else {
+            alert('Ocurrió un error: ' + resultAut);
+        }
+    };
 
-        var dbRef = Database.collection('AccesosDB');
-        dbRef.add({
-            Fecha: new Date(),
-            Persona: Database.doc('PersonasDB/' + idPersona),
-            Tipo: this.state.tipoAcceso
-        });
+    //Autentica los datos del visitante en Firestore
+    autenticarVisitante = () => {
+        try {
+            var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+            var refInvitacion = refCountry.collection('Invitados').doc(this.state.idInvitacion);
 
-        alert('Se registró el ' + this.state.tipoAcceso.toLowerCase() + ' del nuevo visitante correctamente.');
-    }
+            refInvitacion.set(
+                {
+                    Nombre: this.state.nombre,
+                    Apellido: this.state.apellido,
+                    FechaNacimiento: this.state.fechaNacimiento.toDate()
+                },
+                { merge: true }
+            );
+
+            return 0;
+        } catch (error) {
+            return error;
+        }
+    };
+
+    //Graba el ingreso en Firestore
+    grabarIngreso = (nombre, apellido, tipoDoc, numeroDoc) => {
+        try {
+            var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+            var refIngresos = refCountry.collection('Ingresos');
+            refIngresos.add({
+                Nombre: nombre,
+                Apellido: apellido,
+                Documento: numeroDoc,
+                TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc),
+                Descripcion: '',
+                Egreso: true,
+                Estado: true,
+                Fecha: new Date(),
+                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos)
+            });
+
+            return 0;
+        } catch (error) {
+            return error;
+        }
+    };
 
     handleFocus = event => {
-        this.setState({isFocused:true});
-        if(this.props.onFocus) {
+        this.setState({ isFocused: true });
+        if (this.props.onFocus) {
             this.props.onFocus(event);
         }
-    }
+    };
 
     handleBlur = event => {
-        this.setState({isFocused:false});
+        this.setState({ isFocused: false });
         if (this.props.onBlur) {
             this.props.onBlur(event);
         }
-    }
+    };
 
-    handlePicker = (datetime) => {
-        if (this.state.esDesde == true ) {
-            this.setState({
-                isVisible: false,
-                fechaDesde : moment(datetime).format('MMM Do YY')
-            })
-        } 
-    }
+    handlePicker = datetime => {
+        this.setState({
+            isVisible: false,
+            fechaNacimiento: moment(datetime)
+        });
+    };
 
     hidePicker = () => {
-        this.setState({isVisible: false})
-    }
+        this.setState({ isVisible: false });
+    };
 
     showPicker = () => {
-        this.setState({isVisible: true})
-    }
+        this.setState({ isVisible: true });
+    };
 
     render() {
-        const {isFocused} = this.state
+        const { isFocused } = this.state;
 
         if (this.state.tiposDocumento.length < 3) {
             this.obtenerPickers();
@@ -147,144 +184,155 @@ class RegistroVisitante extends Component {
         return (
             <ScrollView>
                 <Content>
-                <View style={styles.container}>
-                    <Spinner
-                            visible={this.state.showSpinner}
-                            textContent={'Loading...'}
-                            textStyle={styles.spinnerTextStyle}
+                    <View style={styles.container}>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                        <Text style={styles.header}> Registrar nuevo visitante</Text>
+
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Nombre"
+                            onChangeText={nombre => this.setState({ nombre })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'default'}
                         />
-                    <StatusBar backgroundColor='#1e90ff'></StatusBar>
-                    <Text style={styles.header}> Registrar nuevo visitante</Text>
 
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder='Nombre'
-                        onChangeText= {(documento) => this.setState({nombre})}
-                        underlineColorAndroid={
-                            isFocused ? BLUE : LIGHT_GRAY
-                        }
-                        onFocus = {this.handleFocus}
-                        onBlur={this.handleBlur}
-                        keyboardType={'default'}
-                    />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Apellido"
+                            onChangeText={apellido => this.setState({ apellido })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'default'}
+                        />
 
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder='Apellido'
-                        onChangeText= {(documento) => this.setState({apellido})}
-                        underlineColorAndroid={
-                            isFocused ? BLUE : LIGHT_GRAY
-                        }
-                        onFocus = {this.handleFocus}
-                        onBlur={this.handleBlur}
-                        keyboardType={'default'}
-                    />
+                        <Picker
+                            note
+                            mode="dropdown"
+                            style={styles.picker}
+                            selectedValue={this.state.picker}
+                            enabled={this.state.isEditable}
+                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
+                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                            {this.state.tiposDocumento.map((item, index) => {
+                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                            })}
+                        </Picker>
 
-                    <Picker
-                        note
-                        mode="dropdown"
-                        style={styles.picker}
-                        selectedValue={this.state.picker}
-                        onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}
-                        >
-                        <Picker.Item label='Tipo de documento' value='-1' color='#7B7C7E'  />
-                        {this.state.tiposDocumento.map((item, index) => {
-                        return (< Picker.Item label={item} value={item} key={index} />);
-                        })}
-                    </Picker>
-                    
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder='Número de documento'
-                        onChangeText= {(documento) => this.setState({documento})}
-                        underlineColorAndroid={
-                            isFocused ? BLUE : LIGHT_GRAY
-                        }
-                        onFocus = {this.handleFocus}
-                        onBlur={this.handleBlur}
-                        keyboardType={'numeric'}
-                    />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Número de documento"
+                            value={this.state.documento}
+                            onChangeText={documento => this.setState({ documento })}
+                            editable={this.state.isEditable}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'numeric'}
+                        />
 
-                    <View style={styles.datetime}>
-                        <Text style={{alignSelf:'center', color: '#8F8787'}}>Fecha de nacimiento</Text>
-                        <Text style={{alignSelf:'center', color:'#1e90ff', paddingHorizontal: '7%', fontSize:15}}> {this.state.fechaHasta} </Text>
-                        <IconFontAwesome style={{alignSelf:'center'}} onPress={() => {this.showPicker() ; this.setState({esDesde:false})}} name="calendar" size={25} />
-                    </View>
-
-                    <DateTimePicker 
-                        isVisible={this.state.isVisible}
-                        onConfirm={this.handlePicker}
-                        onCancel={this.hidePicker}
-                        mode={'date'}
-                        is24Hour={true}>
-                    </DateTimePicker>
-
-                    <View style={{flexDirection:'row'}}>
-                        <View style={styles.buttons}>
-                        <Button bordered success style={{paddingHorizontal:'5%'}}>
-                            <Text>Aceptar</Text>
-                        </Button>
+                        <View style={styles.datetime}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '7%', fontSize: 15 }}>
+                                {this.state.fechaNacimiento.format('MMM Do YY')}
+                            </Text>
+                            <IconFontAwesome
+                                style={{ alignSelf: 'center' }}
+                                onPress={() => {
+                                    this.showPicker();
+                                }}
+                                name="calendar"
+                                size={25}
+                            />
                         </View>
-                        <View style={styles.buttons}>
-                        <Button bordered danger style={{paddingHorizontal:'5%'}} onPress={() => {this.props.navigation.goBack()}}>
-                            <Text>Cancelar</Text>
-                        </Button>
+
+                        <DateTimePicker
+                            isVisible={this.state.isVisible}
+                            onConfirm={this.handlePicker}
+                            onCancel={this.hidePicker}
+                            mode={'date'}
+                            is24Hour={true}></DateTimePicker>
+
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.grabarDatos();
+                                    }}>
+                                    <Text>Aceptar</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
                         </View>
                     </View>
-                </View>
                 </Content>
-            </ScrollView>    
+            </ScrollView>
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        alignItems:'center',
+        alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor:'#fff',
-        marginHorizontal:'3%',
-        marginVertical:'5%',
-        flex:1
+        backgroundColor: '#fff',
+        marginHorizontal: '3%',
+        marginVertical: '5%',
+        flex: 1
     },
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
-      },
-    header:{
-        textAlign:'center',
+    },
+    header: {
+        textAlign: 'center',
         fontSize: 26,
-        marginHorizontal:'5%',
-        marginTop:'7%',
-        color:'#08477A',
-        fontWeight:'normal',
+        marginHorizontal: '5%',
+        marginTop: '7%',
+        color: '#08477A',
+        fontWeight: 'normal',
         fontStyle: 'normal'
     },
-    picker : {
-        width:'85%',
+    picker: {
+        width: '85%',
         fontSize: 18,
-        marginTop:'7%',
-        alignItems:'flex-start',
+        marginTop: '7%',
+        alignItems: 'flex-start'
     },
     textInput: {
-        width:'82%',
+        width: '82%',
         fontSize: 16,
-        alignItems:'flex-start',
-        marginTop:'7%',    
+        alignItems: 'flex-start',
+        marginTop: '7%'
     },
     buttons: {
         alignItems: 'center',
-        justifyContent:'center',
-        width:'45%',
-        marginTop:'7%'
+        justifyContent: 'center',
+        width: '45%',
+        marginTop: '7%'
     },
     datetime: {
-        flexDirection:'row',
-        alignItems:'flex-start',
-        marginTop:'10%',
-        width:'80%',
-
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginTop: '10%',
+        width: '80%'
     }
 });
 

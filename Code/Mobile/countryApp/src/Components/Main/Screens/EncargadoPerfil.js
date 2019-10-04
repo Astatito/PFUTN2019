@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
-import { LocalStorage } from '../../Storage';
-import { Text, View } from 'react-native';
-=======
 import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -15,37 +11,10 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const BLUE = '#428AF8'
 const LIGHT_GRAY = '#D3D3D3'
->>>>>>> dev/Alexis/ingreso
 
 // import Icon from 'react-native-vector-icons/EvilIcons';
 class MiPerfil extends Component {
     static navigationOptions = {
-<<<<<<< HEAD
-        title: 'Mi perfil',
-        headerRight: <View />
-    };
-
-    componentDidMount() {
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                console.log(response.usuario);
-                console.log(response.tipoUsuario);
-                console.log(response.country);
-                console.log(response.datos);
-            })
-            .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
-            });
-    }
-=======
         title: 'Actualizar datos',
         headerRight: <View />,
 }
@@ -106,7 +75,6 @@ hidePicker = () => {
 showPicker = () => {
     this.setState({isVisible: true})
 }
->>>>>>> dev/Alexis/ingreso
 
     render() {
         const {isFocused} = this.state

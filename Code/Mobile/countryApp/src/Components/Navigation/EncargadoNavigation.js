@@ -16,7 +16,6 @@ import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Firebase } from '/../Firebase';
 import { LocalStorage } from '../Storage';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
@@ -27,20 +26,15 @@ const CustomDrawerContentComponent = props => (
                 <Image source={require('../Logo/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
             <DrawerItems {...props} />
-            <Text style= {{marginTop:'95%'}}> </Text>
+            <Text style={{ marginTop: '95%' }}> </Text>
             <TouchableOpacity
                 onPress={() => {
                     props.navigation.closeDrawer();
                     LocalStorage.remove({ key: 'UsuarioLogueado' });
                     props.navigation.navigate('Login');
-<<<<<<< HEAD
                 }}
                 style={{ flex: 1, flexDirection: 'row' }}>
-                <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '110%', color: 'gray' }}></IconEntypo>
-=======
-                }} style={{flex:1,flexDirection:'row'}}>
-                <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'10%', color:'gray'}}></IconEntypo>
->>>>>>> dev/Alexis/ingreso
+                <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '10%', color: 'gray' }}></IconEntypo>
                 <Text
                     style={{
                         paddingTop: '12%',
@@ -84,7 +78,7 @@ const IngresoStackNavigator = createStackNavigator(
         Ingreso: Ingreso,
         IngresoManual: IngresoManual,
         Escaner: Escaner,
-        RegistroVisitante: RegistroVisitante,
+        RegistroVisitante: RegistroVisitante
     },
     {
         defaultNavigationOptions: ({ navigation }) => {

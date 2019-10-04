@@ -32,14 +32,8 @@ const CustomDrawerContentComponent = props => (
                     props.navigation.closeDrawer();
                     LocalStorage.remove({ key: 'UsuarioLogueado' });
                     props.navigation.navigate('Login');
-<<<<<<< HEAD
-                }}
-                style={{ flex: 1, flexDirection: 'row' }}>
-                <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '55%', color: 'gray' }}></IconEntypo>
-=======
                 }} style={{flex:1,flexDirection:'row'}}>
                 <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'5%', color:'gray'}}></IconEntypo>
->>>>>>> dev/Alexis/ingreso
                 <Text
                     style={{
                         paddingTop: '7%',
