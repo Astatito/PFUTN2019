@@ -208,6 +208,67 @@ class RegistroVisitante extends Component {
                             onBlur={this.handleBlur}
                             keyboardType={'default'}
                         />
+                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                        <Text style={styles.header}> Registrar nuevo visitante</Text>
+
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Nombre"
+                            onChangeText={nombre => this.setState({ nombre })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'default'}
+                        />
+
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Apellido"
+                            onChangeText={apellido => this.setState({ apellido })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'default'}
+                        />
+                        <Picker
+                            note
+                            mode="dropdown"
+                            style={styles.picker}
+                            selectedValue={this.state.picker}
+                            enabled={this.state.isEditable}
+                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
+                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                            {this.state.tiposDocumento.map((item, index) => {
+                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                            })}
+                        </Picker>
+
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Número de documento"
+                            value={this.state.documento}
+                            onChangeText={documento => this.setState({ documento })}
+                            editable={this.state.isEditable}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'numeric'}
+                        />
+
+                        <View style={styles.datetime}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '7%', fontSize: 15 }}>
+                                {this.state.fechaNacimiento.format('MMM Do YY')}
+                            </Text>
+                            <IconFontAwesome
+                                style={{ alignSelf: 'center' }}
+                                onPress={() => {
+                                    this.showPicker();
+                                }}
+                                name="calendar"
+                                size={25}
+                            />
+                        </View>
 
                         <Picker
                             note

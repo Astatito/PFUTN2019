@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { LocalStorage } from '../../Storage';
 import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,8 +14,9 @@ const LIGHT_GRAY = '#D3D3D3'
 
 // import Icon from 'react-native-vector-icons/EvilIcons';
 class MiPerfil extends Component {
+
     static navigationOptions = {
-        title: 'Actualizar datos',
+        title: 'Actualizar Datos',
         headerRight: <View />
     };
 
@@ -227,6 +229,8 @@ showPicker = () => {
         );
     }
 }
+
+
 
 const styles = StyleSheet.create({
     container: {
