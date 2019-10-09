@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -22,6 +22,12 @@ class EgresoManual extends Component {
     state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused: false, usuario: {} };
 
     componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -58,10 +64,10 @@ class EgresoManual extends Component {
             Persona: Database.doc('PersonasDB/' + idPersona),
             Tipo: 'Egreso'
         });
-        alert('Egreso registrado correctamente.');
+        Alert.alert('Atención','Egreso registrado correctamente.');
     };
 
-    registrarNuevoVisitante = () => {
+    autenticarVisitante = () => {
         this.props.navigation.navigate('RegistroVisitante', {
             esAcceso: true,
             tipoAcceso: 'Egreso',
@@ -81,7 +87,7 @@ class EgresoManual extends Component {
             .then(snapshot => {
                 if (snapshot.empty) {
                     console.log('No se encontró nada.');
-                    this.registrarNuevoVisitante();
+                    this.autenticarVisitante();
                 }
                 snapshot.forEach(doc => {
                     this.grabarEgreso(doc.id);
@@ -134,21 +140,25 @@ class EgresoManual extends Component {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-
+        this.setState({showSpinner: true});
         refPropietarios
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
             .get()
             .then(snapshot => {
                 if (!snapshot.empty) {
-                    //Si existe el propietario, registra el ingreso.
+                    //Si existe el propietario, registra el egreso.
                     var docPropietario = snapshot.docs[0].data();
 
                     var result = this.grabarEgreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
                     if (result == 0) {
-                        alert('El egreso se registró correctamente. (PROPIETARIO)');
+                        this.setState({showSpinner: false});
+                        Alert.alert('Atención','El egreso se registró correctamente. (PROPIETARIO)');
+                        this.props.navigation.navigate('Egreso')
+
                     } else {
-                        alert('Ocurrió un error: ' + result);
+                        this.setState({showSpinner: false});
+                        Alert.alert('Atención','Ocurrió un error: ' + result);
                     }
                 } else {
                     //Si no existe el propietario, busca si tiene invitaciones.
@@ -168,23 +178,29 @@ class EgresoManual extends Component {
 
                                     var result = this.grabarEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                                     if (result == 0) {
-                                        alert('El egreso se registró correctamente. (VISITANTE)');
+                                        this.setState({showSpinner: false});
+                                        Alert.alert('Atención','El egreso se registró correctamente. (VISITANTE)');
+                                        this.props.navigation.navigate('Egreso')
                                     } else {
-                                        alert('Ocurrió un error: ' + result);
+                                        this.setState({showSpinner: false});
+                                        Alert.alert('Atención','Ocurrió un error: ' + result);
                                     }
                                 } else {
-                                    //Si no es propietario ni visitante, emitir alerta.
-                                    alert('ESA PERSONA NO DEBERÍA ESTAR ADENTRO.');
+                                    //Si no tiene invitaciones, emitir alerta.
+                                    this.setState({showSpinner: false});
+                                    Alert.alert('Atención','ESA PERSONA NO DEBERÍA ESTAR ADENTRO.');
                                 }
                             } else {
                                 //Si no es propietario ni visitante, emitir alerta.
-                                alert('ESA PERSONA NO DEBERÍA ESTAR ADENTRO.');
+                                this.setState({showSpinner: false});
+                                Alert.alert('Atención','ESA PERSONA ES UN FANTASMA .');
                             }
                         });
                 }
             })
             .catch(error => {
-                alert('Ocurrió un error: ', error);
+                this.setState({showSpinner: false});
+                Alert.alert('Atención','Ocurrió un error: ', error);
             });
     };
 

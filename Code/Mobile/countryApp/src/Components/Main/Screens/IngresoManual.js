@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -22,6 +22,12 @@ class IngresoManual extends Component {
     state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused: false, usuario: {} };
 
     componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+        
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -111,7 +117,7 @@ class IngresoManual extends Component {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-
+        this.setState({showSpinner: true});
         refPropietarios
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
@@ -123,9 +129,12 @@ class IngresoManual extends Component {
 
                     var result = this.grabarIngreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
                     if (result == 0) {
-                        alert('El ingreso se registró correctamente. (PROPIETARIO)');
+                        this.setState({showSpinner: false});
+                        Alert.alert('Atención','El ingreso se registró correctamente. (PROPIETARIO)');
+                        this.props.navigation.navigate('Ingreso')
                     } else {
-                        alert('Ocurrió un error: ' + result);
+                        this.setState({showSpinner: false});
+                        Alert.alert('Atención','Ocurrió un error: ' + result);
                     }
                 } else {
                     //Si no existe el propietario, busca si tiene invitaciones.
@@ -147,31 +156,38 @@ class IngresoManual extends Component {
                                         //Si está autenticado, registra el ingreso.
                                         var result = this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                                         if (result == 0) {
-                                            alert('El ingreso se registró correctamente. (VISITANTE AUTENTICADO CON INVITACIÓN VÁLIDA)');
+                                            this.setState({showSpinner: false});
+                                            Alert.alert('Atención','El ingreso se registró correctamente. (VISITANTE AUTENTICADO CON INVITACIÓN VÁLIDA)');
+                                            this.props.navigation.navigate('Ingreso')
                                         } else {
-                                            alert('Ocurrió un error: ' + result);
+                                            this.setState({showSpinner: false});
+                                            Alert.alert('Atención','Ocurrió un error: ' + result);
                                         }
                                     } else {
                                         //Si no está autenticado, se debe autenticar.
                                         console.log('El visitante no está autenticado, se debe autenticar primero.');
                                         console.log(invitacion);
                                         this.autenticarVisitante(tipoDoc, numeroDoc, this.state.usuario, invitacion.id);
+                                        this.setState({showSpinner: false});
                                     }
                                 } else {
-                                    //Si no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
+                                    // Existe pero no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
                                     console.log('No hay ninguna invitación válida.');
-                                    alert('No se encontró ninguna invitación válida.');
+                                    this.setState({showSpinner: false});
+                                    Alert.alert('Atención','No se encontró ninguna invitación válida.');
                                 }
                             } else {
-                                //Si no tiene invitaciones, TODO:se debe generar una nueva invitación por ese día.
+                                //La persona no existe , TODO:se debe generar una nueva invitación por ese día.
                                 console.log('No tiene invitaciones.');
-                                alert('No se encontró ninguna invitación válida.');
+                                this.setState({showSpinner: false});
+                                Alert.alert('Atención','La persona no existe.');
                             }
                         });
                 }
             })
             .catch(error => {
-                alert('Ocurrió un error: ', error);
+                Alert.alert('Atención','Ocurrió un error: ', error);
+                this.setState({showSpinner: false});
             });
     };
 

@@ -201,6 +201,7 @@ class NuevoInvitado extends Component {
                                 style={{ paddingHorizontal: '5%' }}
                                 onPress={() => {
                                     this.registrarNuevoInvitado(this.state.picker, this.state.documento);
+                                    this.props.navigation.goBack();
                                 }}>
                                 <Text>Aceptar</Text>
                             </Button>

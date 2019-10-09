@@ -87,17 +87,22 @@ class RegistroVisitante extends Component {
 
     //Graba los datos referidos a la autenticación y el ingreso en Firestore
     grabarDatos = () => {
+        this.setState({showSpinner: true});
         var resultAut = this.autenticarVisitante();
         var resultGrab = this.grabarIngreso(this.state.nombre, this.state.apellido, this.state.picker, this.state.documento);
 
         if (resultAut == 0) {
             if (resultGrab == 0) {
-                alert('El ingreso se registró correctamente. (VISITANTE SIN AUTENTICAR)');
+                this.setState({showSpinner: false});
+                Alert.alert('Atención','El ingreso se registró correctamente. (VISITANTE SIN AUTENTICAR)');
+                this.props.navigation.navigate('Ingreso')
             } else {
-                alert('Ocurrió un error: ' + resultGrab);
+                this.setState({showSpinner: false});
+                Alert.alert('Atención','Ocurrió un error: ' + resultGrab);
             }
         } else {
-            alert('Ocurrió un error: ' + resultAut);
+            this.setState({showSpinner: false});
+            Alert.alert('Atención','Ocurrió un error: ' + resultAut);
         }
     };
 
@@ -208,67 +213,6 @@ class RegistroVisitante extends Component {
                             onBlur={this.handleBlur}
                             keyboardType={'default'}
                         />
-                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                        <Text style={styles.header}> Registrar nuevo visitante</Text>
-
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Nombre"
-                            onChangeText={nombre => this.setState({ nombre })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'default'}
-                        />
-
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Apellido"
-                            onChangeText={apellido => this.setState({ apellido })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'default'}
-                        />
-                        <Picker
-                            note
-                            mode="dropdown"
-                            style={styles.picker}
-                            selectedValue={this.state.picker}
-                            enabled={this.state.isEditable}
-                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
-                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
-                            {this.state.tiposDocumento.map((item, index) => {
-                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
-                            })}
-                        </Picker>
-
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Número de documento"
-                            value={this.state.documento}
-                            onChangeText={documento => this.setState({ documento })}
-                            editable={this.state.isEditable}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'numeric'}
-                        />
-
-                        <View style={styles.datetime}>
-                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '7%', fontSize: 15 }}>
-                                {this.state.fechaNacimiento.format('MMM Do YY')}
-                            </Text>
-                            <IconFontAwesome
-                                style={{ alignSelf: 'center' }}
-                                onPress={() => {
-                                    this.showPicker();
-                                }}
-                                name="calendar"
-                                size={25}
-                            />
-                        </View>
 
                         <Picker
                             note

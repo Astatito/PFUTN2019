@@ -96,10 +96,6 @@ class Login extends Component {
                 }
             });
     }
-
-    componentWillUnmount(){
-        
-    }
     
     render() {
         return (

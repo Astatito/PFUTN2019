@@ -1,43 +1,16 @@
 import React, { Component } from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList, Alert, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../Storage';
 import { Database } from '../../Firebase';
 import moment from 'moment';
+import Spinner from 'react-native-loading-spinner-overlay';
 
-var flatListData = [
-    {
-        key: 'wulefb43oy',
-        nombre: 'Alexis',
-        apellido: 'Pagura',
-        documento: '39.645.758',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 23:00 hs'
-    },
-    {
-        key: 'kqedufhkdu',
-        nombre: 'Fabián',
-        apellido: 'Guidobaldi',
-        documento: '40.875.659',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 23:00 hs'
-    },
-    {
-        key: '237r8h2eff',
-        nombre: 'Eze',
-        apellido: 'Braicovich',
-        documento: '39.645.569 ',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 23:00 hs'
-    },
-    { key: '32fh8hfhfh', documento: '39.645.100 ', fechaDesde: '02/11/2018 20:00 hs', fechaHasta: '02/11/2018 23:00 hs' },
-    { key: '32h7fhf23h', documento: '39.448.569 ', fechaDesde: '02/11/2018 20:00 hs', fechaHasta: '02/11/2018 23:00 hs' },
-    { key: 'ewufih8o72', documento: '39.298.671 ', fechaDesde: '02/11/2018 20:00 hs', fechaHasta: '02/11/2018 23:00 hs' }
-];
+var flatListData = [ ];
 
 class FlatListItem extends Component {
-    state = { activeRowKey: null };
+    state = { activeRowKey: null, showSpinner: false };
 
     render() {
         const swipeOutSettings = {
@@ -66,7 +39,6 @@ class FlatListItem extends Component {
                                     text: 'Aceptar',
                                     onPress: () => {
                                         flatListData.splice(this.props.index, 1);
-                                        //Refresh FlatList
                                         this.props.parentFlatList.refreshFlatList(deletingRow);
                                     }
                                 }
@@ -130,8 +102,10 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-    static navigationOptions = {
-        title: 'Invitaciones'
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Invitaciones',
+        };
     };
 
     constructor(props) {
@@ -139,8 +113,17 @@ export default class BasicFlatList extends Component {
         state = { deletedRowKey: null };
     }
 
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+    }
+
     componentWillMount() {
         console.log('FlatListData:', flatListData);
+        this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -157,6 +140,7 @@ export default class BasicFlatList extends Component {
                     default:
                         console.warn('Error inesperado: ', error.message);
                 }
+                this.setState({ showSpinner: false });
             });
     }
 
@@ -186,6 +170,9 @@ export default class BasicFlatList extends Component {
                         };
                         tempArray.push(invitado);
                     }
+                    flatListData = tempArray;
+                    this.setState({ showSpinner: false });
+                    console.log(flatListData)
                     console.log('tempArray:', tempArray);
                 }
             });
@@ -198,13 +185,27 @@ export default class BasicFlatList extends Component {
             };
         });
     };
+
     render() {
         return (
-            <FlatList
+            <View>
+                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                <FlatList
                 data={flatListData}
                 renderItem={({ item, index }) => {
                     return <FlatListItem item={item} index={index} parentFlatList={this}></FlatListItem>;
-                }}></FlatList>
+                }}>
+                </FlatList>
+            </View>
+            
         );
     }
 }
+
+const styles = StyleSheet.create({
+    spinnerTextStyle: {
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: '#FFF'
+    }
+});
