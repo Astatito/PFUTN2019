@@ -48,11 +48,14 @@ class RegistroVisitante extends Component {
         if (esAcceso) {
             const tipoDoc = navigation.getParam('tipoDocumento');
             const numeroDoc = navigation.getParam('numeroDocumento');
+            const nombre = navigation.getParam('nombre', '');
+            const apellido = navigation.getParam('apellido', '');
             const tipoAcceso = navigation.getParam('tipoAcceso');
             const usuario = navigation.getParam('usuario');
+            const fecha = navigation.getParam('fechaNacimiento');
             const autenticado = false;
             const invitacion = navigation.getParam('invitacion');
-            this.setearDatos(tipoDoc, numeroDoc, tipoAcceso, usuario, autenticado, invitacion);
+            this.setearDatos(tipoDoc, numeroDoc, nombre, apellido, fecha, tipoAcceso, usuario, autenticado, invitacion);
         }
     }
 
@@ -74,10 +77,13 @@ class RegistroVisitante extends Component {
         });
     };
 
-    setearDatos(tipo, numero, acceso, user, autent, invit) {
+    setearDatos(tipo, numero, nombre, apellido, fecha, acceso, user, autent, invit) {
         this.setState({
             picker: tipo,
             documento: numero,
+            nombre,
+            apellido,
+            fechaNacimiento: moment(fecha, 'DD-MM-YYYY'),
             tipoAcceso: acceso,
             usuario: user,
             isEditable: autent,
@@ -87,22 +93,22 @@ class RegistroVisitante extends Component {
 
     //Graba los datos referidos a la autenticación y el ingreso en Firestore
     grabarDatos = () => {
-        this.setState({showSpinner: true});
+        this.setState({ showSpinner: true });
         var resultAut = this.autenticarVisitante();
         var resultGrab = this.grabarIngreso(this.state.nombre, this.state.apellido, this.state.picker, this.state.documento);
 
         if (resultAut == 0) {
             if (resultGrab == 0) {
-                this.setState({showSpinner: false});
-                Alert.alert('Atención','El ingreso se registró correctamente. (VISITANTE SIN AUTENTICAR)');
-                this.props.navigation.navigate('Ingreso')
+                this.setState({ showSpinner: false });
+                Alert.alert('Atención', 'El ingreso se registró correctamente. (VISITANTE SIN AUTENTICAR)');
+                this.props.navigation.navigate('Ingreso');
             } else {
-                this.setState({showSpinner: false});
-                Alert.alert('Atención','Ocurrió un error: ' + resultGrab);
+                this.setState({ showSpinner: false });
+                Alert.alert('Atención', 'Ocurrió un error: ' + resultGrab);
             }
         } else {
-            this.setState({showSpinner: false});
-            Alert.alert('Atención','Ocurrió un error: ' + resultAut);
+            this.setState({ showSpinner: false });
+            Alert.alert('Atención', 'Ocurrió un error: ' + resultAut);
         }
     };
 
@@ -197,6 +203,7 @@ class RegistroVisitante extends Component {
                         <TextInput
                             style={styles.textInput}
                             placeholder="Nombre"
+                            value={this.state.nombre}
                             onChangeText={nombre => this.setState({ nombre })}
                             underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                             onFocus={this.handleFocus}
@@ -207,6 +214,7 @@ class RegistroVisitante extends Component {
                         <TextInput
                             style={styles.textInput}
                             placeholder="Apellido"
+                            value={this.state.apellido}
                             onChangeText={apellido => this.setState({ apellido })}
                             underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                             onFocus={this.handleFocus}

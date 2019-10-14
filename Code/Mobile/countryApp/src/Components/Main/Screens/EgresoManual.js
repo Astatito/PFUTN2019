@@ -57,48 +57,6 @@ class EgresoManual extends Component {
         });
     };
 
-    grabarEgreso = idPersona => {
-        var dbRef = Database.collection('AccesosDB');
-        dbRef.add({
-            Fecha: new Date(),
-            Persona: Database.doc('PersonasDB/' + idPersona),
-            Tipo: 'Egreso'
-        });
-        Alert.alert('Atención','Egreso registrado correctamente.');
-    };
-
-    autenticarVisitante = () => {
-        this.props.navigation.navigate('RegistroVisitante', {
-            esAcceso: true,
-            tipoAcceso: 'Egreso',
-            tipoDocumento: this.state.picker,
-            numeroDocumento: this.state.documento
-        });
-    };
-
-    obtenerPersona = numeroDocumento => {
-        var tipoDocumento = this.state.picker;
-
-        var dbRef = Database.collection('PersonasDB');
-        var dbDoc = dbRef
-            .where('Documento', '==', this.state.documento)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDocumento))
-            .get()
-            .then(snapshot => {
-                if (snapshot.empty) {
-                    console.log('No se encontró nada.');
-                    this.autenticarVisitante();
-                }
-                snapshot.forEach(doc => {
-                    this.grabarEgreso(doc.id);
-                    console.log('Egreso registrado correctamente.');
-                });
-            })
-            .catch(err => {
-                console.log('Se rompio todo buscando: ' + this.state.documento);
-            });
-    };
-
     //Graba el egreso en Firestore
     grabarEgreso = (nombre, apellido, tipoDoc, numeroDoc) => {
         try {
@@ -140,7 +98,7 @@ class EgresoManual extends Component {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-        this.setState({showSpinner: true});
+        this.setState({ showSpinner: true });
         refPropietarios
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
@@ -152,13 +110,12 @@ class EgresoManual extends Component {
 
                     var result = this.grabarEgreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
                     if (result == 0) {
-                        this.setState({showSpinner: false});
-                        Alert.alert('Atención','El egreso se registró correctamente. (PROPIETARIO)');
-                        this.props.navigation.navigate('Egreso')
-
+                        this.setState({ showSpinner: false });
+                        Alert.alert('Atención', 'El egreso se registró correctamente. (PROPIETARIO)');
+                        this.props.navigation.navigate('Egreso');
                     } else {
-                        this.setState({showSpinner: false});
-                        Alert.alert('Atención','Ocurrió un error: ' + result);
+                        this.setState({ showSpinner: false });
+                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
                     }
                 } else {
                     //Si no existe el propietario, busca si tiene invitaciones.
@@ -178,29 +135,29 @@ class EgresoManual extends Component {
 
                                     var result = this.grabarEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                                     if (result == 0) {
-                                        this.setState({showSpinner: false});
-                                        Alert.alert('Atención','El egreso se registró correctamente. (VISITANTE)');
-                                        this.props.navigation.navigate('Egreso')
+                                        this.setState({ showSpinner: false });
+                                        Alert.alert('Atención', 'El egreso se registró correctamente. (VISITANTE)');
+                                        this.props.navigation.navigate('Egreso');
                                     } else {
-                                        this.setState({showSpinner: false});
-                                        Alert.alert('Atención','Ocurrió un error: ' + result);
+                                        this.setState({ showSpinner: false });
+                                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
                                     }
                                 } else {
                                     //Si no tiene invitaciones, emitir alerta.
-                                    this.setState({showSpinner: false});
-                                    Alert.alert('Atención','ESA PERSONA NO DEBERÍA ESTAR ADENTRO.');
+                                    this.setState({ showSpinner: false });
+                                    Alert.alert('Atención', 'ESA PERSONA NO DEBERÍA ESTAR ADENTRO.');
                                 }
                             } else {
                                 //Si no es propietario ni visitante, emitir alerta.
-                                this.setState({showSpinner: false});
-                                Alert.alert('Atención','ESA PERSONA ES UN FANTASMA .');
+                                this.setState({ showSpinner: false });
+                                Alert.alert('Atención', 'ESA PERSONA ES UN FANTASMA .');
                             }
                         });
                 }
             })
             .catch(error => {
-                this.setState({showSpinner: false});
-                Alert.alert('Atención','Ocurrió un error: ', error);
+                this.setState({ showSpinner: false });
+                Alert.alert('Atención', 'Ocurrió un error: ', error);
             });
     };
 

@@ -27,7 +27,7 @@ class IngresoManual extends Component {
                 showSpinner: false
             });
         }, 3000);
-        
+
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -117,7 +117,7 @@ class IngresoManual extends Component {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-        this.setState({showSpinner: true});
+        this.setState({ showSpinner: true });
         refPropietarios
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
@@ -129,12 +129,12 @@ class IngresoManual extends Component {
 
                     var result = this.grabarIngreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
                     if (result == 0) {
-                        this.setState({showSpinner: false});
-                        Alert.alert('Atención','El ingreso se registró correctamente. (PROPIETARIO)');
-                        this.props.navigation.navigate('Ingreso')
+                        this.setState({ showSpinner: false });
+                        Alert.alert('Atención', 'El ingreso se registró correctamente. (PROPIETARIO)');
+                        this.props.navigation.navigate('Ingreso');
                     } else {
-                        this.setState({showSpinner: false});
-                        Alert.alert('Atención','Ocurrió un error: ' + result);
+                        this.setState({ showSpinner: false });
+                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
                     }
                 } else {
                     //Si no existe el propietario, busca si tiene invitaciones.
@@ -156,38 +156,41 @@ class IngresoManual extends Component {
                                         //Si está autenticado, registra el ingreso.
                                         var result = this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                                         if (result == 0) {
-                                            this.setState({showSpinner: false});
-                                            Alert.alert('Atención','El ingreso se registró correctamente. (VISITANTE AUTENTICADO CON INVITACIÓN VÁLIDA)');
-                                            this.props.navigation.navigate('Ingreso')
+                                            this.setState({ showSpinner: false });
+                                            Alert.alert(
+                                                'Atención',
+                                                'El ingreso se registró correctamente. (VISITANTE AUTENTICADO CON INVITACIÓN VÁLIDA)'
+                                            );
+                                            this.props.navigation.navigate('Ingreso');
                                         } else {
-                                            this.setState({showSpinner: false});
-                                            Alert.alert('Atención','Ocurrió un error: ' + result);
+                                            this.setState({ showSpinner: false });
+                                            Alert.alert('Atención', 'Ocurrió un error: ' + result);
                                         }
                                     } else {
                                         //Si no está autenticado, se debe autenticar.
                                         console.log('El visitante no está autenticado, se debe autenticar primero.');
                                         console.log(invitacion);
                                         this.autenticarVisitante(tipoDoc, numeroDoc, this.state.usuario, invitacion.id);
-                                        this.setState({showSpinner: false});
+                                        this.setState({ showSpinner: false });
                                     }
                                 } else {
                                     // Existe pero no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
                                     console.log('No hay ninguna invitación válida.');
-                                    this.setState({showSpinner: false});
-                                    Alert.alert('Atención','No se encontró ninguna invitación válida.');
+                                    this.setState({ showSpinner: false });
+                                    Alert.alert('Atención', 'No se encontró ninguna invitación válida.');
                                 }
                             } else {
                                 //La persona no existe , TODO:se debe generar una nueva invitación por ese día.
                                 console.log('No tiene invitaciones.');
-                                this.setState({showSpinner: false});
-                                Alert.alert('Atención','La persona no existe.');
+                                this.setState({ showSpinner: false });
+                                Alert.alert('Atención', 'La persona no existe.');
                             }
                         });
                 }
             })
             .catch(error => {
-                Alert.alert('Atención','Ocurrió un error: ', error);
-                this.setState({showSpinner: false});
+                Alert.alert('Atención', 'Ocurrió un error: ', error);
+                this.setState({ showSpinner: false });
             });
     };
 

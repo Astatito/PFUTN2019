@@ -7,10 +7,34 @@ import { Database } from '../../Firebase';
 import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-var flatListData = [ ];
-
 class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
+
+    componentWillMount() {
+        // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
+        LocalStorage.load({
+            key: 'UsuarioLogueado'
+        })
+            .then(response => {
+                this.setState({ usuario: response });
+            })
+            .catch(error => {
+                switch (error.name) {
+                    case 'NotFoundError':
+                        console.log('La key solicitada no existe.');
+                        break;
+                    default:
+                        console.warn('Error inesperado: ', error.message);
+                }
+            });
+    }
+
+    eliminarInvitacion = invitacion => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitados = refCountry.collection('Invitados');
+
+        refInvitados.doc(invitacion).delete();
+    };
 
     render() {
         const swipeOutSettings = {
@@ -29,17 +53,17 @@ class FlatListItem extends Component {
                     text: 'Eliminar',
                     type: 'delete',
                     onPress: () => {
-                        const deletingRow = this.state.activeRowKey;
                         Alert.alert(
                             'Atención',
-                            'Está seguro que desea eliminar ? ',
+                            'Está seguro que desea eliminar la invitación?',
                             [
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        flatListData.splice(this.props.index, 1);
-                                        this.props.parentFlatList.refreshFlatList(deletingRow);
+                                        this.eliminarInvitacion(this.props.item.key);
+                                        // flatListData.splice(this.props.index, 1);
+                                        // this.props.parentFlatList.refreshFlatList(deletingRow);
                                     }
                                 }
                             ],
@@ -104,13 +128,13 @@ class FlatListItem extends Component {
 export default class BasicFlatList extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Invitaciones',
+            title: 'Invitaciones'
         };
     };
 
     constructor(props) {
         super(props);
-        state = { deletedRowKey: null };
+        state = { deletedRowKey: null, flatListData: [] };
     }
 
     componentDidMount() {
@@ -122,7 +146,6 @@ export default class BasicFlatList extends Component {
     }
 
     componentWillMount() {
-        console.log('FlatListData:', flatListData);
         this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado'
@@ -154,8 +177,7 @@ export default class BasicFlatList extends Component {
                 '==',
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
-            .get()
-            .then(snapshot => {
+            .onSnapshot(snapshot => {
                 if (!snapshot.empty) {
                     //El propietario tiene invitaciones
                     var tempArray = [];
@@ -170,10 +192,7 @@ export default class BasicFlatList extends Component {
                         };
                         tempArray.push(invitado);
                     }
-                    flatListData = tempArray;
-                    this.setState({ showSpinner: false });
-                    console.log(flatListData)
-                    console.log('tempArray:', tempArray);
+                    this.setState({ showSpinner: false, flatListData: tempArray });
                 }
             });
     };
@@ -191,13 +210,11 @@ export default class BasicFlatList extends Component {
             <View>
                 <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                 <FlatList
-                data={flatListData}
-                renderItem={({ item, index }) => {
-                    return <FlatListItem item={item} index={index} parentFlatList={this}></FlatListItem>;
-                }}>
-                </FlatList>
+                    data={this.state.flatListData}
+                    renderItem={({ item, index }) => {
+                        return <FlatListItem item={item} index={index} parentFlatList={this}></FlatListItem>;
+                    }}></FlatList>
             </View>
-            
         );
     }
 }
