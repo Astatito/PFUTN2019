@@ -35,9 +35,6 @@ class RegistroVisitante extends Component {
         showSpinner: false,
         isVisible: false,
         isEditable: true,
-        esDesde: null,
-        fechaDesde: new Date(),
-        fechaHasta: new Date(),
         idInvitacion: ''
     };
 
