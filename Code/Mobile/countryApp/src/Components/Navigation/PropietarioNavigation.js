@@ -8,6 +8,8 @@ import UbicacionPropietario from '../Main/Screens/UbicacionPropietario';
 import MisReservas from '../Main/Screens/MisReservas';
 import Invitaciones from '../Main/Screens/Invitaciones';
 import NuevoInvitado from '../Main/Screens/NuevoInvitado';
+import NuevaReserva from '../Main/Screens/NuevaReserva';
+import SeleccionarServicio from '../Main/Screens/SeleccionarServicio';
 import ModalForImage from '../Main/Screens/ModalForImage';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
@@ -131,13 +133,14 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
 // Stack - El stack navigator para el apartado de reserva de eventos.
 const PropietarioEventosStackNavigator = createStackNavigator(
     {
-        MisReservas: MisReservas
+        MisReservas: MisReservas,
+        SeleccionarServicio: SeleccionarServicio,
+        NuevaReserva: NuevaReserva
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight: <View />,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },

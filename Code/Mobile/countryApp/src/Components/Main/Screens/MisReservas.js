@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FlatList, Alert } from 'react-native';
 import {ListItem, Left, Body , Text, Right, Thumbnail} from 'native-base';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Swipeout from 'react-native-swipeout';
 
 var flatListData = [
@@ -72,8 +73,18 @@ class FlatListItem extends Component {
 }
 
 export default class MisReservas extends Component {
-    static navigationOptions = {
-        title: 'Mis Reservas',
+    
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Mis Reservas',
+        headerRight: (
+            <IconAntDesign
+                style={{ paddingRight: 10 }}
+                name="plus"
+                size={25}
+                onPress={() => navigation.navigate('SeleccionarServicio')}
+            />)
+        };
     };
 
     constructor(props) {
