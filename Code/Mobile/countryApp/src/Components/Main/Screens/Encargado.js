@@ -9,16 +9,16 @@ class Encargado extends Component {
     };
 
     render() {
-        //TODO: SOLO PARA TESTING
-        LocalStorage.save({
-            key: 'UsuarioLogueado',
-            data: {
-                usuario: 'encargado@countryapp.com',
-                tipoUsuario: 'Encargado',
-                country: 'nkB2OpDMe6znzVkQRCRf',
-                datos: 'j6cHI1TEPzYTN4l6vTUU'
-            }
-        });
+        //TODO: SOLO TESTING
+        // LocalStorage.save({
+        //     key: 'UsuarioLogueado',
+        //     data: {
+        //         usuario: 'encargado@countryapp.com',
+        //         tipoUsuario: 'Encargado',
+        //         country: 'nkB2OpDMe6znzVkQRCRf',
+        //         datos: 'j6cHI1TEPzYTN4l6vTUU'
+        //     }
+        // });
         //FIN DEL TODO
         return (
             <Content>

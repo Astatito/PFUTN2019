@@ -9,16 +9,16 @@ class Propietario extends Component {
     };
 
     render() {
-        //TODO: SOLO PARA TESTING
-        LocalStorage.save({
-            key: 'UsuarioLogueado',
-            data: {
-                usuario: 'propietario@countryapp.com',
-                tipoUsuario: 'Propietario',
-                country: 'nkB2OpDMe6znzVkQRCRf',
-                datos: 'F73bChXtjOvqTVNdx85j'
-            }
-        });
+        //TODO: SOLO TESTING
+        // LocalStorage.save({
+        //     key: 'UsuarioLogueado',
+        //     data: {
+        //         usuario: 'propietario@countryapp.com',
+        //         tipoUsuario: 'Propietario',
+        //         country: 'nkB2OpDMe6znzVkQRCRf',
+        //         datos: 'F73bChXtjOvqTVNdx85j'
+        //     }
+        // });
         //FIN DEL TODO
         return (
             <Content>
