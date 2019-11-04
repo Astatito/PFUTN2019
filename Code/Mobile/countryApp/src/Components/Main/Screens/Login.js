@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image } from 'react-native';
-import { Firebase, Database } from '../../Firebase';
-import { LocalStorage } from '../../Storage';
+import { Firebase, Database } from '../../DataBase/Firebase';
+import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 class Login extends Component {
@@ -105,7 +105,7 @@ class Login extends Component {
 
                 <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
                     <Image
-                        source={require('../../Logo/LogoTransparente.png')}
+                        source={require('../../../assets/Logo/LogoTransparente.png')}
                         style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
                 </View>
                 <TextInput

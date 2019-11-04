@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { LocalStorage } from '../../Storage';
+import { LocalStorage } from '../../../DataBase/Storage';
 import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
-import { Database } from '../../Firebase';
+import { Database } from '../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Content, Button,Text, Picker} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePicker from 'react-native-modal-datetime-picker';
@@ -15,15 +14,36 @@ const LIGHT_GRAY = '#D3D3D3'
 
 // import Icon from 'react-native-vector-icons/EvilIcons';
 class MiPerfil extends Component {
+
     static navigationOptions = {
         title: 'Actualizar Datos',
-        headerRight: <View />,
-}
+        headerRight: <View />
+    };
+
+    componentDidMount() {
+        LocalStorage.load({
+            key: 'UsuarioLogueado'
+        })
+            .then(response => {
+                console.log(response.usuario);
+                console.log(response.tipoUsuario);
+                console.log(response.country);
+                console.log(response.datos);
+            })
+            .catch(error => {
+                switch (error.name) {
+                    case 'NotFoundError':
+                        console.log('La key solicitada no existe.');
+                        break;
+                    default:
+                        console.warn('Error inesperado: ', error.message);
+                }
+            });
+    }
 
 state = {
     tiposDocumento: [],
     tipoAcceso: '',
-    legajo: '69805',
     nombre: 'Juan',
     apellido: 'Perez',
     picker: '',
@@ -78,7 +98,6 @@ showPicker = () => {
 }
 
     render() {
-
         const {isFocused} = this.state
 
         if (this.state.tiposDocumento.length < 3) {
@@ -95,26 +114,6 @@ showPicker = () => {
                             textStyle={styles.spinnerTextStyle}
                         />
                     <StatusBar backgroundColor='#1e90ff'></StatusBar>                    
-                    <View style={styles.viewContainer}>
-                        <Text style={styles.textLabel}>Legajo</Text>
-                        <TextInput
-                            style={{
-                                width:'83%',
-                                fontSize: 16,
-                                alignItems:'flex-start',
-                                marginTop:'5%'}}
-                            placeholder='Legajo'
-                            onChangeText= {(legajo) => this.setState({legajo})}
-                            underlineColorAndroid={
-                                isFocused ? BLUE : LIGHT_GRAY
-                            }
-                            onFocus = {this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'numeric'}
-                            value={this.state.legajo}
-                        />
-                    </View>
-
                     <View style={styles.viewContainer}>
                         <Text style={styles.textLabel}>Nombre</Text>
                         <TextInput  
@@ -231,13 +230,15 @@ showPicker = () => {
     }
 }
 
+
+
 const styles = StyleSheet.create({
     container: {
         alignItems:'center',
         justifyContent: 'center',
         backgroundColor:'#fff',
         marginHorizontal:'2%',
-        marginVertical:'5%',
+        marginVertical:'9%',
         flexDirection:'column',
         flex:1
     },

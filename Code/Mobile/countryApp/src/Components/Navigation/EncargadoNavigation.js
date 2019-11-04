@@ -2,28 +2,28 @@
 // Se lee de abajo hacia arriba.
 
 import React from 'react';
-import Encargado from '../Main/Screens/Encargado';
-import Ingreso from '../Main/Screens/Ingreso';
-import IngresoManual from '../Main/Screens/IngresoManual';
-import Egreso from '../Main/Screens/Egreso';
-import EgresoManual from '../Main/Screens/EgresoManual';
-import EncargadoPerfil from '../Main/Screens/EncargadoPerfil';
-import Escaner from '../Main/Escaner';
-import RegistroVisitante from '../Main/Screens/RegistroVisitante';
+import Encargado from '../Main/Screens/Encargado/Encargado';
+import Ingreso from '../Main/Screens/Encargado/Ingreso/Ingreso';
+import IngresoManual from '../Main/Screens/Encargado/Ingreso/IngresoManual';
+import Egreso from '../Main/Screens/Encargado/Egreso/Egreso';
+import EgresoManual from '../Main/Screens/Encargado/Egreso/EgresoManual';
+import EncargadoPerfil from '../Main/Screens/Encargado/EncargadoPerfil';
+import Escaner from '../Main/Screens/Encargado/Escaner';
+import RegistroVisitante from '../Main/Screens/Encargado/Ingreso/RegistroVisitante';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { LocalStorage } from '../Storage';
+import { LocalStorage } from '../DataBase/Storage';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
             <View style={{ height: 150, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                <Image source={require('../Logo/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
+                <Image source={require('../../assets/Logo/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
             <DrawerItems {...props} />
             <Text style={{ marginTop: '95%' }}> </Text>

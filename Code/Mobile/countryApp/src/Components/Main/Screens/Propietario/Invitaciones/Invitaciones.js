@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
 import Swipeout from 'react-native-swipeout';
-import { LocalStorage } from '../../Storage';
-import { Database } from '../../Firebase';
+import { LocalStorage } from '../../../../DataBase/Storage';
+import { Database } from '../../../../DataBase/Firebase';
 import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 

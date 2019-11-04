@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FlatList, Alert } from 'react-native';
 import {ListItem, Left, Body , Text, Right, Thumbnail} from 'native-base';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconEvil from 'react-native-vector-icons/EvilIcons';
 import Swipeout from 'react-native-swipeout';
 
 var flatListData = [
@@ -54,7 +55,22 @@ class FlatListItem extends Component {
     
     return (
         <Swipeout {...swipeOutSettings} >
-            <ListItem avatar>
+            <ListItem avatar onPress= {() => {
+                        Alert.alert(
+                            'Atención',
+                            'Desea modificar esta reserva ? ',
+                            [
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                {
+                                    text: 'Aceptar',
+                                    onPress: () => {
+                                        this.props.navigation.navigate('InformacionReserva');
+                                    }
+                                }
+                            ],
+                            { cancelable: true }
+                        );
+                    }}>
                     <Left>
                         <Thumbnail source={{ uri: 'https://clubdeltrade.com/wp-content/uploads/2019/06/industria_deportiva.png' }} />
                     </Left>
@@ -77,13 +93,14 @@ export default class MisReservas extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Mis Reservas',
-        headerRight: (
+            headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+            headerRight: (
             <IconAntDesign
                 style={{ paddingRight: 10 }}
                 name="plus"
                 size={25}
                 onPress={() => navigation.navigate('SeleccionarServicio')}
-            />)
+            />), 
         };
     };
 
@@ -105,7 +122,7 @@ export default class MisReservas extends Component {
                 data= {flatListData}
                 renderItem = {({item,index}) => {
                     return(
-                        <FlatListItem item={item} index={index} parentFlatList={this}>
+                        <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}>
 
                         </FlatListItem>
                     )

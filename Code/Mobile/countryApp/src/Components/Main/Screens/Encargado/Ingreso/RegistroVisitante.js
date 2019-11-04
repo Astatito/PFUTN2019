@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
-import { Database } from '../../Firebase';
+import { Database } from '../../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Content, Button, Text, Picker } from 'native-base';

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image, StatusBar } from 'react-native';
 import { Text, Content } from 'native-base';
-import { LocalStorage } from '../../Storage';
+import { LocalStorage } from '../../../DataBase/Storage';
 
-class Propietario extends Component {
+class Encargado extends Component {
     static navigationOptions = {
         title: 'Home'
     };
@@ -13,10 +13,10 @@ class Propietario extends Component {
         // LocalStorage.save({
         //     key: 'UsuarioLogueado',
         //     data: {
-        //         usuario: 'propietario@countryapp.com',
-        //         tipoUsuario: 'Propietario',
+        //         usuario: 'encargado@countryapp.com',
+        //         tipoUsuario: 'Encargado',
         //         country: 'nkB2OpDMe6znzVkQRCRf',
-        //         datos: 'F73bChXtjOvqTVNdx85j'
+        //         datos: 'j6cHI1TEPzYTN4l6vTUU'
         //     }
         // });
         //FIN DEL TODO
@@ -26,7 +26,7 @@ class Propietario extends Component {
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
                     <Text style={styles.header}> Bienvenido de nuevo !</Text>
                     <View style={{ height: 340, width: 340, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image source={require('../../Logo/LogoTransparente.png')} style={{ height: 340, width: 340 }}></Image>
+                        <Image source={require('../../../../assets/Logo/LogoTransparente.png')} style={{ height: 340, width: 340 }}></Image>
                     </View>
                 </View>
             </Content>
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
         fontStyle: 'normal'
     }
 });
-export default Propietario;
+export default Encargado;

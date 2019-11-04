@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
-import { Database } from '../../Firebase';
+import { Database } from '../../../../DataBase/Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Content, Button, Text, Picker } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import { LocalStorage } from '../../Storage';
+import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
 const BLUE = '#428AF8';

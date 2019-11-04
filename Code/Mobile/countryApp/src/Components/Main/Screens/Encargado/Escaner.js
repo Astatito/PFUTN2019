@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { AppRegistry, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import { Database } from '../Firebase';
-import { LocalStorage } from '../Storage';
+import { Database } from '../../../DataBase/Firebase';
+import { LocalStorage } from '../../../DataBase/Storage';
 import moment from 'moment';
 
 class Escaner extends Component {
