@@ -1,0 +1,44 @@
+.borde {
+    border: 2px solid rgb(68, 76, 143);
+    border-radius: 10px;
+  }
+  .izquierda {
+    text-align: end;
+  }
+
+  .button {
+   background-color: blue;
+  }
+
+  .derecha {
+    text-align:start;
+  }
+
+  .tabla{
+    border: 1px solid rgb(221, 221, 221);
+    
+  }
+  .contenedor{
+    display:inline;
+  }
+
+  div.espacio{
+    height: 15px;
+  }
+  .boton{
+    cursor: pointer;
+    padding:6px 10px;
+    margin-right: 5px;
+    border-radius: 0px;
+
+    
+  }
+
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .espacio-izquierda{
+    margin: 50;
+  }

@@ -1,9 +1,17 @@
-export const DB_CONFIG = {
-    apiKey: "AIzaSyB837_BMh2WnGbXWVoOE0xclKymC7aC2lc",
-    authDomain: "countryapp-ab360.firebaseapp.com",
-    databaseURL: "https://countryapp-ab360.firebaseio.com",
-    projectId: "countryapp-ab360",
-    storageBucket: "",
-    messagingSenderId: "570428474188",
-    appId: "1:570428474188:web:9865d0ea7c0a9e0b"
+import firebase from "firebase";
+import 'firebase/firestore';
+
+const config = {
+  apiKey: "AIzaSyCuck_TCGJv5gSVrNVsRD-9r4amZ4CrwUM",
+  authDomain: "countryapp-f0ce1.firebaseapp.com",
+  databaseURL: "https://countryapp-f0ce1.firebaseio.com",
+  projectId: "countryapp-f0ce1",
+  storageBucket: "countryapp-f0ce1.appspot.com",
+  messagingSenderId: "810428216960",
+  appId: "1:810428216960:web:ffe81dcac50290a2"
   }; 
+
+  const Firebase = firebase.initializeApp(config);
+  const Database = firebase.firestore();
+
+  export {Firebase, Database};
