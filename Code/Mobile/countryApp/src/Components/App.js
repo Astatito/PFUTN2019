@@ -52,6 +52,4 @@ class App extends Component {
     }
 }
 
-// TESTING PROTECTED BRANCH
-
 export default App;
