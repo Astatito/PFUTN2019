@@ -41,7 +41,7 @@ class MiUbicacion extends Component {
         
         return (
             <View style={styles.container}>
-                <Image style={{ width: '100%', height: '73%' }} source={require('../../../../../assets/Logo/ubicacionhome.jpg')} />
+                <Image style={{ width: '100%', height: '73%' }} source={require('../../../../../assets/Images/ubicacionhome.jpg')} />
 
                 <View style={{padding:'5%', width: '100%'}}>
 

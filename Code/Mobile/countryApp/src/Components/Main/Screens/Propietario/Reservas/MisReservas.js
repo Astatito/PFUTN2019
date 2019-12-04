@@ -132,10 +132,10 @@ class FlatListItem extends Component {
                     <Left>
                         <Thumbnail source={{ uri: 'https://clubdeltrade.com/wp-content/uploads/2019/06/industria_deportiva.png' }} />
                     </Left>
-                    <Body style={{ alignSelf: 'center' }}>
+                    <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
                         <Text style={{ fontSize: 14 }}> {this.props.item.nombre} </Text>
                     </Body>
-                    <Right style={{ alignSelf: 'center', marginTop: '2.6%' }}>
+                    <Right style={{ alignSelf: 'center' }}>
                         <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
                         <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                     </Right>

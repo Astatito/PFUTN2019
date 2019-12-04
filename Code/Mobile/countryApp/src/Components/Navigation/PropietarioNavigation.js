@@ -22,13 +22,14 @@ import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
+import ModificarInvitado from '../Main/Screens/Propietario/Invitaciones/ModificarInvitado';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
             <View style={{ height: 150, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                <Image source={require('../../assets/Logo/propietario.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
+                <Image source={require('../../assets/Images/propietario.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
             <DrawerItems {...props} />
             <Text style= {{marginTop:'45%'}}> </Text>
@@ -217,6 +218,7 @@ const PropietarioEventosStackNavigator = createStackNavigator(
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },
+                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
@@ -231,7 +233,9 @@ const PropietarioEventosStackNavigator = createStackNavigator(
 const PropietarioInvitacionesStackNavigator = createStackNavigator(
     {
         Invitaciones: Invitaciones,
-        NuevoInvitado: NuevoInvitado
+        ModificarInvitado: ModificarInvitado,
+        NuevoInvitado: NuevoInvitado,
+        
     },
     {
         defaultNavigationOptions: ({ navigation }) => {

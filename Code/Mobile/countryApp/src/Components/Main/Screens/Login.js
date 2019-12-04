@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
 import { Firebase, Database } from '../../DataBase/Firebase';
 import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -99,13 +99,15 @@ class Login extends Component {
 
     render() {
         return (
+            
+
             <View style={styles.container}>
                 <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                 <StatusBar backgroundColor="#96D0E8"></StatusBar>
-
+                <KeyboardAvoidingView behavior='height'>
                 <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
                     <Image
-                        source={require('../../../assets/Logo/LogoTransparente.png')}
+                        source={require('../../../assets/Images/LogoTransparente.png')}
                         style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
                 </View>
                 <TextInput
@@ -125,12 +127,16 @@ class Login extends Component {
                     <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
                 </TouchableOpacity>
                 <Text style={styles.result}>{this.state.result}</Text>
+                </KeyboardAvoidingView>
             </View>
+              
+            
         );
     }
 }
 
 const styles = StyleSheet.create({
+   
     wrapper: {
         flex: 1
     },

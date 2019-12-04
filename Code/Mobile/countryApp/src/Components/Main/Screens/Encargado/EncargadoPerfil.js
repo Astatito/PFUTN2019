@@ -3,17 +3,21 @@ import { LocalStorage } from '../../../DataBase/Storage';
 import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Content, Button, Text, Picker } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import { NavigationActions } from 'react-navigation';
 import moment from 'moment';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
-// import Icon from 'react-native-vector-icons/EvilIcons';
+const navigateAction = NavigationActions.navigate({
+    routeName: 'Propietario',
+    action: NavigationActions.navigate({ routeName: 'Propietario' }),
+    });
+
 class MiPerfil extends Component {
     static navigationOptions = {
         title: 'Actualizar Datos',
@@ -21,6 +25,13 @@ class MiPerfil extends Component {
     };
 
     componentWillMount() {
+        this.setState({ showSpinner: true });
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -32,9 +43,11 @@ class MiPerfil extends Component {
                 switch (error.name) {
                     case 'NotFoundError':
                         console.log('La key solicitada no existe.');
+                        this.setState({ showSpinner: false });
                         break;
                     default:
                         console.warn('Error inesperado: ', error.message);
+                        this.setState({ showSpinner: false });
                 }
             });
     }
@@ -71,11 +84,13 @@ class MiPerfil extends Component {
                     celular: encargado.Celular,
                     fechaNacimiento: moment.unix(encargado.FechaNacimiento.seconds)
                 });
+                this.setState({ showSpinner: false });
             }
         });
     };
 
     actualizarDatos = () => {
+        this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refEncargado = refCountry.collection('Encargados').doc(this.state.usuario.datos);
 
@@ -89,7 +104,20 @@ class MiPerfil extends Component {
             },
             { merge: true }
         );
-        Alert.alert('Atención', 'Datos personales actualizados correctamente.');
+        this.setState({ showSpinner: false });
+        Alert.alert(
+            'Atención',
+            'Datos personales actualizados correctamente.',
+            [
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        // Redirrecionar a Home del encargado.
+                        this.props.navigation.dispatch(navigateAction);
+                    }
+                }
+            ]
+        );
     };
 
     obtenerPickers = () => {
@@ -273,7 +301,12 @@ class MiPerfil extends Component {
                                 </Button>
                             </View>
                             <View style={styles.buttons}>
-                                <Button bordered danger style={{ paddingHorizontal: '5%' }}>
+                                <Button 
+                                    bordered 
+                                    danger 
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                    }}>
                                     <Text>Cancelar</Text>
                                 </Button>
                             </View>

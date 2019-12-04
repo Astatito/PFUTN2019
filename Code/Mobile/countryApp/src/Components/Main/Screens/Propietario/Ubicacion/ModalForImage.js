@@ -7,7 +7,7 @@ const image = [
         props: {
             // Or you can set source directory.
             url: '',
-            source: require('../../../../../assets/Logo/countrymapa.jpg')
+            source: require('../../../../../assets/Images/countrymapa.jpg')
         }
     }
 ]

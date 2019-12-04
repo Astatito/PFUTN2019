@@ -12,10 +12,19 @@ import moment from 'moment';
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
-class DatosReserva extends Component {
+class ModificarInvitado extends Component {
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: null,
+            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
+            headerRight: <View />
+        };
+    };
 
     state = {
-        nombreReserva: '',
+        picker: '',
+        tiposDocumento: [],
+        documento: '',
         fechaDesde: moment(new Date()),
         fechaHasta: moment(new Date()),
         showSpinner: false,
@@ -25,23 +34,17 @@ class DatosReserva extends Component {
         usuario: {}
     };
 
-    componentDidMount() {
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                this.setState({ usuario: response });
-            })
-            .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
+    obtenerPickers = () => {
+        var dbRef = Database.collection('TipoDocumento');
+        var dbDocs = dbRef.get().then(snapshot => {
+            var tiposDocumento = [];
+            snapshot.forEach(doc => {
+                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
             });
-    }
+            this.setState({ tiposDocumento });
+        });
+    };
 
     handleFocus = event => {
         this.setState({ isFocused: true });
@@ -82,17 +85,33 @@ class DatosReserva extends Component {
     render() {
         const { isFocused } = this.state;
 
+        if (this.state.tiposDocumento.length < 3) {
+            this.obtenerPickers();
+        }
+
         return (
             <Content>
                 <View style={styles.container}>
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                    <Text style={styles.header}> Modificar reserva </Text>
+                    <Text style={styles.header}> Modificar invitado </Text>
+
+                    <Picker
+                        note
+                        mode="dropdown"
+                        style={styles.picker}
+                        selectedValue={this.state.picker}
+                        onValueChange={itemValue => this.setState({ picker: itemValue })}>
+                        <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                        {this.state.tiposDocumento.map((item, index) => {
+                            return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                        })}
+                    </Picker>
 
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Nombre de reserva"
-                        onChangeText={nombreReserva => this.setState({ nombreReserva })}
+                        placeholder="Número de documento"
+                        onChangeText={documento => this.setState({ documento })}
                         underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
@@ -190,6 +209,12 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
         fontStyle: 'normal'
     },
+    picker: {
+        width: '85%',
+        fontSize: 18,
+        marginTop: '5%',
+        alignItems: 'flex-start'
+    },
     textInput: {
         width: '80%',
         fontSize: 16,
@@ -210,4 +235,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default DatosReserva;
+export default ModificarInvitado;

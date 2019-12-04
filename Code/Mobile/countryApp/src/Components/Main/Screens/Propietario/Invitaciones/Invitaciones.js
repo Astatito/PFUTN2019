@@ -78,7 +78,24 @@ class FlatListItem extends Component {
         if (this.props.item.nombre == null && this.props.item.apellido == null) {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem avatar>
+                    <ListItem
+                    avatar
+                    onPress={() => {
+                        Alert.alert(
+                            'Atención',
+                            'Desea modificar esta invitacion ? ',
+                            [
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                {
+                                    text: 'Aceptar',
+                                    onPress: () => {
+                                        this.props.navigation.navigate('ModificarInvitado');
+                                    }
+                                }
+                            ],
+                            { cancelable: true }
+                        );
+                    }}>
                         <Left>
                             <Thumbnail
                                 source={{
@@ -87,11 +104,10 @@ class FlatListItem extends Component {
                                 }}
                             />
                         </Left>
-                        <Body style={{ alignSelf: 'center' }}>
-                            <Text></Text>
+                        <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center', marginTop: '3.4%' }}>
+                        <Right style={{ alignSelf: 'center'}}>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                         </Right>
@@ -101,7 +117,24 @@ class FlatListItem extends Component {
         } else {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem avatar>
+                    <ListItem
+                    avatar
+                    onPress={() => {
+                        Alert.alert(
+                            'Atención',
+                            'Desea modificar esta invitacion ? ',
+                            [
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                {
+                                    text: 'Aceptar',
+                                    onPress: () => {
+                                        this.props.navigation.navigate('ModificarInvitado');
+                                    }
+                                }
+                            ],
+                            { cancelable: true }
+                        );
+                    }}>
                         <Left>
                             <Thumbnail
                                 source={{
@@ -114,7 +147,7 @@ class FlatListItem extends Component {
                             <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
                             <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center', marginTop: '2.6%' }}>
+                        <Right style={{ alignSelf: 'center', marginTop: '2.4%' }}>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                         </Right>
@@ -214,7 +247,7 @@ export default class BasicFlatList extends Component {
                 <FlatList
                     data={this.state.flatListData}
                     renderItem={({ item, index }) => {
-                        return <FlatListItem item={item} index={index} parentFlatList={this}></FlatListItem>;
+                        return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
                     }}></FlatList>
             </View>
         );

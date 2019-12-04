@@ -81,10 +81,10 @@ class FlatListItem extends Component {
                         <Left>
                             <Thumbnail source={{ uri: 'https://cdn.pixabay.com/photo/2016/09/16/09/20/alarm-1673577_960_720.png' }} />
                         </Left>
-                        <Body style={{ alignSelf: 'center', marginTop:'1.8%'}}>
+                        <Body style={{ alignSelf: 'center', marginTop:'1%'}}>
                             <Text style={{fontSize:14,color: 'green'}}> {this.props.item.estado} </Text>
                         </Body>
-                        <Right style={{alignSelf:'center', flexDirection:'row', marginTop:'2.6%'}}>
+                        <Right style={{alignSelf:'center', flexDirection:'row', marginTop:'1.9%'}}>
                             <Text style={{fontSize:12, color:'gray'}}> {this.props.item.desde} </Text>
                             <Text style={{fontSize:12, color:'gray'}}> - </Text>
                             <Text style={{fontSize:12, color:'gray'}}> {this.props.item.hasta} </Text>

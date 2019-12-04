@@ -23,7 +23,7 @@ const CustomDrawerContentComponent = props => (
     <ScrollView>
         <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
             <View style={{ height: 150, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                <Image source={require('../../assets/Logo/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
+                <Image source={require('../../assets/Images/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
             <DrawerItems {...props} />
             <Text style={{ marginTop: '95%' }}> </Text>
@@ -150,7 +150,8 @@ const EncargadoTabNavigator = createBottomTabNavigator({
 // Stack - El stack navigator para el apartado MiPerfil.
 const EncargadoPerfilStackNavigator = createStackNavigator(
     {
-        EncargadoPerfil: EncargadoPerfil
+        EncargadoPerfil: EncargadoPerfil,
+        Encargado: Encargado
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
