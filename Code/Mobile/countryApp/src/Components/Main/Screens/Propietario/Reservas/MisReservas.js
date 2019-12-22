@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList, Alert, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
@@ -7,47 +7,48 @@ import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import moment from 'moment';
+import Spinner from 'react-native-loading-spinner-overlay';
 
-var flatListData = [
-    {
-        key: 'wulefb43oy',
-        nombre: 'Cancha de fútbol 5',
-        estado: 'Activa',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 21:00 hs'
-    },
-    {
-        key: 'kqedufhkdu',
-        nombre: 'Club House  ',
-        estado: 'Finalizada',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '03/11/2018 05:00 hs'
-    },
-    {
-        key: '237r8h2eff',
-        nombre: 'Cancha de Tenis',
-        estado: 'Activa',
-        fechaDesde: '12/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 21:00 hs'
-    },
-    {
-        key: '32fh8hfhfh',
-        nombre: 'Cancha de Golf ',
-        estado: 'Cancelada',
-        fechaDesde: '3/11/2018 11:00 hs',
-        fechaHasta: '02/11/2018 13:00 hs'
-    },
-    {
-        key: '32h7fhf23h',
-        nombre: 'Piscina climatizada ',
-        estado: 'Cancelada',
-        fechaDesde: '09/11/2018 16:00 hs',
-        fechaHasta: '02/11/2018 17:00 hs'
-    }
-];
+// var flatListData = [
+//     {
+//         key: 'wulefb43oy',
+//         nombre: 'Cancha de fútbol 5',
+//         estado: 'Activa',
+//         fechaDesde: '02/11/2018 20:00 hs',
+//         fechaHasta: '02/11/2018 21:00 hs'
+//     },
+//     {
+//         key: 'kqedufhkdu',
+//         nombre: 'Club House  ',
+//         estado: 'Finalizada',
+//         fechaDesde: '02/11/2018 20:00 hs',
+//         fechaHasta: '03/11/2018 05:00 hs'
+//     },
+//     {
+//         key: '237r8h2eff',
+//         nombre: 'Cancha de Tenis',
+//         estado: 'Activa',
+//         fechaDesde: '12/11/2018 20:00 hs',
+//         fechaHasta: '02/11/2018 21:00 hs'
+//     },
+//     {
+//         key: '32fh8hfhfh',
+//         nombre: 'Cancha de Golf ',
+//         estado: 'Cancelada',
+//         fechaDesde: '3/11/2018 11:00 hs',
+//         fechaHasta: '02/11/2018 13:00 hs'
+//     },
+//     {
+//         key: '32h7fhf23h',
+//         nombre: 'Piscina climatizada ',
+//         estado: 'Cancelada',
+//         fechaDesde: '09/11/2018 16:00 hs',
+//         fechaHasta: '02/11/2018 17:00 hs'
+//     }
+// ];
 
 class FlatListItem extends Component {
-    state = { activeRowKey: null };
+    state = { activeRowKey: null, showSpinner: false };
 
     componentWillMount() {
         // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
@@ -88,15 +89,15 @@ class FlatListItem extends Component {
                         const deletingRow = this.state.activeRowKey;
                         Alert.alert(
                             'Atención',
-                            'Está seguro que desea eliminar ? ',
+                            'Está seguro que desea eliminar la reserva ? ',
                             [
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        flatListData.splice(this.props.index, 1);
-                                        //Refresh FlatList
-                                        this.props.parentFlatList.refreshFlatList(deletingRow);
+                                        //Lógica para eliminar la reserva eliminarReserva()
+                                        // flatListData.splice(this.props.index, 1);
+                                        // this.props.parentFlatList.refreshFlatList(deletingRow);
                                     }
                                 }
                             ],
@@ -145,7 +146,7 @@ class FlatListItem extends Component {
     }
 }
 
-export default class MisReservas extends Component {
+export default class BasicFlatList extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Mis Reservas',
@@ -167,6 +168,7 @@ export default class MisReservas extends Component {
     }
 
     componentWillMount() {
+        this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -206,10 +208,10 @@ export default class MisReservas extends Component {
                     tempArray.push(reserva);
                 }
                 console.log('FlatList seteado correctamente en state');
-                this.setState({ flatListData: tempArray });
+                this.setState({ showSpinner: false, flatListData: tempArray });
                 console.log(this.state.flatListData);
             } else {
-                this.setState({ flatListData: [] });
+                this.setState({ showSpinner: false, flatListData: [] });
             }
         });
     };
@@ -223,11 +225,23 @@ export default class MisReservas extends Component {
     };
     render() {
         return (
-            <FlatList
-                data={flatListData}
+            <View>
+                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                <FlatList
+                data={this.state.flatListData}
                 renderItem={({ item, index }) => {
                     return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
                 }}></FlatList>
+            </View>
+            
         );
     }
 }
+
+const styles = StyleSheet.create({
+    spinnerTextStyle: {
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: '#FFF'
+    }
+});
