@@ -10,6 +10,8 @@ import NuevoInvitado from '../Main/Screens/Propietario/Invitaciones/NuevoInvitad
 import MisReservas from '../Main/Screens/Propietario/Reservas/MisReservas';
 import DatosReserva from '../Main/Screens/Propietario/Reservas/DatosReserva';
 import InvitadosReserva from '../Main/Screens/Propietario/Reservas/InvitadosReserva';
+import NuevoInvitadoReserva from '../Main/Screens/Propietario/Reservas/NuevoInvitadoReserva';
+import InvitadosExistentesReserva from '../Main/Screens/Propietario/Reservas/InvitadosExistentesReserva';
 import SeleccionarTurno from '../Main/Screens/Propietario/Reservas/SeleccionarTurno';
 import SeleccionarServicio from '../Main/Screens/Propietario/Reservas/SeleccionarServicio';
 import ModalForImage from '../Main/Screens/Propietario/Ubicacion/ModalForImage';
@@ -18,7 +20,7 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
@@ -134,61 +136,12 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
     }
 );
 
-// Stack - El stack navigator para el apartado de mi ubicación.
-const InvitadosReservaStackNavigator = createStackNavigator(
-    {
-        InvitadosReserva: InvitadosReserva
-    },
-    {
-        defaultNavigationOptions: ({ navigation }) => {
-            return {
-                title: 'Invitados',
-                headerRight: <View></View>,
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.navigate('MisReservas')} name="arrow-back" size={30} />,
-                headerStyle: {
-                    backgroundColor: '#1e90ff'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    textAlign: 'center',
-                    flex: 1
-                },
-            };
-        }
-    }
-);
-// Stack - El stack navigator para el apartado de mi ubicación.
-const DatosReservaStackNavigator = createStackNavigator(
-    {
-        DatosReserva: DatosReserva
-    },
-    {
-        defaultNavigationOptions: ({ navigation }) => {
-            return {
-                title: 'Reserva',
-                headerRight: <View></View>,
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.navigate('MisReservas')} name="arrow-back" size={30} />,
-                headerStyle: {
-                    backgroundColor: '#1e90ff'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    textAlign: 'center',
-                    flex: 1
-                }
-            };
-        }
-    }
-);
-
 //TabNavigator para el manejo de la reserva e invitados de la misma.
 const PropietarioReservaTabNavigator = createBottomTabNavigator({
     'Mis Invitados': {
         screen: InvitadosReserva,
         navigationOptions: {
             title:'Invitados',
-            headerRight: <View></View>,
-            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
             tabBarIcon: ({ tintColor }) => <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}/>,
         }
     },
@@ -197,7 +150,6 @@ const PropietarioReservaTabNavigator = createBottomTabNavigator({
         navigationOptions: {
             title:'Reserva',
             headerRight: <View></View>,
-            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
             tabBarIcon: ({ tintColor }) => <IconEntypo name="text-document" style={{ fontSize: 25, color: tintColor }} color="#346ECD" />,
         }
     },
@@ -208,9 +160,13 @@ const PropietarioReservaTabNavigator = createBottomTabNavigator({
 const PropietarioEventosStackNavigator = createStackNavigator(
     {
         MisReservas: MisReservas,
+        InvitadosReserva: InvitadosReserva,
+        DatosReserva: DatosReserva,
         InformacionReserva: PropietarioReservaTabNavigator,
         SeleccionarServicio: SeleccionarServicio,
         SeleccionarTurno: SeleccionarTurno,
+        NuevoInvitadoReserva: NuevoInvitadoReserva,
+        InvitadosExistentesReserva: InvitadosExistentesReserva
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -219,6 +175,20 @@ const PropietarioEventosStackNavigator = createStackNavigator(
                     backgroundColor: '#1e90ff'
                 },
                 headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
+                headerRight: (
+                    <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
+                        onPress={() => Alert.alert(
+                            'Atención',
+                            '¿ Qué tipo de invitado desea añadir ? ',
+                            [
+                                { text: 'Nuevo Invitado', onPress: () => navigation.navigate('NuevoInvitadoReserva'), style: 'cancel' },
+                                { text: 'Existente', onPress: () => navigation.navigate('InvitadosExistentesReserva'), style: 'cancel' },
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' }
+                            ],
+                            { cancelable: true }
+                        )}
+                    />
+                ),
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',

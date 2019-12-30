@@ -9,43 +9,43 @@ import { Database } from '../../../../DataBase/Firebase';
 import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-// var flatListData = [
-//     {
-//         key: 'wulefb43oy',
-//         nombre: 'Cancha de fútbol 5',
-//         estado: 'Activa',
-//         fechaDesde: '02/11/2018 20:00 hs',
-//         fechaHasta: '02/11/2018 21:00 hs'
-//     },
-//     {
-//         key: 'kqedufhkdu',
-//         nombre: 'Club House  ',
-//         estado: 'Finalizada',
-//         fechaDesde: '02/11/2018 20:00 hs',
-//         fechaHasta: '03/11/2018 05:00 hs'
-//     },
-//     {
-//         key: '237r8h2eff',
-//         nombre: 'Cancha de Tenis',
-//         estado: 'Activa',
-//         fechaDesde: '12/11/2018 20:00 hs',
-//         fechaHasta: '02/11/2018 21:00 hs'
-//     },
-//     {
-//         key: '32fh8hfhfh',
-//         nombre: 'Cancha de Golf ',
-//         estado: 'Cancelada',
-//         fechaDesde: '3/11/2018 11:00 hs',
-//         fechaHasta: '02/11/2018 13:00 hs'
-//     },
-//     {
-//         key: '32h7fhf23h',
-//         nombre: 'Piscina climatizada ',
-//         estado: 'Cancelada',
-//         fechaDesde: '09/11/2018 16:00 hs',
-//         fechaHasta: '02/11/2018 17:00 hs'
-//     }
-// ];
+var flatListData = [
+    {
+        key: 'wulefb43oy',
+        nombre: 'Cancha de fútbol 5',
+        estado: 'Activa',
+        fechaDesde: '02/11/2018 20:00 hs',
+        fechaHasta: '02/11/2018 21:00 hs'
+    },
+    {
+        key: 'kqedufhkdu',
+        nombre: 'Club House  ',
+        estado: 'Finalizada',
+        fechaDesde: '02/11/2018 20:00 hs',
+        fechaHasta: '03/11/2018 05:00 hs'
+    },
+    {
+        key: '237r8h2eff',
+        nombre: 'Cancha de Tenis',
+        estado: 'Activa',
+        fechaDesde: '12/11/2018 20:00 hs',
+        fechaHasta: '02/11/2018 21:00 hs'
+    },
+    {
+        key: '32fh8hfhfh',
+        nombre: 'Cancha de Golf ',
+        estado: 'Cancelada',
+        fechaDesde: '3/11/2018 11:00 hs',
+        fechaHasta: '02/11/2018 13:00 hs'
+    },
+    {
+        key: '32h7fhf23h',
+        nombre: 'Piscina climatizada ',
+        estado: 'Cancelada',
+        fechaDesde: '09/11/2018 16:00 hs',
+        fechaHasta: '02/11/2018 17:00 hs'
+    }
+];
 
 class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
@@ -89,15 +89,13 @@ class FlatListItem extends Component {
                         const deletingRow = this.state.activeRowKey;
                         Alert.alert(
                             'Atención',
-                            'Está seguro que desea eliminar la reserva ? ',
+                            '¿ Está seguro que desea eliminar la reserva ? ',
                             [
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
                                         //Lógica para eliminar la reserva eliminarReserva()
-                                        // flatListData.splice(this.props.index, 1);
-                                        // this.props.parentFlatList.refreshFlatList(deletingRow);
                                     }
                                 }
                             ],
@@ -117,7 +115,7 @@ class FlatListItem extends Component {
                     onPress={() => {
                         Alert.alert(
                             'Atención',
-                            'Desea modificar esta reserva ? ',
+                            '¿ Desea modificar esta reserva ? ',
                             [
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
@@ -164,7 +162,7 @@ export default class BasicFlatList extends Component {
 
     constructor(props) {
         super(props);
-        state = { deletedRowKey: null, flatListData: [] };
+        state = { flatListData: [] };
     }
 
     componentWillMount() {
@@ -216,19 +214,12 @@ export default class BasicFlatList extends Component {
         });
     };
 
-    refreshFlatList = deletedKey => {
-        this.setState(prevState => {
-            return {
-                deletedRowKey: deletedKey
-            };
-        });
-    };
     render() {
         return (
             <View>
                 <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                 <FlatList
-                data={this.state.flatListData}
+                data={flatListData}
                 renderItem={({ item, index }) => {
                     return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
                 }}></FlatList>

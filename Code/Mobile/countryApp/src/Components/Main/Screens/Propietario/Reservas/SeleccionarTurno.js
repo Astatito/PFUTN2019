@@ -3,7 +3,6 @@ import { FlatList, Alert, StyleSheet, View , StatusBar} from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import Calendar from '../../../../Common/Calendar';
-import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 var flatListData = [
@@ -34,14 +33,12 @@ var flatListData = [
 ];
 
 class FlatListItem extends Component {
+
     state = {showSpinner: false, selectedDate: '' };
 
     render() {
         const swipeOutSettings = {
-            autoClose: true,
-            style: { backgroundColor: '#fff' },
-            rowId: this.props.index,
-            sectionId: 1
+            style: { backgroundColor: '#fff' }
         };
             return (
                 <Swipeout {...swipeOutSettings}>
@@ -55,7 +52,7 @@ class FlatListItem extends Component {
                                     {
                                         text: 'Aceptar',
                                         onPress: () => {
-                                            console.log('YAYA', this.props.item.key)
+                                            //Funcion que registra el turno en la BD.
                                         }
                                     }
                                 ],
@@ -69,14 +66,13 @@ class FlatListItem extends Component {
                                     {
                                         text: 'Aceptar',
                                         onPress: () => {
-                                            console.log('YAYA', this.props.item.key)
+                                            console.log('Este turno no se pudo reservar', this.props.item.key)
                                         }
                                     }
                                 ],
                                 { cancelable: true }
                             );
                         }
-                        
                     }}>
                         <Left>
                             <Thumbnail source={{ uri: 'https://cdn.pixabay.com/photo/2016/09/16/09/20/alarm-1673577_960_720.png' }} />
@@ -96,15 +92,17 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
+
     static navigationOptions = ({ navigation }) => {
         return {
             header: null
-            // title: 'Turnos',
-            // headerRight: <View></View>,
-            // headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
         };
     };
 
+    componentWillMount() {
+        this.setState({ showSpinner: true });
+    }
+    
     componentDidMount() {
         setInterval(() => {
             this.setState({
@@ -116,6 +114,7 @@ export default class BasicFlatList extends Component {
     render() {
         return (
             <View>
+                {/* Descomentar para tener Spinner. */}
                 {/* <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} /> */}
                 <StatusBar backgroundColor='#1e90ff' ></StatusBar>
 
@@ -132,7 +131,6 @@ export default class BasicFlatList extends Component {
                         )
                     }}
                 />
-
             </View>
         );
     }

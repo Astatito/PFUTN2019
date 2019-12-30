@@ -3,7 +3,6 @@ import { FlatList, Alert, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 var flatListData = [
@@ -31,17 +30,14 @@ class FlatListItem extends Component {
 
     render() {
         const swipeOutSettings = {
-            autoClose: true,
-            style: { backgroundColor: '#fff' },
-            rowId: this.props.index,
-            sectionId: 1
+            style: { backgroundColor: '#fff' }
         };
             return (
                 <Swipeout {...swipeOutSettings}>
                     <ListItem avatar onPress= {() => {
                         Alert.alert(
                             'Atención',
-                            'Desea reservar el servicio ? ',
+                            '¿ Desea reservar el servicio ? ',
                             [
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
@@ -73,6 +69,7 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
+
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Servicios',
@@ -80,6 +77,10 @@ export default class BasicFlatList extends Component {
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
         };
     };
+
+    componentWillMount() {
+        this.setState({ showSpinner: true });
+    }
 
     componentDidMount() {
         setInterval(() => {
@@ -92,11 +93,11 @@ export default class BasicFlatList extends Component {
     render() {
         return (
             <View>
+                {/* Descomentar para tener Spinner. */}
                 {/* <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} /> */}
                 <FlatList
                 data={flatListData}
                 renderItem={({ item, index }) => {
-
                     return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
                 }}>
                 </FlatList>

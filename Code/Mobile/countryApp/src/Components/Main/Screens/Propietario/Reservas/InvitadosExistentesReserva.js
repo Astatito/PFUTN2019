@@ -1,14 +1,54 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
-import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+let selectedItems = [];
+
+var flatListData = [
+    {
+        key: 'wulefb43oy',
+        nombre: 'Alexis',
+        apellido: 'Pagura',
+        documento: '39611837',
+        fechaDesde: '02/11/2018 20:00 hs',
+        fechaHasta: '02/11/2018 21:00 hs',
+    },
+    {
+        key: 'kqedufhkdu',
+        nombre: 'Fabián',
+        apellido: 'Guidobaldi',
+        documento: '40564852',
+        fechaDesde: '02/11/2018 20:00 hs',
+        fechaHasta: '03/11/2018 05:00 hs'
+    },
+    {
+        key: '237r8h2eff',
+        nombre: 'Ezequiel ',
+        apellido: 'Braicovich',
+        documento: '45874125',
+        fechaDesde: '12/11/2018 20:00 hs',
+        fechaHasta: '02/11/2018 21:00 hs'
+    },
+    {
+        key: '32fh8hfhfh',
+        documento: '45874125',
+        fechaDesde: '3/11/2018 11:00 hs',
+        fechaHasta: '02/11/2018 13:00 hs'
+    },
+    {
+        key: '32h7fhf23h',
+        documento: '45874125',
+        fechaDesde: '09/11/2018 16:00 hs',
+        fechaHasta: '02/11/2018 17:00 hs'
+    }
+];
+
 class FlatListItem extends Component {
-    state = { activeRowKey: null, showSpinner: false };
+    state = { showSpinner: false, isSelected: false};
 
     componentWillMount() {
         // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
@@ -29,72 +69,26 @@ class FlatListItem extends Component {
             });
     }
 
-    eliminarInvitacion = invitacion => {
-        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-        var refInvitados = refCountry.collection('Invitados');
-
-        refInvitados.doc(invitacion).delete();
-    };
-
     render() {
         const swipeOutSettings = {
-            autoClose: true,
-            style: { backgroundColor: '#fff' },
-            onClose: (secId, rowId, direction) => {
-                if (this.state.activeRowKey != null) {
-                    this.setState({ activeRowKey: null });
-                }
-            },
-            onOpen: (secId, rowId, direction) => {
-                this.setState({ activeRowKey: this.props.item.key });
-            },
-            right: [
-                {
-                    text: 'Eliminar',
-                    type: 'delete',
-                    onPress: () => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Está seguro que desea eliminar la invitación ?',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.eliminarInvitacion(this.props.item.key);
-                                        //flatListData.splice(this.props.index, 1);
-                                        //this.props.parentFlatList.refreshFlatList(deletingRow);
-                                    }
-                                }
-                            ],
-                            { cancelable: true }
-                        );
-                    }
-                }
-            ],
-            rowId: this.props.index,
-            sectionId: 1
+            style: { backgroundColor: '#fff' }
         };
-        if (this.props.item.nombre == null && this.props.item.apellido == null) {
+        
+        if (this.props.item.nombre == null && this.props.item.apellido == null && this.state.isSelected == false) {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem
+                    <ListItem 
                     avatar
                     onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea modificar esta invitacion ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.props.navigation.navigate('ModificarInvitado');
-                                    }
-                                }
-                            ],
-                            { cancelable: true }
-                        );
+                        if (selectedItems.includes(this.props.item)) {
+                            let index = selectedItems.indexOf(this.props.item);
+                            selectedItems.splice(index,1)
+                            this.setState({ isSelected: false});
+                        } else {
+                            selectedItems.push(this.props.item)
+                            this.setState({ isSelected: true});
+                        }
+                        console.log(selectedItems)
                     }}>
                         <Left>
                             <Thumbnail
@@ -114,26 +108,52 @@ class FlatListItem extends Component {
                     </ListItem>
                 </Swipeout>
             );
-        } else {
+        } else if (this.props.item.nombre == null && this.props.item.apellido == null && this.state.isSelected == true) {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem
+                    <ListItem 
                     avatar
                     onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea modificar esta invitacion ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.props.navigation.navigate('ModificarInvitado');
-                                    }
-                                }
-                            ],
-                            { cancelable: true }
-                        );
+                        if (selectedItems.includes(this.props.item)) {
+                            let index = selectedItems.indexOf(this.props.item);
+                            selectedItems.splice(index,1)
+                            this.setState({ isSelected: false});
+                        } else {
+                            selectedItems.push(this.props.item)
+                            this.setState({ isSelected: true});
+                        }
+                        console.log(selectedItems)
+                    }}>
+                        <Left>
+                            <Thumbnail
+                                source= {require('../../../../../assets/Images/check-azul.png')}                          
+                            />
+                        </Left>
+                        <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
+                        </Body>
+                        <Right style={{ alignSelf: 'center'}}>
+                            <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
+                            <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
+                        </Right>
+                    </ListItem>
+                </Swipeout>
+            );
+        } else if (this.state.isSelected == false) {
+            return (
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem 
+                    avatar
+                    onPress={() => {
+                        if (selectedItems.includes(this.props.item)) {
+                            let index = selectedItems.indexOf(this.props.item);
+                            selectedItems.splice(index,1)
+                            this.setState({ isSelected: false});
+                        } else {
+                            selectedItems.push(this.props.item)
+                            this.setState({ isSelected: true});
+                        }
+                        console.log(selectedItems)
                     }}>
                         <Left>
                             <Thumbnail
@@ -154,20 +174,54 @@ class FlatListItem extends Component {
                     </ListItem>
                 </Swipeout>
             );
+        } else {
+            return (
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem 
+                    avatar
+                    onPress={() => {
+                        if (selectedItems.includes(this.props.item)) {
+                            let index = selectedItems.indexOf(this.props.item);
+                            selectedItems.splice(index,1)
+                            this.setState({ isSelected: false});
+                        } else {
+                            selectedItems.push(this.props.item)
+                            this.setState({ isSelected: true});
+                        }
+                        console.log(selectedItems)
+                    }}>
+                        <Left>
+                            <Thumbnail
+                                source= {require('../../../../../assets/Images/check-azul.png')}                          
+                            />
+                        </Left>
+                        <Body style={{ alignSelf: 'center' }}>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
+                        </Body>
+                        <Right style={{ alignSelf: 'center', marginTop: '2.4%' }}>
+                            <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
+                            <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
+                        </Right>
+                    </ListItem>
+                </Swipeout>
+            );
         }
     }
 }
 
 export default class BasicFlatList extends Component {
+
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Invitaciones'
+            title: 'Invitados personales',
+            headerRight: <View></View>
         };
     };
 
     constructor(props) {
         super(props);
-        state = { deletedRowKey: null, flatListData: [] };
+        state = { flatListData: [] };
     }
 
     componentDidMount() {
@@ -179,6 +233,7 @@ export default class BasicFlatList extends Component {
     }
 
     componentWillMount() {
+        selectedItems = [];
         this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado'
@@ -201,55 +256,56 @@ export default class BasicFlatList extends Component {
     }
 
     obtenerInvitaciones = () => {
-        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-        var refInvitados = refCountry.collection('Invitados');
-
-        refInvitados
-            .where(
-                'IdPropietario',
-                '==',
-                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
-            )
-            .onSnapshot(snapshot => {
-                if (!snapshot.empty) {
-                    //El propietario tiene invitaciones
-                    var tempArray = [];
-                    for (var i = 0; i < snapshot.docs.length; i++) {
-                        var invitado = {
-                            key: snapshot.docs[i].id,
-                            nombre: snapshot.docs[i].data().Nombre,
-                            apellido: snapshot.docs[i].data().Apellido,
-                            documento: snapshot.docs[i].data().Documento,
-                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
-                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
-                        };
-                        tempArray.push(invitado);
-                    }
-                    this.setState({ showSpinner: false, flatListData: tempArray });
-                } else {
-                    this.setState({ showSpinner: false, flatListData: [] });
-                }
-            });
+        //Lógica para obtener las invitaciones personales.
     };
 
-    refreshFlatList = deletedKey => {
-        this.setState(prevState => {
-            return {
-                deletedRowKey: deletedKey
-            };
-        });
-    };
-
+    isFlatListItemSelected = ({ item, index }) => {
+        console.log(item)
+        console.log(index)
+        return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
+    }
+    
     render() {
+
         return (
-            <View>
-                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                <FlatList
-                    data={this.state.flatListData}
-                    renderItem={({ item, index }) => {
-                        return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
-                    }}></FlatList>
-            </View>
+            <Content>
+                <View>
+                    {/* Descomentar para tener Spinner. */}
+                    {/* <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} /> */}
+                    <FlatList
+                        //Reemplazar aca por this.state.flatListData
+                        data={flatListData}
+                        renderItem={({ item, index }) => {
+                            // this.isFlatListItemSelected({ item, index });
+                            return <FlatListItem navigation={this.props.navigation} item={item} index={index} isSelected={false} parentFlatList={this}></FlatListItem>;
+
+                        }}></FlatList>
+                        <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    style={{ paddingHorizontal: '12%' }}
+                                    onPress={() => {
+                                        //Lógica para agregar un invitado existente a a reserva.
+                                    }}>
+                                    <Text>Añadir</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
+                        </View>
+                </View>
+            </Content>
         );
     }
 }
@@ -259,5 +315,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
+    },
+    buttons: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '45%',
+        marginVertical: '5%'
     }
 });
