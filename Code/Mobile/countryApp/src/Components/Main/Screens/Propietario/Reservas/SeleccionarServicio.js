@@ -52,12 +52,7 @@ class FlatListItem extends Component {
                         );
                     }}>
                         <Left>
-                            <Thumbnail
-                                source={{
-                                    uri:
-                                        'https://i0.pngocean.com/files/985/518/496/vector-graphics-calendar-clip-art-illustration-computer-icons-calendar-icon.jpg'
-                                }}
-                            />
+                            <Thumbnail source= {require('../../../../../assets/Images/servicios.jpg')} />
                         </Left>
                         <Body style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 14, marginTop: '5.9%', justifyContent:'center' }}> {this.props.item.nombre} </Text>

@@ -129,7 +129,7 @@ class FlatListItem extends Component {
                         );
                     }}>
                     <Left>
-                        <Thumbnail source={{ uri: 'https://clubdeltrade.com/wp-content/uploads/2019/06/industria_deportiva.png' }} />
+                        <Thumbnail source= {require('../../../../../assets/Images/reservas.png')} />
                     </Left>
                     <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
                         <Text style={{ fontSize: 14 }}> {this.props.item.nombre} </Text>

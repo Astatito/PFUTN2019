@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View , StatusBar} from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content} from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import Calendar from '../../../../Common/Calendar';
 import Spinner from 'react-native-loading-spinner-overlay';
+
+let selectedItems = [];
 
 var flatListData = [
     {
@@ -34,48 +36,59 @@ var flatListData = [
 
 class FlatListItem extends Component {
 
-    state = {showSpinner: false, selectedDate: '' };
+    state = {showSpinner: false, selectedDate: '', isSelected: false };
 
     render() {
         const swipeOutSettings = {
             style: { backgroundColor: '#fff' }
         };
+        if (this.state.isSelected == false) {
             return (
                 <Swipeout {...swipeOutSettings}>
                     <ListItem avatar onPress= {() => {
-                        if (this.props.item.estado === 'Disponible') {
-                            Alert.alert(
-                                'Atención',
-                                '¿ Desea reservar el turno ? ',
-                                [
-                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                    {
-                                        text: 'Aceptar',
-                                        onPress: () => {
-                                            //Funcion que registra el turno en la BD.
-                                        }
-                                    }
-                                ],
-                                { cancelable: true }
-                            );
-                        } else {
-                            Alert.alert(
-                                'Atención',
-                                'Lo siento, este turno no está disponible.',
-                                [
-                                    {
-                                        text: 'Aceptar',
-                                        onPress: () => {
-                                            console.log('Este turno no se pudo reservar', this.props.item.key)
-                                        }
-                                    }
-                                ],
-                                { cancelable: true }
-                            );
+                        if (this.props.item.estado==='Disponible') {
+                            if (selectedItems.includes(this.props.item)) {
+                                let index = selectedItems.indexOf(this.props.item);
+                                selectedItems.splice(index,1)
+                                this.setState({ isSelected: false});
+                            } else {
+                                selectedItems.push(this.props.item)
+                                this.setState({ isSelected: true});
+                            }
                         }
+                        console.log(selectedItems)
                     }}>
                         <Left>
-                            <Thumbnail source={{ uri: 'https://cdn.pixabay.com/photo/2016/09/16/09/20/alarm-1673577_960_720.png' }} />
+                            <Thumbnail source= {require('../../../../../assets/Images/turnos.png')} />
+                        </Left>
+                        <Body style={{ alignSelf: 'center', marginTop:'1%'}}>
+                            
+                            <Text style={{fontSize:14,color: 'green'}}> {this.props.item.estado} </Text>
+                        </Body>
+                        <Right style={{alignSelf:'center', flexDirection:'row', marginTop:'1.9%'}}>
+                            <Text style={{fontSize:12, color:'gray'}}> {this.props.item.desde} </Text>
+                            <Text style={{fontSize:12, color:'gray'}}> - </Text>
+                            <Text style={{fontSize:12, color:'gray'}}> {this.props.item.hasta} </Text>
+                        </Right>
+                    </ListItem>
+                </Swipeout>
+            );
+        } else {
+            return (
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem avatar onPress= {() => {
+                            if (selectedItems.includes(this.props.item)) {
+                                let index = selectedItems.indexOf(this.props.item);
+                                selectedItems.splice(index,1)
+                                this.setState({ isSelected: false});
+                            } else {
+                                selectedItems.push(this.props.item)
+                                this.setState({ isSelected: true});
+                            }
+                            console.log(selectedItems)
+                    }}>
+                        <Left>
+                            <Thumbnail source= {require('../../../../../assets/Images/check-azul.png')} />
                         </Left>
                         <Body style={{ alignSelf: 'center', marginTop:'1%'}}>
                             <Text style={{fontSize:14,color: 'green'}}> {this.props.item.estado} </Text>
@@ -88,6 +101,8 @@ class FlatListItem extends Component {
                     </ListItem>
                 </Swipeout>
             );
+        }
+            
     }
 }
 
@@ -113,7 +128,8 @@ export default class BasicFlatList extends Component {
 
     render() {
         return (
-            <View>
+            <Content>
+                <View>
                 {/* Descomentar para tener Spinner. */}
                 {/* <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} /> */}
                 <StatusBar backgroundColor='#1e90ff' ></StatusBar>
@@ -131,7 +147,34 @@ export default class BasicFlatList extends Component {
                         )
                     }}
                 />
-            </View>
+
+                <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
+                    <View style={styles.buttons}>
+                        <Button
+                            bordered
+                            success
+                            style={{ paddingHorizontal: '8%' }}
+                            onPress={() => {
+                                //Lógica para agregar los turnos a una reserva.
+                            }}>
+                            <Text>Aceptar</Text>
+                        </Button>
+                    </View>
+                    <View style={styles.buttons}>
+                        <Button
+                            bordered
+                            danger
+                            style={{ paddingHorizontal: '5%' }}
+                            onPress={() => {
+                                this.props.navigation.goBack();
+                            }}>
+                            <Text>Cancelar</Text>
+                        </Button>
+                    </View>
+                </View>
+                </View>
+            </Content>
+            
         );
     }
 }
@@ -141,5 +184,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
+    },
+    buttons: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '45%',
+        marginVertical: '5%'
     }
 });
