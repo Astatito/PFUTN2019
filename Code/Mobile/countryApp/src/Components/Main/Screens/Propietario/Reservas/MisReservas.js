@@ -9,44 +9,6 @@ import { Database } from '../../../../DataBase/Firebase';
 import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-var flatListData = [
-    {
-        key: 'wulefb43oy',
-        nombre: 'Cancha de fútbol 5',
-        estado: 'Activa',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 21:00 hs'
-    },
-    {
-        key: 'kqedufhkdu',
-        nombre: 'Club House  ',
-        estado: 'Finalizada',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '03/11/2018 05:00 hs'
-    },
-    {
-        key: '237r8h2eff',
-        nombre: 'Cancha de Tenis',
-        estado: 'Activa',
-        fechaDesde: '12/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 21:00 hs'
-    },
-    {
-        key: '32fh8hfhfh',
-        nombre: 'Cancha de Golf ',
-        estado: 'Cancelada',
-        fechaDesde: '3/11/2018 11:00 hs',
-        fechaHasta: '02/11/2018 13:00 hs'
-    },
-    {
-        key: '32h7fhf23h',
-        nombre: 'Piscina climatizada ',
-        estado: 'Cancelada',
-        fechaDesde: '09/11/2018 16:00 hs',
-        fechaHasta: '02/11/2018 17:00 hs'
-    }
-];
-
 class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
 
@@ -165,6 +127,14 @@ export default class BasicFlatList extends Component {
         state = { flatListData: [] };
     }
 
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+    }
+
     componentWillMount() {
         this.setState({ showSpinner: true });
         LocalStorage.load({
@@ -205,9 +175,7 @@ export default class BasicFlatList extends Component {
                     };
                     tempArray.push(reserva);
                 }
-                console.log('FlatList seteado correctamente en state');
                 this.setState({ showSpinner: false, flatListData: tempArray });
-                console.log(this.state.flatListData);
             } else {
                 this.setState({ showSpinner: false, flatListData: [] });
             }
@@ -219,12 +187,13 @@ export default class BasicFlatList extends Component {
             <View>
                 <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                 <FlatList
-                data={flatListData}
-                renderItem={({ item, index }) => {
-                    return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
-                }}></FlatList>
+                    data={this.state.flatListData}
+                    renderItem={({ item, index }) => {
+                        return (
+                            <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                        );
+                    }}></FlatList>
             </View>
-            
         );
     }
 }
