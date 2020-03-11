@@ -22,6 +22,8 @@ class ModificarInvitado extends Component {
     };
 
     state = {
+        nombre: 'Alexis',
+        apellido: 'Pagura',
         picker: '',
         tiposDocumento: [],
         documento: '',
@@ -89,109 +91,208 @@ class ModificarInvitado extends Component {
             this.obtenerPickers();
         }
 
-        return (
-            <Content>
-                <View style={styles.container}>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                    <Text style={styles.header}> Modificar invitado </Text>
-
-                    <View style={styles.name}>
-                        <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Nombre y Apellido : </Text>
-                        <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%'}}>
-                            {/* TODO : Acá deberias poner el nombre del invitado */}
-                            Alexis Pagura
-                        </Text>
-                    </View>
-
-                    <Picker
-                        note
-                        mode="dropdown"
-                        style={styles.picker}
-                        selectedValue={this.state.picker}
-                        onValueChange={itemValue => this.setState({ picker: itemValue })}>
-                        <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
-                        {this.state.tiposDocumento.map((item, index) => {
-                            return <Picker.Item label={item.nombre} value={item.id} key={index} />;
-                        })}
-                    </Picker>
-
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Número de documento"
-                        onChangeText={documento => this.setState({ documento })}
-                        underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        keyboardType={'numeric'}
-                    />
-
-                    <View style={styles.datetime}>
-                        <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
-                            {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
-                        </Text>
-                        <IconFontAwesome
-                            style={{ alignSelf: 'center' }}
-                            onPress={() => {
-                                this.showPicker();
-                                this.setState({ esDesde: true });
-                            }}
-                            name="calendar"
-                            size={25}
+        if (this.state.nombre == null && this.state.apellido == null) {
+            return (
+                <Content>
+                    <View style={styles.container}>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                        <Text style={styles.header}> Modificar invitado </Text>
+                        <Picker
+                            note
+                            mode="dropdown"
+                            style={styles.picker}
+                            selectedValue={this.state.picker}
+                            onValueChange={itemValue => this.setState({ picker: itemValue })}>
+                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                            {this.state.tiposDocumento.map((item, index) => {
+                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                            })}
+                        </Picker>
+    
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Número de documento"
+                            onChangeText={documento => this.setState({ documento })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'numeric'}
                         />
-                    </View>
-
-                    <View style={styles.datetime}>
-                        <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                            {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
-                        </Text>
-                        <IconFontAwesome
-                            style={{ alignSelf: 'center' }}
-                            onPress={() => {
-                                this.showPicker();
-                                this.setState({ esDesde: false });
-                            }}
-                            name="calendar"
-                            size={25}
-                        />
-                    </View>
-
-                    <DateTimePicker
-                        isVisible={this.state.isVisible}
-                        onConfirm={this.handlePicker}
-                        onCancel={this.hidePicker}
-                        mode={'datetime'}
-                        is24Hour={true}></DateTimePicker>
-
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                success
-                                style={{ paddingHorizontal: '5%' }}
+    
+                        <View style={styles.datetime}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
+                                {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
+                            </Text>
+                            <IconFontAwesome
+                                style={{ alignSelf: 'center' }}
                                 onPress={() => {
-                                    this.props.navigation.goBack();
-                                }}>
-                                <Text>Aceptar</Text>
-                            </Button>
+                                    this.showPicker();
+                                    this.setState({ esDesde: true });
+                                }}
+                                name="calendar"
+                                size={25}
+                            />
                         </View>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                danger
-                                style={{ paddingHorizontal: '5%' }}
+    
+                        <View style={styles.datetime}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
+                                {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
+                            </Text>
+                            <IconFontAwesome
+                                style={{ alignSelf: 'center' }}
                                 onPress={() => {
-                                    this.props.navigation.goBack();
-                                }}>
-                                <Text>Cancelar</Text>
-                            </Button>
+                                    this.showPicker();
+                                    this.setState({ esDesde: false });
+                                }}
+                                name="calendar"
+                                size={25}
+                            />
+                        </View>
+    
+                        <DateTimePicker
+                            isVisible={this.state.isVisible}
+                            onConfirm={this.handlePicker}
+                            onCancel={this.hidePicker}
+                            mode={'datetime'}
+                            is24Hour={true}></DateTimePicker>
+    
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Aceptar</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </Content>
-        );
+                </Content>
+            );
+        } else {
+            return (
+                <Content>
+                    <View style={styles.container}>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                        <Text style={styles.header}> Modificar invitado </Text>
+    
+                        <View style={styles.name}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Nombre y Apellido : </Text>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%'}}>
+                                {/* TODO : Acá deberias poner el nombre del invitado */}
+                                {this.state.nombre + ' ' + this.state.apellido}
+                            </Text>
+                        </View>
+    
+                        <Picker
+                            note
+                            mode="dropdown"
+                            style={styles.picker}
+                            selectedValue={this.state.picker}
+                            onValueChange={itemValue => this.setState({ picker: itemValue })}>
+                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                            {this.state.tiposDocumento.map((item, index) => {
+                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                            })}
+                        </Picker>
+    
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Número de documento"
+                            onChangeText={documento => this.setState({ documento })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'numeric'}
+                        />
+    
+                        <View style={styles.datetime}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
+                                {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
+                            </Text>
+                            <IconFontAwesome
+                                style={{ alignSelf: 'center' }}
+                                onPress={() => {
+                                    this.showPicker();
+                                    this.setState({ esDesde: true });
+                                }}
+                                name="calendar"
+                                size={25}
+                            />
+                        </View>
+    
+                        <View style={styles.datetime}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
+                                {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
+                            </Text>
+                            <IconFontAwesome
+                                style={{ alignSelf: 'center' }}
+                                onPress={() => {
+                                    this.showPicker();
+                                    this.setState({ esDesde: false });
+                                }}
+                                name="calendar"
+                                size={25}
+                            />
+                        </View>
+    
+                        <DateTimePicker
+                            isVisible={this.state.isVisible}
+                            onConfirm={this.handlePicker}
+                            onCancel={this.hidePicker}
+                            mode={'datetime'}
+                            is24Hour={true}></DateTimePicker>
+    
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Aceptar</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
+                        </View>
+                    </View>
+                </Content>
+            );
+
+        }
+        
     }
 }
 const styles = StyleSheet.create({

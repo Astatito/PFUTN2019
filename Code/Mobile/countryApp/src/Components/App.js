@@ -3,8 +3,6 @@ import Login from './Main/Screens/Login';
 import EncargadoNavigation from './Navigation/EncargadoNavigation';
 import PropietarioNavigation from './Navigation/PropietarioNavigation';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
-import ModificarInvitado from './Main/Screens/Propietario/Invitaciones/ModificarInvitado'
-import PropietarioPerfil from './Main/Screens/Propietario/PropietarioPerfil'
 class App extends Component {
     render() {
         return <AppContainer />;
