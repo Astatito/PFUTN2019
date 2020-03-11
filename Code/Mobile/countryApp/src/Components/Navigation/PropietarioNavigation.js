@@ -136,17 +136,76 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
     }
 );
 
+// Stack - El stack navigator para el apartado MiPerfil.
+const PropietarioEventosInvitadosStackNavigator = createStackNavigator(
+    {
+        InvitadosReserva : InvitadosReserva
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
+                headerRight: (
+                    <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
+                        onPress={() => Alert.alert(
+                            'Atención',
+                            '¿ Qué tipo de invitado desea añadir ? ',
+                            [
+                                { text: 'Nuevo Invitado', onPress: () => navigation.navigate('NuevoInvitadoReserva'), style: 'cancel' },
+                                { text: 'Existente', onPress: () => navigation.navigate('InvitadosExistentesReserva'), style: 'cancel' },
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' }
+                            ],
+                            { cancelable: true }
+                        )}
+                    />
+                ),
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+            };
+        }
+    }
+);
+
+// Stack - El stack navigator para el apartado MiPerfil.
+const PropietarioDatosReservaStackNavigator = createStackNavigator(
+    {
+        DatosReserva : DatosReserva
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
+                headerRight: <View />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+            };
+        }
+    }
+);
+
 //TabNavigator para el manejo de la reserva e invitados de la misma.
 const PropietarioReservaTabNavigator = createBottomTabNavigator({
     'Mis Invitados': {
-        screen: InvitadosReserva,
+        screen: PropietarioEventosInvitadosStackNavigator,
         navigationOptions: {
             title:'Invitados',
             tabBarIcon: ({ tintColor }) => <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}/>,
         }
     },
     'Datos de reserva': {
-        screen: DatosReserva,
+        screen: PropietarioDatosReservaStackNavigator,
         navigationOptions: {
             title:'Reserva',
             headerRight: <View></View>,
@@ -162,7 +221,12 @@ const PropietarioEventosStackNavigator = createStackNavigator(
         MisReservas: MisReservas,
         InvitadosReserva: InvitadosReserva,
         DatosReserva: DatosReserva,
-        InformacionReserva: PropietarioReservaTabNavigator,
+        InformacionReserva: {
+            screen: PropietarioReservaTabNavigator,
+            navigationOptions: {
+            header: null
+            }
+        },
         SeleccionarServicio: SeleccionarServicio,
         SeleccionarTurno: SeleccionarTurno,
         NuevoInvitadoReserva: NuevoInvitadoReserva,
@@ -174,21 +238,6 @@ const PropietarioEventosStackNavigator = createStackNavigator(
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
-                headerRight: (
-                    <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
-                        onPress={() => Alert.alert(
-                            'Atención',
-                            '¿ Qué tipo de invitado desea añadir ? ',
-                            [
-                                { text: 'Nuevo Invitado', onPress: () => navigation.navigate('NuevoInvitadoReserva'), style: 'cancel' },
-                                { text: 'Existente', onPress: () => navigation.navigate('InvitadosExistentesReserva'), style: 'cancel' },
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' }
-                            ],
-                            { cancelable: true }
-                        )}
-                    />
-                ),
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
