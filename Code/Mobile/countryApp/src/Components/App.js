@@ -3,6 +3,7 @@ import Login from './Main/Screens/Login';
 import EncargadoNavigation from './Navigation/EncargadoNavigation';
 import PropietarioNavigation from './Navigation/PropietarioNavigation';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
+
 class App extends Component {
     render() {
         return <AppContainer />;

@@ -3,8 +3,6 @@ import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
 import { Content, Button, Text } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
@@ -95,7 +93,7 @@ class DatosReserva extends Component {
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
                     <Text style={styles.header}> Modificar reserva </Text>
-
+                    
                     <TextInput
                         style={styles.textInput}
                         placeholder="Nombre de reserva"
@@ -105,45 +103,6 @@ class DatosReserva extends Component {
                         onBlur={this.handleBlur}
                         keyboardType={'numeric'}
                     />
-
-                    <View style={styles.datetime}>
-                        <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
-                            {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
-                        </Text>
-                        <IconFontAwesome
-                            style={{ alignSelf: 'center' }}
-                            onPress={() => {
-                                this.showPicker();
-                                this.setState({ esDesde: true });
-                            }}
-                            name="calendar"
-                            size={25}
-                        />
-                    </View>
-
-                    <View style={styles.datetime}>
-                        <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                            {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
-                        </Text>
-                        <IconFontAwesome
-                            style={{ alignSelf: 'center' }}
-                            onPress={() => {
-                                this.showPicker();
-                                this.setState({ esDesde: false });
-                            }}
-                            name="calendar"
-                            size={25}
-                        />
-                    </View>
-
-                    <DateTimePicker
-                        isVisible={this.state.isVisible}
-                        onConfirm={this.handlePicker}
-                        onCancel={this.hidePicker}
-                        mode={'datetime'}
-                        is24Hour={true}></DateTimePicker>
 
                     <View style={{ flexDirection: 'row' }}>
                         <View style={styles.buttons}>
@@ -202,12 +161,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         alignItems: 'flex-start',
         margin: '7%'
-    },
-    datetime: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        margin: '7%',
-        width: '80%'
     },
     buttons: {
         alignItems: 'center',
