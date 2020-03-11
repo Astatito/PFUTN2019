@@ -96,6 +96,14 @@ class ModificarInvitado extends Component {
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
                     <Text style={styles.header}> Modificar invitado </Text>
 
+                    <View style={styles.name}>
+                        <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Nombre y Apellido : </Text>
+                        <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%'}}>
+                            {/* TODO : Acá deberias poner el nombre del invitado */}
+                            Alexis Pagura
+                        </Text>
+                    </View>
+
                     <Picker
                         note
                         mode="dropdown"
@@ -120,7 +128,7 @@ class ModificarInvitado extends Component {
 
                     <View style={styles.datetime}>
                         <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '3%', fontSize: 15 }}>
+                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
                             {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
                         </Text>
                         <IconFontAwesome
@@ -136,7 +144,7 @@ class ModificarInvitado extends Component {
 
                     <View style={styles.datetime}>
                         <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '3%', fontSize: 15 }}>
+                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
                             {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
                         </Text>
                         <IconFontAwesome
@@ -231,7 +239,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '5%'
+        marginVertical: '2%'
+    },
+    name: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        margin: '4%',
+        width: '80%'
     }
 });
 

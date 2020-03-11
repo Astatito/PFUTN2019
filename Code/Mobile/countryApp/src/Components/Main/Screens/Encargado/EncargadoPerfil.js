@@ -254,7 +254,7 @@ class MiPerfil extends Component {
 
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '7%', fontSize: 15 }}>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
                                 {this.state.fechaNacimiento.format('DD/MM/YYYY')}
                             </Text>
                             <IconFontAwesome

@@ -215,10 +215,84 @@ const PropietarioReservaTabNavigator = createBottomTabNavigator({
 
 });
 
+// Stack - El stack navigator para las reservas activas.
+const PropietarioReservasActivasStackNavigator = createStackNavigator(
+    {
+        ReservasPendientes : MisReservas
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                title: 'Mis Reservas',
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerRight:<IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25} onPress={() => navigation.navigate('SeleccionarServicio')}/>,
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+            };
+        }
+    }
+);
+
+// Stack - El stack navigator para las reservas finalizadas.
+const PropietarioReservasFinalizadasStackNavigator = createStackNavigator(
+    {
+        ReservasFinalizadas : MisReservas
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                title: 'Mis Reservas',
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerRight: <View />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+            };
+        }
+    }
+);
+
+//TabNavigator para el manejo de las reservas pendientes y pasadas.
+const PropietarioMisReservasTabNavigator = createBottomTabNavigator({
+    'Activas': {
+        screen: PropietarioReservasActivasStackNavigator,
+        navigationOptions: {
+            title:'Activas',
+            tabBarIcon: ({ tintColor }) => <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}/>,
+        }
+    },
+    'Finalizadas': {
+        screen: PropietarioReservasFinalizadasStackNavigator,
+        navigationOptions: {
+            title:'Finalizadas',
+            tabBarIcon: ({ tintColor }) => <IconAntDesign name="book" style={{ fontSize: 25, color: tintColor }}/>,
+        }
+    }},
+    {
+        initialRouteName: "Activas"
+    }
+    );
+
 // Stack - El stack navigator para el apartado de reserva de eventos.
 const PropietarioEventosStackNavigator = createStackNavigator(
     {
-        MisReservas: MisReservas,
+        MisReservas: {
+            screen: PropietarioMisReservasTabNavigator,
+            navigationOptions: {
+            header: null
+            }
+        },
         InvitadosReserva: InvitadosReserva,
         DatosReserva: DatosReserva,
         InformacionReserva: {
@@ -254,7 +328,6 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
         Invitaciones: Invitaciones,
         ModificarInvitado: ModificarInvitado,
         NuevoInvitado: NuevoInvitado,
-        
     },
     {
         defaultNavigationOptions: ({ navigation }) => {

@@ -156,7 +156,7 @@ class NuevoInvitado extends Component {
 
                     <View style={styles.datetime}>
                         <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '3%', fontSize: 15 }}>
+                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
                             {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
                         </Text>
                         <IconFontAwesome
@@ -172,7 +172,7 @@ class NuevoInvitado extends Component {
 
                     <View style={styles.datetime}>
                         <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
-                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '3%', fontSize: 15 }}>
+                        <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
                             {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
                         </Text>
                         <IconFontAwesome

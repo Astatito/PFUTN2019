@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconEvil from 'react-native-vector-icons/EvilIcons';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
@@ -93,10 +91,12 @@ class FlatListItem extends Component {
                     <Left>
                         <Thumbnail source= {require('../../../../../assets/Images/reservas.png')} />
                     </Left>
-                    <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
+                    <Body style={{ alignSelf: 'center' }}>
                         <Text style={{ fontSize: 14 }}> {this.props.item.nombre} </Text>
+                        {/* TODO : Debería ser algo así, reemplazar donde dice Servicio por {this.props.item.servicio} */}
+                        <Text style={{ fontSize: 11, color: 'gray' }}> Servicio </Text>
                     </Body>
-                    <Right style={{ alignSelf: 'center' }}>
+                    <Right style={{ alignSelf: 'center', marginTop: '1.3%' }}>
                         <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
                         <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                     </Right>
@@ -107,20 +107,6 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-    static navigationOptions = ({ navigation }) => {
-        return {
-            title: 'Mis Reservas',
-            headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-            headerRight: (
-                <IconAntDesign
-                    style={{ paddingRight: 10 }}
-                    name="plus"
-                    size={25}
-                    onPress={() => navigation.navigate('SeleccionarServicio')}
-                />
-            )
-        };
-    };
 
     constructor(props) {
         super(props);
