@@ -36,6 +36,14 @@ class ModificarInvitado extends Component {
         usuario: {}
     };
 
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+    }
+    
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = () => {
         var dbRef = Database.collection('TipoDocumento');

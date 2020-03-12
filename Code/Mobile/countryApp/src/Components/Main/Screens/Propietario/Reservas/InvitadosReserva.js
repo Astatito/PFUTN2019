@@ -46,7 +46,7 @@ var flatListData = [
 ];
 
 class FlatListItem extends Component {
-    state = {showSpinner: false };
+    state = {activeRowKey: null, showSpinner: false };
 
     componentWillMount() {
         // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
@@ -71,6 +71,58 @@ class FlatListItem extends Component {
         const swipeOutSettings = {
             autoClose: true,
             style: { backgroundColor: '#fff' },
+            onClose: (secId, rowId, direction) => {
+                if (this.state.activeRowKey != null) {
+                    this.setState({ activeRowKey: null });
+                }
+            },
+            onOpen: (secId, rowId, direction) => {
+                this.setState({ activeRowKey: this.props.item.key });
+            },
+            left: [
+                {
+                    text: 'Confirmar',
+                    type: 'primary',
+                    onPress: () => {
+                        Alert.alert(
+                            'Atención',
+                            '¿ Está seguro que desea confirmar el invitado ?',
+                            [
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                {
+                                    text: 'Aceptar',
+                                    onPress: () => {
+                                        //Funcion para confirmar el invitado pendiente de una reserva.
+                                    }
+                                }
+                            ],
+                            { cancelable: true }
+                        );
+                    }
+                }
+            ],
+            right: [
+                {
+                    text: 'Descartar',
+                    type: 'delete',
+                    onPress: () => {
+                        Alert.alert(
+                            'Atención',
+                            '¿ Está seguro que desea eliminar la invitación ?',
+                            [
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                {
+                                    text: 'Aceptar',
+                                    onPress: () => {
+                                        //Funcion para eliminar o no confirmar un invitado pendiente de una reserva.
+                                    }
+                                }
+                            ],
+                            { cancelable: true }
+                        );
+                    }
+                }
+            ],
             rowId: this.props.index,
             sectionId: 1
         };

@@ -3,6 +3,7 @@ import { FlatList, Alert, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Database } from '../../../../DataBase/Firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -205,7 +206,8 @@ export default class BasicFlatList extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Invitados personales',
-            headerRight: <View></View>
+            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
+            headerRight: <View />
         };
     };
 
