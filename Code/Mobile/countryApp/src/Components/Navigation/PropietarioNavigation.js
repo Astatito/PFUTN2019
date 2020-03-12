@@ -20,11 +20,33 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { View, Text, ScrollView, StyleSheet, Image, Alert } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
 import ModificarInvitado from '../Main/Screens/Propietario/Invitaciones/ModificarInvitado';
+import Share from 'react-native-share'
+import RNFetchBlob from 'rn-fetch-blob';
+
+//Funcion para compartir el link de invitacion de una reserva
+shareImage= () => {
+    
+      let shareOptions = {
+        title: 'Compartir',
+        message: 'Hola! Aquí te envío la invitación para mi evento.',
+        subject: 'Invitación a mi evento'
+      };
+    
+      Share.open(shareOptions)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          err && console.log(err);
+        });
+    
+};
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = props => (
@@ -144,9 +166,12 @@ const PropietarioEventosInvitadosStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
+                title: 'Invitados',
                 headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
                 headerRight: (
-                    <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
+                    <View style={styles.iconContainer}>
+                        <IconEntypo style={{ paddingRight: 15 }} name="share" size={23} onPress={() => {this.shareImage()}}/>
+                        <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
                         onPress={() => Alert.alert(
                             'Atención',
                             '¿ Qué tipo de invitado desea añadir ? ',
@@ -158,6 +183,7 @@ const PropietarioEventosInvitadosStackNavigator = createStackNavigator(
                             { cancelable: true }
                         )}
                     />
+                    </View>
                 ),
                 headerStyle: {
                     backgroundColor: '#1e90ff'
@@ -180,6 +206,7 @@ const PropietarioDatosReservaStackNavigator = createStackNavigator(
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
+                title: 'Reserva',
                 headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
@@ -225,7 +252,7 @@ const PropietarioReservasActivasStackNavigator = createStackNavigator(
             return {
                 title: 'Mis Reservas',
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight:<IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25} onPress={() => navigation.navigate('SeleccionarServicio')}/>,
+                headerRight: <IconAntDesign style={{ paddingRight: 10 }} name="plus" size={25} onPress={() => navigation.navigate('SeleccionarServicio')}/>,
                 headerStyle: {
                     backgroundColor: '#1e90ff'
                 },
@@ -269,7 +296,7 @@ const PropietarioMisReservasTabNavigator = createBottomTabNavigator({
         screen: PropietarioReservasActivasStackNavigator,
         navigationOptions: {
             title:'Activas',
-            tabBarIcon: ({ tintColor }) => <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}/>,
+            tabBarIcon: ({ tintColor }) => <MaterialCommunityIcons name="account-group" style={{ fontSize: 30, color: tintColor }}/>,
         }
     },
     'Finalizadas': {
@@ -401,7 +428,13 @@ const PropietarioNavigation = createDrawerNavigator(
 const styles = StyleSheet.create({
     container: {
         flex: 1
+    },
+    iconContainer: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        width: 100
     }
 });
+
 
 export default PropietarioNavigation;

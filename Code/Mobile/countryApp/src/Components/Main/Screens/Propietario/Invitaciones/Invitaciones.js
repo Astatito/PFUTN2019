@@ -149,6 +149,7 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
+    
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Invitaciones'

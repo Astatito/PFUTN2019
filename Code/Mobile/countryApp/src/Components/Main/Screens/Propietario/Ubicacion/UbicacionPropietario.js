@@ -34,9 +34,8 @@ class MiUbicacion extends Component {
               err && console.log(err);
             });
         };
-        };
+    };
     
-
     render() {
         
         return (
