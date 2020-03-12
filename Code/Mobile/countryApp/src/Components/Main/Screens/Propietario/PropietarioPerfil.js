@@ -15,8 +15,8 @@ const LIGHT_GRAY = '#D3D3D3';
 
 const navigateAction = NavigationActions.navigate({
     routeName: 'Propietario',
-    action: NavigationActions.navigate({ routeName: 'Propietario' }),
-    });
+    action: NavigationActions.navigate({ routeName: 'Propietario' })
+});
 
 class MiPerfil extends Component {
     static navigationOptions = {
@@ -83,6 +83,7 @@ class MiPerfil extends Component {
                     celular: propietario.Celular,
                     fechaNacimiento: moment.unix(propietario.FechaNacimiento.seconds)
                 });
+                console.log(propietario);
                 this.setState({ showSpinner: false });
             }
         });
@@ -103,19 +104,15 @@ class MiPerfil extends Component {
             { merge: true }
         );
         this.setState({ showSpinner: false });
-        Alert.alert(
-            'Atención',
-            'Datos personales actualizados correctamente.',
-            [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        // Redirrecionar a Home del propietario.
-                        this.props.navigation.dispatch(navigateAction);
-                    }
+        Alert.alert('Atención', 'Datos personales actualizados correctamente.', [
+            {
+                text: 'OK',
+                onPress: () => {
+                    // Redirrecionar a Home del propietario.
+                    this.props.navigation.dispatch(navigateAction);
                 }
-            ]
-        );
+            }
+        ]);
     };
 
     obtenerPickers = () => {
@@ -123,7 +120,7 @@ class MiPerfil extends Component {
         var dbDocs = dbRef.get().then(snapshot => {
             var tiposDocumento = [];
             snapshot.forEach(doc => {
-                tiposDocumento.push(doc.data().Nombre);
+                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
             });
             this.setState({ tiposDocumento });
         });
@@ -204,6 +201,7 @@ class MiPerfil extends Component {
                             mode="dropdown"
                             style={styles.picker}
                             selectedValue={this.state.picker}
+                            enabled={false}
                             onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
                             <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
                             {this.state.tiposDocumento.map((item, index) => {
@@ -280,7 +278,13 @@ class MiPerfil extends Component {
                                 </Button>
                             </View>
                             <View style={styles.buttons}>
-                                <Button bordered danger style={{ paddingHorizontal: '5%' }}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.dispatch(navigateAction);
+                                    }}>
                                     <Text>Cancelar</Text>
                                 </Button>
                             </View>

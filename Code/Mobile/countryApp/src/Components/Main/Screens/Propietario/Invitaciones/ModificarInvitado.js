@@ -33,7 +33,8 @@ class ModificarInvitado extends Component {
         isFocused: false,
         isVisible: false,
         esDesde: null,
-        usuario: {}
+        usuario: {},
+        autenticado: null
     };
 
     componentDidMount() {
@@ -43,7 +44,24 @@ class ModificarInvitado extends Component {
             });
         }, 3000);
     }
-    
+
+    componentWillMount() {
+        const { navigation } = this.props;
+        const usuario = navigation.getParam('usuario');
+        const invitacion = navigation.getParam('invitacion');
+        const autenticado = navigation.getParam('autenticado');
+
+        this.setState({
+            autenticado: autenticado,
+            usuario: usuario,
+            documento: invitacion.documento,
+            picker: invitacion.tipoDocumento,
+            fechaDesde: moment(invitacion.fechaDesde, 'D/M/YYYY HH:mm'),
+            fechaHasta: moment(invitacion.fechaHasta, 'D/M/YYYY HH:mm'),
+            idInvitacion: invitacion.key
+        });
+    }
+
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = () => {
         var dbRef = Database.collection('TipoDocumento');
@@ -92,6 +110,21 @@ class ModificarInvitado extends Component {
         this.setState({ isVisible: true });
     };
 
+    actualizarInvitado = () => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitado = refCountry.collection('Invitados').doc(this.state.idInvitacion);
+
+        refInvitado.set(
+            {
+                FechaDesde: this.state.fechaDesde.toDate(),
+                FechaHasta: this.state.fechaHasta.toDate(),
+                Documento: this.state.documento,
+                TipoDocumento: Database.doc('TipoDocumento/' + this.state.picker)
+            },
+            { merge: true }
+        );
+    };
+
     render() {
         const { isFocused } = this.state;
 
@@ -111,27 +144,30 @@ class ModificarInvitado extends Component {
                             mode="dropdown"
                             style={styles.picker}
                             selectedValue={this.state.picker}
+                            enabled={!this.state.autenticado}
                             onValueChange={itemValue => this.setState({ picker: itemValue })}>
                             <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
                             {this.state.tiposDocumento.map((item, index) => {
                                 return <Picker.Item label={item.nombre} value={item.id} key={index} />;
                             })}
                         </Picker>
-    
+
                         <TextInput
                             style={styles.textInput}
                             placeholder="Número de documento"
+                            value={this.state.documento}
+                            editable={!this.state.autenticado}
                             onChangeText={documento => this.setState({ documento })}
                             underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                             onFocus={this.handleFocus}
                             onBlur={this.handleBlur}
                             keyboardType={'numeric'}
                         />
-    
+
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
                             <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
-                                {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
+                                {this.state.fechaDesde.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
                                 style={{ alignSelf: 'center' }}
@@ -143,11 +179,11 @@ class ModificarInvitado extends Component {
                                 size={25}
                             />
                         </View>
-    
+
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
                             <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                                {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
+                                {this.state.fechaDesde.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
                                 style={{ alignSelf: 'center' }}
@@ -159,14 +195,14 @@ class ModificarInvitado extends Component {
                                 size={25}
                             />
                         </View>
-    
+
                         <DateTimePicker
                             isVisible={this.state.isVisible}
                             onConfirm={this.handlePicker}
                             onCancel={this.hidePicker}
                             mode={'datetime'}
                             is24Hour={true}></DateTimePicker>
-    
+
                         <View style={{ flexDirection: 'row' }}>
                             <View style={styles.buttons}>
                                 <Button
@@ -201,15 +237,15 @@ class ModificarInvitado extends Component {
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <StatusBar backgroundColor="#1e90ff"></StatusBar>
                         <Text style={styles.header}> Modificar invitado </Text>
-    
+
                         <View style={styles.name}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Nombre y Apellido : </Text>
-                            <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%'}}>
+                            <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%' }}>
                                 {/* TODO : Acá deberias poner el nombre del invitado */}
                                 {this.state.nombre + ' ' + this.state.apellido}
                             </Text>
                         </View>
-    
+
                         <Picker
                             note
                             mode="dropdown"
@@ -221,7 +257,7 @@ class ModificarInvitado extends Component {
                                 return <Picker.Item label={item.nombre} value={item.id} key={index} />;
                             })}
                         </Picker>
-    
+
                         <TextInput
                             style={styles.textInput}
                             placeholder="Número de documento"
@@ -231,11 +267,11 @@ class ModificarInvitado extends Component {
                             onBlur={this.handleBlur}
                             keyboardType={'numeric'}
                         />
-    
+
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
                             <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
-                                {this.state.fechaDesde.format('MMMM, Do YYYY HH:mm')}
+                                {this.state.fechaDesde.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
                                 style={{ alignSelf: 'center' }}
@@ -247,11 +283,11 @@ class ModificarInvitado extends Component {
                                 size={25}
                             />
                         </View>
-    
+
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
                             <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                                {this.state.fechaHasta.format('MMMM, Do YYYY HH:mm')}
+                                {this.state.fechaHasta.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
                                 style={{ alignSelf: 'center' }}
@@ -263,14 +299,14 @@ class ModificarInvitado extends Component {
                                 size={25}
                             />
                         </View>
-    
+
                         <DateTimePicker
                             isVisible={this.state.isVisible}
                             onConfirm={this.handlePicker}
                             onCancel={this.hidePicker}
                             mode={'datetime'}
                             is24Hour={true}></DateTimePicker>
-    
+
                         <View style={{ flexDirection: 'row' }}>
                             <View style={styles.buttons}>
                                 <Button
@@ -278,6 +314,7 @@ class ModificarInvitado extends Component {
                                     success
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={() => {
+                                        this.actualizarInvitado();
                                         this.props.navigation.goBack();
                                     }}>
                                     <Text>Aceptar</Text>
@@ -298,9 +335,7 @@ class ModificarInvitado extends Component {
                     </View>
                 </Content>
             );
-
         }
-        
     }
 }
 const styles = StyleSheet.create({

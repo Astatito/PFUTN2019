@@ -75,34 +75,38 @@ class FlatListItem extends Component {
             rowId: this.props.index,
             sectionId: 1
         };
-        if (this.props.item.nombre == null && this.props.item.apellido == null) {
+        if (this.props.item.nombre == '' && this.props.item.apellido == '') {
             return (
                 <Swipeout {...swipeOutSettings}>
                     <ListItem
-                    avatar
-                    onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea modificar esta invitacion ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.props.navigation.navigate('ModificarInvitado');
+                        avatar
+                        onPress={() => {
+                            Alert.alert(
+                                'Atención',
+                                '¿ Desea modificar esta invitacion ? ',
+                                [
+                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                    {
+                                        text: 'Aceptar',
+                                        onPress: () => {
+                                            this.props.navigation.navigate('ModificarInvitado', {
+                                                usuario: this.state.usuario,
+                                                invitacion: this.props.item,
+                                                autenticado: false
+                                            });
+                                        }
                                     }
-                                }
-                            ],
-                            { cancelable: true }
-                        );
-                    }}>
+                                ],
+                                { cancelable: true }
+                            );
+                        }}>
                         <Left>
-                            <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
+                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
                         </Left>
                         <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center'}}>
+                        <Right style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                         </Right>
@@ -113,25 +117,29 @@ class FlatListItem extends Component {
             return (
                 <Swipeout {...swipeOutSettings}>
                     <ListItem
-                    avatar
-                    onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea modificar esta invitacion ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.props.navigation.navigate('ModificarInvitado');
+                        avatar
+                        onPress={() => {
+                            Alert.alert(
+                                'Atención',
+                                '¿ Desea modificar esta invitacion ? ',
+                                [
+                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                    {
+                                        text: 'Aceptar',
+                                        onPress: () => {
+                                            this.props.navigation.navigate('ModificarInvitado', {
+                                                usuario: this.state.usuario,
+                                                invitacion: this.props.item,
+                                                autenticado: true
+                                            });
+                                        }
                                     }
-                                }
-                            ],
-                            { cancelable: true }
-                        );
-                    }}>
+                                ],
+                                { cancelable: true }
+                            );
+                        }}>
                         <Left>
-                            <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
+                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
                         </Left>
                         <Body style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
@@ -211,6 +219,7 @@ export default class BasicFlatList extends Component {
                             nombre: snapshot.docs[i].data().Nombre,
                             apellido: snapshot.docs[i].data().Apellido,
                             documento: snapshot.docs[i].data().Documento,
+                            tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
                             fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
                             fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
                         };
@@ -238,7 +247,9 @@ export default class BasicFlatList extends Component {
                 <FlatList
                     data={this.state.flatListData}
                     renderItem={({ item, index }) => {
-                        return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
+                        return (
+                            <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                        );
                     }}></FlatList>
             </View>
         );

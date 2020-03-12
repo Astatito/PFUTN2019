@@ -29,6 +29,16 @@ class FlatListItem extends Component {
             });
     }
 
+    eliminarReserva = reserva => {
+        var refReservaPropietario = Database.doc(
+            'Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos + '/Reservas/' + reserva.key
+        );
+        refReservaPropietario.set({ Cancelado: true }, { merge: true });
+
+        var refReservaServicio = Database.doc(reserva.idReservaServicio);
+        refReservaServicio.set({ Cancelado: true }, { merge: true });
+    };
+
     render() {
         const swipeOutSettings = {
             autoClose: true,
@@ -55,7 +65,7 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        //Lógica para eliminar la reserva eliminarReserva()
+                                        this.eliminarReserva(this.props.item);
                                     }
                                 }
                             ],
@@ -89,7 +99,7 @@ class FlatListItem extends Component {
                         );
                     }}>
                     <Left>
-                        <Thumbnail source= {require('../../../../../assets/Images/reservas.png')} />
+                        <Thumbnail source={require('../../../../../assets/Images/reservas.png')} />
                     </Left>
                     <Body style={{ alignSelf: 'center' }}>
                         <Text style={{ fontSize: 14 }}> {this.props.item.nombre} </Text>
@@ -148,24 +158,28 @@ export default class BasicFlatList extends Component {
             .doc(this.state.usuario.datos)
             .collection('Reservas');
 
-        refReservas.onSnapshot(snapshot => {
-            if (!snapshot.empty) {
-                //El propietario tiene reservas
-                var tempArray = [];
-                for (var i = 0; i < snapshot.docs.length; i++) {
-                    var reserva = {
-                        key: snapshot.docs[i].id,
-                        nombre: snapshot.docs[i].data().Nombre,
-                        fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
-                        fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
-                    };
-                    tempArray.push(reserva);
+        refReservas
+            .where('Cancelado', '==', false)
+            .orderBy('FechaDesde')
+            .onSnapshot(snapshot => {
+                if (!snapshot.empty) {
+                    //El propietario tiene reservas
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        var reserva = {
+                            key: snapshot.docs[i].id,
+                            nombre: snapshot.docs[i].data().Nombre,
+                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
+                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
+                            idReservaServicio: snapshot.docs[i].data().IdReservaServicio.path
+                        };
+                        tempArray.push(reserva);
+                    }
+                    this.setState({ showSpinner: false, flatListData: tempArray });
+                } else {
+                    this.setState({ showSpinner: false, flatListData: [] });
                 }
-                this.setState({ showSpinner: false, flatListData: tempArray });
-            } else {
-                this.setState({ showSpinner: false, flatListData: [] });
-            }
-        });
+            });
     };
 
     render() {

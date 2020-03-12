@@ -124,7 +124,6 @@ export default class BasicFlatList extends Component {
         var duracionTurno = this.state.servicio.duracionTurno;
         var cantidadTurnos = diferencia / duracionTurno;
 
-        var hora = this.state.servicio.horaInicio;
         var tempArray = [];
 
         var auxDate = moment(this.state.servicio.horaInicio);
@@ -155,6 +154,7 @@ export default class BasicFlatList extends Component {
                 showSpinner: false
             });
         }, 3000);
+        console.log('TEST: se monto el componente');
     }
 
     fechaSeleccionada = fecha => {
@@ -191,6 +191,7 @@ export default class BasicFlatList extends Component {
         );
 
         refReservas
+            .where('Cancelado', '==', false)
             .where('FechaDesde', '>=', desde)
             .where('FechaDesde', '<=', hasta)
             .get()
@@ -210,6 +211,7 @@ export default class BasicFlatList extends Component {
                     console.log('No se encontró ninguna reserva.');
                 }
 
+                console.log('TEST: se trajeron las reservas');
                 this.actualizarTurnos(reservas);
             })
             .catch(error => {
