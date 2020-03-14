@@ -62,8 +62,6 @@ class FlatListItem extends Component {
                                     text: 'Aceptar',
                                     onPress: () => {
                                         this.eliminarInvitacion(this.props.item.key);
-                                        //flatListData.splice(this.props.index, 1);
-                                        //this.props.parentFlatList.refreshFlatList(deletingRow);
                                     }
                                 }
                             ],
@@ -157,7 +155,6 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-    
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Invitaciones'

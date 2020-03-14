@@ -268,6 +268,9 @@ export default class BasicFlatList extends Component {
             fechaDesde.setHours(parseInt(desde[0]), parseInt(desde[1]), parseInt(0));
             fechaHasta.setHours(parseInt(hasta[0]), parseInt(hasta[1]), parseInt(0));
 
+            var random = Math.floor(Math.random() * 1001).toString();
+            var nombre = 'Random';
+
             reserva = {
                 Cancelado: false,
                 FechaAlta: new Date(),
@@ -276,7 +279,7 @@ export default class BasicFlatList extends Component {
                 IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
                 IdReservaServicio: null,
                 IdServicio: Database.doc('Country/' + this.state.usuario.country + '/Servicios/' + this.state.servicio.key),
-                Nombre: 'Random1',
+                Nombre: nombre + random,
                 Servicio: this.state.servicio.nombre
             };
 
