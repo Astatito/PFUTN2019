@@ -22,8 +22,8 @@ class ModificarInvitado extends Component {
     };
 
     state = {
-        nombre: 'Alexis',
-        apellido: 'Pagura',
+        nombre: '',
+        apellido: '',
         picker: '',
         tiposDocumento: [],
         documento: '',
@@ -54,6 +54,8 @@ class ModificarInvitado extends Component {
         this.setState({
             autenticado: autenticado,
             usuario: usuario,
+            nombre: invitacion.nombre,
+            apellido: invitacion.apellido,
             documento: invitacion.documento,
             picker: invitacion.tipoDocumento,
             fechaDesde: moment(invitacion.fechaDesde, 'D/M/YYYY HH:mm'),
@@ -132,7 +134,7 @@ class ModificarInvitado extends Component {
             this.obtenerPickers();
         }
 
-        if (this.state.nombre == null && this.state.apellido == null) {
+        if (this.state.nombre == '' && this.state.apellido == '') {
             return (
                 <Content>
                     <View style={styles.container}>
@@ -241,7 +243,6 @@ class ModificarInvitado extends Component {
                         <View style={styles.name}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Nombre y Apellido : </Text>
                             <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%' }}>
-                                {/* TODO : Acá deberias poner el nombre del invitado */}
                                 {this.state.nombre + ' ' + this.state.apellido}
                             </Text>
                         </View>
@@ -251,6 +252,7 @@ class ModificarInvitado extends Component {
                             mode="dropdown"
                             style={styles.picker}
                             selectedValue={this.state.picker}
+                            enabled={!this.state.autenticado}
                             onValueChange={itemValue => this.setState({ picker: itemValue })}>
                             <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
                             {this.state.tiposDocumento.map((item, index) => {
@@ -261,7 +263,9 @@ class ModificarInvitado extends Component {
                         <TextInput
                             style={styles.textInput}
                             placeholder="Número de documento"
+                            value={this.state.documento}
                             onChangeText={documento => this.setState({ documento })}
+                            editable={!this.state.autenticado}
                             underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                             onFocus={this.handleFocus}
                             onBlur={this.handleBlur}
