@@ -103,8 +103,7 @@ class FlatListItem extends Component {
                     </Left>
                     <Body style={{ alignSelf: 'center' }}>
                         <Text style={{ fontSize: 14 }}> {this.props.item.nombre} </Text>
-                        {/* TODO : Debería ser algo así, reemplazar donde dice Servicio por {this.props.item.servicio} */}
-                        <Text style={{ fontSize: 11, color: 'gray' }}> Servicio </Text>
+                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.servicio} </Text>
                     </Body>
                     <Right style={{ alignSelf: 'center', marginTop: '1.3%' }}>
                         <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
@@ -117,7 +116,6 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-
     constructor(props) {
         super(props);
         state = { flatListData: [] };
@@ -171,7 +169,8 @@ export default class BasicFlatList extends Component {
                             nombre: snapshot.docs[i].data().Nombre,
                             fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
                             fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
-                            idReservaServicio: snapshot.docs[i].data().IdReservaServicio.path
+                            idReservaServicio: snapshot.docs[i].data().IdReservaServicio.path,
+                            servicio: snapshot.docs[i].data().Servicio
                         };
                         tempArray.push(reserva);
                     }
