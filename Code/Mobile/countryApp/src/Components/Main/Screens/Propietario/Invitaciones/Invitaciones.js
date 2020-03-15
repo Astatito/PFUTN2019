@@ -81,7 +81,7 @@ class FlatListItem extends Component {
                         onPress={() => {
                             Alert.alert(
                                 'Atención',
-                                '¿ Desea modificar esta invitacion ? ',
+                                '¿ Desea modificar esta invitación ? ',
                                 [
                                     { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                     {
@@ -119,7 +119,7 @@ class FlatListItem extends Component {
                         onPress={() => {
                             Alert.alert(
                                 'Atención',
-                                '¿ Desea modificar esta invitacion ? ',
+                                '¿ Desea modificar esta invitación ? ',
                                 [
                                     { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                     {

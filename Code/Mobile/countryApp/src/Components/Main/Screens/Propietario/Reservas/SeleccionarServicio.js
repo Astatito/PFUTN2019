@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Alert, StyleSheet, View } from 'react-native';
+import { FlatList, Alert, StyleSheet, View, TextInput} from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
@@ -8,46 +8,55 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
+const BLUE = '#428AF8';
+const LIGHT_GRAY = '#D3D3D3';
+
 class FlatListItem extends Component {
-    state = { showSpinner: false };
+    state = { showSpinner: false, nombreReserva: '' };
 
     render() {
         const swipeOutSettings = {
             style: { backgroundColor: '#fff' }
         };
         return (
-            <Swipeout {...swipeOutSettings}>
-                <ListItem
-                    avatar
-                    onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea reservar el servicio ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.props.navigation.navigate('SeleccionarTurno', { servicio: this.props.item });
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            Alert.alert(
+                                'Atención',
+                                '¿ Desea reservar el servicio ? ',
+                                [
+                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                    {
+                                        text: 'Aceptar',
+                                        onPress: () => {
+                                            if (this.state.nombreReserva == '') {
+                                                Alert.alert('Atención', 'Debe ingresar un nombre válido para la reserva.')
+                                            } else {
+                                                this.props.navigation.navigate('SeleccionarTurno', { servicio: this.props.item });
+                                            }
+                                            
+                                        }
                                     }
-                                }
-                            ],
-                            { cancelable: true }
-                        );
-                    }}>
-                    <Left>
-                        <Thumbnail source={require('../../../../../assets/Images/servicios.jpg')} />
-                    </Left>
-                    <Body style={{ alignSelf: 'center' }}>
-                        <Text style={{ fontSize: 14, marginTop: '5.9%', justifyContent: 'center' }}> {this.props.item.nombre} </Text>
-                    </Body>
-                </ListItem>
-            </Swipeout>
+                                ],
+                                { cancelable: true }
+                            );
+                        }}>
+                        <Left>
+                            <Thumbnail source={require('../../../../../assets/Images/servicios.jpg')} />
+                        </Left>
+                        <Body style={{ alignSelf: 'center' }}>
+                            <Text style={{ fontSize: 14, marginTop: '5.9%', justifyContent: 'center' }}> {this.props.item.nombre} </Text>
+                        </Body>
+                    </ListItem>
+                </Swipeout>
         );
     }
 }
 
 export default class BasicFlatList extends Component {
+    
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Servicios',
@@ -110,11 +119,37 @@ export default class BasicFlatList extends Component {
         }, 3000);
     }
 
+    
+    handleFocus = event => {
+        this.setState({ isFocused: true });
+        if (this.props.onFocus) {
+            this.props.onFocus(event);
+        }
+    };
+
+    handleBlur = event => {
+        this.setState({ isFocused: false });
+        if (this.props.onBlur) {
+            this.props.onBlur(event);
+        }
+    };
+
     render() {
+        const { isFocused } = this.state;
+
         return (
             <View>
                 {/* Descomentar para tener Spinner. */}
                 <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                <TextInput
+                        style={styles.textInput}
+                        placeholder="Nombre de la reserva"
+                        onChangeText={nombreReserva => this.setState({ nombreReserva })}
+                        underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
+                        keyboardType={'default'}
+                />
                 <FlatList
                     data={this.state.flatListData}
                     renderItem={({ item, index }) => {
@@ -132,5 +167,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
-    }
+    },
+    textInput: {
+        width: '80%',
+        fontSize: 16,
+        alignItems: 'flex-start',
+        marginHorizontal: '7%',
+        marginTop : '7%',
+        marginVertical: '3%'
+    },
 });

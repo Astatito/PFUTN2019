@@ -6,6 +6,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
+
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
@@ -101,7 +102,7 @@ class DatosReserva extends Component {
                         underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
-                        keyboardType={'numeric'}
+                        keyboardType={'default'}
                     />
 
                     <View style={{ flexDirection: 'row' }}>

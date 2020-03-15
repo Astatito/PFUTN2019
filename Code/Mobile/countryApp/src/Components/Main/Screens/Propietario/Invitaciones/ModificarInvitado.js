@@ -168,7 +168,7 @@ class ModificarInvitado extends Component {
 
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '18%', fontSize: 15 }}>
                                 {this.state.fechaDesde.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
@@ -184,8 +184,8 @@ class ModificarInvitado extends Component {
 
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                                {this.state.fechaDesde.format('D/M/YYYY - HH:mm')}
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '17%', fontSize: 15 }}>
+                                {this.state.fechaHasta.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
                                 style={{ alignSelf: 'center' }}
@@ -212,6 +212,7 @@ class ModificarInvitado extends Component {
                                     success
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={() => {
+                                        this.actualizarInvitado();
                                         this.props.navigation.goBack();
                                     }}>
                                     <Text>Aceptar</Text>
@@ -274,7 +275,7 @@ class ModificarInvitado extends Component {
 
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Ingreso</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '9.5%', fontSize: 15 }}>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '18%', fontSize: 15 }}>
                                 {this.state.fechaDesde.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
@@ -290,7 +291,7 @@ class ModificarInvitado extends Component {
 
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Egreso</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '17%', fontSize: 15 }}>
                                 {this.state.fechaHasta.format('D/M/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
