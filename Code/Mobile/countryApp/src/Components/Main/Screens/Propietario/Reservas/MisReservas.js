@@ -182,18 +182,28 @@ export default class BasicFlatList extends Component {
     };
 
     render() {
-        return (
-            <View>
-                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                <FlatList
-                    data={this.state.flatListData}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
-                        );
-                    }}></FlatList>
-            </View>
-        );
+        console.log(this.state.flatListData)
+        if (this.state.flatListData && this.state.flatListData.length == 0) {
+            return(
+                <View>
+                    <Text style={styles.textDefault}> No hay reservas para mostrar. </Text>
+                </View>
+            );
+            
+        } else {
+            return (
+                <View>
+                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                    <FlatList
+                        data={this.state.flatListData}
+                        renderItem={({ item, index }) => {
+                            return (
+                                <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                            );
+                        }}></FlatList>
+                </View>
+            );
+        }
     }
 }
 
@@ -202,5 +212,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
+    },
+    textDefault : {
+        marginTop: '65%',
+        textAlign: 'center',
+        fontSize: 14,
+        color: '#8F8787',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
     }
 });

@@ -136,10 +136,8 @@ export default class BasicFlatList extends Component {
 
     render() {
         const { isFocused } = this.state;
-
         return (
             <View>
-                {/* Descomentar para tener Spinner. */}
                 <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                 <TextInput
                         style={styles.textInput}
@@ -175,5 +173,5 @@ const styles = StyleSheet.create({
         marginHorizontal: '7%',
         marginTop : '7%',
         marginVertical: '3%'
-    },
+    }
 });
