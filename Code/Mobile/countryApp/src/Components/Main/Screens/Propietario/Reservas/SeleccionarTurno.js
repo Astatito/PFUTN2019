@@ -83,7 +83,6 @@ class FlatListItem extends Component {
                     </Swipeout>
                 );
             }
-            
         } else {
             if (this.props.item.estado == 'Disponible') {
                 return (
@@ -146,7 +145,6 @@ class FlatListItem extends Component {
                     </Swipeout>
                 );
             }
-            
         }
     }
 }
@@ -161,8 +159,9 @@ export default class BasicFlatList extends Component {
     componentWillMount() {
         const { navigation } = this.props;
         const servicio = navigation.getParam('servicio');
+        const nombreReserva = navigation.getParam('nombreReserva');
 
-        this.setState({ showSpinner: true, servicio: servicio, fechaSeleccionada: new Date() });
+        this.setState({ showSpinner: true, servicio: servicio, fechaSeleccionada: new Date(), nombreReserva: nombreReserva });
 
         LocalStorage.load({
             key: 'UsuarioLogueado'
@@ -336,9 +335,6 @@ export default class BasicFlatList extends Component {
             fechaDesde.setHours(parseInt(desde[0]), parseInt(desde[1]), parseInt(0));
             fechaHasta.setHours(parseInt(hasta[0]), parseInt(hasta[1]), parseInt(0));
 
-            var random = Math.floor(Math.random() * 1001).toString();
-            var nombre = 'Random';
-
             reserva = {
                 Cancelado: false,
                 FechaAlta: new Date(),
@@ -347,7 +343,7 @@ export default class BasicFlatList extends Component {
                 IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
                 IdReservaServicio: null,
                 IdServicio: Database.doc('Country/' + this.state.usuario.country + '/Servicios/' + this.state.servicio.key),
-                Nombre: nombre + random,
+                Nombre: this.state.nombreReserva,
                 Servicio: this.state.servicio.nombre
             };
 
