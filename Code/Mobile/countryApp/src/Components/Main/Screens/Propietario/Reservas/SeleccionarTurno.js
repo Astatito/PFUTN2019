@@ -18,12 +18,79 @@ class FlatListItem extends Component {
             style: { backgroundColor: '#fff' }
         };
         if (this.state.isSelected == false) {
-            return (
-                <Swipeout {...swipeOutSettings}>
-                    <ListItem
-                        avatar
-                        onPress={() => {
-                            if (this.props.item.estado === 'Disponible') {
+            if (this.props.item.estado == 'Disponible') {
+                return (
+                    <Swipeout {...swipeOutSettings}>
+                        <ListItem
+                            avatar
+                            onPress={() => {
+                                if (this.props.item.estado === 'Disponible') {
+                                    if (selectedItems.includes(this.props.item)) {
+                                        let index = selectedItems.indexOf(this.props.item);
+                                        selectedItems.splice(index, 1);
+                                        this.setState({ isSelected: false });
+                                    } else {
+                                        selectedItems.push(this.props.item);
+                                        this.setState({ isSelected: true });
+                                    }
+                                }
+                                console.log(selectedItems);
+                            }}>
+                            <Left>
+                                <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
+                            </Left>
+                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                            </Body>
+                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                            </Right>
+                        </ListItem>
+                    </Swipeout>
+                );
+            } else {
+                return (
+                    <Swipeout {...swipeOutSettings}>
+                        <ListItem
+                            avatar
+                            onPress={() => {
+                                if (this.props.item.estado === 'Disponible') {
+                                    if (selectedItems.includes(this.props.item)) {
+                                        let index = selectedItems.indexOf(this.props.item);
+                                        selectedItems.splice(index, 1);
+                                        this.setState({ isSelected: false });
+                                    } else {
+                                        selectedItems.push(this.props.item);
+                                        this.setState({ isSelected: true });
+                                    }
+                                }
+                                console.log(selectedItems);
+                            }}>
+                            <Left>
+                                <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
+                            </Left>
+                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
+                            </Body>
+                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                            </Right>
+                        </ListItem>
+                    </Swipeout>
+                );
+            }
+            
+        } else {
+            if (this.props.item.estado == 'Disponible') {
+                return (
+                    <Swipeout {...swipeOutSettings}>
+                        <ListItem
+                            avatar
+                            onPress={() => {
                                 if (selectedItems.includes(this.props.item)) {
                                     let index = selectedItems.indexOf(this.props.item);
                                     selectedItems.splice(index, 1);
@@ -32,53 +99,54 @@ class FlatListItem extends Component {
                                     selectedItems.push(this.props.item);
                                     this.setState({ isSelected: true });
                                 }
-                            }
-                            console.log(selectedItems);
-                        }}>
-                        <Left>
-                            <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
-                        </Left>
-                        <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                            <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
-                        </Body>
-                        <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                            <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                            <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                            <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                        </Right>
-                    </ListItem>
-                </Swipeout>
-            );
-        } else {
-            return (
-                <Swipeout {...swipeOutSettings}>
-                    <ListItem
-                        avatar
-                        onPress={() => {
-                            if (selectedItems.includes(this.props.item)) {
-                                let index = selectedItems.indexOf(this.props.item);
-                                selectedItems.splice(index, 1);
-                                this.setState({ isSelected: false });
-                            } else {
-                                selectedItems.push(this.props.item);
-                                this.setState({ isSelected: true });
-                            }
-                            console.log(selectedItems);
-                        }}>
-                        <Left>
-                            <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
-                        </Left>
-                        <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                            <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
-                        </Body>
-                        <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                            <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                            <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                            <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                        </Right>
-                    </ListItem>
-                </Swipeout>
-            );
+                                console.log(selectedItems);
+                            }}>
+                            <Left>
+                                <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
+                            </Left>
+                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                            </Body>
+                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                            </Right>
+                        </ListItem>
+                    </Swipeout>
+                );
+            } else {
+                return (
+                    <Swipeout {...swipeOutSettings}>
+                        <ListItem
+                            avatar
+                            onPress={() => {
+                                if (selectedItems.includes(this.props.item)) {
+                                    let index = selectedItems.indexOf(this.props.item);
+                                    selectedItems.splice(index, 1);
+                                    this.setState({ isSelected: false });
+                                } else {
+                                    selectedItems.push(this.props.item);
+                                    this.setState({ isSelected: true });
+                                }
+                                console.log(selectedItems);
+                            }}>
+                            <Left>
+                                <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
+                            </Left>
+                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
+                            </Body>
+                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                            </Right>
+                        </ListItem>
+                    </Swipeout>
+                );
+            }
+            
         }
     }
 }
@@ -234,7 +302,7 @@ export default class BasicFlatList extends Component {
             for (var reserva of reservas) {
                 for (var i = 0; i < turnos.length; i++) {
                     if (turnos[i].desde >= reserva.desde && turnos[i].desde < reserva.hasta) {
-                        turnos[i].estado = 'Ocupado';
+                        turnos[i].estado = 'Reservado';
                     }
                 }
             }
@@ -294,10 +362,9 @@ export default class BasicFlatList extends Component {
                 .doc(this.state.usuario.datos)
                 .collection('Reservas');
             refReserva.add(reserva);
-            Alert.alert('Atención', 'Reserva realizada correctamente.');
             this.props.navigation.navigate('MisReservas');
         } else {
-            Alert.alert('Atención', 'No se puede realizar la reserva: los turnos seleccionados deben ser consecutivos.');
+            Alert.alert('Atención', 'No se puede realizar la reserva. Los turnos seleccionados deben ser consecutivos.');
         }
     };
 
@@ -305,7 +372,6 @@ export default class BasicFlatList extends Component {
         return (
             <Content>
                 <View>
-                    {/* Descomentar para tener Spinner. */}
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
 
@@ -325,7 +391,20 @@ export default class BasicFlatList extends Component {
                                 success
                                 style={{ paddingHorizontal: '8%' }}
                                 onPress={() => {
-                                    this.generarReserva();
+                                    Alert.alert(
+                                        'Atención',
+                                        '¿ Desea confirmar la reserva ? ',
+                                        [
+                                            { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                            {
+                                                text: 'Aceptar',
+                                                onPress: () => {
+                                                    this.generarReserva();
+                                                }
+                                            }
+                                        ],
+                                        { cancelable: true }
+                                    );
                                 }}>
                                 <Text>Aceptar</Text>
                             </Button>

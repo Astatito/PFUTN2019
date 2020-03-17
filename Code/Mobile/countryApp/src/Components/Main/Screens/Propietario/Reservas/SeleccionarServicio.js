@@ -31,12 +31,11 @@ class FlatListItem extends Component {
                                     {
                                         text: 'Aceptar',
                                         onPress: () => {
-                                            if (this.state.nombreReserva == '') {
-                                                Alert.alert('Atención', 'Debe ingresar un nombre válido para la reserva.')
-                                            } else {
+                                            // if (this.state.nombreReserva == '') {
+                                            //     Alert.alert('Atención', 'Debe ingresar un nombre válido para la reserva.')
+                                            // } else {
                                                 this.props.navigation.navigate('SeleccionarTurno', { servicio: this.props.item });
-                                            }
-                                            
+                                            // }
                                         }
                                     }
                                 ],
