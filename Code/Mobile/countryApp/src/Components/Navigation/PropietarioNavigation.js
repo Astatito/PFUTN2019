@@ -101,7 +101,7 @@ const PropietarioStackNavigator = createStackNavigator(
     }
 );
 
-// Tab Navigator - Este es el Tab Navigator de Registros.
+// Tab Navigator - Este es el Tab Navigator de Home.
 const PropietarioTabNavigator = createBottomTabNavigator({
     Home: {
         screen: PropietarioStackNavigator,
@@ -372,10 +372,10 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
     }
 );
 
-//Este es el Drawer del Encargado. Registros, Mi Perfil, Eventos y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
+//Este es el Drawer del Encargado. Home, Mi Perfil, Eventos y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
 const PropietarioNavigation = createDrawerNavigator(
     {
-        Registros: {
+        Home: {
             screen: PropietarioTabNavigator,
             navigationOptions: {
                 drawerIcon: ({ tintColor }) => <IconEntypo name="home" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
