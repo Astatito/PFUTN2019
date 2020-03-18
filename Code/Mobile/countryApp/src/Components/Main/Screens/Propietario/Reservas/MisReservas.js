@@ -91,7 +91,10 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        this.props.navigation.navigate('InformacionReserva');
+                                        this.props.navigation.navigate('InformacionReserva', {
+                                            usuario: this.state.usuario,
+                                            reserva: this.props.item
+                                        });
                                     }
                                 }
                             ],
@@ -182,14 +185,13 @@ export default class BasicFlatList extends Component {
     };
 
     render() {
-        console.log(this.state.flatListData)
+        console.log(this.state.flatListData);
         if (this.state.flatListData && this.state.flatListData.length == 0) {
-            return(
+            return (
                 <View>
                     <Text style={styles.textDefault}> No hay reservas para mostrar. </Text>
                 </View>
             );
-            
         } else {
             return (
                 <View>
@@ -198,7 +200,11 @@ export default class BasicFlatList extends Component {
                         data={this.state.flatListData}
                         renderItem={({ item, index }) => {
                             return (
-                                <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                                <FlatListItem
+                                    navigation={this.props.navigation}
+                                    item={item}
+                                    index={index}
+                                    parentFlatList={this}></FlatListItem>
                             );
                         }}></FlatList>
                 </View>
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
         color: '#FFF'
     },
-    textDefault : {
+    textDefault: {
         marginTop: '65%',
         textAlign: 'center',
         fontSize: 14,

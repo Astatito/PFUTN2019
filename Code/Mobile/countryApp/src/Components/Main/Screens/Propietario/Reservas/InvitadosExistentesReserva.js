@@ -5,51 +5,13 @@ import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Database } from '../../../../DataBase/Firebase';
+import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 let selectedItems = [];
 
-var flatListData = [
-    {
-        key: 'wulefb43oy',
-        nombre: 'Alexis',
-        apellido: 'Pagura',
-        documento: '39611837',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 21:00 hs',
-    },
-    {
-        key: 'kqedufhkdu',
-        nombre: 'Fabián',
-        apellido: 'Guidobaldi',
-        documento: '40564852',
-        fechaDesde: '02/11/2018 20:00 hs',
-        fechaHasta: '03/11/2018 05:00 hs'
-    },
-    {
-        key: '237r8h2eff',
-        nombre: 'Ezequiel ',
-        apellido: 'Braicovich',
-        documento: '45874125',
-        fechaDesde: '12/11/2018 20:00 hs',
-        fechaHasta: '02/11/2018 21:00 hs'
-    },
-    {
-        key: '32fh8hfhfh',
-        documento: '45874125',
-        fechaDesde: '3/11/2018 11:00 hs',
-        fechaHasta: '02/11/2018 13:00 hs'
-    },
-    {
-        key: '32h7fhf23h',
-        documento: '45874125',
-        fechaDesde: '09/11/2018 16:00 hs',
-        fechaHasta: '02/11/2018 17:00 hs'
-    }
-];
-
 class FlatListItem extends Component {
-    state = { showSpinner: false, isSelected: false};
+    state = { showSpinner: false, isSelected: false };
 
     componentWillMount() {
         // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
@@ -74,30 +36,30 @@ class FlatListItem extends Component {
         const swipeOutSettings = {
             style: { backgroundColor: '#fff' }
         };
-        
+
         if (this.props.item.nombre == null && this.props.item.apellido == null && this.state.isSelected == false) {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem 
-                    avatar
-                    onPress={() => {
-                        if (selectedItems.includes(this.props.item)) {
-                            let index = selectedItems.indexOf(this.props.item);
-                            selectedItems.splice(index,1)
-                            this.setState({ isSelected: false});
-                        } else {
-                            selectedItems.push(this.props.item)
-                            this.setState({ isSelected: true});
-                        }
-                        console.log(selectedItems)
-                    }}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItems.includes(this.props.item)) {
+                                let index = selectedItems.indexOf(this.props.item);
+                                selectedItems.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItems.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                            console.log(selectedItems);
+                        }}>
                         <Left>
-                            <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
+                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
                         </Left>
                         <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center'}}>
+                        <Right style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                         </Right>
@@ -107,28 +69,26 @@ class FlatListItem extends Component {
         } else if (this.props.item.nombre == null && this.props.item.apellido == null && this.state.isSelected == true) {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem 
-                    avatar
-                    onPress={() => {
-                        if (selectedItems.includes(this.props.item)) {
-                            let index = selectedItems.indexOf(this.props.item);
-                            selectedItems.splice(index,1)
-                            this.setState({ isSelected: false});
-                        } else {
-                            selectedItems.push(this.props.item)
-                            this.setState({ isSelected: true});
-                        }
-                        console.log(selectedItems)
-                    }}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItems.includes(this.props.item)) {
+                                let index = selectedItems.indexOf(this.props.item);
+                                selectedItems.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItems.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                            console.log(selectedItems);
+                        }}>
                         <Left>
-                            <Thumbnail
-                                source= {require('../../../../../assets/Images/check-azul.png')}                          
-                            />
+                            <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
                         </Left>
                         <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center'}}>
+                        <Right style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
                             <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                         </Right>
@@ -138,21 +98,21 @@ class FlatListItem extends Component {
         } else if (this.state.isSelected == false) {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem 
-                    avatar
-                    onPress={() => {
-                        if (selectedItems.includes(this.props.item)) {
-                            let index = selectedItems.indexOf(this.props.item);
-                            selectedItems.splice(index,1)
-                            this.setState({ isSelected: false});
-                        } else {
-                            selectedItems.push(this.props.item)
-                            this.setState({ isSelected: true});
-                        }
-                        console.log(selectedItems)
-                    }}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItems.includes(this.props.item)) {
+                                let index = selectedItems.indexOf(this.props.item);
+                                selectedItems.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItems.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                            console.log(selectedItems);
+                        }}>
                         <Left>
-                            <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
+                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
                         </Left>
                         <Body style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
@@ -168,23 +128,21 @@ class FlatListItem extends Component {
         } else {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem 
-                    avatar
-                    onPress={() => {
-                        if (selectedItems.includes(this.props.item)) {
-                            let index = selectedItems.indexOf(this.props.item);
-                            selectedItems.splice(index,1)
-                            this.setState({ isSelected: false});
-                        } else {
-                            selectedItems.push(this.props.item)
-                            this.setState({ isSelected: true});
-                        }
-                        console.log(selectedItems)
-                    }}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItems.includes(this.props.item)) {
+                                let index = selectedItems.indexOf(this.props.item);
+                                selectedItems.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItems.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                            console.log(selectedItems);
+                        }}>
                         <Left>
-                            <Thumbnail
-                                source= {require('../../../../../assets/Images/check-azul.png')}                          
-                            />
+                            <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
                         </Left>
                         <Body style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
@@ -202,7 +160,6 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Invitados personales',
@@ -248,54 +205,114 @@ export default class BasicFlatList extends Component {
     }
 
     obtenerInvitaciones = () => {
-        //Lógica para obtener las invitaciones personales.
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitados = refCountry.collection('Invitados');
+
+        refInvitados
+            .where(
+                'IdPropietario',
+                '==',
+                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
+            )
+            .get()
+            .then(snapshot => {
+                if (!snapshot.empty) {
+                    //El propietario tiene invitaciones
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        if (snapshot.docs[i].data().Nombre != '') {
+                            var invitado = {
+                                key: snapshot.docs[i].id,
+                                nombre: snapshot.docs[i].data().Nombre,
+                                apellido: snapshot.docs[i].data().Apellido,
+                                documento: snapshot.docs[i].data().Documento,
+                                tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                                fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
+                                fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
+                            };
+                            tempArray.push(invitado);
+                        }
+                    }
+                    this.setState({ showSpinner: false, flatListData: tempArray });
+                } else {
+                    this.setState({ showSpinner: false, flatListData: [] });
+                }
+            })
+            .catch(error => {
+                this.setState({ showSpinner: false });
+                Alert.alert('Atención', 'Ocurrió un error: ', error);
+            });
+    };
+
+    agregarInvitados = () => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
+        var refReserva = refPropietario.collection('Reservas').doc('Ks1fT74hrUlq7CA9oGOh'); //TODO: DEBERIA VENIR EN EL PROPS, NO ESTAR HARDCODEADO (CUANDO HAGO CLICK EN EL + EN LA PANTALLA ANTERIOR)
+        var refInvitados = refReserva.collection('Invitados');
+
+        for (var i = 0; i < selectedItems.length; i++) {
+            console.log(selectedItems[i]);
+            var invitado = {
+                Nombre: selectedItems[i].nombre,
+                Apellido: selectedItems[i].apellido,
+                Documento: selectedItems[i].documento,
+                TipoDocumento: Database.doc('TipoDocumento/' + selectedItems[i].tipoDocumento),
+                Estado: true,
+                IdInvitado: selectedItems[i].key
+            };
+            refInvitados.add(invitado);
+        }
     };
 
     isFlatListItemSelected = ({ item, index }) => {
-        console.log(item)
-        console.log(index)
+        console.log(item);
+        console.log(index);
         return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
-    }
-    
-    render() {
+    };
 
+    render() {
         return (
             <Content>
                 <View>
-                    {/* Descomentar para tener Spinner. */}
-                    {/* <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} /> */}
+                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <FlatList
-                        //Reemplazar aca por this.state.flatListData
-                        data={flatListData}
+                        data={this.state.flatListData}
                         renderItem={({ item, index }) => {
                             // this.isFlatListItemSelected({ item, index });
-                            return <FlatListItem navigation={this.props.navigation} item={item} index={index} isSelected={false} parentFlatList={this}></FlatListItem>;
-
+                            return (
+                                <FlatListItem
+                                    navigation={this.props.navigation}
+                                    item={item}
+                                    index={index}
+                                    isSelected={false}
+                                    parentFlatList={this}></FlatListItem>
+                            );
                         }}></FlatList>
-                        <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    success
-                                    style={{ paddingHorizontal: '12%' }}
-                                    onPress={() => {
-                                        //Lógica para agregar un invitado existente a a reserva.
-                                    }}>
-                                    <Text>Añadir</Text>
-                                </Button>
-                            </View>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    danger
-                                    style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.props.navigation.goBack();
-                                    }}>
-                                    <Text>Cancelar</Text>
-                                </Button>
-                            </View>
+                    <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
+                        <View style={styles.buttons}>
+                            <Button
+                                bordered
+                                success
+                                style={{ paddingHorizontal: '12%' }}
+                                onPress={() => {
+                                    this.agregarInvitados();
+                                    this.props.navigation.goBack();
+                                }}>
+                                <Text>Añadir</Text>
+                            </Button>
                         </View>
+                        <View style={styles.buttons}>
+                            <Button
+                                bordered
+                                danger
+                                style={{ paddingHorizontal: '5%' }}
+                                onPress={() => {
+                                    this.props.navigation.goBack();
+                                }}>
+                                <Text>Cancelar</Text>
+                            </Button>
+                        </View>
+                    </View>
                 </View>
             </Content>
         );
