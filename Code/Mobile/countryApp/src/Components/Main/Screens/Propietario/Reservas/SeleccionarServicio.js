@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View, TextInput} from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Root, Toast } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
@@ -31,8 +31,15 @@ class FlatListItem extends Component {
                                     {
                                         text: 'Aceptar',
                                         onPress: () => {
+                                            //Verificacion del nombre de reserva.
                                             // if (this.state.nombreReserva == '') {
-                                            //     Alert.alert('Atención', 'Debe ingresar un nombre válido para la reserva.')
+                                            //     Toast.show({
+                                            //         text: "Debe ingresar un nombre válido para la reserva.",
+                                            //         buttonText: "Aceptar",
+                                            //         duration: 3000,
+                                            //         position: "bottom",
+                                            //         type: "warning",
+                                            //     })
                                             // } else {
                                                 this.props.navigation.navigate('SeleccionarTurno', { servicio: this.props.item });
                                             // }
@@ -136,25 +143,28 @@ export default class BasicFlatList extends Component {
     render() {
         const { isFocused } = this.state;
         return (
-            <View>
-                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                <TextInput
-                        style={styles.textInput}
-                        placeholder="Nombre de la reserva"
-                        onChangeText={nombreReserva => this.setState({ nombreReserva })}
-                        underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        keyboardType={'default'}
-                />
-                <FlatList
-                    data={this.state.flatListData}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
-                        );
-                    }}></FlatList>
-            </View>
+            <Root>
+                <View>
+                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                    <TextInput
+                            style={styles.textInput}
+                            placeholder="Nombre de la reserva"
+                            onChangeText={nombreReserva => this.setState({ nombreReserva })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'default'}
+                    />
+                    <FlatList
+                        data={this.state.flatListData}
+                        renderItem={({ item, index }) => {
+                            return (
+                                <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                            );
+                        }}></FlatList>
+                </View>
+            </Root>
+            
         );
     }
 }
