@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
+import { ListItem, Left, Body, Text, Thumbnail } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
@@ -88,36 +88,21 @@ class FlatListItem extends Component {
             rowId: this.props.index,
             sectionId: 1
         };
-        if (this.props.item.nombre == null && this.props.item.apellido == null) {
-            return (
-                <Swipeout {...swipeOutSettings}>
-                    <ListItem avatar>
-                        <Left>
-                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
-                        </Left>
-                        <Body style={{ alignSelf: 'center', marginTop: '2.7%' }}>
-                            <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
-                        </Body>
-                        <Right style={{ alignSelf: 'center' }}></Right>
-                    </ListItem>
-                </Swipeout>
-            );
-        } else {
-            return (
-                <Swipeout {...swipeOutSettings}>
-                    <ListItem avatar>
-                        <Left>
-                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
-                        </Left>
-                        <Body style={{ alignSelf: 'center' }}>
-                            <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
-                            <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
-                        </Body>
-                        <Right style={{ alignSelf: 'center', marginTop: '2.4%' }}></Right>
-                    </ListItem>
-                </Swipeout>
-            );
-        }
+        
+        return (
+            <Swipeout {...swipeOutSettings}>
+                <ListItem avatar>
+                    <Left>
+                        <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
+                    </Left>
+                    <Body style={{ alignSelf: 'center' }}>
+                        <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
+                        <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
+                    </Body>
+                </ListItem>
+            </Swipeout>
+        );
+        
     }
 }
 
@@ -178,18 +163,26 @@ export default class BasicFlatList extends Component {
     };
 
     render() {
-        return (
-            <View>
-                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                <FlatList
+        if (this.state.flatListData && this.state.flatListData.length == 0) {
+            return(
+                <View>
+                    <Text style={styles.textDefault}>Aún no hay invitados en esta reserva. </Text>
+                </View>
+            );
+        } else {
+            return(
+                <View>
+                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                    <FlatList
                     data={this.state.flatListData}
                     renderItem={({ item, index }) => {
                         return (
                             <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
                         );
                     }}></FlatList>
-            </View>
-        );
+                </View>
+            );
+        }
     }
 }
 
@@ -198,5 +191,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'normal',
         color: '#FFF'
+    },
+    textDefault : {
+        marginTop: '65%',
+        textAlign: 'center',
+        fontSize: 14,
+        color: '#8F8787',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
     }
 });

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View, StatusBar } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content } from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root} from 'native-base';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import Swipeout from 'react-native-swipeout';
@@ -182,6 +182,10 @@ export default class BasicFlatList extends Component {
             });
     }
 
+    onToastClosed = (reason) => {
+        this.props.navigation.navigate('MisReservas')
+    }
+
     addMinutes = (date, minutes) => {
         return new Date(date.getTime() + minutes * 60000);
     };
@@ -358,67 +362,87 @@ export default class BasicFlatList extends Component {
                 .doc(this.state.usuario.datos)
                 .collection('Reservas');
             refReserva.add(reserva);
-            this.props.navigation.navigate('MisReservas');
+            return 0
         } else {
-            Alert.alert('Atención', 'No se puede realizar la reserva. Los turnos seleccionados deben ser consecutivos.');
+            return 1
         }
     };
 
     render() {
         return (
-            <Content>
-                <View>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <StatusBar backgroundColor="#1e90ff"></StatusBar>
+            <Root>
+                <Content>
+                    <View>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
 
-                    <Calendar onDateSelected={date => this.fechaSeleccionada(date)} />
+                        <Calendar onDateSelected={date => this.fechaSeleccionada(date)} />
 
-                    <FlatList
-                        data={this.state.flatListData}
-                        renderItem={({ item, index }) => {
-                            return <FlatListItem item={item} index={index} parentFlatList={this} />;
-                        }}
-                    />
+                        <FlatList
+                            data={this.state.flatListData}
+                            renderItem={({ item, index }) => {
+                                return <FlatListItem item={item} index={index} parentFlatList={this} />;
+                            }}
+                        />
 
-                    <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                success
-                                style={{ paddingHorizontal: '8%' }}
-                                onPress={() => {
-                                    Alert.alert(
-                                        'Atención',
-                                        '¿ Desea confirmar la reserva ? ',
-                                        [
-                                            { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                            {
-                                                text: 'Aceptar',
-                                                onPress: () => {
-                                                    this.generarReserva();
+                        <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    style={{ paddingHorizontal: '8%' }}
+                                    onPress={() => {
+                                        Alert.alert(
+                                            'Atención',
+                                            '¿ Desea confirmar la reserva ? ',
+                                            [
+                                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                                {
+                                                    text: 'Aceptar',
+                                                    onPress: () => {
+                                                        if (this.generarReserva() == 0) {
+                                                            Toast.show({
+                                                                text: "Reserva realizada exitosamente.",
+                                                                buttonText: "Aceptar",
+                                                                duration: 3000,
+                                                                position: "bottom",
+                                                                type: "success",
+                                                                onClose : this.onToastClosed.bind(this)
+                                                            })
+                                                        } else {
+                                                            Toast.show({
+                                                                text: "Los turnos seleccionados deben ser consecutivos.",
+                                                                buttonText: "Aceptar",
+                                                                duration: 3000,
+                                                                position: "bottom",
+                                                                type: "warning",
+                                                            })
+                                                        }
+                                                    }
                                                 }
-                                            }
-                                        ],
-                                        { cancelable: true }
-                                    );
-                                }}>
-                                <Text>Aceptar</Text>
-                            </Button>
-                        </View>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                danger
-                                style={{ paddingHorizontal: '5%' }}
-                                onPress={() => {
-                                    this.props.navigation.goBack();
-                                }}>
-                                <Text>Cancelar</Text>
-                            </Button>
+                                            ],
+                                            { cancelable: true }
+                                        );
+                                    }}>
+                                    <Text>Aceptar</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </Content>
+                </Content>
+            </Root>
+            
         );
     }
 }

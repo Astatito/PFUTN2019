@@ -172,16 +172,7 @@ const PropietarioEventosInvitadosStackNavigator = createStackNavigator(
                     <View style={styles.iconContainer}>
                         <IconEntypo style={{ paddingRight: 15 }} name="share" size={23} onPress={() => {this.shareImage()}}/>
                         <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
-                        onPress={() => Alert.alert(
-                            'Atención',
-                            '¿ Qué tipo de invitado desea añadir ? ',
-                            [
-                                { text: 'Nuevo Invitado', onPress: () => navigation.navigate('NuevoInvitadoReserva'), style: 'cancel' },
-                                { text: 'Existente', onPress: () => navigation.navigate('InvitadosExistentesReserva'), style: 'cancel' },
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' }
-                            ],
-                            { cancelable: true }
-                        )}
+                        onPress={() => navigation.navigate('InvitadosExistentesReserva')}
                     />
                     </View>
                 ),
