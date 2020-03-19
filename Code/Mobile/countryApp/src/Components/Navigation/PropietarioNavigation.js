@@ -8,6 +8,7 @@ import UbicacionPropietario from '../Main/Screens/Propietario/Ubicacion/Ubicacio
 import Invitaciones from '../Main/Screens/Propietario/Invitaciones/Invitaciones';
 import NuevoInvitado from '../Main/Screens/Propietario/Invitaciones/NuevoInvitado';
 import MisReservas from '../Main/Screens/Propietario/Reservas/MisReservas';
+import ReservasFinalizadas from '../Main/Screens/Propietario/Reservas/ReservasFinalizadas';
 import DatosReserva from '../Main/Screens/Propietario/Reservas/DatosReserva';
 import InvitadosReserva from '../Main/Screens/Propietario/Reservas/InvitadosReserva';
 import NuevoInvitadoReserva from '../Main/Screens/Propietario/Reservas/NuevoInvitadoReserva';
@@ -27,7 +28,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
 import ModificarInvitado from '../Main/Screens/Propietario/Invitaciones/ModificarInvitado';
 import Share from 'react-native-share'
-import RNFetchBlob from 'rn-fetch-blob';
 
 //Funcion para compartir el link de invitacion de una reserva
 shareImage= () => {
@@ -260,7 +260,7 @@ const PropietarioReservasActivasStackNavigator = createStackNavigator(
 // Stack - El stack navigator para las reservas finalizadas.
 const PropietarioReservasFinalizadasStackNavigator = createStackNavigator(
     {
-        ReservasFinalizadas : MisReservas
+        ReservasFinalizadas : ReservasFinalizadas
     },
     {
         defaultNavigationOptions: ({ navigation }) => {

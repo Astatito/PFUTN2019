@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content } from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root} from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -244,6 +244,10 @@ export default class BasicFlatList extends Component {
             });
     };
 
+    onToastClosed = (reason) => {
+        this.props.navigation.goBack();
+    }
+
     agregarInvitados = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
@@ -262,6 +266,7 @@ export default class BasicFlatList extends Component {
             };
             refInvitados.add(invitado);
         }
+        return 0
     };
 
     isFlatListItemSelected = ({ item, index }) => {
@@ -272,49 +277,61 @@ export default class BasicFlatList extends Component {
 
     render() {
         return (
-            <Content>
-                <View>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <FlatList
-                        data={this.state.flatListData}
-                        renderItem={({ item, index }) => {
-                            // this.isFlatListItemSelected({ item, index });
-                            return (
-                                <FlatListItem
-                                    navigation={this.props.navigation}
-                                    item={item}
-                                    index={index}
-                                    isSelected={false}
-                                    parentFlatList={this}></FlatListItem>
-                            );
-                        }}></FlatList>
-                    <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                success
-                                style={{ paddingHorizontal: '12%' }}
-                                onPress={() => {
-                                    this.agregarInvitados();
-                                    this.props.navigation.goBack();
-                                }}>
-                                <Text>Añadir</Text>
-                            </Button>
-                        </View>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                danger
-                                style={{ paddingHorizontal: '5%' }}
-                                onPress={() => {
-                                    this.props.navigation.goBack();
-                                }}>
-                                <Text>Cancelar</Text>
-                            </Button>
+            <Root>
+                <Content>
+                    <View>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <FlatList
+                            data={this.state.flatListData}
+                            renderItem={({ item, index }) => {
+                                // this.isFlatListItemSelected({ item, index });
+                                return (
+                                    <FlatListItem
+                                        navigation={this.props.navigation}
+                                        item={item}
+                                        index={index}
+                                        isSelected={false}
+                                        parentFlatList={this}></FlatListItem>
+                                );
+                            }}></FlatList>
+                        <View style={{ flexDirection: 'row', marginLeft: '10%' }}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    style={{ paddingHorizontal: '12%' }}
+                                    onPress={() => {
+                                        if (this.agregarInvitados() == 0) {
+                                            Toast.show({
+                                                text: "Invitado añadido exitosamente.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "success",
+                                                onClose : this.onToastClosed.bind(this)
+                                            })
+                                        }
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Añadir</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack();
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </Content>
+                </Content>
+            </Root>
+            
         );
     }
 }

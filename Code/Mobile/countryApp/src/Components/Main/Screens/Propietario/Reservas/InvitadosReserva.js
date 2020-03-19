@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, StyleSheet, View, Alert } from 'react-native';
-import { ListItem, Left, Body, Text, Thumbnail } from 'native-base';
+import { ListItem, Left, Body, Text, Thumbnail, Toast, Root } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
@@ -55,6 +55,13 @@ class FlatListItem extends Component {
                                     text: 'Aceptar',
                                     onPress: () => {
                                         //Funcion para confirmar el invitado pendiente de una reserva.
+                                        Toast.show({
+                                            text: "Invitación confirmada exitosamente.",
+                                            buttonText: "Aceptar",
+                                            duration: 3000,
+                                            position: "bottom",
+                                            type: "success"
+                                        })
                                     }
                                 }
                             ],
@@ -77,6 +84,13 @@ class FlatListItem extends Component {
                                     text: 'Aceptar',
                                     onPress: () => {
                                         //Funcion para eliminar o no confirmar un invitado pendiente de una reserva.
+                                        Toast.show({
+                                            text: "Invitación eliminada exitosamente.",
+                                            buttonText: "Aceptar",
+                                            duration: 3000,
+                                            position: "bottom",
+                                            type: "success"
+                                        })
                                     }
                                 }
                             ],
@@ -171,16 +185,19 @@ export default class BasicFlatList extends Component {
             );
         } else {
             return(
-                <View>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <FlatList
-                    data={this.state.flatListData}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
-                        );
-                    }}></FlatList>
-                </View>
+                <Root>
+                    <View>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <FlatList
+                        data={this.state.flatListData}
+                        renderItem={({ item, index }) => {
+                            return (
+                                <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                            );
+                        }}></FlatList>
+                    </View>
+                </Root>
+                
             );
         }
     }
