@@ -11,7 +11,6 @@ import MisReservas from '../Main/Screens/Propietario/Reservas/MisReservas';
 import ReservasFinalizadas from '../Main/Screens/Propietario/Reservas/ReservasFinalizadas';
 import DatosReserva from '../Main/Screens/Propietario/Reservas/DatosReserva';
 import InvitadosReserva from '../Main/Screens/Propietario/Reservas/InvitadosReserva';
-import NuevoInvitadoReserva from '../Main/Screens/Propietario/Reservas/NuevoInvitadoReserva';
 import InvitadosExistentesReserva from '../Main/Screens/Propietario/Reservas/InvitadosExistentesReserva';
 import SeleccionarTurno from '../Main/Screens/Propietario/Reservas/SeleccionarTurno';
 import SeleccionarServicio from '../Main/Screens/Propietario/Reservas/SeleccionarServicio';
@@ -321,7 +320,6 @@ const PropietarioEventosStackNavigator = createStackNavigator(
         },
         SeleccionarServicio: SeleccionarServicio,
         SeleccionarTurno: SeleccionarTurno,
-        NuevoInvitadoReserva: NuevoInvitadoReserva,
         InvitadosExistentesReserva: InvitadosExistentesReserva
     },
     {

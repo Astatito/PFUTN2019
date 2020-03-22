@@ -229,6 +229,7 @@ export default class BasicFlatList extends Component {
     }
 
     fechaSeleccionada = fecha => {
+        this.setState({ showSpinner: true });
         selectedItems = [];
         var dia = moment(fecha).format('E');
         if (this.state.servicio.disponibilidad[dia - 1]) {
@@ -237,6 +238,7 @@ export default class BasicFlatList extends Component {
             this.obtenerReservasPorDia(fecha);
         } else {
             alert('No podes reservar hoy cabeza!');
+            this.setState({ showSpinner: false });
         }
     };
 
@@ -310,8 +312,7 @@ export default class BasicFlatList extends Component {
                 }
             }
         }
-
-        this.setState({ flatListData: turnos });
+        this.setState({ flatListData: turnos, showSpinner: false });
     };
 
     validarTurnos = turnos => {
@@ -324,6 +325,7 @@ export default class BasicFlatList extends Component {
     };
 
     generarReserva = () => {
+        this.setState({ showSpinner: true });
         if (this.validarTurnos(selectedItems)) {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refServicio = refCountry.collection('Servicios').doc(this.state.servicio.key);
@@ -362,8 +364,10 @@ export default class BasicFlatList extends Component {
                 .doc(this.state.usuario.datos)
                 .collection('Reservas');
             refReserva.add(reserva);
+            this.setState({ showSpinner: false });
             return 0
         } else {
+            this.setState({ showSpinner: false });
             return 1
         }
     };
