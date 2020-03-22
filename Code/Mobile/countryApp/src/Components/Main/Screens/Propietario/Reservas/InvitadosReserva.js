@@ -103,20 +103,35 @@ class FlatListItem extends Component {
             sectionId: 1
         };
         
-        return (
-            <Swipeout {...swipeOutSettings}>
-                <ListItem avatar>
-                    <Left>
-                        <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
-                    </Left>
-                    <Body style={{ alignSelf: 'center' }}>
-                        <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
-                        <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
-                    </Body>
-                </ListItem>
-            </Swipeout>
-        );
-        
+        if (this.props.item.estado == false) {
+            return (
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem avatar>
+                        <Left>
+                            <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
+                        </Left>
+                        <Body style={{ alignSelf: 'center' }}>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
+                        </Body>
+                    </ListItem>
+                </Swipeout>
+            );
+        } else {
+            return (
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem avatar>
+                        <Left>
+                            <Thumbnail source={require('../../../../../assets/Images/confirmar.jpg')} />
+                        </Left>
+                        <Body style={{ alignSelf: 'center' }}>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
+                        </Body>
+                    </ListItem>
+                </Swipeout>
+            );
+        }
     }
 }
 
@@ -164,11 +179,13 @@ export default class BasicFlatList extends Component {
                         key: snapshot.docs[i].id,
                         nombre: snapshot.docs[i].data().Nombre,
                         apellido: snapshot.docs[i].data().Apellido,
+                        estado: snapshot.docs[i].data().Estado,
                         documento: snapshot.docs[i].data().Documento,
                         tipoDocumento: snapshot.docs[i].data().TipoDocumento.id
                     };
                     tempArray.push(invitado);
                 }
+                tempArray.sort((a,b) => a.estado - b.estado)
                 this.setState({ showSpinner: false, flatListData: tempArray });
             } else {
                 this.setState({ showSpinner: false, flatListData: [] });

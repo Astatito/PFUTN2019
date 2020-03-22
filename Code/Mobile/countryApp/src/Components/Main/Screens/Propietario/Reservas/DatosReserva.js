@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
 import { Content, Button, Text } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -119,7 +119,21 @@ class DatosReserva extends Component {
                                 success
                                 style={{ paddingHorizontal: '5%' }}
                                 onPress={() => {
-                                    this.props.navigation.goBack();
+                                    Alert.alert(
+                                        'Atención',
+                                        '¿ Está seguro que desea modificar esta reserva ? ',
+                                        [
+                                            { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                            {
+                                                text: 'Aceptar',
+                                                onPress: () => {
+                                                    //Funcion para modificar la reserva.
+                                                    this.props.navigation.navigate('MisReservas');
+                                                }
+                                            }
+                                        ],
+                                        { cancelable: true }
+                                    );
                                 }}>
                                 <Text>Aceptar</Text>
                             </Button>
@@ -130,7 +144,7 @@ class DatosReserva extends Component {
                                 danger
                                 style={{ paddingHorizontal: '5%' }}
                                 onPress={() => {
-                                    this.props.navigation.goBack();
+                                    this.props.navigation.navigate('MisReservas');
                                 }}>
                                 <Text>Cancelar</Text>
                             </Button>
