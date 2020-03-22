@@ -6,16 +6,13 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
-
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
 class DatosReserva extends Component {
-
     state = {
         nombreReserva: '',
-        fechaDesde: moment(new Date()),
-        fechaHasta: moment(new Date()),
+        reserva: {},
         showSpinner: false,
         isFocused: false,
         isVisible: false,
@@ -33,28 +30,17 @@ class DatosReserva extends Component {
 
     componentWillMount() {
         this.setState({ showSpinner: true });
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                this.setState({ usuario: response });
-                this.obtenerReservas();
-            })
-            .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
-            });
-    }
 
-    obtenerReservas = () => {
-        // Logica para traer las reservas finalizadas.
-        this.setState({ showSpinner: false});
-    };
+        const { navigation } = this.props;
+        const usuario = navigation.dangerouslyGetParent().getParam('usuario');
+        const reserva = navigation.dangerouslyGetParent().getParam('reserva');
+
+        this.setState({
+            usuario: usuario,
+            nombreReserva: reserva.nombre,
+            reserva: reserva
+        });
+    }
 
     handleFocus = event => {
         this.setState({ isFocused: true });
@@ -92,6 +78,31 @@ class DatosReserva extends Component {
         this.setState({ isVisible: true });
     };
 
+    modificarReserva = () => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+
+        var refReserva = refCountry
+            .collection('Propietarios')
+            .doc(this.state.usuario.datos)
+            .collection('Reservas')
+            .doc(this.state.reserva.key);
+
+        refReserva.set(
+            {
+                Nombre: this.state.nombreReserva
+            },
+            { merge: true }
+        );
+
+        refReserva = Database.doc(this.state.reserva.idReservaServicio);
+        refReserva.set(
+            {
+                Nombre: this.state.nombreReserva
+            },
+            { merge: true }
+        );
+    };
+
     render() {
         const { isFocused } = this.state;
 
@@ -101,10 +112,11 @@ class DatosReserva extends Component {
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
                     <Text style={styles.header}> Modificar reserva </Text>
-                    
+
                     <TextInput
                         style={styles.textInput}
                         placeholder="Nombre de reserva"
+                        value={this.state.nombreReserva}
                         onChangeText={nombreReserva => this.setState({ nombreReserva })}
                         underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                         onFocus={this.handleFocus}
@@ -127,7 +139,7 @@ class DatosReserva extends Component {
                                             {
                                                 text: 'Aceptar',
                                                 onPress: () => {
-                                                    //Funcion para modificar la reserva.
+                                                    this.modificarReserva();
                                                     this.props.navigation.navigate('MisReservas');
                                                 }
                                             }
@@ -144,6 +156,7 @@ class DatosReserva extends Component {
                                 danger
                                 style={{ paddingHorizontal: '5%' }}
                                 onPress={() => {
+                                    this.modificarReserva();
                                     this.props.navigation.navigate('MisReservas');
                                 }}>
                                 <Text>Cancelar</Text>
