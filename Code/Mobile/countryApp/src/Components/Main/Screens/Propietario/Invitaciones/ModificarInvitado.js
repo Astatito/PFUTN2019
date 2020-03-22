@@ -46,6 +46,7 @@ class ModificarInvitado extends Component {
     }
 
     componentWillMount() {
+        this.setState({ showSpinner: true });
         const { navigation } = this.props;
         const usuario = navigation.getParam('usuario');
         const invitacion = navigation.getParam('invitacion');
@@ -60,7 +61,8 @@ class ModificarInvitado extends Component {
             picker: invitacion.tipoDocumento,
             fechaDesde: moment(invitacion.fechaDesde, 'D/M/YYYY HH:mm'),
             fechaHasta: moment(invitacion.fechaHasta, 'D/M/YYYY HH:mm'),
-            idInvitacion: invitacion.key
+            idInvitacion: invitacion.key,
+            showSpinner: false
         });
     }
 
@@ -117,6 +119,7 @@ class ModificarInvitado extends Component {
     }
 
     actualizarInvitado = () => {
+        this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitado = refCountry.collection('Invitados').doc(this.state.idInvitacion);
 
@@ -129,6 +132,7 @@ class ModificarInvitado extends Component {
             },
             { merge: true }
         );
+        this.setState({ showSpinner: false });
     };
 
     render() {
@@ -143,7 +147,7 @@ class ModificarInvitado extends Component {
                 <Root>
                     <Content>
                         <View style={styles.container}>
-                            <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                            <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} /> 
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
                             <Text style={styles.header}> Modificar invitado </Text>
                             <Picker

@@ -93,6 +93,8 @@ export default class BasicFlatList extends Component {
     obtenerReservas = () => {
         this.setState({ flatListData: [] });
         //Logica para obtener las reservas finalizadas.
+        //Insertar al final del proceso donde corresponda.
+        this.setState({ showSpinner: false });
     };
 
     render() {

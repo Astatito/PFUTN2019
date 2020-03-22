@@ -24,19 +24,21 @@ class DatosReserva extends Component {
     };
 
     componentDidMount() {
-        this.setState({ showSpinner: true });
-
         setInterval(() => {
             this.setState({
                 showSpinner: false
             });
         }, 3000);
-        
+    }
+
+    componentWillMount() {
+        this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
             .then(response => {
                 this.setState({ usuario: response });
+                this.obtenerReservas();
             })
             .catch(error => {
                 switch (error.name) {
@@ -48,6 +50,11 @@ class DatosReserva extends Component {
                 }
             });
     }
+
+    obtenerReservas = () => {
+        // Logica para traer las reservas finalizadas.
+        this.setState({ showSpinner: false});
+    };
 
     handleFocus = event => {
         this.setState({ isFocused: true });

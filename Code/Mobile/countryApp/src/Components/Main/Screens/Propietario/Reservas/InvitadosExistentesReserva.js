@@ -249,6 +249,7 @@ export default class BasicFlatList extends Component {
     }
 
     agregarInvitados = () => {
+        this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc('Ks1fT74hrUlq7CA9oGOh'); //TODO: DEBERIA VENIR EN EL PROPS, NO ESTAR HARDCODEADO (CUANDO HAGO CLICK EN EL + EN LA PANTALLA ANTERIOR)
@@ -266,6 +267,7 @@ export default class BasicFlatList extends Component {
             };
             refInvitados.add(invitado);
         }
+        this.setState({ showSpinner: false });
         return 0
     };
 

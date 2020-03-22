@@ -35,6 +35,12 @@ class NuevoInvitado extends Component {
     };
 
     componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -105,6 +111,7 @@ class NuevoInvitado extends Component {
     }
 
     registrarNuevoInvitado = (tipoDoc, numeroDoc) => {
+        this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
 
@@ -120,6 +127,7 @@ class NuevoInvitado extends Component {
             Documento: numeroDoc,
             TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc)
         });
+        this.setState({ showSpinner: false });
         return 0
     };
 

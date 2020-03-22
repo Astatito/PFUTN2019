@@ -30,6 +30,7 @@ class FlatListItem extends Component {
     }
 
     eliminarReserva = reserva => {
+        this.setState({ showSpinner: true });
         var refReservaPropietario = Database.doc(
             'Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos + '/Reservas/' + reserva.key
         );
@@ -37,6 +38,7 @@ class FlatListItem extends Component {
 
         var refReservaServicio = Database.doc(reserva.idReservaServicio);
         refReservaServicio.set({ Cancelado: true }, { merge: true });
+        this.setState({ showSpinner: false });
     };
 
     render() {
