@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root} from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -244,9 +244,9 @@ export default class BasicFlatList extends Component {
             });
     };
 
-    onToastClosed = (reason) => {
+    onToastClosed = reason => {
         this.props.navigation.goBack();
-    }
+    };
 
     agregarInvitados = () => {
         this.setState({ showSpinner: true });
@@ -266,9 +266,10 @@ export default class BasicFlatList extends Component {
                 IdInvitado: selectedItems[i].key
             };
             refInvitados.add(invitado);
+            // TODO: FALTA DEFINIR LA LÓGICA PARA GESTIONAR LAS AUTORIZACIONES
         }
         this.setState({ showSpinner: false });
-        return 0
+        return 0;
     };
 
     isFlatListItemSelected = ({ item, index }) => {
@@ -305,13 +306,13 @@ export default class BasicFlatList extends Component {
                                     onPress={() => {
                                         if (this.agregarInvitados() == 0) {
                                             Toast.show({
-                                                text: "Invitado añadido exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Invitado añadido exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success",
-                                                onClose : this.onToastClosed.bind(this)
-                                            })
+                                                position: 'bottom',
+                                                type: 'success',
+                                                onClose: this.onToastClosed.bind(this)
+                                            });
                                         }
                                         this.props.navigation.goBack();
                                     }}>
@@ -333,7 +334,6 @@ export default class BasicFlatList extends Component {
                     </View>
                 </Content>
             </Root>
-            
         );
     }
 }

@@ -29,6 +29,35 @@ class FlatListItem extends Component {
             });
     }
 
+    descartarInvitado = invitado => {
+        if (invitado.estado == true) {
+            // TODO: SE DEBE ELIMINAR TAMBIÉN LA INVITACIÓN PARA QUE NO PUEDA INGRESAR
+        }
+
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
+        var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva);
+        var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
+
+        refInvitado.delete();
+    };
+
+    confirmarInvitado = invitado => {
+        // TODO: SE DEBE CREAR/ACTUALIZAR LA INVITACIÓN PARA QUE PUEDA INGRESAR
+
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
+        var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva);
+        var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
+
+        refInvitado.set(
+            {
+                Estado: true
+            },
+            { merge: true }
+        );
+    };
+
     render() {
         const swipeOutSettings = {
             autoClose: true,
@@ -54,14 +83,14 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        //Funcion para confirmar el invitado pendiente de una reserva.
+                                        this.confirmarInvitado(this.props.item);
                                         Toast.show({
-                                            text: "Invitación confirmada exitosamente.",
-                                            buttonText: "Aceptar",
+                                            text: 'Invitación confirmada exitosamente.',
+                                            buttonText: 'Aceptar',
                                             duration: 3000,
-                                            position: "bottom",
-                                            type: "success"
-                                        })
+                                            position: 'bottom',
+                                            type: 'success'
+                                        });
                                     }
                                 }
                             ],
@@ -83,14 +112,14 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        //Funcion para eliminar o no confirmar un invitado pendiente de una reserva.
+                                        this.descartarInvitado(this.props.item);
                                         Toast.show({
-                                            text: "Invitación eliminada exitosamente.",
-                                            buttonText: "Aceptar",
+                                            text: 'Invitación eliminada exitosamente.',
+                                            buttonText: 'Aceptar',
                                             duration: 3000,
-                                            position: "bottom",
-                                            type: "success"
-                                        })
+                                            position: 'bottom',
+                                            type: 'success'
+                                        });
                                     }
                                 }
                             ],
@@ -102,13 +131,13 @@ class FlatListItem extends Component {
             rowId: this.props.index,
             sectionId: 1
         };
-        
+
         if (this.props.item.estado == false) {
             return (
                 <Swipeout {...swipeOutSettings}>
                     <ListItem avatar>
                         <Left>
-                            <Thumbnail source= {require('../../../../../assets/Images/invitado.jpg')} />
+                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
                         </Left>
                         <Body style={{ alignSelf: 'center' }}>
                             <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
@@ -181,11 +210,12 @@ export default class BasicFlatList extends Component {
                         apellido: snapshot.docs[i].data().Apellido,
                         estado: snapshot.docs[i].data().Estado,
                         documento: snapshot.docs[i].data().Documento,
-                        tipoDocumento: snapshot.docs[i].data().TipoDocumento.id
+                        tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                        reserva: this.state.reserva.key
                     };
                     tempArray.push(invitado);
                 }
-                tempArray.sort((a,b) => a.estado - b.estado)
+                tempArray.sort((a, b) => a.estado - b.estado);
                 this.setState({ showSpinner: false, flatListData: tempArray });
             } else {
                 this.setState({ showSpinner: false, flatListData: [] });
@@ -195,26 +225,29 @@ export default class BasicFlatList extends Component {
 
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
-            return(
+            return (
                 <View>
                     <Text style={styles.textDefault}>Aún no hay invitados en esta reserva. </Text>
                 </View>
             );
         } else {
-            return(
+            return (
                 <Root>
                     <View>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <FlatList
-                        data={this.state.flatListData}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
-                            );
-                        }}></FlatList>
+                            data={this.state.flatListData}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <FlatListItem
+                                        navigation={this.props.navigation}
+                                        item={item}
+                                        index={index}
+                                        parentFlatList={this}></FlatListItem>
+                                );
+                            }}></FlatList>
                     </View>
                 </Root>
-                
             );
         }
     }
@@ -226,7 +259,7 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
         color: '#FFF'
     },
-    textDefault : {
+    textDefault: {
         marginTop: '65%',
         textAlign: 'center',
         fontSize: 14,
