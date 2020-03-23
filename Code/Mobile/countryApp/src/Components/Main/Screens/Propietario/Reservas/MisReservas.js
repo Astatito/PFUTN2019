@@ -194,7 +194,6 @@ export default class BasicFlatList extends Component {
     };
 
     render() {
-        console.log(this.state.flatListData);
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
                 <View>
