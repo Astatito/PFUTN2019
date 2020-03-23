@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { FlatList, Alert, StyleSheet, View, TextInput} from 'react-native';
-import { ListItem, Left, Body, Text, Thumbnail, Root, Toast } from 'native-base';
+import { FlatList, Alert, StyleSheet, View, TextInput } from 'react-native';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Root, Toast } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
@@ -45,6 +45,7 @@ class FlatListItem extends Component {
                                                     servicio: this.props.item,
                                                     nombreReserva: nombreReserva
                                                 });
+                                                nombreReserva = ''
                                             }
                                         }
                                     }
@@ -160,12 +161,15 @@ export default class BasicFlatList extends Component {
                         data={this.state.flatListData}
                         renderItem={({ item, index }) => {
                             return (
-                                <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                                <FlatListItem
+                                    navigation={this.props.navigation}
+                                    item={item}
+                                    index={index}
+                                    parentFlatList={this}></FlatListItem>
                             );
                         }}></FlatList>
                 </View>
             </Root>
-            
         );
     }
 }

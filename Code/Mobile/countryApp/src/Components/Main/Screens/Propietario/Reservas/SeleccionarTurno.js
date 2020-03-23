@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View, StatusBar } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root} from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root } from 'native-base';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import Swipeout from 'react-native-swipeout';
@@ -184,9 +184,9 @@ export default class BasicFlatList extends Component {
             });
     }
 
-    onToastClosed = (reason) => {
-        this.props.navigation.navigate('MisReservas')
-    }
+    onToastClosed = reason => {
+        this.props.navigation.navigate('MisReservas');
+    };
 
     addMinutes = (date, minutes) => {
         return new Date(date.getTime() + minutes * 60000);
@@ -362,10 +362,10 @@ export default class BasicFlatList extends Component {
                 .collection('Reservas');
             refReserva.add(reserva);
             this.setState({ showSpinner: false });
-            return 0
+            return 0;
         } else {
             this.setState({ showSpinner: false });
-            return 1
+            return 1;
         }
     };
 
@@ -409,24 +409,35 @@ export default class BasicFlatList extends Component {
                                                     {
                                                         text: 'Aceptar',
                                                         onPress: () => {
-                                                            if (this.generarReserva() == 0) {
+                                                            if (selectedItems.length > 0) {
+                                                                if (this.generarReserva() == 0) {
+                                                                    Toast.show({
+                                                                        text: "Reserva realizada exitosamente.",
+                                                                        buttonText: "Aceptar",
+                                                                        duration: 3000,
+                                                                        position: "bottom",
+                                                                        type: "success",
+                                                                        onClose : this.onToastClosed.bind(this)
+                                                                    })
+                                                                } else {
+                                                                    Toast.show({
+                                                                        text: "Los turnos seleccionados deben ser consecutivos.",
+                                                                        buttonText: "Aceptar",
+                                                                        duration: 3000,
+                                                                        position: "bottom",
+                                                                        type: "warning",
+                                                                    })
+                                                                }
+                                                            } else { 
                                                                 Toast.show({
-                                                                    text: "Reserva realizada exitosamente.",
-                                                                    buttonText: "Aceptar",
+                                                                    text: 'Debe seleccionar al menos un turno.',
+                                                                    buttonText: 'Aceptar',
                                                                     duration: 3000,
-                                                                    position: "bottom",
-                                                                    type: "success",
-                                                                    onClose : this.onToastClosed.bind(this)
-                                                                })
-                                                            } else {
-                                                                Toast.show({
-                                                                    text: "Los turnos seleccionados deben ser consecutivos.",
-                                                                    buttonText: "Aceptar",
-                                                                    duration: 3000,
-                                                                    position: "bottom",
-                                                                    type: "warning",
-                                                                })
+                                                                    position: 'bottom',
+                                                                    type: 'warning'
+                                                                });
                                                             }
+                                                            
                                                         }
                                                     }
                                                 ],

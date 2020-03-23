@@ -49,7 +49,12 @@ class RegistroVisitante extends Component {
             const apellido = navigation.getParam('apellido', '');
             const tipoAcceso = navigation.getParam('tipoAcceso');
             const usuario = navigation.getParam('usuario');
-            const fecha = navigation.getParam('fechaNacimiento');
+            const date = navigation.getParam('fechaNacimiento');
+            if (date == undefined) {
+                fecha = moment(new Date());
+            } else {
+                fecha = moment(date, 'DD-MM-YYYY');
+            }
             const autenticado = false;
             const invitacion = navigation.getParam('invitacion');
             this.setearDatos(tipoDoc, numeroDoc, nombre, apellido, fecha, tipoAcceso, usuario, autenticado, invitacion);
@@ -80,7 +85,7 @@ class RegistroVisitante extends Component {
             documento: numero,
             nombre,
             apellido,
-            fechaNacimiento: moment(fecha, 'DD-MM-YYYY'),
+            fechaNacimiento: fecha,
             tipoAcceso: acceso,
             usuario: user,
             isEditable: autent,
@@ -247,11 +252,12 @@ class RegistroVisitante extends Component {
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
                             <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                                {this.state.fechaNacimiento.format('MMM Do YY')}
+                                {this.state.fechaNacimiento.format('D/M/YYYY')}
                             </Text>
                             <IconFontAwesome
                                 style={{ alignSelf: 'center' }}
                                 onPress={() => {
+                                    console.log(this.state.fechaNacimiento);
                                     this.showPicker();
                                 }}
                                 name="calendar"
