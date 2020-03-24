@@ -5,7 +5,11 @@ import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
-import moment from 'moment';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Share from 'react-native-share'
+
 
 class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
@@ -136,6 +140,48 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
+    //Funcion para compartir el link de invitacion de una reserva
+    shareImage= () => {
+    
+        let shareOptions = {
+        title: 'Compartir',
+        message: 'Hola! Aquí te envío la invitación para mi evento.',
+        subject: 'Invitación a mi evento'
+        };
+    
+        Share.open(shareOptions)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            err && console.log(err);
+        });
+    
+    };
+
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Invitados',
+                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
+                headerRight: (
+                    <View style={styles.iconContainer}>
+                        <IconEntypo style={{ paddingRight: 15 }} name="share" size={23} onPress={() => {this.shareImage()}}/>
+                        <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
+                        onPress={() => navigation.navigate('InvitadosExistentesReserva')}
+                    />
+                    </View>
+                ),
+                headerStyle: {
+                    backgroundColor: '#1e90ff'
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1
+                }
+        };
+    };
+
     constructor(props) {
         super(props);
         state = { flatListData: [] };
@@ -147,7 +193,6 @@ export default class BasicFlatList extends Component {
                 showSpinner: false
             });
         }, 3000);
-
         this.obtenerInvitaciones();
     }
 
@@ -163,6 +208,25 @@ export default class BasicFlatList extends Component {
             reserva: reserva
         });
     }
+    
+    //Funcion para compartir el link de invitacion de una reserva
+    shareImage= () => {
+    
+        let shareOptions = {
+        title: 'Compartir',
+        message: 'Hola! Aquí te envío la invitación para mi evento.',
+        subject: 'Invitación a mi evento'
+        };
+    
+        Share.open(shareOptions)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            err && console.log(err);
+        });
+    
+    };
 
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
@@ -233,5 +297,10 @@ const styles = StyleSheet.create({
         color: '#8F8787',
         fontWeight: 'normal',
         fontStyle: 'normal'
+    },
+    iconContainer: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        width: 100
     }
 });
