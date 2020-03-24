@@ -10,7 +10,6 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Share from 'react-native-share'
 
-
 class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
 
@@ -63,7 +62,50 @@ class FlatListItem extends Component {
     };
 
     render() {
-        const swipeOutSettings = {
+        const swipeOutSettingsConfirmado = {
+            autoClose: true,
+            style: { backgroundColor: '#fff' },
+            onClose: (secId, rowId, direction) => {
+                if (this.state.activeRowKey != null) {
+                    this.setState({ activeRowKey: null });
+                }
+            },
+            onOpen: (secId, rowId, direction) => {
+                this.setState({ activeRowKey: this.props.item.key });
+            },
+            right: [
+                {
+                    text: 'Descartar',
+                    type: 'delete',
+                    onPress: () => {
+                        Alert.alert(
+                            'Atención',
+                            '¿ Está seguro que desea eliminar la invitación ?',
+                            [
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                {
+                                    text: 'Aceptar',
+                                    onPress: () => {
+                                        this.descartarInvitado(this.props.item);
+                                        Toast.show({
+                                            text: 'Invitación eliminada exitosamente.',
+                                            buttonText: 'Aceptar',
+                                            duration: 3000,
+                                            position: 'bottom',
+                                            type: 'success'
+                                        });
+                                    }
+                                }
+                            ],
+                            { cancelable: true }
+                        );
+                    }
+                }
+            ],
+            rowId: this.props.index,
+            sectionId: 1
+        };
+        const swipeOutSettingsPendiente = {
             autoClose: true,
             style: { backgroundColor: '#fff' },
             onClose: (secId, rowId, direction) => {
@@ -138,7 +180,7 @@ class FlatListItem extends Component {
 
         if (this.props.item.estado == false) {
             return (
-                <Swipeout {...swipeOutSettings}>
+                <Swipeout {...swipeOutSettingsPendiente}>
                     <ListItem avatar>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
@@ -152,7 +194,7 @@ class FlatListItem extends Component {
             );
         } else {
             return (
-                <Swipeout {...swipeOutSettings}>
+                <Swipeout {...swipeOutSettingsConfirmado}>
                     <ListItem avatar>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/confirmar.jpg')} />
@@ -169,24 +211,6 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-    //Funcion para compartir el link de invitacion de una reserva
-    shareImage= () => {
-    
-        let shareOptions = {
-        title: 'Compartir',
-        message: 'Hola! Aquí te envío la invitación para mi evento.',
-        subject: 'Invitación a mi evento'
-        };
-    
-        Share.open(shareOptions)
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => {
-            err && console.log(err);
-        });
-    
-    };
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -194,7 +218,14 @@ export default class BasicFlatList extends Component {
                 headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
                 headerRight: (
                     <View style={styles.iconContainer}>
-                        <IconEntypo style={{ paddingRight: 15 }} name="share" size={23} onPress={() => {this.shareImage()}}/>
+                        <IconEntypo style={{ paddingRight: 15 }} name="share" size={23} onPress={() => {
+                            let shareOptions = {
+                                title: 'Compartir',
+                                message: 'Hola! Aquí te envío la invitación para mi evento.',
+                                subject: 'Invitación a mi evento'
+                                };
+                                Share.open(shareOptions)
+                        } }/>
                         <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
                         onPress={() => navigation.navigate('InvitadosExistentesReserva')}
                     />
