@@ -211,6 +211,33 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
+    state = { usuario: null , reserva: null };
+    
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
+        this.obtenerInvitaciones();
+    }
+
+    componentWillMount() {
+        this.setState({ showSpinner: true });
+
+        const { navigation } = this.props;
+        const usuarios = navigation.dangerouslyGetParent().getParam('usuario');
+        const reservas = navigation.dangerouslyGetParent().getParam('reserva');
+
+        this.setState({
+            usuario: usuarios,
+            reserva: reservas
+        });
+        console.log('Usuario', this.state.usuario)
+        console.log('Reserva', this.state.reserva)
+
+    }
+    
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Invitados',
@@ -222,9 +249,10 @@ export default class BasicFlatList extends Component {
                         name="share"
                         size={23}
                         onPress={() => {
+                            let link = 'http://livesafe.com.ar/invitado/' + this.state.usuario.country + '/' + this.state.usuario.datos + '/' + this.state.reserva.key;
                             let shareOptions = {
                                 title: 'Compartir',
-                                message: 'Hola! Aquí te envío la invitación para mi evento.',
+                                message: 'Hola! Te envío la invitación para mi evento. Por favor, completa tus datos en el siguiente link: ' + link,
                                 subject: 'Invitación a mi evento'
                             };
                             Share.open(shareOptions);
@@ -253,48 +281,6 @@ export default class BasicFlatList extends Component {
         super(props);
         state = { flatListData: [] };
     }
-
-    componentDidMount() {
-        setInterval(() => {
-            this.setState({
-                showSpinner: false
-            });
-        }, 3000);
-        this.obtenerInvitaciones();
-    }
-
-    componentWillMount() {
-        this.setState({ showSpinner: true });
-
-        const { navigation } = this.props;
-        const usuario = navigation.dangerouslyGetParent().getParam('usuario');
-        const reserva = navigation.dangerouslyGetParent().getParam('reserva');
-
-        this.setState({
-            usuario: usuario,
-            reserva: reserva
-        });
-    }
-
-    //Funcion para compartir el link de invitacion de una reserva
-    shareImage = () => {
-        let link =
-            'http://livesafe.com.ar/invitado/' + this.state.usuario.country + '/' + this.state.usuario.datos + '/' + this.state.reserva.key;
-
-        let shareOptions = {
-            title: 'Compartir',
-            message: 'Hola! Te envío la invitación para mi evento. Por favor, completa tus datos en el siguiente link: ' + link,
-            subject: 'Invitación a mi evento'
-        };
-
-        Share.open(shareOptions)
-            .then(res => {
-                console.log(res);
-            })
-            .catch(err => {
-                err && console.log(err);
-            });
-    };
 
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
