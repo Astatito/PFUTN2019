@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
-import { Content, Button, Text } from 'native-base';
+import { Content, Button, Text, Root, Toast } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
@@ -38,7 +38,8 @@ class DatosReserva extends Component {
         this.setState({
             usuario: usuario,
             nombreReserva: reserva.nombre,
-            reserva: reserva
+            reserva: reserva,
+            showSpinner: false
         });
     }
 
@@ -78,7 +79,12 @@ class DatosReserva extends Component {
         this.setState({ isVisible: true });
     };
 
+    onToastClosed = (reason) => {
+        this.props.navigation.navigate('MisReservas');
+    }
+
     modificarReserva = () => {
+        this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
 
         var refReserva = refCountry
@@ -101,70 +107,82 @@ class DatosReserva extends Component {
             },
             { merge: true }
         );
+        this.setState({ showSpinner: false });
+        return 0
     };
 
     render() {
         const { isFocused } = this.state;
 
         return (
-            <Content>
-                <View style={styles.container}>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                    <Text style={styles.header}> Modificar reserva </Text>
+            <Root>
+                <Content>
+                    <View style={styles.container}>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                        <Text style={styles.header}> Modificar reserva </Text>
 
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Nombre de reserva"
-                        value={this.state.nombreReserva}
-                        onChangeText={nombreReserva => this.setState({ nombreReserva })}
-                        underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        keyboardType={'default'}
-                    />
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Nombre de reserva"
+                            value={this.state.nombreReserva}
+                            onChangeText={nombreReserva => this.setState({ nombreReserva })}
+                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            keyboardType={'default'}
+                        />
 
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                success
-                                style={{ paddingHorizontal: '5%' }}
-                                onPress={() => {
-                                    Alert.alert(
-                                        'Atención',
-                                        '¿ Está seguro que desea modificar esta reserva ? ',
-                                        [
-                                            { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                            {
-                                                text: 'Aceptar',
-                                                onPress: () => {
-                                                    this.modificarReserva();
-                                                    this.props.navigation.navigate('MisReservas');
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        Alert.alert(
+                                            'Atención',
+                                            '¿ Está seguro que desea modificar esta reserva ? ',
+                                            [
+                                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                                {
+                                                    text: 'Aceptar',
+                                                    onPress: () => {
+                                                        if (this.modificarReserva() == 0 ) {
+                                                            Toast.show({
+                                                                text: "Datos de reserva actualizados.",
+                                                                buttonText: "Aceptar",
+                                                                duration: 3000,
+                                                                position: "bottom",
+                                                                type: "success",
+                                                                onClose : this.onToastClosed.bind(this)
+                                                            })
+                                                        }
+                                                    }
                                                 }
-                                            }
-                                        ],
-                                        { cancelable: true }
-                                    );
-                                }}>
-                                <Text>Aceptar</Text>
-                            </Button>
-                        </View>
-                        <View style={styles.buttons}>
-                            <Button
-                                bordered
-                                danger
-                                style={{ paddingHorizontal: '5%' }}
-                                onPress={() => {
-                                    this.modificarReserva();
-                                    this.props.navigation.navigate('MisReservas');
-                                }}>
-                                <Text>Cancelar</Text>
-                            </Button>
+                                            ],
+                                            { cancelable: true }
+                                        );
+                                    }}>
+                                    <Text>Aceptar</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.navigate('MisReservas');
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
                         </View>
                     </View>
-                </View>
-            </Content>
+                </Content>
+            </Root>
+            
         );
     }
 }
