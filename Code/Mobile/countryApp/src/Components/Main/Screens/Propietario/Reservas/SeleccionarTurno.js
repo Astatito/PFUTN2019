@@ -373,6 +373,7 @@ export default class BasicFlatList extends Component {
         if (this.state.hayTurnos == false) {
             return (
                 <View>
+                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <Calendar selectedDate={this.state.selectedDate} onDateSelected={date => {this.fechaSeleccionada(date), this.setState({ selectedDate: date })}} />
                     <Text style={styles.textDefault}> No hay turnos para mostrar. </Text>
                 </View>
