@@ -125,7 +125,7 @@ const EgresoStackNavigator = createStackNavigator(
 );
 
 //Este es el Tab Navigator. El titulo superior que se encuentra en la franja azul se pone automáticamente.
-// Este Tab tiene tres Stacks.
+
 const EncargadoTabNavigator = createBottomTabNavigator({
     Home: {
         screen: EncargadoStackNavigator,

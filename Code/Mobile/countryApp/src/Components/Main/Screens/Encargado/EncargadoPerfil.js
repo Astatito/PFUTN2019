@@ -3,7 +3,7 @@ import { LocalStorage } from '../../../DataBase/Storage';
 import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Content, Button, Text, Picker } from 'native-base';
+import { Content, Button, Text, Picker, Root, Toast } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { NavigationActions } from 'react-navigation';
@@ -14,8 +14,8 @@ const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
 const navigateAction = NavigationActions.navigate({
-    routeName: 'Propietario',
-    action: NavigationActions.navigate({ routeName: 'Propietario' }),
+    routeName: 'Registros',
+    action: NavigationActions.navigate({ routeName: 'Registros' }),
     });
 
 class MiPerfil extends Component {
@@ -105,19 +105,6 @@ class MiPerfil extends Component {
             { merge: true }
         );
         this.setState({ showSpinner: false });
-        Alert.alert(
-            'Atención',
-            'Datos personales actualizados correctamente.',
-            [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        // Redirrecionar a Home del encargado.
-                        this.props.navigation.dispatch(navigateAction);
-                    }
-                }
-            ]
-        );
     };
 
     obtenerPickers = () => {
@@ -160,6 +147,10 @@ class MiPerfil extends Component {
         this.setState({ isVisible: true });
     };
 
+    onToastClosed = (reason) => {
+        this.props.navigation.dispatch(navigateAction) 
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -168,152 +159,164 @@ class MiPerfil extends Component {
         }
 
         return (
-            <ScrollView>
-                <Content>
-                    <View style={styles.container}>
-                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                        <View style={styles.viewContainer}>
-                            <Text style={styles.textLabel}>Legajo</Text>
-                            <TextInput
-                                style={{
-                                    width: '83%',
-                                    fontSize: 16,
-                                    alignItems: 'flex-start',
-                                    marginTop: '5%'
-                                }}
-                                placeholder="Legajo"
-                                onChangeText={legajo => this.setState({ legajo })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
-                                keyboardType={'numeric'}
-                                value={this.state.legajo}
-                            />
-                        </View>
-
-                        <View style={styles.viewContainer}>
-                            <Text style={styles.textLabel}>Nombre</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                placeholder="Nombre"
-                                onChangeText={nombre => this.setState({ nombre })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
-                                keyboardType={'default'}
-                                value={this.state.nombre}
-                            />
-                        </View>
-
-                        <View style={styles.viewContainer}>
-                            <Text style={styles.textLabel}>Apellido</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                placeholder="Apellido"
-                                onChangeText={apellido => this.setState({ apellido })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
-                                keyboardType={'default'}
-                                value={this.state.apellido}
-                            />
-                        </View>
-
-                        <Picker
-                            note
-                            mode="dropdown"
-                            style={styles.picker}
-                            selectedValue={this.state.picker}
-                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
-                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
-                            {this.state.tiposDocumento.map((item, index) => {
-                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
-                            })}
-                        </Picker>
-
-                        <View style={styles.viewContainer}>
-                            <Text style={styles.textLabel}>Documento</Text>
-                            <TextInput
-                                style={{
-                                    width: '70%',
-                                    fontSize: 16,
-                                    alignItems: 'flex-start',
-                                    marginTop: '5%'
-                                }}
-                                placeholder="Número de documento"
-                                onChangeText={documento => this.setState({ documento })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
-                                keyboardType={'numeric'}
-                                value={this.state.documento}
-                                editable={false}
-                            />
-                        </View>
-
-                        <View style={styles.datetime}>
-                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                                {this.state.fechaNacimiento.format('DD/MM/YYYY')}
-                            </Text>
-                            <IconFontAwesome
-                                style={{ alignSelf: 'center' }}
-                                onPress={() => {
-                                    this.showPicker();
-                                }}
-                                name="calendar"
-                                size={25}
-                            />
-                        </View>
-
-                        <DateTimePicker
-                            isVisible={this.state.isVisible}
-                            onConfirm={this.handlePicker}
-                            onCancel={this.hidePicker}
-                            mode={'date'}
-                            is24Hour={true}></DateTimePicker>
-
-                        <View style={styles.viewContainer}>
-                            <Text style={styles.textLabel}>Celular</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                placeholder="Celular"
-                                onChangeText={celular => this.setState({ celular })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
-                                keyboardType={'numeric'}
-                                value={this.state.celular}
-                            />
-                        </View>
-
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    success
-                                    style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.actualizarDatos();
-                                    }}>
-                                    <Text>Aceptar</Text>
-                                </Button>
+            <Root>
+                <ScrollView>
+                    <Content>
+                        <View style={styles.container}>
+                            <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                            <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                            <View style={styles.viewContainer}>
+                                <Text style={styles.textLabel}>Legajo</Text>
+                                <TextInput
+                                    style={{
+                                        width: '83%',
+                                        fontSize: 16,
+                                        alignItems: 'flex-start',
+                                        marginTop: '5%'
+                                    }}
+                                    placeholder="Legajo"
+                                    onChangeText={legajo => this.setState({ legajo })}
+                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                    onFocus={this.handleFocus}
+                                    onBlur={this.handleBlur}
+                                    keyboardType={'numeric'}
+                                    value={this.state.legajo}
+                                />
                             </View>
-                            <View style={styles.buttons}>
-                                <Button 
-                                    bordered 
-                                    danger 
-                                    style={{ paddingHorizontal: '5%' }}
+
+                            <View style={styles.viewContainer}>
+                                <Text style={styles.textLabel}>Nombre</Text>
+                                <TextInput
+                                    style={styles.textInput}
+                                    placeholder="Nombre"
+                                    onChangeText={nombre => this.setState({ nombre })}
+                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                    onFocus={this.handleFocus}
+                                    onBlur={this.handleBlur}
+                                    keyboardType={'default'}
+                                    value={this.state.nombre}
+                                />
+                            </View>
+
+                            <View style={styles.viewContainer}>
+                                <Text style={styles.textLabel}>Apellido</Text>
+                                <TextInput
+                                    style={styles.textInput}
+                                    placeholder="Apellido"
+                                    onChangeText={apellido => this.setState({ apellido })}
+                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                    onFocus={this.handleFocus}
+                                    onBlur={this.handleBlur}
+                                    keyboardType={'default'}
+                                    value={this.state.apellido}
+                                />
+                            </View>
+
+                            <Picker
+                                note
+                                mode="dropdown"
+                                style={styles.picker}
+                                selectedValue={this.state.picker}
+                                enabled={false}
+                                onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
+                                {this.state.tiposDocumento.map((item, index) => {
+                                    return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                                })}
+                            </Picker>
+
+                            <View style={styles.viewContainer}>
+                                <Text style={styles.textLabel}>Documento</Text>
+                                <TextInput
+                                    style={{
+                                        width: '70%',
+                                        fontSize: 16,
+                                        alignItems: 'flex-start',
+                                        marginTop: '5%'
+                                    }}
+                                    placeholder="Número de documento"
+                                    onChangeText={documento => this.setState({ documento })}
+                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                    onFocus={this.handleFocus}
+                                    onBlur={this.handleBlur}
+                                    keyboardType={'numeric'}
+                                    value={this.state.documento}
+                                    editable={false}
+                                />
+                            </View>
+
+                            <View style={styles.datetime}>
+                                <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
+                                <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
+                                    {this.state.fechaNacimiento.format('DD/MM/YYYY')}
+                                </Text>
+                                <IconFontAwesome
+                                    style={{ alignSelf: 'center' }}
                                     onPress={() => {
-                                    }}>
-                                    <Text>Cancelar</Text>
-                                </Button>
+                                        this.showPicker();
+                                    }}
+                                    name="calendar"
+                                    size={25}
+                                />
+                            </View>
+
+                            <DateTimePicker
+                                isVisible={this.state.isVisible}
+                                onConfirm={this.handlePicker}
+                                onCancel={this.hidePicker}
+                                mode={'date'}
+                                is24Hour={true}></DateTimePicker>
+
+                            <View style={styles.viewContainer}>
+                                <Text style={styles.textLabel}>Celular</Text>
+                                <TextInput
+                                    style={styles.textInput}
+                                    placeholder="Celular"
+                                    onChangeText={celular => this.setState({ celular })}
+                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                    onFocus={this.handleFocus}
+                                    onBlur={this.handleBlur}
+                                    keyboardType={'numeric'}
+                                    value={this.state.celular}
+                                />
+                            </View>
+
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={styles.buttons}>
+                                    <Button
+                                        bordered
+                                        success
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={() => {
+                                            this.actualizarDatos();
+                                            Toast.show({
+                                                text: "Datos personales actualizados.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "success",
+                                                onClose : this.onToastClosed.bind(this)
+                                            })
+                                        }}>
+                                        <Text>Aceptar</Text>
+                                    </Button>
+                                </View>
+                                <View style={styles.buttons}>
+                                    <Button 
+                                        bordered 
+                                        danger 
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={() => {
+                                            this.props.navigation.dispatch(navigateAction);
+                                        }}>
+                                        <Text>Cancelar</Text>
+                                    </Button>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </Content>
-            </ScrollView>
+                    </Content>
+                </ScrollView>
+            </Root>
+            
         );
     }
 }
