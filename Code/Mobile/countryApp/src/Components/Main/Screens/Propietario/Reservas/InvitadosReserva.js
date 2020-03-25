@@ -211,8 +211,11 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-    state = { usuario: null , reserva: null };
-    
+    state = { usuario: null, reserva: null };
+    idCountry = '';
+    idPropietario = '';
+    idReserva = '';
+
     componentDidMount() {
         setInterval(() => {
             this.setState({
@@ -226,18 +229,19 @@ export default class BasicFlatList extends Component {
         this.setState({ showSpinner: true });
 
         const { navigation } = this.props;
-        const usuarios = navigation.dangerouslyGetParent().getParam('usuario');
-        const reservas = navigation.dangerouslyGetParent().getParam('reserva');
+        const usuario = navigation.dangerouslyGetParent().getParam('usuario');
+        const reserva = navigation.dangerouslyGetParent().getParam('reserva');
+
+        idCountry = usuario.country;
+        idPropietario = usuario.datos;
+        idReserva = reserva.key;
 
         this.setState({
-            usuario: usuarios,
-            reserva: reservas
+            usuario: usuario,
+            reserva: reserva
         });
-        console.log('Usuario', this.state.usuario)
-        console.log('Reserva', this.state.reserva)
-
     }
-    
+
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Invitados',
@@ -249,10 +253,12 @@ export default class BasicFlatList extends Component {
                         name="share"
                         size={23}
                         onPress={() => {
-                            let link = 'http://livesafe.com.ar/invitado/' + this.state.usuario.country + '/' + this.state.usuario.datos + '/' + this.state.reserva.key;
+                            let link = 'http://livesafe.com.ar/invitado/' + idCountry + '/' + idPropietario + '/' + idReserva;
                             let shareOptions = {
                                 title: 'Compartir',
-                                message: 'Hola! Te envío la invitación para mi evento. Por favor, completa tus datos en el siguiente link: ' + link,
+                                message:
+                                    'Hola! Te envío la invitación para mi evento. Por favor, completa tus datos en el siguiente link: ' +
+                                    link,
                                 subject: 'Invitación a mi evento'
                             };
                             Share.open(shareOptions);
@@ -262,7 +268,7 @@ export default class BasicFlatList extends Component {
                         style={{ paddingRight: 10 }}
                         name="plus"
                         size={25}
-                        onPress={() => navigation.navigate('InvitadosExistentesReserva')}
+                        onPress={() => navigation.navigate('InvitadosExistentesReserva', { reserva: idReserva })}
                     />
                 </View>
             ),

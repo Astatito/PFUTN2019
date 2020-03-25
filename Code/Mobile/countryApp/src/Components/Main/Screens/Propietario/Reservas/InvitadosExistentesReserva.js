@@ -183,13 +183,17 @@ export default class BasicFlatList extends Component {
 
     componentWillMount() {
         selectedItems = [];
+
+        // const { navigation } = this.props;
+        // const reserva = navigation.getParam('reserva');
+        // this.setState({ showSpinner: true, reserva: reserva });
+
         this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
             .then(response => {
                 this.setState({ usuario: response });
-                console.log(this.state.usuario);
                 this.obtenerInvitaciones();
             })
             .catch(error => {
@@ -252,7 +256,7 @@ export default class BasicFlatList extends Component {
         this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-        var refReserva = refPropietario.collection('Reservas').doc('Ks1fT74hrUlq7CA9oGOh'); //TODO: DEBERIA VENIR EN EL PROPS, NO ESTAR HARDCODEADO (CUANDO HAGO CLICK EN EL + EN LA PANTALLA ANTERIOR)
+        var refReserva = refPropietario.collection('Reservas').doc('Ks1fT74hrUlq7CA9oGOh'); //TODO: REEMPLAZAR EL ID POR THIS.STATE.RESERVA
         var refInvitados = refReserva.collection('Invitados');
 
         for (var i = 0; i < selectedItems.length; i++) {
