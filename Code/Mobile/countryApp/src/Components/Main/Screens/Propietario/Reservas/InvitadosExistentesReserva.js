@@ -314,7 +314,6 @@ export default class BasicFlatList extends Component {
                                                 onClose: this.onToastClosed.bind(this)
                                             });
                                         }
-                                        this.props.navigation.goBack();
                                     }}>
                                     <Text>Añadir</Text>
                                 </Button>

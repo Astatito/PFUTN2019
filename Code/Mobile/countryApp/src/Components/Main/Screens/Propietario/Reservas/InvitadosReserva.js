@@ -43,6 +43,7 @@ class FlatListItem extends Component {
         var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
 
         refInvitado.delete();
+        return 0
     };
 
     confirmarInvitado = invitado => {
@@ -59,6 +60,7 @@ class FlatListItem extends Component {
             },
             { merge: true }
         );
+        return 0
     };
 
     render() {
@@ -86,14 +88,15 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        this.descartarInvitado(this.props.item);
-                                        Toast.show({
-                                            text: 'Invitación eliminada exitosamente.',
-                                            buttonText: 'Aceptar',
-                                            duration: 3000,
-                                            position: 'bottom',
-                                            type: 'success'
-                                        });
+                                        if (this.descartarInvitado(this.props.item) == 0) {
+                                            Toast.show({
+                                                text: 'Invitación eliminada exitosamente.',
+                                                buttonText: 'Aceptar',
+                                                duration: 3000,
+                                                position: 'bottom',
+                                                type: 'success'
+                                            });
+                                        }
                                     }
                                 }
                             ],
@@ -129,14 +132,15 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        this.confirmarInvitado(this.props.item);
-                                        Toast.show({
-                                            text: 'Invitación confirmada exitosamente.',
-                                            buttonText: 'Aceptar',
-                                            duration: 3000,
-                                            position: 'bottom',
-                                            type: 'success'
-                                        });
+                                        if (this.confirmarInvitado(this.props.item) == 0 ) {
+                                            Toast.show({
+                                                text: 'Invitación confirmada exitosamente.',
+                                                buttonText: 'Aceptar',
+                                                duration: 3000,
+                                                position: 'bottom',
+                                                type: 'success'
+                                            });
+                                        }
                                     }
                                 }
                             ],
@@ -158,14 +162,15 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        this.descartarInvitado(this.props.item);
-                                        Toast.show({
-                                            text: 'Invitación eliminada exitosamente.',
-                                            buttonText: 'Aceptar',
-                                            duration: 3000,
-                                            position: 'bottom',
-                                            type: 'success'
-                                        });
+                                        if (this.descartarInvitado(this.props.item) == 0) {
+                                            Toast.show({
+                                                text: 'Invitación eliminada exitosamente.',
+                                                buttonText: 'Aceptar',
+                                                duration: 3000,
+                                                position: 'bottom',
+                                                type: 'success'
+                                            });
+                                        }
                                     }
                                 }
                             ],
