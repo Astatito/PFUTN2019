@@ -8,7 +8,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Share from 'react-native-share'
+import Share from 'react-native-share';
 
 class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
@@ -216,41 +216,10 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-
-    static navigationOptions = ({ navigation }) => {
-        return {
-            title: 'Invitados',
-                headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
-                headerRight: (
-                    <View style={styles.iconContainer}>
-                        <IconEntypo style={{ paddingRight: 15 }} name="share" size={23} onPress={() => {
-                            let shareOptions = {
-                                title: 'Compartir',
-                                message: 'Hola! Aquí te envío la invitación para mi evento.',
-                                subject: 'Invitación a mi evento'
-                                };
-                                Share.open(shareOptions)
-                        } }/>
-                        <IconAntDesign style={{ paddingRight: 10 }} name="plus"size={25}
-                        onPress={() => navigation.navigate('InvitadosExistentesReserva')}
-                    />
-                    </View>
-                ),
-                headerStyle: {
-                    backgroundColor: '#1e90ff'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    textAlign: 'center',
-                    flex: 1
-                }
-        };
-    };
-
-    constructor(props) {
-        super(props);
-        state = { flatListData: [] };
-    }
+    state = { usuario: null, reserva: null };
+    idCountry = '';
+    idPropietario = '';
+    idReserva = '';
 
     componentDidMount() {
         setInterval(() => {
@@ -268,30 +237,61 @@ export default class BasicFlatList extends Component {
         const usuario = navigation.dangerouslyGetParent().getParam('usuario');
         const reserva = navigation.dangerouslyGetParent().getParam('reserva');
 
+        idCountry = usuario.country;
+        idPropietario = usuario.datos;
+        idReserva = reserva.key;
+
         this.setState({
             usuario: usuario,
             reserva: reserva
         });
     }
-    
-    //Funcion para compartir el link de invitacion de una reserva
-    shareImage= () => {
-    
-        let shareOptions = {
-        title: 'Compartir',
-        message: 'Hola! Aquí te envío la invitación para mi evento.',
-        subject: 'Invitación a mi evento'
+
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Invitados',
+            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
+            headerRight: (
+                <View style={styles.iconContainer}>
+                    <IconEntypo
+                        style={{ paddingRight: 15 }}
+                        name="share"
+                        size={23}
+                        onPress={() => {
+                            let link = 'http://livesafe.com.ar/invitado/' + idCountry + '/' + idPropietario + '/' + idReserva;
+                            let shareOptions = {
+                                title: 'Compartir',
+                                message:
+                                    'Hola! Te envío la invitación para mi evento. Por favor, completa tus datos en el siguiente link: ' +
+                                    link,
+                                subject: 'Invitación a mi evento'
+                            };
+                            Share.open(shareOptions);
+                        }}
+                    />
+                    <IconAntDesign
+                        style={{ paddingRight: 10 }}
+                        name="plus"
+                        size={25}
+                        onPress={() => navigation.navigate('InvitadosExistentesReserva', { reserva: idReserva })}
+                    />
+                </View>
+            ),
+            headerStyle: {
+                backgroundColor: '#1e90ff'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                textAlign: 'center',
+                flex: 1
+            }
         };
-    
-        Share.open(shareOptions)
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => {
-            err && console.log(err);
-        });
-    
     };
+
+    constructor(props) {
+        super(props);
+        state = { flatListData: [] };
+    }
 
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
@@ -368,8 +368,8 @@ const styles = StyleSheet.create({
         fontStyle: 'normal'
     },
     iconContainer: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
         width: 100
     }
 });
