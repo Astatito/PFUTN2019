@@ -170,7 +170,7 @@ export default class BasicFlatList extends Component {
 
     constructor(props) {
         super(props);
-        state = { flatListData: [] };
+        state = { flatListData: [], idReserva: '' };
     }
 
     componentDidMount() {
@@ -184,11 +184,9 @@ export default class BasicFlatList extends Component {
     componentWillMount() {
         selectedItems = [];
 
-        // const { navigation } = this.props;
-        // const reserva = navigation.getParam('reserva');
-        // this.setState({ showSpinner: true, reserva: reserva });
-
-        this.setState({ showSpinner: true });
+        const { navigation } = this.props;
+        const reserva = navigation.getParam('reserva');
+        this.setState({ showSpinner: true, idReserva : reserva });
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -256,7 +254,7 @@ export default class BasicFlatList extends Component {
         this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-        var refReserva = refPropietario.collection('Reservas').doc('Ks1fT74hrUlq7CA9oGOh'); //TODO: REEMPLAZAR EL ID POR THIS.STATE.RESERVA
+        var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva); //TODO: REEMPLAZAR EL ID POR THIS.STATE.RESERVA
         var refInvitados = refReserva.collection('Invitados');
 
         for (var i = 0; i < selectedItems.length; i++) {
