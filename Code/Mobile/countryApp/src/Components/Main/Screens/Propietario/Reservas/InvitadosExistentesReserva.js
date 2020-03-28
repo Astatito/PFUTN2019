@@ -170,7 +170,7 @@ export default class BasicFlatList extends Component {
 
     constructor(props) {
         super(props);
-        state = { flatListData: [], idReserva: '' };
+        state = { flatListData: [], invitadosReserva: [] , idReserva: '' };
     }
 
     componentDidMount() {
@@ -183,7 +183,6 @@ export default class BasicFlatList extends Component {
 
     componentWillMount() {
         selectedItems = [];
-
         const { navigation } = this.props;
         const reserva = navigation.getParam('reserva');
         this.setState({ showSpinner: true, idReserva : reserva });
@@ -193,6 +192,7 @@ export default class BasicFlatList extends Component {
             .then(response => {
                 this.setState({ usuario: response });
                 this.obtenerInvitaciones();
+                this.obtenerInvitadosReserva()
             })
             .catch(error => {
                 switch (error.name) {
@@ -250,16 +250,46 @@ export default class BasicFlatList extends Component {
         this.props.navigation.goBack();
     };
 
+    obtenerInvitadosReserva = () => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
+        var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva);
+        var refInvitados = refReserva.collection('Invitados');
+
+        refInvitados.onSnapshot(snapshot => {
+            if (!snapshot.empty) {
+                //El propietario tiene invitaciones
+                var tempArray = [];
+                for (var i = 0; i < snapshot.docs.length; i++) {
+                    var invitado = {
+                        key: snapshot.docs[i].id,
+                        nombre: snapshot.docs[i].data().Nombre,
+                        apellido: snapshot.docs[i].data().Apellido,
+                        estado: snapshot.docs[i].data().Estado,
+                        documento: snapshot.docs[i].data().Documento,
+                        tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                        reserva: this.state.idReserva
+                    };
+                    tempArray.push(invitado);
+                }
+                tempArray.sort((a, b) => a.estado - b.estado);
+                this.setState({ invitadosReserva: tempArray });
+            } else {
+                this.setState({ invitadosReserva: tempArray });
+            }
+        });
+    };
+
     agregarInvitados = () => {
         this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva); //TODO: REEMPLAZAR EL ID POR THIS.STATE.RESERVA
         var refInvitados = refReserva.collection('Invitados');
-
+        var alMenosUnInvitado = false;
         for (var i = 0; i < selectedItems.length; i++) {
             console.log(selectedItems[i]);
-            var invitado = {
+            var nuevoInvitado = {
                 Nombre: selectedItems[i].nombre,
                 Apellido: selectedItems[i].apellido,
                 Documento: selectedItems[i].documento,
@@ -267,11 +297,25 @@ export default class BasicFlatList extends Component {
                 Estado: true,
                 IdInvitado: selectedItems[i].key
             };
-            refInvitados.add(invitado);
+            if (this.state.invitadosReserva) {
+                if (!this.state.invitadosReserva.find(inv => (inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento))) {
+                    alMenosUnInvitado = true
+                    refInvitados.add(nuevoInvitado);
+                }
+            } else {
+                //La lista está vacía. Entonces no hay invitados, agregamos a todos los que seleccione.
+                alMenosUnInvitado = true
+                refInvitados.add(nuevoInvitado);
+            }
+            
             // TODO: FALTA DEFINIR LA LÓGICA PARA GESTIONAR LAS AUTORIZACIONES
         }
         this.setState({ showSpinner: false });
-        return 0;
+        if (alMenosUnInvitado == true) {
+            return 0;
+        } else {
+            return 1
+        }
     };
 
     isFlatListItemSelected = ({ item, index }) => {
@@ -313,6 +357,15 @@ export default class BasicFlatList extends Component {
                                                 duration: 3000,
                                                 position: 'bottom',
                                                 type: 'success',
+                                                onClose: this.onToastClosed.bind(this)
+                                            });
+                                        } else {
+                                            Toast.show({
+                                                text: 'Los invitados ya están en la lista.',
+                                                buttonText: 'Aceptar',
+                                                duration: 3000,
+                                                position: 'bottom',
+                                                type: 'warning',
                                                 onClose: this.onToastClosed.bind(this)
                                             });
                                         }
