@@ -250,6 +250,38 @@ export default class BasicFlatList extends Component {
         this.props.navigation.goBack();
     };
 
+    yaFueInvitado = (nuevoInvitado) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
+        var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva);
+        var refInvitados = refReserva.collection('Invitados');
+        var tempArray = [];
+        refInvitados.get().then(snapshot => {
+            if (snapshot.exists) {
+                for (var i = 0; i < snapshot.docs.length; i++) {
+                    var invitado = {
+                        key: snapshot.docs[i].id,
+                        nombre: snapshot.docs[i].data().Nombre,
+                        apellido: snapshot.docs[i].data().Apellido,
+                        estado: snapshot.docs[i].data().Estado,
+                        documento: snapshot.docs[i].data().Documento,
+                        tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                        reserva: this.state.idReserva
+                    };
+                    tempArray.push(invitado);
+                }
+                tempArray.sort((a, b) => a.estado - b.estado);   
+            }
+        });
+        //Esto no trae nada - TEMPARRAY
+        console.log('TempArray',tempArray)
+        if (tempArray.find(inv => (inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     agregarInvitados = () => {
         this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
@@ -267,7 +299,15 @@ export default class BasicFlatList extends Component {
                 Estado: true,
                 IdInvitado: selectedItems[i].key
             };
-            refInvitados.add(invitado);
+            
+            const result = this.yaFueInvitado(invitado) 
+            console.log('result', result)
+            if (this.yaFueInvitado(invitado) == false) {
+                console.log('Agregando invitado')
+                refInvitados.add(invitado);
+            } else {
+                console.log('Este invitado ya está en la lista')
+            }
             // TODO: FALTA DEFINIR LA LÓGICA PARA GESTIONAR LAS AUTORIZACIONES
         }
         this.setState({ showSpinner: false });
