@@ -91,17 +91,43 @@ export default class BasicFlatList extends Component {
     }
 
     obtenerReservas = () => {
-        this.setState({ flatListData: [] });
-        //Logica para obtener las reservas finalizadas.
-        //Insertar al final del proceso donde corresponda.
-        this.setState({ showSpinner: false });
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refReservas = refCountry
+            .collection('Propietarios')
+            .doc(this.state.usuario.datos)
+            .collection('Reservas');
+
+        refReservas
+            .where('Cancelado', '==', false)
+            .where('FechaDesde', '<', new Date())
+            .orderBy('FechaDesde')
+            .onSnapshot(snapshot => {
+                if (!snapshot.empty) {
+                    //El propietario tiene reservas
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        var reserva = {
+                            key: snapshot.docs[i].id,
+                            nombre: snapshot.docs[i].data().Nombre,
+                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
+                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
+                            idReservaServicio: snapshot.docs[i].data().IdReservaServicio.path,
+                            servicio: snapshot.docs[i].data().Servicio
+                        };
+                        tempArray.push(reserva);
+                    }
+                    this.setState({ showSpinner: false, flatListData: tempArray });
+                } else {
+                    this.setState({ showSpinner: false, flatListData: [] });
+                }
+            });
     };
 
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
                 <View>
-                    <Text style={styles.textDefault}> No hay reservas para mostrar. </Text>
+                    <Text style={styles.textDefault}> No hay reservas finalizadas. </Text>
                 </View>
             );
         } else {

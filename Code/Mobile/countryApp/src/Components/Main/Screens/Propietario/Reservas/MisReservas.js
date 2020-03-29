@@ -39,7 +39,7 @@ class FlatListItem extends Component {
         var refReservaServicio = Database.doc(reserva.idReservaServicio);
         refReservaServicio.set({ Cancelado: true }, { merge: true });
         this.setState({ showSpinner: false });
-        return 0
+        return 0;
     };
 
     render() {
@@ -70,12 +70,12 @@ class FlatListItem extends Component {
                                     onPress: () => {
                                         if (this.eliminarReserva(this.props.item) == 0) {
                                             Toast.show({
-                                                text: "Reserva eliminada exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Reserva eliminada exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success"
-                                            })
+                                                position: 'bottom',
+                                                type: 'success'
+                                            });
                                         }
                                     }
                                 }
@@ -172,6 +172,7 @@ export default class BasicFlatList extends Component {
 
         refReservas
             .where('Cancelado', '==', false)
+            .where('FechaDesde', '>=', new Date())
             .orderBy('FechaDesde')
             .onSnapshot(snapshot => {
                 if (!snapshot.empty) {
@@ -199,14 +200,14 @@ export default class BasicFlatList extends Component {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
                 <View>
-                    <Text style={styles.textDefault}> No hay reservas para mostrar. </Text>
+                    <Text style={styles.textDefault}> No hay ninguna reserva activa. </Text>
                 </View>
             );
         } else {
             return (
-                <Root>  
+                <Root>
                     <View>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <FlatList
                             data={this.state.flatListData}
                             renderItem={({ item, index }) => {
