@@ -133,6 +133,7 @@ class ModificarInvitado extends Component {
             { merge: true }
         );
         this.setState({ showSpinner: false });
+        return 0
     };
 
     render() {
@@ -221,16 +222,16 @@ class ModificarInvitado extends Component {
                                         success
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
-                                            this.actualizarInvitado();
-                                            Toast.show({
-                                                text: "Invitado actualizado exitosamente.",
-                                                buttonText: "Aceptar",
-                                                duration: 3000,
-                                                position: "bottom",
-                                                type: "success",
-                                                onClose : this.onToastClosed.bind(this)
-                                            })
-                                            
+                                            if (this.actualizarInvitado() == 0) {
+                                                Toast.show({
+                                                    text: "Invitado actualizado exitosamente.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })   
+                                            }
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>
@@ -338,15 +339,16 @@ class ModificarInvitado extends Component {
                                         success
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
-                                            this.actualizarInvitado();
-                                            Toast.show({
-                                                text: "Invitado actualizado exitosamente.",
-                                                buttonText: "Aceptar",
-                                                duration: 3000,
-                                                position: "bottom",
-                                                type: "success",
-                                                onClose : this.onToastClosed.bind(this)
-                                            })
+                                            if (this.actualizarInvitado() == 0) {
+                                                Toast.show({
+                                                    text: "Invitado actualizado exitosamente.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            }
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>

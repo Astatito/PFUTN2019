@@ -105,6 +105,7 @@ class MiPerfil extends Component {
             { merge: true }
         );
         this.setState({ showSpinner: false });
+        return 0
     };
 
     obtenerPickers = () => {
@@ -287,15 +288,16 @@ class MiPerfil extends Component {
                                         success
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
-                                            this.actualizarDatos();
-                                            Toast.show({
-                                                text: "Datos personales actualizados.",
-                                                buttonText: "Aceptar",
-                                                duration: 3000,
-                                                position: "bottom",
-                                                type: "success",
-                                                onClose : this.onToastClosed.bind(this)
-                                            })
+                                            if (this.actualizarDatos() == 0) {
+                                                Toast.show({
+                                                    text: "Datos personales actualizados.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            }
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>

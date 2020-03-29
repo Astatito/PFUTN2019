@@ -39,6 +39,7 @@ class FlatListItem extends Component {
         var refReservaServicio = Database.doc(reserva.idReservaServicio);
         refReservaServicio.set({ Cancelado: true }, { merge: true });
         this.setState({ showSpinner: false });
+        return 0
     };
 
     render() {
@@ -67,14 +68,15 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        this.eliminarReserva(this.props.item);
-                                        Toast.show({
-                                            text: "Reserva eliminada exitosamente.",
-                                            buttonText: "Aceptar",
-                                            duration: 3000,
-                                            position: "bottom",
-                                            type: "success"
-                                        })
+                                        if (this.eliminarReserva(this.props.item) == 0) {
+                                            Toast.show({
+                                                text: "Reserva eliminada exitosamente.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "success"
+                                            })
+                                        }
                                     }
                                 }
                             ],

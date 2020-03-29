@@ -148,7 +148,7 @@ class DatosReserva extends Component {
                                                 {
                                                     text: 'Aceptar',
                                                     onPress: () => {
-                                                        if (this.modificarReserva() == 0 ) {
+                                                        if (this.modificarReserva() == 0) {
                                                             Toast.show({
                                                                 text: "Datos de reserva actualizados.",
                                                                 buttonText: "Aceptar",

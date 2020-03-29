@@ -132,7 +132,7 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        if (this.confirmarInvitado(this.props.item) == 0 ) {
+                                        if (this.confirmarInvitado(this.props.item) == 0) {
                                             Toast.show({
                                                 text: 'Invitación confirmada exitosamente.',
                                                 buttonText: 'Aceptar',

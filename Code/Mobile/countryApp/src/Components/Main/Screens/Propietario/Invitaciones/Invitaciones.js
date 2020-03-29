@@ -34,6 +34,7 @@ class FlatListItem extends Component {
         var refInvitados = refCountry.collection('Invitados');
 
         refInvitados.doc(invitacion).delete();
+        return 0
     };
 
     render() {
@@ -61,14 +62,16 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        this.eliminarInvitacion(this.props.item.key);
-                                        Toast.show({
-                                            text: "Invitado eliminado exitosamente.",
-                                            buttonText: "Aceptar",
-                                            duration: 3000,
-                                            position: "bottom",
-                                            type: "success"
-                                        })
+                                        if (this.eliminarInvitacion(this.props.item.key) == 0) {
+                                            Toast.show({
+                                                text: "Invitado eliminado exitosamente.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "success"
+                                            })
+                                        }
+                                        
                                     }
                                 }
                             ],
