@@ -151,6 +151,7 @@ export default class BasicFlatList extends Component {
             .then(response => {
                 this.setState({ usuario: response });
                 this.obtenerReservas();
+                this.createListeners();
             })
             .catch(error => {
                 switch (error.name) {
@@ -163,6 +164,21 @@ export default class BasicFlatList extends Component {
             });
     }
 
+    componentWillUnmount() {
+        this._unsubscribeSnapshot.remove();
+        console.log('Se desmontó el componente!');
+    }
+
+    createListeners() {
+        this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
+            this.snapshotReservas();
+        });
+
+        this._subscribeSnapshot = this.props.navigation.addListener('didFocus', () => {
+            this.obtenerReservas();
+        });
+    }
+
     obtenerReservas = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refReservas = refCountry
@@ -170,7 +186,7 @@ export default class BasicFlatList extends Component {
             .doc(this.state.usuario.datos)
             .collection('Reservas');
 
-        refReservas
+        this.snapshotReservas = refReservas
             .where('Cancelado', '==', false)
             .where('FechaDesde', '>=', new Date())
             .orderBy('FechaDesde')
