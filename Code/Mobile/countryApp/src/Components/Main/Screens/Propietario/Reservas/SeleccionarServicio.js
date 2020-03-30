@@ -20,35 +20,35 @@ class FlatListItem extends Component {
             style: { backgroundColor: '#fff' }
         };
         return (
-                <Swipeout {...swipeOutSettings}>
-                    <ListItem
-                        avatar
-                        onPress={() => {
-                            Alert.alert(
-                                'Atención',
-                                '¿ Desea reservar el servicio ? ',
-                                [
-                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                    {
-                                        text: 'Aceptar',
-                                        onPress: () => {
-                                            if (nombreReserva == '') {
-                                                Toast.show({
-                                                    text: "Debe ingresar un nombre válido para la reserva.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "warning",
-                                                })
-                                            } else {
-                                                this.props.navigation.navigate('SeleccionarTurno', {
-                                                    servicio: this.props.item,
-                                                    nombreReserva: nombreReserva
-                                                });
-                                                nombreReserva = ''
-                                            }
+            <Swipeout {...swipeOutSettings}>
+                <ListItem
+                    avatar
+                    onPress={() => {
+                        Alert.alert(
+                            'Atención',
+                            '¿ Desea reservar el servicio ? ',
+                            [
+                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                {
+                                    text: 'Aceptar',
+                                    onPress: () => {
+                                        if (nombreReserva == '') {
+                                            Toast.show({
+                                                text: 'Debe ingresar un nombre válido para la reserva.',
+                                                buttonText: 'Aceptar',
+                                                duration: 3000,
+                                                position: 'bottom',
+                                                type: 'warning'
+                                            });
+                                        } else {
+                                            this.props.navigation.navigate('SeleccionarTurno', {
+                                                servicio: this.props.item,
+                                                nombreReserva: nombreReserva
+                                            });
+                                            nombreReserva = '';
                                         }
                                     }
+                                }
                             ],
                             { cancelable: true }
                         );
@@ -99,25 +99,31 @@ export default class BasicFlatList extends Component {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refServicios = refCountry.collection('Servicios');
 
-        refServicios.onSnapshot(snapshot => {
-            if (!snapshot.empty) {
-                var tempArray = [];
-                for (var i = 0; i < snapshot.docs.length; i++) {
-                    var servicio = {
-                        key: snapshot.docs[i].id,
-                        nombre: snapshot.docs[i].data().Nombre,
-                        disponibilidad: snapshot.docs[i].data().Disponibilidad,
-                        horaInicio: new Date(snapshot.docs[i].data().HoraInicio.seconds * 1000),
-                        horaFin: new Date(snapshot.docs[i].data().HoraFin.seconds * 1000),
-                        duracionTurno: snapshot.docs[i].data().DuracionTurno
-                    };
-                    tempArray.push(servicio);
+        refServicios
+            .get()
+            .then(snapshot => {
+                if (!snapshot.empty) {
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        var servicio = {
+                            key: snapshot.docs[i].id,
+                            nombre: snapshot.docs[i].data().Nombre,
+                            disponibilidad: snapshot.docs[i].data().Disponibilidad,
+                            horaInicio: new Date(snapshot.docs[i].data().HoraInicio.seconds * 1000),
+                            horaFin: new Date(snapshot.docs[i].data().HoraFin.seconds * 1000),
+                            duracionTurno: snapshot.docs[i].data().DuracionTurno
+                        };
+                        tempArray.push(servicio);
+                    }
+                    this.setState({ showSpinner: false, flatListData: tempArray });
+                } else {
+                    this.setState({ showSpinner: false, flatListData: [] });
                 }
-                this.setState({ showSpinner: false, flatListData: tempArray });
-            } else {
-                this.setState({ showSpinner: false, flatListData: [] });
-            }
-        });
+            })
+            .catch(error => {
+                this.setState({ showSpinner: false });
+                Alert.alert('Atención', 'Ocurrió un error: ', error);
+            });
     };
 
     componentDidMount() {
@@ -149,13 +155,13 @@ export default class BasicFlatList extends Component {
                 <View>
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <TextInput
-                            style={styles.textInput}
-                            placeholder="Nombre de la reserva"
-                            onChangeText={nombre => nombreReserva = nombre}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'default'}
+                        style={styles.textInput}
+                        placeholder="Ingrese el nombre de su reserva"
+                        onChangeText={nombre => (nombreReserva = nombre)}
+                        underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
+                        keyboardType={'default'}
                     />
                     <FlatList
                         data={this.state.flatListData}

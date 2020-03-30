@@ -43,7 +43,7 @@ class FlatListItem extends Component {
         var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
 
         refInvitado.delete();
-        return 0
+        return 0;
     };
 
     confirmarInvitado = invitado => {
@@ -60,7 +60,7 @@ class FlatListItem extends Component {
             },
             { merge: true }
         );
-        return 0
+        return 0;
     };
 
     render() {
@@ -228,6 +228,7 @@ export default class BasicFlatList extends Component {
             });
         }, 3000);
         this.obtenerInvitaciones();
+        this.createListeners();
     }
 
     componentWillMount() {
@@ -245,6 +246,11 @@ export default class BasicFlatList extends Component {
             usuario: usuario,
             reserva: reserva
         });
+    }
+
+    componentWillUnmount() {
+        this._unsubscribeSnapshot.remove();
+        this._subscribeSnapshot.remove();
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -293,13 +299,23 @@ export default class BasicFlatList extends Component {
         state = { flatListData: [] };
     }
 
+    createListeners() {
+        this._subscribeSnapshot = this.props.navigation.addListener('didFocus', () => {
+            this.obtenerInvitaciones();
+        });
+
+        this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
+            this.snapshotInvitados();
+        });
+    }
+
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc(this.state.reserva.key);
         var refInvitados = refReserva.collection('Invitados');
 
-        refInvitados.onSnapshot(snapshot => {
+        this.snapshotInvitados = refInvitados.onSnapshot(snapshot => {
             if (!snapshot.empty) {
                 //El propietario tiene invitaciones
                 var tempArray = [];

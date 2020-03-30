@@ -166,16 +166,16 @@ export default class BasicFlatList extends Component {
 
     componentWillUnmount() {
         this._unsubscribeSnapshot.remove();
-        console.log('Se desmontó el componente!');
+        this._subscribeSnapshot.remove();
     }
 
     createListeners() {
-        this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
-            this.snapshotReservas();
-        });
-
         this._subscribeSnapshot = this.props.navigation.addListener('didFocus', () => {
             this.obtenerReservas();
+        });
+        
+        this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
+            this.snapshotReservas();
         });
     }
 
