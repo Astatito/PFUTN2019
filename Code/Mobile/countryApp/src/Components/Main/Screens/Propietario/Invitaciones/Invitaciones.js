@@ -34,7 +34,7 @@ class FlatListItem extends Component {
         var refInvitados = refCountry.collection('Invitados');
 
         refInvitados.doc(invitacion).delete();
-        return 0
+        return 0;
     };
 
     render() {
@@ -64,14 +64,13 @@ class FlatListItem extends Component {
                                     onPress: () => {
                                         if (this.eliminarInvitacion(this.props.item.key) == 0) {
                                             Toast.show({
-                                                text: "Invitado eliminado exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Invitado eliminado exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success"
-                                            })
+                                                position: 'bottom',
+                                                type: 'success'
+                                            });
                                         }
-                                        
                                     }
                                 }
                             ],
@@ -191,8 +190,8 @@ export default class BasicFlatList extends Component {
         })
             .then(response => {
                 this.setState({ usuario: response });
-                console.log(this.state.usuario);
                 this.obtenerInvitaciones();
+                this.createListeners();
             })
             .catch(error => {
                 switch (error.name) {
@@ -206,11 +205,26 @@ export default class BasicFlatList extends Component {
             });
     }
 
+    componentWillUnmount() {
+        this._unsubscribeSnapshot.remove();
+        this._subscribeSnapshot.remove();
+    }
+
+    createListeners() {
+        this._subscribeSnapshot = this.props.navigation.addListener('didFocus', () => {
+            this.obtenerInvitaciones();
+        });
+
+        this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
+            this.snapshotInvitados();
+        });
+    }
+
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
 
-        refInvitados
+        this.snapshotInvitados = refInvitados
             .where(
                 'IdPropietario',
                 '==',
@@ -249,7 +263,7 @@ export default class BasicFlatList extends Component {
 
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
-            return(
+            return (
                 <View>
                     <Text style={styles.textDefault}> No hay invitaciones para mostrar. </Text>
                 </View>
@@ -263,7 +277,11 @@ export default class BasicFlatList extends Component {
                             data={this.state.flatListData}
                             renderItem={({ item, index }) => {
                                 return (
-                                    <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>
+                                    <FlatListItem
+                                        navigation={this.props.navigation}
+                                        item={item}
+                                        index={index}
+                                        parentFlatList={this}></FlatListItem>
                                 );
                             }}></FlatList>
                     </View>
@@ -279,7 +297,7 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
         color: '#FFF'
     },
-    textDefault : {
+    textDefault: {
         marginTop: '65%',
         textAlign: 'center',
         fontSize: 14,

@@ -51,7 +51,6 @@ class FlatListItem extends Component {
                                 selectedItems.push(this.props.item);
                                 this.setState({ isSelected: true });
                             }
-                            console.log(selectedItems);
                         }}>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
@@ -80,7 +79,6 @@ class FlatListItem extends Component {
                                 selectedItems.push(this.props.item);
                                 this.setState({ isSelected: true });
                             }
-                            console.log(selectedItems);
                         }}>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
@@ -109,7 +107,6 @@ class FlatListItem extends Component {
                                 selectedItems.push(this.props.item);
                                 this.setState({ isSelected: true });
                             }
-                            console.log(selectedItems);
                         }}>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
@@ -139,7 +136,6 @@ class FlatListItem extends Component {
                                 selectedItems.push(this.props.item);
                                 this.setState({ isSelected: true });
                             }
-                            console.log(selectedItems);
                         }}>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
@@ -170,7 +166,7 @@ export default class BasicFlatList extends Component {
 
     constructor(props) {
         super(props);
-        state = { flatListData: [], invitadosReserva: [] , idReserva: '' };
+        state = { flatListData: [], invitadosReserva: [], idReserva: '' };
     }
 
     componentDidMount() {
@@ -185,14 +181,14 @@ export default class BasicFlatList extends Component {
         selectedItems = [];
         const { navigation } = this.props;
         const reserva = navigation.getParam('reserva');
-        this.setState({ showSpinner: true, idReserva : reserva });
+        this.setState({ showSpinner: true, idReserva: reserva });
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
             .then(response => {
                 this.setState({ usuario: response });
                 this.obtenerInvitaciones();
-                this.obtenerInvitadosReserva()
+                this.obtenerInvitadosReserva();
             })
             .catch(error => {
                 switch (error.name) {
@@ -288,7 +284,6 @@ export default class BasicFlatList extends Component {
         var refInvitados = refReserva.collection('Invitados');
         var alMenosUnInvitado = false;
         for (var i = 0; i < selectedItems.length; i++) {
-            console.log(selectedItems[i]);
             var nuevoInvitado = {
                 Nombre: selectedItems[i].nombre,
                 Apellido: selectedItems[i].apellido,
@@ -298,29 +293,31 @@ export default class BasicFlatList extends Component {
                 IdInvitado: selectedItems[i].key
             };
             if (this.state.invitadosReserva) {
-                if (!this.state.invitadosReserva.find(inv => (inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento))) {
-                    alMenosUnInvitado = true
+                if (
+                    !this.state.invitadosReserva.find(
+                        inv => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
+                    )
+                ) {
+                    alMenosUnInvitado = true;
                     refInvitados.add(nuevoInvitado);
                 }
             } else {
                 //La lista está vacía. Entonces no hay invitados, agregamos a todos los que seleccione.
-                alMenosUnInvitado = true
+                alMenosUnInvitado = true;
                 refInvitados.add(nuevoInvitado);
             }
-            
+
             // TODO: FALTA DEFINIR LA LÓGICA PARA GESTIONAR LAS AUTORIZACIONES
         }
         this.setState({ showSpinner: false });
         if (alMenosUnInvitado == true) {
             return 0;
         } else {
-            return 1
+            return 1;
         }
     };
 
     isFlatListItemSelected = ({ item, index }) => {
-        console.log(item);
-        console.log(index);
         return <FlatListItem navigation={this.props.navigation} item={item} index={index} parentFlatList={this}></FlatListItem>;
     };
 
