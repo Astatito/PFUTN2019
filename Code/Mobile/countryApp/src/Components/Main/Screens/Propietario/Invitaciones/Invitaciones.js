@@ -190,7 +190,6 @@ export default class BasicFlatList extends Component {
         })
             .then(response => {
                 this.setState({ usuario: response });
-                console.log(this.state.usuario);
                 this.obtenerInvitaciones();
                 this.createListeners();
             })

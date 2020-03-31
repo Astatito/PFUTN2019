@@ -76,67 +76,43 @@ class Login extends Component {
                 showSpinner: false
             });
         }, 3000);
-
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                console.log(response.usuario);
-                console.log(response.tipoUsuario);
-                console.log(response.country);
-                console.log(response.datos);
-            })
-            .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
-            });
     }
 
     render() {
         return (
-            
-
             <View style={styles.container}>
                 <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                 <StatusBar backgroundColor="#96D0E8"></StatusBar>
-                <KeyboardAvoidingView behavior='height'>
-                <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
-                    <Image
-                        source={require('../../../assets/Images/LogoTransparente.png')}
-                        style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
-                </View>
-                <TextInput
-                    style={styles.textInput}
-                    placeholder="Usuario"
-                    onChangeText={email => this.setState({ email })}
-                    underlineColorAndroid="transparent"
-                />
-                <TextInput
-                    style={styles.textInput}
-                    placeholder="Contraseña"
-                    onChangeText={password => this.setState({ password })}
-                    underlineColorAndroid="transparent"
-                    secureTextEntry={true}
-                />
-                <TouchableOpacity style={styles.btn} onPress={this.onButtonPress.bind(this)}>
-                    <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
-                </TouchableOpacity>
-                <Text style={styles.result}>{this.state.result}</Text>
+                <KeyboardAvoidingView behavior="height">
+                    <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
+                        <Image
+                            source={require('../../../assets/Images/LogoTransparente.png')}
+                            style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
+                    </View>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Usuario"
+                        onChangeText={email => this.setState({ email })}
+                        underlineColorAndroid="transparent"
+                    />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Contraseña"
+                        onChangeText={password => this.setState({ password })}
+                        underlineColorAndroid="transparent"
+                        secureTextEntry={true}
+                    />
+                    <TouchableOpacity style={styles.btn} onPress={this.onButtonPress.bind(this)}>
+                        <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.result}>{this.state.result}</Text>
                 </KeyboardAvoidingView>
             </View>
-              
-            
         );
     }
 }
 
 const styles = StyleSheet.create({
-   
     wrapper: {
         flex: 1
     },

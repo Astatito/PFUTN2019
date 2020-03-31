@@ -34,7 +34,6 @@ class FlatListItem extends Component {
                                         this.setState({ isSelected: true });
                                     }
                                 }
-                                console.log(selectedItems);
                             }}>
                             <Left>
                                 <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
@@ -66,7 +65,6 @@ class FlatListItem extends Component {
                                         this.setState({ isSelected: true });
                                     }
                                 }
-                                console.log(selectedItems);
                             }}>
                             <Left>
                                 <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
@@ -98,7 +96,6 @@ class FlatListItem extends Component {
                                     selectedItems.push(this.props.item);
                                     this.setState({ isSelected: true });
                                 }
-                                console.log(selectedItems);
                             }}>
                             <Left>
                                 <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
@@ -128,7 +125,6 @@ class FlatListItem extends Component {
                                     selectedItems.push(this.props.item);
                                     this.setState({ isSelected: true });
                                 }
-                                console.log(selectedItems);
                             }}>
                             <Left>
                                 <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
@@ -270,8 +266,6 @@ export default class BasicFlatList extends Component {
             .then(snapshot => {
                 var reservas = [];
                 if (!snapshot.empty) {
-                    console.log('Reservas encontradas.');
-
                     for (var i = 0; i < snapshot.docs.length; i++) {
                         var reserva = {
                             desde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('HH:mm'),
@@ -279,8 +273,6 @@ export default class BasicFlatList extends Component {
                         };
                         reservas.push(reserva);
                     }
-                } else {
-                    console.log('No se encontró ninguna reserva.');
                 }
                 this.actualizarTurnos(reservas);
             })
@@ -350,8 +342,6 @@ export default class BasicFlatList extends Component {
                 Servicio: this.state.servicio.nombre
             };
 
-            console.log(reserva);
-
             refReserva.set(reserva);
             reserva.IdReservaServicio = Database.doc(
                 'Country/' + this.state.usuario.country + '/Servicios/' + this.state.servicio.key + '/Reservas/' + refReserva.id
@@ -374,7 +364,12 @@ export default class BasicFlatList extends Component {
             return (
                 <View>
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <Calendar selectedDate={this.state.selectedDate} onDateSelected={date => {this.fechaSeleccionada(date), this.setState({ selectedDate: date })}} />
+                    <Calendar
+                        selectedDate={this.state.selectedDate}
+                        onDateSelected={date => {
+                            this.fechaSeleccionada(date), this.setState({ selectedDate: date });
+                        }}
+                    />
                     <Text style={styles.textDefault}> No hay turnos para mostrar. </Text>
                 </View>
             );
@@ -386,7 +381,12 @@ export default class BasicFlatList extends Component {
                             <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
 
-                            <Calendar selectedDate={this.state.selectedDate} onDateSelected={date => {this.fechaSeleccionada(date), this.setState({ selectedDate: date })}} />
+                            <Calendar
+                                selectedDate={this.state.selectedDate}
+                                onDateSelected={date => {
+                                    this.fechaSeleccionada(date), this.setState({ selectedDate: date });
+                                }}
+                            />
 
                             <FlatList
                                 data={this.state.flatListData}
@@ -413,23 +413,23 @@ export default class BasicFlatList extends Component {
                                                             if (selectedItems.length > 0) {
                                                                 if (this.generarReserva() == 0) {
                                                                     Toast.show({
-                                                                        text: "Reserva realizada exitosamente.",
-                                                                        buttonText: "Aceptar",
+                                                                        text: 'Reserva realizada exitosamente.',
+                                                                        buttonText: 'Aceptar',
                                                                         duration: 3000,
-                                                                        position: "bottom",
-                                                                        type: "success",
-                                                                        onClose : this.onToastClosed.bind(this)
-                                                                    })
+                                                                        position: 'bottom',
+                                                                        type: 'success',
+                                                                        onClose: this.onToastClosed.bind(this)
+                                                                    });
                                                                 } else {
                                                                     Toast.show({
-                                                                        text: "Los turnos seleccionados deben ser consecutivos.",
-                                                                        buttonText: "Aceptar",
+                                                                        text: 'Los turnos seleccionados deben ser consecutivos.',
+                                                                        buttonText: 'Aceptar',
                                                                         duration: 3000,
-                                                                        position: "bottom",
-                                                                        type: "warning",
-                                                                    })
+                                                                        position: 'bottom',
+                                                                        type: 'warning'
+                                                                    });
                                                                 }
-                                                            } else { 
+                                                            } else {
                                                                 Toast.show({
                                                                     text: 'Debe seleccionar al menos un turno.',
                                                                     buttonText: 'Aceptar',
@@ -438,7 +438,6 @@ export default class BasicFlatList extends Component {
                                                                     type: 'warning'
                                                                 });
                                                             }
-                                                            
                                                         }
                                                     }
                                                 ],
