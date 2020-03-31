@@ -12,6 +12,7 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
+let datosPropietario = {};
 
 const navigateAction = NavigationActions.navigate({
     routeName: 'Propietario',
@@ -83,7 +84,7 @@ class MiPerfil extends Component {
                     celular: propietario.Celular,
                     fechaNacimiento: moment.unix(propietario.FechaNacimiento.seconds)
                 });
-                console.log(propietario);
+                datosPropietario = propietario;
                 this.setState({ showSpinner: false });
             }
         });
@@ -103,8 +104,26 @@ class MiPerfil extends Component {
             },
             { merge: true }
         );
+
+        // datosPropietario.Nombre = this.state.nombre;
+        // datosPropietario.Apellido = this.state.apellido;
+        // datosPropietario.Celular = this.state.celular;
+        // datosPropietario.FechaNacimiento = this.state.fechaNacimiento.toDate();
+
         this.setState({ showSpinner: false });
-        return 0
+        return 0;
+    };
+
+    cancelarCambios = () => {
+        this.setState({
+            nombre: datosPropietario.Nombre,
+            apellido: datosPropietario.Apellido,
+            legajo: datosPropietario.Legajo,
+            documento: datosPropietario.Documento,
+            picker: datosPropietario.TipoDocumento.id,
+            celular: datosPropietario.Celular,
+            fechaNacimiento: moment.unix(datosPropietario.FechaNacimiento.seconds)
+        });
     };
 
     obtenerPickers = () => {
@@ -147,9 +166,9 @@ class MiPerfil extends Component {
         this.setState({ isVisible: true });
     };
 
-    onToastClosed = (reason) => {
-        this.props.navigation.dispatch(navigateAction) 
-    }
+    onToastClosed = reason => {
+        this.props.navigation.dispatch(navigateAction);
+    };
 
     render() {
         const { isFocused } = this.state;
@@ -270,13 +289,13 @@ class MiPerfil extends Component {
                                         onPress={() => {
                                             if (this.actualizarDatos() == 0) {
                                                 Toast.show({
-                                                    text: "Datos personales actualizados.",
-                                                    buttonText: "Aceptar",
+                                                    text: 'Datos personales actualizados.',
+                                                    buttonText: 'Aceptar',
                                                     duration: 3000,
-                                                    position: "bottom",
-                                                    type: "success",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
+                                                    position: 'bottom',
+                                                    type: 'success',
+                                                    onClose: this.onToastClosed.bind(this)
+                                                });
                                             }
                                         }}>
                                         <Text>Aceptar</Text>
@@ -288,6 +307,7 @@ class MiPerfil extends Component {
                                         danger
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
+                                            this.cancelarCambios();
                                             this.props.navigation.dispatch(navigateAction);
                                         }}>
                                         <Text>Cancelar</Text>
@@ -298,7 +318,6 @@ class MiPerfil extends Component {
                     </Content>
                 </ScrollView>
             </Root>
-            
         );
     }
 }
