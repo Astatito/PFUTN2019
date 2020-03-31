@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Content, Button, Text, Picker } from 'native-base';
+import { Content, Button, Text, Picker, Root, Toast } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
@@ -94,71 +94,61 @@ class EgresoManual extends Component {
     };
 
     //Registra el egreso según tipo y número de documento
-    registrarEgreso = (tipoDoc, numeroDoc) => {
+    registrarEgreso = async (tipoDoc, numeroDoc) => {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
         this.setState({ showSpinner: true });
-        refPropietarios
-            .where('Documento', '==', numeroDoc)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
-            .get()
-            .then(snapshot => {
-                if (!snapshot.empty) {
-                    //Si existe el propietario, registra el egreso.
-                    var docPropietario = snapshot.docs[0].data();
-
-                    var result = this.grabarEgreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
-                    if (result == 0) {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'El egreso se registró correctamente. (PROPIETARIO)');
-                        this.props.navigation.navigate('Egreso');
-                    } else {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
-                    }
+        try {
+            const snapshot = await refPropietarios.where('Documento', '==', numeroDoc).where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc)).get()
+            if (!snapshot.empty) {
+                //Si existe el propietario, registra el egreso.
+                var docPropietario = snapshot.docs[0].data();
+                var result = this.grabarEgreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
+                if (result == 0) {
+                    this.setState({ showSpinner: false });
+                    return 0
                 } else {
-                    //Si no existe el propietario, busca si tiene invitaciones.
-                    var refInvitados = refCountry.collection('Invitados');
-
-                    refInvitados
-                        .where('Documento', '==', numeroDoc)
-                        .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
-                        .get()
-                        .then(snapshot => {
-                            if (!snapshot.empty) {
-                                //Si tiene invitaciones, verifica que haya alguna invitación válida.
-
-                                var invitacion = this.obtenerInvitacionValida(snapshot.docs);
-                                if (invitacion != -1) {
-                                    //Si hay una invitación válida, registra el egreso.
-
-                                    var result = this.grabarEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
-                                    if (result == 0) {
-                                        this.setState({ showSpinner: false });
-                                        Alert.alert('Atención', 'El egreso se registró correctamente. (VISITANTE)');
-                                        this.props.navigation.navigate('Egreso');
-                                    } else {
-                                        this.setState({ showSpinner: false });
-                                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
-                                    }
-                                } else {
-                                    //Si no tiene invitaciones, emitir alerta.
-                                    this.setState({ showSpinner: false });
-                                    Alert.alert('Atención', 'ESA PERSONA NO DEBERÍA ESTAR ADENTRO.');
-                                }
-                            } else {
-                                //Si no es propietario ni visitante, emitir alerta.
-                                this.setState({ showSpinner: false });
-                                Alert.alert('Atención', 'ESA PERSONA ES UN FANTASMA .');
-                            }
-                        });
+                    this.setState({ showSpinner: false });
+                    return 1
                 }
-            })
-            .catch(error => {
-                this.setState({ showSpinner: false });
-                Alert.alert('Atención', 'Ocurrió un error: ', error);
-            });
+            } else {
+                //Si no existe el propietario, busca si tiene invitaciones.
+                var refInvitados = refCountry.collection('Invitados');
+                const snapshot = await refInvitados.where('Documento', '==', numeroDoc).where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc)).get()
+                    if (!snapshot.empty) {
+                        //Si tiene invitaciones, verifica que haya alguna invitación válida.
+                        var invitacion = this.obtenerInvitacionValida(snapshot.docs);
+                        if (invitacion != -1) {
+                            //Si hay una invitación válida, registra el egreso.
+
+                            var result = this.grabarEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
+                            if (result == 0) {
+                                this.setState({ showSpinner: false });
+                                return 0
+                            } else {
+                                this.setState({ showSpinner: false });
+                                return 1
+                            }
+                        } else {
+                            //Si no tiene invitaciones, emitir alerta.
+                            this.setState({ showSpinner: false });
+                            return 2
+                        }
+                    } else {
+                        //Si no es propietario ni visitante, emitir alerta.
+                        this.setState({ showSpinner: false });
+                        return 3;
+                    }
+            };
+        } catch (error) {
+            this.setState({ showSpinner: false });
+            return 1
+        }
+    }
+        
+    onToastClosed = reason => {
+        this.props.navigation.navigate('Egreso');
     };
 
     handleFocus = event => {
@@ -182,62 +172,101 @@ class EgresoManual extends Component {
         }
 
         return (
-            <ScrollView>
-                <Content>
-                    <View style={styles.container}>
-                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                        <Text style={styles.header}> Registrar nuevo Egreso</Text>
+            <Root>
+                <ScrollView>
+                    <Content>
+                        <View style={styles.container}>
+                            <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                            <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                            <Text style={styles.header}> Registrar nuevo Egreso</Text>
 
-                        <Picker
-                            note
-                            mode="dropdown"
-                            style={styles.picker}
-                            selectedValue={this.state.picker}
-                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
-                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
-                            {this.state.tiposDocumento.map((item, index) => {
-                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
-                            })}
-                        </Picker>
+                            <Picker
+                                note
+                                mode="dropdown"
+                                style={styles.picker}
+                                selectedValue={this.state.picker}
+                                onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
+                                <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                                {this.state.tiposDocumento.map((item, index) => {
+                                    return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                                })}
+                            </Picker>
 
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Número de documento"
-                            onChangeText={documento => this.setState({ documento })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'numeric'}
-                        />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Número de documento"
+                                onChangeText={documento => this.setState({ documento })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'numeric'}
+                            />
 
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    success
-                                    style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.registrarEgreso(this.state.picker, this.state.documento);
-                                    }}>
-                                    <Text>Aceptar</Text>
-                                </Button>
-                            </View>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    danger
-                                    style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.props.navigation.goBack();
-                                    }}>
-                                    <Text>Cancelar</Text>
-                                </Button>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={styles.buttons}>
+                                    <Button
+                                        bordered
+                                        success
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={async () => {
+                                            const result = await this.registrarEgreso(this.state.picker, this.state.documento);
+                                            if (result == 0) {
+                                                Toast.show({
+                                                    text: "Egreso registrado exitosamente.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 1) {
+                                                Toast.show({
+                                                    text: "Lo siento, ocurrió un error inesperado.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "danger",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 2) {
+                                                Toast.show({
+                                                    text: "El visitante no tiene ningún ingreso registrado.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "warning",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 3) {
+                                                Toast.show({
+                                                    text: "Esta persona es un fantasma.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "warning",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } 
+                                        }}>
+                                        <Text>Aceptar</Text>
+                                    </Button>
+                                </View>
+                                <View style={styles.buttons}>
+                                    <Button
+                                        bordered
+                                        danger
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={() => {
+                                            this.props.navigation.goBack();
+                                        }}>
+                                        <Text>Cancelar</Text>
+                                    </Button>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </Content>
-            </ScrollView>
+                    </Content>
+                </ScrollView>
+            </Root>
         );
     }
 }

@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Content, Button, Text, Picker } from 'native-base';
+import { Content, Button, Text, Picker, Root, Toast } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
@@ -102,16 +102,19 @@ class RegistroVisitante extends Component {
         if (resultAut == 0) {
             if (resultGrab == 0) {
                 this.setState({ showSpinner: false });
-                Alert.alert('Atención', 'El ingreso se registró correctamente. (VISITANTE SIN AUTENTICAR)');
-                this.props.navigation.navigate('Ingreso');
+                return 0
             } else {
                 this.setState({ showSpinner: false });
-                Alert.alert('Atención', 'Ocurrió un error: ' + resultGrab);
+                return 1
             }
         } else {
             this.setState({ showSpinner: false });
-            Alert.alert('Atención', 'Ocurrió un error: ' + resultAut);
+            return 1
         }
+    };
+
+    onToastClosed = reason => {
+        this.props.navigation.navigate('Ingreso');
     };
 
     //Autentica los datos del visitante en Firestore
@@ -128,7 +131,6 @@ class RegistroVisitante extends Component {
                 },
                 { merge: true }
             );
-
             return 0;
         } catch (error) {
             return error;
@@ -151,7 +153,6 @@ class RegistroVisitante extends Component {
                 Fecha: new Date(),
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos)
             });
-
             return 0;
         } catch (error) {
             return error;
@@ -195,110 +196,131 @@ class RegistroVisitante extends Component {
         }
 
         return (
-            <ScrollView>
-                <Content>
-                    <View style={styles.container}>
-                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                        <Text style={styles.header}> Registrar nuevo visitante</Text>
+            <Root>
+                <ScrollView>
+                    <Content>
+                        <View style={styles.container}>
+                            <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                            <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                            <Text style={styles.header}> Registrar nuevo visitante</Text>
 
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Nombre"
-                            value={this.state.nombre}
-                            onChangeText={nombre => this.setState({ nombre })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'default'}
-                        />
-
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Apellido"
-                            value={this.state.apellido}
-                            onChangeText={apellido => this.setState({ apellido })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'default'}
-                        />
-
-                        <Picker
-                            note
-                            mode="dropdown"
-                            style={styles.picker}
-                            selectedValue={this.state.picker}
-                            enabled={this.state.isEditable}
-                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
-                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
-                            {this.state.tiposDocumento.map((item, index) => {
-                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
-                            })}
-                        </Picker>
-
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Número de documento"
-                            value={this.state.documento}
-                            onChangeText={documento => this.setState({ documento })}
-                            editable={this.state.isEditable}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'numeric'}
-                        />
-
-                        <View style={styles.datetime}>
-                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                                {this.state.fechaNacimiento.format('D/M/YYYY')}
-                            </Text>
-                            <IconFontAwesome
-                                style={{ alignSelf: 'center' }}
-                                onPress={() => {
-                                    console.log(this.state.fechaNacimiento);
-                                    this.showPicker();
-                                }}
-                                name="calendar"
-                                size={25}
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Nombre"
+                                value={this.state.nombre}
+                                onChangeText={nombre => this.setState({ nombre })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'default'}
                             />
-                        </View>
 
-                        <DateTimePicker
-                            isVisible={this.state.isVisible}
-                            onConfirm={this.handlePicker}
-                            onCancel={this.hidePicker}
-                            mode={'date'}
-                            is24Hour={true}></DateTimePicker>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Apellido"
+                                value={this.state.apellido}
+                                onChangeText={apellido => this.setState({ apellido })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'default'}
+                            />
 
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    success
-                                    style={{ paddingHorizontal: '5%' }}
+                            <Picker
+                                note
+                                mode="dropdown"
+                                style={styles.picker}
+                                selectedValue={this.state.picker}
+                                enabled={this.state.isEditable}
+                                onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
+                                <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                                {this.state.tiposDocumento.map((item, index) => {
+                                    return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                                })}
+                            </Picker>
+
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Número de documento"
+                                value={this.state.documento}
+                                onChangeText={documento => this.setState({ documento })}
+                                editable={this.state.isEditable}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'numeric'}
+                            />
+
+                            <View style={styles.datetime}>
+                                <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
+                                <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
+                                    {this.state.fechaNacimiento.format('D/M/YYYY')}
+                                </Text>
+                                <IconFontAwesome
+                                    style={{ alignSelf: 'center' }}
                                     onPress={() => {
-                                        this.grabarDatos();
-                                    }}>
-                                    <Text>Aceptar</Text>
-                                </Button>
+                                        console.log(this.state.fechaNacimiento);
+                                        this.showPicker();
+                                    }}
+                                    name="calendar"
+                                    size={25}
+                                />
                             </View>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    danger
-                                    style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.props.navigation.goBack();
-                                    }}>
-                                    <Text>Cancelar</Text>
-                                </Button>
+
+                            <DateTimePicker
+                                isVisible={this.state.isVisible}
+                                onConfirm={this.handlePicker}
+                                onCancel={this.hidePicker}
+                                mode={'date'}
+                                is24Hour={true}></DateTimePicker>
+
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={styles.buttons}>
+                                    <Button
+                                        bordered
+                                        success
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={() => {
+                                            const result = this.grabarDatos();
+                                            if (result == 0) {
+                                                Toast.show({
+                                                    text: "Ingreso registrado exitosamente.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 1) {
+                                                Toast.show({
+                                                    text: "Lo siento, ocurrió un error inesperado.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "danger",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            }
+                                        }}>
+                                        <Text>Aceptar</Text>
+                                    </Button>
+                                </View>
+                                <View style={styles.buttons}>
+                                    <Button
+                                        bordered
+                                        danger
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={() => {
+                                            this.props.navigation.goBack();
+                                        }}>
+                                        <Text>Cancelar</Text>
+                                    </Button>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </Content>
-            </ScrollView>
+                    </Content>
+                </ScrollView>
+            </Root>
         );
     }
 }
