@@ -111,7 +111,6 @@ class NuevoInvitado extends Component {
     }
 
     registrarNuevoInvitado = (tipoDoc, numeroDoc) => {
-        this.setState({ showSpinner: true });
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
 
@@ -127,7 +126,6 @@ class NuevoInvitado extends Component {
             Documento: numeroDoc,
             TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc)
         });
-        this.setState({ showSpinner: false });
         return 0
     };
 
@@ -214,16 +212,20 @@ class NuevoInvitado extends Component {
                                     success
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={() => {
-                                        if (this.registrarNuevoInvitado(this.state.picker, this.state.documento) == 0) {
-                                            Toast.show({
-                                                text: "Invitado registrado exitosamente.",
-                                                buttonText: "Aceptar",
-                                                duration: 3000,
-                                                position: "bottom",
-                                                type: "success",
-                                                onClose : this.onToastClosed.bind(this)
-                                            })
-                                        }
+                                        this.setState({ showSpinner: true }, () => {
+                                            if ( this.registrarNuevoInvitado(this.state.picker, this.state.documento) == 0) {
+                                                this.setState({ showSpinner: false } , () => {
+                                                    Toast.show({
+                                                        text: "Invitado registrado exitosamente.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "success",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                });
+                                            }
+                                        });
                                     }}>
                                     <Text>Aceptar</Text>
                                 </Button>

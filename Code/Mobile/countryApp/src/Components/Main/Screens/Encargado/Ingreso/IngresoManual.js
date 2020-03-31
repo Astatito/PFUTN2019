@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Content, Button, Text, Picker } from 'native-base';
+import { Content, Button, Text, Picker, Root, Toast } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
@@ -19,7 +19,7 @@ class IngresoManual extends Component {
         };
     };
 
-    state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused: false, usuario: {} };
+    state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused: false, usuario: {}, invitacionId : null };
 
     componentDidMount() {
         setInterval(() => {
@@ -73,7 +73,6 @@ class IngresoManual extends Component {
                 Fecha: new Date(),
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos)
             });
-
             return 0;
         } catch (error) {
             return error;
@@ -91,7 +90,6 @@ class IngresoManual extends Component {
                 return docInvitacion;
             }
         }
-
         return -1;
     };
 
@@ -113,85 +111,72 @@ class IngresoManual extends Component {
     };
 
     //Registra el ingreso según tipo y número de documento
-    registrarIngreso = (tipoDoc, numeroDoc) => {
+    registrarIngreso = async (tipoDoc, numeroDoc) => {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
         this.setState({ showSpinner: true });
-        refPropietarios
-            .where('Documento', '==', numeroDoc)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
-            .get()
-            .then(snapshot => {
-                if (!snapshot.empty) {
-                    //Si existe el propietario, registra el ingreso.
-                    var docPropietario = snapshot.docs[0].data();
-
-                    var result = this.grabarIngreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
-                    if (result == 0) {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'El ingreso se registró correctamente. (PROPIETARIO)');
-                        this.props.navigation.navigate('Ingreso');
+        try {
+            const snapshot = await refPropietarios .where('Documento', '==', numeroDoc) .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc)).get()
+            if (!snapshot.empty) {
+                //Si existe el propietario, registra el ingreso.
+                var docPropietario = snapshot.docs[0].data();
+                var result = this.grabarIngreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
+                if (result == 0) {
+                    this.setState({ showSpinner: false });
+                    console.log('entro')
+                    return 0
                     } else {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
-                    }
-                } else {
-                    //Si no existe el propietario, busca si tiene invitaciones.
-                    var refInvitados = refCountry.collection('Invitados');
-
-                    refInvitados
-                        .where('Documento', '==', numeroDoc)
-                        .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
-                        .get()
-                        .then(snapshot => {
-                            if (!snapshot.empty) {
-                                //Si tiene invitaciones, verifica que haya alguna invitación válida.
-
-                                var invitacion = this.obtenerInvitacionValida(snapshot.docs);
-                                if (invitacion != -1) {
-                                    //Si hay una invitación válida, verifica que esté autenticado.
-
-                                    if (this.estaAutenticado(invitacion)) {
-                                        //Si está autenticado, registra el ingreso.
-                                        var result = this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
-                                        if (result == 0) {
-                                            this.setState({ showSpinner: false });
-                                            Alert.alert(
-                                                'Atención',
-                                                'El ingreso se registró correctamente. (VISITANTE AUTENTICADO CON INVITACIÓN VÁLIDA)'
-                                            );
-                                            this.props.navigation.navigate('Ingreso');
-                                        } else {
-                                            this.setState({ showSpinner: false });
-                                            Alert.alert('Atención', 'Ocurrió un error: ' + result);
-                                        }
-                                    } else {
-                                        //Si no está autenticado, se debe autenticar.
-                                        console.log('El visitante no está autenticado, se debe autenticar primero.');
-                                        console.log(invitacion);
-                                        this.autenticarVisitante(tipoDoc, numeroDoc, this.state.usuario, invitacion.id);
-                                        this.setState({ showSpinner: false });
-                                    }
-                                } else {
-                                    // Existe pero no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
-                                    console.log('No hay ninguna invitación válida.');
+                    this.setState({ showSpinner: false });
+                    return 1
+                }
+            } else {
+                //Si no existe el propietario, busca si tiene invitaciones.
+                var refInvitados = refCountry.collection('Invitados');
+                const snapshot = await refInvitados.where('Documento', '==', numeroDoc).where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc)).get()
+                    if (!snapshot.empty) {
+                        //Si tiene invitaciones, verifica que haya alguna invitación válida.
+                        var invitacion = this.obtenerInvitacionValida(snapshot.docs);
+                        if (invitacion != -1) {
+                            //Si hay una invitación válida, verifica que esté autenticado.
+            
+                            if (this.estaAutenticado(invitacion)) {
+                                //Si está autenticado, registra el ingreso.
+                                var result = this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
+                                if (result == 0) {
                                     this.setState({ showSpinner: false });
-                                    Alert.alert('Atención', 'No se encontró ninguna invitación válida.');
+                                    return 0
+                                } else {
+                                    this.setState({ showSpinner: false });
+                                    return 1
                                 }
                             } else {
-                                //La persona no existe , TODO:se debe generar una nueva invitación por ese día.
-                                console.log('No tiene invitaciones.');
-                                this.setState({ showSpinner: false });
-                                Alert.alert('Atención', 'La persona no existe.');
+                                //Si no está autenticado, se debe autenticar.
+                                this.setState({ showSpinner: false, invitacionId: invitacion.id });
+                                return 2
                             }
-                        });
-                }
-            })
-            .catch(error => {
-                Alert.alert('Atención', 'Ocurrió un error: ', error);
-                this.setState({ showSpinner: false });
-            });
+                        } else {
+                            // Existe pero no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
+                            return 3
+                        }
+                    } else {
+                        //La persona no existe , TODO:se debe generar una nueva invitación por ese día.
+                        this.setState({ showSpinner: false });
+                        return 4
+                    }
+            }
+        } catch (error) {
+            this.setState({ showSpinner: false });
+                return 1
+        } 
+    };
+
+    onToastClosed = reason => {
+        this.props.navigation.navigate('Ingreso');
+    };
+
+    autenticarToast = (reason ) => {
+        this.autenticarVisitante(this.state.picker, this.state.documento, this.state.usuario, this.state.invitacionId);
     };
 
     handleFocus = event => {
@@ -215,62 +200,111 @@ class IngresoManual extends Component {
         }
 
         return (
-            <ScrollView>
-                <Content>
-                    <View style={styles.container}>
-                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                        <Text style={styles.header}>Registrar nuevo ingreso</Text>
+            <Root>
+                <ScrollView>
+                    <Content>
+                        <View style={styles.container}>
+                            <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                            <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                            <Text style={styles.header}>Registrar nuevo ingreso</Text>
 
-                        <Picker
-                            note
-                            mode="dropdown"
-                            style={styles.picker}
-                            selectedValue={this.state.picker}
-                            onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
-                            <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
-                            {this.state.tiposDocumento.map((item, index) => {
-                                return <Picker.Item label={item.nombre} value={item.id} key={index} />;
-                            })}
-                        </Picker>
+                            <Picker
+                                note
+                                mode="dropdown"
+                                style={styles.picker}
+                                selectedValue={this.state.picker}
+                                onValueChange={(itemValue, itemIndex) => this.setState({ picker: itemValue })}>
+                                <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
+                                {this.state.tiposDocumento.map((item, index) => {
+                                    return <Picker.Item label={item.nombre} value={item.id} key={index} />;
+                                })}
+                            </Picker>
 
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Número de documento"
-                            onChangeText={documento => this.setState({ documento })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
-                            keyboardType={'numeric'}
-                        />
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Número de documento"
+                                onChangeText={documento => this.setState({ documento })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'numeric'}
+                            />
 
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    success
-                                    style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.registrarIngreso(this.state.picker, this.state.documento);
-                                    }}>
-                                    <Text>Aceptar</Text>
-                                </Button>
-                            </View>
-                            <View style={styles.buttons}>
-                                <Button
-                                    bordered
-                                    danger
-                                    style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.props.navigation.goBack();
-                                    }}>
-                                    <Text>Cancelar</Text>
-                                </Button>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={styles.buttons}>
+                                    <Button
+                                        bordered
+                                        success
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={async () => {    
+                                            const result = await this.registrarIngreso(this.state.picker, this.state.documento)                                
+                                            if (result == 0) {
+                                                Toast.show({
+                                                    text: "Ingreso registrado exitosamente.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 1) {
+                                                Toast.show({
+                                                    text: "Lo siento, ocurrió un error inesperado.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "danger",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 2) {
+                                                Toast.show({
+                                                    text: "El visitante no está autenticado, se debe autenticar primero.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "warning",
+                                                    onClose : this.autenticarToast.bind(this)
+                                                })
+                                            } else if (result == 3) {
+                                                Toast.show({
+                                                    text: "El invitado no tiene ninguna invitación activa.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "warning",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 4) {
+                                                Toast.show({
+                                                    text: "La persona no se encuentra registrada en el sistema.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "warning",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            }
+                                        }}>
+                                        <Text>Aceptar</Text>
+                                    </Button>
+                                </View>
+                                <View style={styles.buttons}>
+                                    <Button
+                                        bordered
+                                        danger
+                                        style={{ paddingHorizontal: '5%' }}
+                                        onPress={() => {
+                                            this.props.navigation.goBack();
+                                        }}>
+                                        <Text>Cancelar</Text>
+                                    </Button>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </Content>
-            </ScrollView>
+                    </Content>
+                </ScrollView>
+            </Root>
+            
         );
     }
 }
@@ -318,3 +352,4 @@ const styles = StyleSheet.create({
 });
 
 export default IngresoManual;
+
