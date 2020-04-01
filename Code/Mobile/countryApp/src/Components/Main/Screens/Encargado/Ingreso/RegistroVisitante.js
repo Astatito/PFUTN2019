@@ -62,9 +62,13 @@ class RegistroVisitante extends Component {
     }
 
     componentDidMount() {
-        Alert.alert('Atención', 'El visitante no está registrado; por favor, complete el siguiente formulario. ', [
-            { text: 'Aceptar', onPress: () => console.log('Cancel pressed'), style: 'cancel' }
-        ]);
+        Toast.show({
+            text: "El visitante no está autenticado, complete el formulario.",
+            buttonText: "Aceptar",
+            duration: 3000,
+            position: "bottom",
+            type: "warning",
+        })
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.

@@ -21,18 +21,22 @@ class Login extends Component {
         };
     };
 
-    onButtonPress() {
+    async onButtonPress() {
         this.setState({ showSpinner: true });
-        Firebase.auth()
-            .signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then(() => {
-                this.setState({ result: 'Logueo exitoso.' });
-                this.logueoUsuario();
-            })
-            .catch(() => {
-                this.setState({ result: 'Falló la autenticación.' });
-                this.setState({ showSpinner: false });
-            });
+        try {
+            Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+            this.setState({ result: 'Logueo exitoso.' });
+            const home = await this.logueoUsuario();
+            if (home == 1) {
+                this.props.navigation.navigate('Propietario')
+            } else if (home == 2){
+                this.props.navigation.navigate('Encargado')
+            }
+        } catch (error) {
+            this.setState({ result: 'Falló la autenticación.' });
+        } finally {
+            this.setState({ showSpinner: false });
+        }   
     }
 
     storeUsuario = (keyStore, obj) => {
@@ -47,27 +51,23 @@ class Login extends Component {
         });
     };
 
-    logueoUsuario = () => {
+    logueoUsuario = async () => {
         var dbRef = Database.collection('Usuarios');
-        var dbDoc = dbRef
-            .doc(this.state.email.toLowerCase())
-            .get()
-            .then(doc => {
-                if (doc.exists) {
-                    this.storeUsuario('UsuarioLogueado', doc.data());
-
-                    switch (doc.data().TipoUsuario.id) {
-                        case 'Propietario':
-                            this.props.navigation.navigate('Propietario');
-                            this.setState({ showSpinner: false });
-                            break;
-                        case 'Encargado':
-                            this.props.navigation.navigate('Encargado');
-                            this.setState({ showSpinner: false });
-                            break;
-                    }
+        try {
+            var doc = await dbRef.doc(this.state.email.toLowerCase()).get()
+            this.setState({ result: 'Logueo exitoso.' });
+            if (doc.exists) {
+                this.storeUsuario('UsuarioLogueado', doc.data());
+                switch (doc.data().TipoUsuario.id) {
+                    case 'Propietario':
+                        return 1
+                    case 'Encargado':
+                        return 2
                 }
-            });
+            }
+        } catch (error) {
+            
+        } 
     };
 
     componentDidMount() {
