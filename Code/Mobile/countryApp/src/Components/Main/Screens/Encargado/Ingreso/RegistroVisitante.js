@@ -93,22 +93,23 @@ class RegistroVisitante extends Component {
     }
 
     //Graba los datos referidos a la autenticación y el ingreso en Firestore
-    grabarDatos = () => {
-        this.setState({ showSpinner: true });
-        var resultAut = this.autenticarVisitante();
-        var resultGrab = this.grabarIngreso(this.state.nombre, this.state.apellido, this.state.picker, this.state.documento);
-
-        if (resultAut == 0) {
-            if (resultGrab == 0) {
-                this.setState({ showSpinner: false });
-                return 0
+    grabarDatos = async () => {
+        try {
+            var resultAut = await this.autenticarVisitante();
+            var resultGrab = await this.grabarIngreso(this.state.nombre, this.state.apellido, this.state.picker, this.state.documento);
+            if (resultAut == 0) {
+                if (resultGrab == 0) {
+                    return 0
+                } else {
+                    return 1
+                }
             } else {
-                this.setState({ showSpinner: false });
                 return 1
             }
-        } else {
-            this.setState({ showSpinner: false });
+        } catch (error) {
             return 1
+        } finally {
+            this.setState({ showSpinner: false });
         }
     };
 
@@ -117,12 +118,12 @@ class RegistroVisitante extends Component {
     };
 
     //Autentica los datos del visitante en Firestore
-    autenticarVisitante = () => {
+    autenticarVisitante = async () => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refInvitacion = refCountry.collection('Invitados').doc(this.state.idInvitacion);
 
-            refInvitacion.set(
+            await refInvitacion.set(
                 {
                     Nombre: this.state.nombre,
                     Apellido: this.state.apellido,
@@ -132,16 +133,16 @@ class RegistroVisitante extends Component {
             );
             return 0;
         } catch (error) {
-            return error;
+            return 1;
         }
     };
 
     //Graba el ingreso en Firestore
-    grabarIngreso = (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            refIngresos.add({
+            await refIngresos.add({
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -154,7 +155,7 @@ class RegistroVisitante extends Component {
             });
             return 0;
         } catch (error) {
-            return error;
+            return 1;
         }
     };
 
@@ -280,26 +281,28 @@ class RegistroVisitante extends Component {
                                         success
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
-                                            const result = this.grabarDatos();
-                                            if (result == 0) {
-                                                Toast.show({
-                                                    text: "Ingreso registrado exitosamente.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "success",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 1) {
-                                                Toast.show({
-                                                    text: "Lo siento, ocurrió un error inesperado.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "danger",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            }
+                                            this.setState({ showSpinner: true }, async () => {
+                                                const result = await this.grabarDatos();  
+                                                if (result == 0) {
+                                                    Toast.show({
+                                                        text: "Ingreso registrado exitosamente.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "success",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 1) {
+                                                    Toast.show({
+                                                        text: "Lo siento, ocurrió un error inesperado.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "danger",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                }
+                                            }); 
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>

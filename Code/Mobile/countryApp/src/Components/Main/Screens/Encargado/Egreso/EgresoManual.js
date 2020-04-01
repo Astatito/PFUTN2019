@@ -57,11 +57,11 @@ class EgresoManual extends Component {
     };
 
     //Graba el egreso en Firestore
-    grabarEgreso = (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarEgreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refEgresos = refCountry.collection('Egresos');
-            refEgresos.add({
+            await refEgresos.add({
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -70,10 +70,9 @@ class EgresoManual extends Component {
                 Fecha: new Date(),
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos)
             });
-
             return 0;
         } catch (error) {
-            return error;
+            return 1;
         }
     };
 
@@ -97,18 +96,15 @@ class EgresoManual extends Component {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-        this.setState({ showSpinner: true });
         try {
             const snapshot = await refPropietarios.where('Documento', '==', numeroDoc).where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc)).get()
             if (!snapshot.empty) {
                 //Si existe el propietario, registra el egreso.
                 var docPropietario = snapshot.docs[0].data();
-                var result = this.grabarEgreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
+                var result = await this.grabarEgreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
                 if (result == 0) {
-                    this.setState({ showSpinner: false });
                     return 0
                 } else {
-                    this.setState({ showSpinner: false });
                     return 1
                 }
             } else {
@@ -120,29 +116,25 @@ class EgresoManual extends Component {
                         var invitacion = this.obtenerInvitacionValida(snapshot.docs);
                         if (invitacion != -1) {
                             //Si hay una invitación válida, registra el egreso.
-
-                            var result = this.grabarEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
+                            var result = await this.grabarEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                             if (result == 0) {
-                                this.setState({ showSpinner: false });
                                 return 0
                             } else {
-                                this.setState({ showSpinner: false });
                                 return 1
                             }
                         } else {
                             //Si no tiene invitaciones, emitir alerta.
-                            this.setState({ showSpinner: false });
                             return 2
                         }
                     } else {
                         //Si no es propietario ni visitante, emitir alerta.
-                        this.setState({ showSpinner: false });
                         return 3;
                     }
             };
         } catch (error) {
-            this.setState({ showSpinner: false });
             return 1
+        } finally {
+            this.setState({ showSpinner: false });
         }
     }
         
@@ -208,44 +200,46 @@ class EgresoManual extends Component {
                                         success
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={async () => {
-                                            const result = await this.registrarEgreso(this.state.picker, this.state.documento);
-                                            if (result == 0) {
-                                                Toast.show({
-                                                    text: "Egreso registrado exitosamente.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "success",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 1) {
-                                                Toast.show({
-                                                    text: "Lo siento, ocurrió un error inesperado.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "danger",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 2) {
-                                                Toast.show({
-                                                    text: "El visitante no tiene ningún ingreso registrado.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "warning",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 3) {
-                                                Toast.show({
-                                                    text: "Esta persona es un fantasma.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "warning",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } 
+                                            this.setState({ showSpinner: true }, async () => {
+                                                const result = await this.registrarEgreso(this.state.picker, this.state.documento);
+                                                if (result == 0) {
+                                                    Toast.show({
+                                                        text: "Egreso registrado exitosamente.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "success",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 1) {
+                                                    Toast.show({
+                                                        text: "Lo siento, ocurrió un error inesperado.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "danger",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 2) {
+                                                    Toast.show({
+                                                        text: "El visitante no tiene ningún ingreso registrado.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "warning",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 3) {
+                                                    Toast.show({
+                                                        text: "Esta persona es un fantasma.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "warning",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } 
+                                            })
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>

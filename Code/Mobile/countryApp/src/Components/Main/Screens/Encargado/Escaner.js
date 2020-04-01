@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Database } from '../../../DataBase/Firebase';
 import { LocalStorage } from '../../../DataBase/Storage';

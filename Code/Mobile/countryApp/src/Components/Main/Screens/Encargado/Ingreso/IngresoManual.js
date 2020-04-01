@@ -57,11 +57,11 @@ class IngresoManual extends Component {
     };
 
     //Graba el ingreso en Firestore
-    grabarIngreso = (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            refIngresos.add({
+            await refIngresos.add({
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -74,7 +74,7 @@ class IngresoManual extends Component {
             });
             return 0;
         } catch (error) {
-            return error;
+            return 1;
         }
     };
 
@@ -114,18 +114,15 @@ class IngresoManual extends Component {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-        this.setState({ showSpinner: true });
         try {
             const snapshot = await refPropietarios .where('Documento', '==', numeroDoc) .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc)).get()
             if (!snapshot.empty) {
                 //Si existe el propietario, registra el ingreso.
                 var docPropietario = snapshot.docs[0].data();
-                var result = this.grabarIngreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
+                var result = await this.grabarIngreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
                 if (result == 0) {
-                    this.setState({ showSpinner: false });
                     return 0
                     } else {
-                    this.setState({ showSpinner: false });
                     return 1
                 }
             } else {
@@ -139,17 +136,15 @@ class IngresoManual extends Component {
                             //Si hay una invitación válida, verifica que esté autenticado.
                             if (this.estaAutenticado(invitacion)) {
                                 //Si está autenticado, registra el ingreso.
-                                var result = this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
+                                var result = await this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                                 if (result == 0) {
-                                    this.setState({ showSpinner: false });
                                     return 0
                                 } else {
-                                    this.setState({ showSpinner: false });
                                     return 1
                                 }
                             } else {
                                 //Si no está autenticado, se debe autenticar.
-                                this.setState({ showSpinner: false, invitacionId: invitacion.id });
+                                this.setState({ invitacionId: invitacion.id });
                                 return 2
                             }
                         } else {
@@ -158,14 +153,14 @@ class IngresoManual extends Component {
                         }
                     } else {
                         //La persona no existe , TODO:se debe generar una nueva invitación por ese día.
-                        this.setState({ showSpinner: false });
                         return 4
                     }
             }
         } catch (error) {
-            this.setState({ showSpinner: false });
                 return 1
-        } 
+        } finally {
+            this.setState({ showSpinner: false });
+        }
     };
 
     onToastClosed = reason => {
@@ -233,54 +228,56 @@ class IngresoManual extends Component {
                                         bordered
                                         success
                                         style={{ paddingHorizontal: '5%' }}
-                                        onPress={async () => {    
-                                            const result = await this.registrarIngreso(this.state.picker, this.state.documento)                                
-                                            if (result == 0) {
-                                                Toast.show({
-                                                    text: "Ingreso registrado exitosamente.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "success",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 1) {
-                                                Toast.show({
-                                                    text: "Lo siento, ocurrió un error inesperado.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "danger",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 2) {
-                                                Toast.show({
-                                                    text: "El visitante no está autenticado, se debe autenticar primero.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "warning",
-                                                    onClose : this.autenticarToast.bind(this)
-                                                })
-                                            } else if (result == 3) {
-                                                Toast.show({
-                                                    text: "El invitado no tiene ninguna invitación activa.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "warning",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 4) {
-                                                Toast.show({
-                                                    text: "La persona no se encuentra registrada en el sistema.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "warning",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            }
+                                        onPress={async () => {
+                                            this.setState({ showSpinner: true }, async () => {
+                                                const result = await this.registrarIngreso(this.state.picker, this.state.documento)   
+                                                if (result == 0) {
+                                                    Toast.show({
+                                                        text: "Ingreso registrado exitosamente.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "success",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 1) {
+                                                    Toast.show({
+                                                        text: "Lo siento, ocurrió un error inesperado.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "danger",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 2) {
+                                                    Toast.show({
+                                                        text: "El visitante no está autenticado, se debe autenticar primero.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "warning",
+                                                        onClose : this.autenticarToast.bind(this)
+                                                    })
+                                                } else if (result == 3) {
+                                                    Toast.show({
+                                                        text: "El invitado no tiene ninguna invitación activa.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "warning",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 4) {
+                                                    Toast.show({
+                                                        text: "La persona no se encuentra registrada en el sistema.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "warning",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                }
+                                            });    
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>
