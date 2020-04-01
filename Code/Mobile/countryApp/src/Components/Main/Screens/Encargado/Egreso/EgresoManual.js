@@ -222,7 +222,7 @@ class EgresoManual extends Component {
                                                     })
                                                 } else if (result == 2) {
                                                     Toast.show({
-                                                        text: "El visitante no tiene ningún ingreso registrado.",
+                                                        text: "El visitante no tiene invitaciones activas.",
                                                         buttonText: "Aceptar",
                                                         duration: 3000,
                                                         position: "bottom",
