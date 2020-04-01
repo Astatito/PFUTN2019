@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image, StatusBar } from 'react-native';
 import { Text, Content } from 'native-base';
-import { LocalStorage } from '../../../DataBase/Storage';
 
 class Propietario extends Component {
     static navigationOptions = {
@@ -9,17 +8,6 @@ class Propietario extends Component {
     };
 
     render() {
-        //TODO: SOLO TESTING
-        // LocalStorage.save({
-        //     key: 'UsuarioLogueado',
-        //     data: {
-        //         usuario: 'propietario@countryapp.com',
-        //         tipoUsuario: 'Propietario',
-        //         country: 'nkB2OpDMe6znzVkQRCRf',
-        //         datos: 'F73bChXtjOvqTVNdx85j'
-        //     }
-        // });
-        //FIN DEL TODO
         return (
             <Content>
                 <View style={styles.container}>

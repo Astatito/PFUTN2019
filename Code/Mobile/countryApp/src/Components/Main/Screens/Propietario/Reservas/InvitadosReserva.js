@@ -32,35 +32,39 @@ class FlatListItem extends Component {
             });
     }
 
-    descartarInvitado = invitado => {
+    descartarInvitado = async invitado => {
         if (invitado.estado == true) {
             // TODO: SE DEBE ELIMINAR TAMBIÉN LA INVITACIÓN PARA QUE NO PUEDA INGRESAR
         }
-
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva);
         var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
-
-        refInvitado.delete();
-        return 0;
+        try {
+            await refInvitado.delete();
+            return 0
+        } catch (error) {
+            return 1
+        }
     };
 
-    confirmarInvitado = invitado => {
+    confirmarInvitado = async invitado => {
         // TODO: SE DEBE CREAR/ACTUALIZAR LA INVITACIÓN PARA QUE PUEDA INGRESAR
-
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva);
         var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
-
-        refInvitado.set(
-            {
-                Estado: true
-            },
-            { merge: true }
-        );
-        return 0;
+        try {
+            await refInvitado.set(
+                {
+                    Estado: true
+                },
+                { merge: true }
+            );
+            return 0;
+        } catch (error) {
+            return 1
+        }
     };
 
     render() {
@@ -87,15 +91,24 @@ class FlatListItem extends Component {
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
-                                    onPress: () => {
-                                        if (this.descartarInvitado(this.props.item) == 0) {
+                                    onPress: async () => {
+                                        const result = await this.descartarInvitado(this.props.item)
+                                        if (result == 0) {
                                             Toast.show({
-                                                text: 'Invitación eliminada exitosamente.',
-                                                buttonText: 'Aceptar',
+                                                text: "Invitación eliminada exitosamente.",
+                                                buttonText: "Aceptar",
                                                 duration: 3000,
-                                                position: 'bottom',
-                                                type: 'success'
-                                            });
+                                                position: "bottom",
+                                                type: "success"
+                                            })
+                                        } else if (result == 1) {
+                                            Toast.show({
+                                                text: "Lo siento, ocurrió un error inesperado.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "danger"
+                                            })
                                         }
                                     }
                                 }
@@ -131,15 +144,24 @@ class FlatListItem extends Component {
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
-                                    onPress: () => {
-                                        if (this.confirmarInvitado(this.props.item) == 0) {
+                                    onPress: async () => {
+                                        const result = await this.confirmarInvitado(this.props.item)
+                                        if (result == 0) {
                                             Toast.show({
-                                                text: 'Invitación confirmada exitosamente.',
-                                                buttonText: 'Aceptar',
+                                                text: "Invitación confirmada exitosamente.",
+                                                buttonText: "Aceptar",
                                                 duration: 3000,
-                                                position: 'bottom',
-                                                type: 'success'
-                                            });
+                                                position: "bottom",
+                                                type: "success"
+                                            })
+                                        } else if (result == 1) {
+                                            Toast.show({
+                                                text: "Lo siento, ocurrió un error inesperado.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "danger"
+                                            })
                                         }
                                     }
                                 }
@@ -161,15 +183,24 @@ class FlatListItem extends Component {
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
-                                    onPress: () => {
-                                        if (this.descartarInvitado(this.props.item) == 0) {
+                                    onPress: async () => {
+                                        const result = await this.descartarInvitado(this.props.item)
+                                        if (result == 0) {
                                             Toast.show({
-                                                text: 'Invitación eliminada exitosamente.',
-                                                buttonText: 'Aceptar',
+                                                text: "Invitación eliminada exitosamente.",
+                                                buttonText: "Aceptar",
                                                 duration: 3000,
-                                                position: 'bottom',
-                                                type: 'success'
-                                            });
+                                                position: "bottom",
+                                                type: "success"
+                                            })
+                                        } else if (result == 1) {
+                                            Toast.show({
+                                                text: "Lo siento, ocurrió un error inesperado.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "danger"
+                                            })
                                         }
                                     }
                                 }
@@ -216,6 +247,7 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
+
     state = { usuario: null, reserva: null };
     idCountry = '';
     idPropietario = '';
@@ -342,9 +374,11 @@ export default class BasicFlatList extends Component {
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
-                <View>
-                    <Text style={styles.textDefault}>Aún no hay invitados en esta reserva. </Text>
-                </View>
+                <Root>
+                    <View>
+                        <Text style={styles.textDefault}>Aún no hay invitados en esta reserva. </Text>
+                    </View>
+                </Root>
             );
         } else {
             return (

@@ -225,19 +225,19 @@ export default class BasicFlatList extends Component {
         }, 3000);
     }
 
-    fechaSeleccionada = fecha => {
+    fechaSeleccionada = async fecha => {
         this.setState({ showSpinner: true });
         selectedItems = [];
         var dia = moment(fecha).format('E');
         if (this.state.servicio.disponibilidad[dia - 1]) {
             this.setState({ fechaSeleccionada: fecha.toDate(), hayTurnos: true });
-            this.obtenerReservasPorDia(fecha);
+            await this.obtenerReservasPorDia(fecha);
         } else {
             this.setState({ showSpinner: false, hayTurnos: false });
         }
     };
 
-    obtenerReservasPorDia = fecha => {
+    obtenerReservasPorDia = async fecha => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refServicio = refCountry.collection('Servicios').doc(this.state.servicio.key);
         var refReservas = refServicio.collection('Reservas');
@@ -258,13 +258,13 @@ export default class BasicFlatList extends Component {
             this.state.servicio.horaFin.getMinutes()
         );
 
-        refReservas
+        try {
+            const snapshot = await refReservas
             .where('Cancelado', '==', false)
             .where('FechaDesde', '>=', desde)
             .where('FechaDesde', '<=', hasta)
             .get()
-            .then(snapshot => {
-                var reservas = [];
+            var reservas = [];
                 if (!snapshot.empty) {
                     for (var i = 0; i < snapshot.docs.length; i++) {
                         var reserva = {
@@ -275,11 +275,10 @@ export default class BasicFlatList extends Component {
                     }
                 }
                 this.actualizarTurnos(reservas);
-            })
-            .catch(error => {
-                this.setState({ showSpinner: false });
-                Alert.alert('Atención', 'Ocurrió un error: ', error);
-            });
+        } catch (error) {
+            this.setState({ showSpinner: false });
+            Alert.alert('Atención', 'Ocurrió un error: ', error);
+        }
     };
 
     actualizarTurnos = reservas => {
@@ -313,65 +312,68 @@ export default class BasicFlatList extends Component {
         return turnos.length == compareValue;
     };
 
-    generarReserva = () => {
-        this.setState({ showSpinner: true });
-        if (this.validarTurnos(selectedItems)) {
-            var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-            var refServicio = refCountry.collection('Servicios').doc(this.state.servicio.key);
+    generarReserva = async () => {
 
-            var refReserva = refServicio.collection('Reservas').doc();
-
-            var desde = selectedItems[0].desde.split(':');
-            var hasta = selectedItems[selectedItems.length - 1].hasta.split(':');
-
-            fechaDesde = new Date(this.state.fechaSeleccionada);
-            fechaHasta = new Date(this.state.fechaSeleccionada);
-
-            fechaDesde.setHours(parseInt(desde[0]), parseInt(desde[1]), parseInt(0));
-            fechaHasta.setHours(parseInt(hasta[0]), parseInt(hasta[1]), parseInt(0));
-
-            reserva = {
-                Cancelado: false,
-                FechaAlta: new Date(),
-                FechaDesde: fechaDesde,
-                FechaHasta: fechaHasta,
-                IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
-                IdReservaServicio: null,
-                IdServicio: Database.doc('Country/' + this.state.usuario.country + '/Servicios/' + this.state.servicio.key),
-                Nombre: this.state.nombreReserva,
-                Servicio: this.state.servicio.nombre
-            };
-
-            refReserva.set(reserva);
-            reserva.IdReservaServicio = Database.doc(
-                'Country/' + this.state.usuario.country + '/Servicios/' + this.state.servicio.key + '/Reservas/' + refReserva.id
-            );
-            refReserva = refCountry
-                .collection('Propietarios')
-                .doc(this.state.usuario.datos)
-                .collection('Reservas');
-            refReserva.add(reserva);
+        try {
+            if (this.validarTurnos(selectedItems)) {
+                var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+                var refServicio = refCountry.collection('Servicios').doc(this.state.servicio.key);
+                var refReserva = refServicio.collection('Reservas').doc();
+                var desde = selectedItems[0].desde.split(':');
+                var hasta = selectedItems[selectedItems.length - 1].hasta.split(':');
+                fechaDesde = new Date(this.state.fechaSeleccionada);
+                fechaHasta = new Date(this.state.fechaSeleccionada);
+                fechaDesde.setHours(parseInt(desde[0]), parseInt(desde[1]), parseInt(0));
+                fechaHasta.setHours(parseInt(hasta[0]), parseInt(hasta[1]), parseInt(0));
+    
+                reserva = {
+                    Cancelado: false,
+                    FechaAlta: new Date(),
+                    FechaDesde: fechaDesde,
+                    FechaHasta: fechaHasta,
+                    IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
+                    IdReservaServicio: null,
+                    IdServicio: Database.doc('Country/' + this.state.usuario.country + '/Servicios/' + this.state.servicio.key),
+                    Nombre: this.state.nombreReserva,
+                    Servicio: this.state.servicio.nombre
+                };
+    
+                await refReserva.set(reserva);
+                reserva.IdReservaServicio = Database.doc(
+                    'Country/' + this.state.usuario.country + '/Servicios/' + this.state.servicio.key + '/Reservas/' + refReserva.id
+                );
+                refReserva = refCountry
+                    .collection('Propietarios')
+                    .doc(this.state.usuario.datos)
+                    .collection('Reservas');
+                await refReserva.add(reserva);
+                return 0;
+            } else {
+                return 1
+            }
+        } catch (error) {
+            return 2
+        } finally {
             this.setState({ showSpinner: false });
-            return 0;
-        } else {
-            this.setState({ showSpinner: false });
-            return 1;
         }
     };
 
     render() {
         if (this.state.hayTurnos == false) {
             return (
-                <View>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <Calendar
-                        selectedDate={this.state.selectedDate}
-                        onDateSelected={date => {
-                            this.fechaSeleccionada(date), this.setState({ selectedDate: date });
-                        }}
-                    />
-                    <Text style={styles.textDefault}> No hay turnos para mostrar. </Text>
-                </View>
+                <Root>
+                        <View>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <Calendar
+                            selectedDate={this.state.selectedDate}
+                            onDateSelected={date => {
+                                this.fechaSeleccionada(date), this.setState({ selectedDate: date });
+                            }}
+                        />
+                        <Text style={styles.textDefault}> No hay turnos para mostrar. </Text>
+                    </View>
+                </Root>
+                
             );
         } else {
             return (
@@ -409,26 +411,41 @@ export default class BasicFlatList extends Component {
                                                     { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                                     {
                                                         text: 'Aceptar',
-                                                        onPress: () => {
+                                                        onPress: async () => {
+                                                            console.log('Items', selectedItems.length)
                                                             if (selectedItems.length > 0) {
-                                                                if (this.generarReserva() == 0) {
-                                                                    Toast.show({
-                                                                        text: 'Reserva realizada exitosamente.',
-                                                                        buttonText: 'Aceptar',
-                                                                        duration: 3000,
-                                                                        position: 'bottom',
-                                                                        type: 'success',
-                                                                        onClose: this.onToastClosed.bind(this)
-                                                                    });
-                                                                } else {
-                                                                    Toast.show({
-                                                                        text: 'Los turnos seleccionados deben ser consecutivos.',
-                                                                        buttonText: 'Aceptar',
-                                                                        duration: 3000,
-                                                                        position: 'bottom',
-                                                                        type: 'warning'
-                                                                    });
-                                                                }
+                                                                this.setState({ showSpinner: true }, async () => {
+                                                                    const result = await this.generarReserva()
+                                                                    if ( result == 0) {
+                                                                        Toast.show({
+                                                                            text: 'Reserva realizada exitosamente.',
+                                                                            buttonText: 'Aceptar',
+                                                                            duration: 3000,
+                                                                            position: 'bottom',
+                                                                            type: 'success',
+                                                                            onClose: this.onToastClosed.bind(this)
+                                                                        });
+                                                                    } else if (result == 1) {
+                                                                        Toast.show({
+                                                                            text: 'Los turnos seleccionados deben ser consecutivos.',
+                                                                            buttonText: 'Aceptar',
+                                                                            duration: 3000,
+                                                                            position: 'bottom',
+                                                                            type: 'warning'
+                                                                        });
+                                                                    } else if (result == 2) {
+                                                                        Toast.show({
+                                                                            text: "Lo siento, ocurrió un error inesperado.",
+                                                                            buttonText: "Aceptar",
+                                                                            duration: 3000,
+                                                                            position: "bottom",
+                                                                            type: "danger",
+                                                                            onClose : this.onToastClosed.bind(this)
+                                                                        })
+                                                                    }
+
+
+                                                                    })
                                                             } else {
                                                                 Toast.show({
                                                                     text: 'Debe seleccionar al menos un turno.',

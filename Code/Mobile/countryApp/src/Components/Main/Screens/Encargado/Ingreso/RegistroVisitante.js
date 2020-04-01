@@ -68,15 +68,14 @@ class RegistroVisitante extends Component {
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
-    obtenerPickers = () => {
+    obtenerPickers = async () => {
         var dbRef = Database.collection('TipoDocumento');
-        var dbDocs = dbRef.get().then(snapshot => {
-            var tiposDocumento = [];
-            snapshot.forEach(doc => {
-                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-            });
-            this.setState({ tiposDocumento });
+        var snapshot = await dbRef.get()
+        var tiposDocumento = [];
+        snapshot.forEach(doc => {
+            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
+        this.setState({ tiposDocumento });
     };
 
     setearDatos(tipo, numero, nombre, apellido, fecha, acceso, user, autent, invit) {

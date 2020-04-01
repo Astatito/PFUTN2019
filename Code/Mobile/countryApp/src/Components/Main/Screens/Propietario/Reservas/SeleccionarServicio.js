@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View, TextInput } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail, Root, Toast } from 'native-base';
+import { ListItem, Left, Body, Text, Thumbnail, Root, Toast } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-loading-spinner-overlay';
-import moment from 'moment';
 
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
@@ -32,6 +31,7 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
+                                        console.log('No hay nombre',nombreReserva == '')
                                         if (nombreReserva == '') {
                                             Toast.show({
                                                 text: 'Debe ingresar un nombre válido para la reserva.',
@@ -66,6 +66,7 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
+
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Servicios',
@@ -82,6 +83,7 @@ export default class BasicFlatList extends Component {
             .then(response => {
                 this.setState({ usuario: response });
                 this.obtenerServicios();
+                
             })
             .catch(error => {
                 switch (error.name) {
@@ -95,35 +97,35 @@ export default class BasicFlatList extends Component {
             });
     }
 
-    obtenerServicios = () => {
+    obtenerServicios = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refServicios = refCountry.collection('Servicios');
 
-        refServicios
-            .get()
-            .then(snapshot => {
-                if (!snapshot.empty) {
-                    var tempArray = [];
-                    for (var i = 0; i < snapshot.docs.length; i++) {
-                        var servicio = {
-                            key: snapshot.docs[i].id,
-                            nombre: snapshot.docs[i].data().Nombre,
-                            disponibilidad: snapshot.docs[i].data().Disponibilidad,
-                            horaInicio: new Date(snapshot.docs[i].data().HoraInicio.seconds * 1000),
-                            horaFin: new Date(snapshot.docs[i].data().HoraFin.seconds * 1000),
-                            duracionTurno: snapshot.docs[i].data().DuracionTurno
-                        };
-                        tempArray.push(servicio);
-                    }
-                    this.setState({ showSpinner: false, flatListData: tempArray });
-                } else {
-                    this.setState({ showSpinner: false, flatListData: [] });
+        try {
+            const snapshot = await refServicios.get()
+            if (!snapshot.empty) {
+                var tempArray = [];
+                for (var i = 0; i < snapshot.docs.length; i++) {
+                    var servicio = {
+                        key: snapshot.docs[i].id,
+                        nombre: snapshot.docs[i].data().Nombre,
+                        disponibilidad: snapshot.docs[i].data().Disponibilidad,
+                        horaInicio: new Date(snapshot.docs[i].data().HoraInicio.seconds * 1000),
+                        horaFin: new Date(snapshot.docs[i].data().HoraFin.seconds * 1000),
+                        duracionTurno: snapshot.docs[i].data().DuracionTurno
+                    };
+                    tempArray.push(servicio);
                 }
-            })
-            .catch(error => {
-                this.setState({ showSpinner: false });
-                Alert.alert('Atención', 'Ocurrió un error: ', error);
-            });
+                this.setState({ flatListData: tempArray });
+            } else {
+                this.setState({ flatListData: [] });
+            }
+            return 0
+        } catch (error) {
+            return 1
+        } finally {
+            this.setState({ showSpinner: false });
+        }
     };
 
     componentDidMount() {

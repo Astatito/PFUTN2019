@@ -3,7 +3,6 @@ import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
 import { Content, Button, Text, Root, Toast } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
 const BLUE = '#428AF8';
@@ -83,32 +82,33 @@ class DatosReserva extends Component {
         this.props.navigation.navigate('MisReservas');
     }
 
-    modificarReserva = () => {
-        this.setState({ showSpinner: true });
+    modificarReserva = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-
         var refReserva = refCountry
             .collection('Propietarios')
             .doc(this.state.usuario.datos)
             .collection('Reservas')
             .doc(this.state.reserva.key);
-
-        refReserva.set(
-            {
-                Nombre: this.state.nombreReserva
-            },
-            { merge: true }
-        );
-
-        refReserva = Database.doc(this.state.reserva.idReservaServicio);
-        refReserva.set(
-            {
-                Nombre: this.state.nombreReserva
-            },
-            { merge: true }
-        );
-        this.setState({ showSpinner: false });
-        return 0
+        try {
+            await refReserva.set(
+                {
+                    Nombre: this.state.nombreReserva
+                },
+                { merge: true }
+            );
+            refReserva = Database.doc(this.state.reserva.idReservaServicio);
+            await refReserva.set(
+                {
+                    Nombre: this.state.nombreReserva
+                },
+                { merge: true }
+            );
+            return 0
+        } catch (error) {
+            return 1
+        } finally {
+            this.setState({ showSpinner: false });
+        }
     };
 
     render() {
@@ -147,17 +147,29 @@ class DatosReserva extends Component {
                                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                                 {
                                                     text: 'Aceptar',
-                                                    onPress: () => {
-                                                        if (this.modificarReserva() == 0) {
-                                                            Toast.show({
-                                                                text: "Datos de reserva actualizados.",
-                                                                buttonText: "Aceptar",
-                                                                duration: 3000,
-                                                                position: "bottom",
-                                                                type: "success",
-                                                                onClose : this.onToastClosed.bind(this)
-                                                            })
-                                                        }
+                                                    onPress: async () => {
+                                                        this.setState({ showSpinner: true }, async () => {
+                                                            const result = await this.modificarReserva()
+                                                            if (result == 0) {
+                                                                Toast.show({
+                                                                    text: "Datos de reserva actualizados.",
+                                                                    buttonText: "Aceptar",
+                                                                    duration: 3000,
+                                                                    position: "bottom",
+                                                                    type: "success",
+                                                                    onClose : this.onToastClosed.bind(this)
+                                                                })
+                                                            } else if (result == 1) {
+                                                                Toast.show({
+                                                                    text: "Lo siento, ocurrió un error inesperado.",
+                                                                    buttonText: "Aceptar",
+                                                                    duration: 3000,
+                                                                    position: "bottom",
+                                                                    type: "danger",
+                                                                    onClose : this.onToastClosed.bind(this)
+                                                                })
+                                                            }
+                                                        });
                                                     }
                                                 }
                                             ],

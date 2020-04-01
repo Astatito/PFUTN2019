@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { LocalStorage } from '../../../DataBase/Storage';
-import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Content, Button, Text, Picker, Toast, Root } from 'native-base';
@@ -90,28 +90,25 @@ class MiPerfil extends Component {
         });
     };
 
-    actualizarDatos = () => {
-        this.setState({ showSpinner: true });
+    actualizarDatos = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-
-        refPropietario.set(
-            {
-                Nombre: this.state.nombre,
-                Apellido: this.state.apellido,
-                Celular: this.state.celular,
-                FechaNacimiento: this.state.fechaNacimiento.toDate()
-            },
-            { merge: true }
-        );
-
-        // datosPropietario.Nombre = this.state.nombre;
-        // datosPropietario.Apellido = this.state.apellido;
-        // datosPropietario.Celular = this.state.celular;
-        // datosPropietario.FechaNacimiento = this.state.fechaNacimiento.toDate();
-
-        this.setState({ showSpinner: false });
-        return 0;
+        try {
+            await refPropietario.set(
+                {
+                    Nombre: this.state.nombre,
+                    Apellido: this.state.apellido,
+                    Celular: this.state.celular,
+                    FechaNacimiento: this.state.fechaNacimiento.toDate()
+                },
+                { merge: true }
+            );
+            return 0
+        } catch (error) {
+            return 1
+        } finally {
+            this.setState({ showSpinner: false });
+        }
     };
 
     cancelarCambios = () => {
@@ -126,15 +123,14 @@ class MiPerfil extends Component {
         });
     };
 
-    obtenerPickers = () => {
+    obtenerPickers = async () => {
         var dbRef = Database.collection('TipoDocumento');
-        var dbDocs = dbRef.get().then(snapshot => {
-            var tiposDocumento = [];
-            snapshot.forEach(doc => {
-                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-            });
-            this.setState({ tiposDocumento });
+        var snapshot = await dbRef.get()
+        var tiposDocumento = [];
+        snapshot.forEach(doc => {
+            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
+        this.setState({ tiposDocumento });
     };
 
     handleFocus = event => {
@@ -286,17 +282,29 @@ class MiPerfil extends Component {
                                         bordered
                                         success
                                         style={{ paddingHorizontal: '5%' }}
-                                        onPress={() => {
-                                            if (this.actualizarDatos() == 0) {
-                                                Toast.show({
-                                                    text: 'Datos personales actualizados.',
-                                                    buttonText: 'Aceptar',
-                                                    duration: 3000,
-                                                    position: 'bottom',
-                                                    type: 'success',
-                                                    onClose: this.onToastClosed.bind(this)
-                                                });
-                                            }
+                                        onPress={async () => {
+                                            this.setState({ showSpinner: true }, async () => {
+                                                const result = await this.actualizarDatos()
+                                                if (result == 0) {
+                                                    Toast.show({
+                                                        text: "Datos personales actualizados.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "success",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 1) {
+                                                    Toast.show({
+                                                        text: "Lo siento, ocurrió un error inesperado.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "danger",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                }
+                                            });
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>

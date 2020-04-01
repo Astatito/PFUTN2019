@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { LocalStorage } from '../../../DataBase/Storage';
-import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Content, Button, Text, Picker, Root, Toast } from 'native-base';
@@ -26,6 +26,7 @@ class MiPerfil extends Component {
 
     componentWillMount() {
         this.setState({ showSpinner: true });
+
         setInterval(() => {
             this.setState({
                 showSpinner: false
@@ -37,7 +38,7 @@ class MiPerfil extends Component {
         })
             .then(usuario => {
                 this.setState({ usuario });
-                this.obtenerDatosPersonales(usuario);
+                this.obtenerDatosPersonales();
             })
             .catch(error => {
                 switch (error.name) {
@@ -68,7 +69,7 @@ class MiPerfil extends Component {
         usuario: {}
     };
 
-    obtenerDatosPersonales = usuario => {
+    obtenerDatosPersonales = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refEncargados = refCountry.collection('Encargados');
 
@@ -89,34 +90,37 @@ class MiPerfil extends Component {
         });
     };
 
-    actualizarDatos = () => {
-        this.setState({ showSpinner: true });
+    actualizarDatos = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refEncargado = refCountry.collection('Encargados').doc(this.state.usuario.datos);
 
-        refEncargado.set(
-            {
-                Nombre: this.state.nombre,
-                Apellido: this.state.apellido,
-                Legajo: this.state.legajo,
-                Celular: this.state.celular,
-                FechaNacimiento: this.state.fechaNacimiento.toDate()
-            },
-            { merge: true }
-        );
-        this.setState({ showSpinner: false });
-        return 0
+        try {
+            await refEncargado.set(
+                {
+                    Nombre: this.state.nombre,
+                    Apellido: this.state.apellido,
+                    Legajo: this.state.legajo,
+                    Celular: this.state.celular,
+                    FechaNacimiento: this.state.fechaNacimiento.toDate()
+                },
+                { merge: true }
+            );
+            return 0
+        } catch (error) {
+            return 1
+        } finally {
+            this.setState({ showSpinner: false });
+        }
     };
 
-    obtenerPickers = () => {
+    obtenerPickers = async () => {
         var dbRef = Database.collection('TipoDocumento');
-        var dbDocs = dbRef.get().then(snapshot => {
-            var tiposDocumento = [];
-            snapshot.forEach(doc => {
-                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-            });
-            this.setState({ tiposDocumento });
+        var snapshot = await dbRef.get()
+        var tiposDocumento = [];
+        snapshot.forEach(doc => {
+            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
+        this.setState({ tiposDocumento });
     };
 
     handleFocus = event => {
@@ -287,17 +291,29 @@ class MiPerfil extends Component {
                                         bordered
                                         success
                                         style={{ paddingHorizontal: '5%' }}
-                                        onPress={() => {
-                                            if (this.actualizarDatos() == 0) {
-                                                Toast.show({
-                                                    text: "Datos personales actualizados.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "success",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            }
+                                        onPress={async () => {
+                                            this.setState({ showSpinner: true }, async () => {
+                                                const result = await this.actualizarDatos()
+                                                if (result == 0) {
+                                                    Toast.show({
+                                                        text: "Datos personales actualizados.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "success",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                } else if (result == 1) {
+                                                    Toast.show({
+                                                        text: "Lo siento, ocurrió un error inesperado.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "danger",
+                                                        onClose : this.onToastClosed.bind(this)
+                                                    })
+                                                }
+                                            });
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>

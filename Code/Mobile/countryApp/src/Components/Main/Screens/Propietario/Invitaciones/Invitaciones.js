@@ -29,12 +29,15 @@ class FlatListItem extends Component {
             });
     }
 
-    eliminarInvitacion = invitacion => {
+    eliminarInvitacion = async invitacion => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
-
-        refInvitados.doc(invitacion).delete();
-        return 0;
+        try {
+            await refInvitados.doc(invitacion).delete();
+            return 0;
+        } catch (error) {
+            return 1
+        } 
     };
 
     render() {
@@ -61,15 +64,24 @@ class FlatListItem extends Component {
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
-                                    onPress: () => {
-                                        if (this.eliminarInvitacion(this.props.item.key) == 0) {
+                                    onPress: async () => {
+                                        const result = await this.eliminarInvitacion(this.props.item.key)
+                                        if (result == 0) {
                                             Toast.show({
-                                                text: 'Invitado eliminado exitosamente.',
-                                                buttonText: 'Aceptar',
+                                                text: "Invitado eliminado exitosamente.",
+                                                buttonText: "Aceptar",
                                                 duration: 3000,
-                                                position: 'bottom',
-                                                type: 'success'
-                                            });
+                                                position: "bottom",
+                                                type: "success"
+                                            })
+                                        } else if (result == 1) {
+                                            Toast.show({
+                                                text: "Lo siento, ocurrió un error inesperado.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "danger"
+                                            })
                                         }
                                     }
                                 }
@@ -264,9 +276,11 @@ export default class BasicFlatList extends Component {
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
-                <View>
-                    <Text style={styles.textDefault}> No hay invitaciones para mostrar. </Text>
-                </View>
+                <Root>
+                    <View>
+                        <Text style={styles.textDefault}> No hay invitaciones para mostrar. </Text>
+                    </View>
+                </Root>
             );
         } else {
             return (

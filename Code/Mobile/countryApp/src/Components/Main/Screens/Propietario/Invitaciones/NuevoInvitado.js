@@ -13,6 +13,7 @@ const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
 class NuevoInvitado extends Component {
+
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Nuevo Invitado',
@@ -34,7 +35,7 @@ class NuevoInvitado extends Component {
         usuario: {}
     };
 
-    componentDidMount() {
+    componentDidMount () {
         setInterval(() => {
             this.setState({
                 showSpinner: false
@@ -44,30 +45,31 @@ class NuevoInvitado extends Component {
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
-            .then(response => {
-                this.setState({ usuario: response });
+            .then(usuario => {
+                this.setState({ usuario });
             })
             .catch(error => {
                 switch (error.name) {
                     case 'NotFoundError':
                         console.log('La key solicitada no existe.');
+                        this.setState({ showSpinner: false });
                         break;
                     default:
                         console.warn('Error inesperado: ', error.message);
+                        this.setState({ showSpinner: false });
                 }
             });
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
-    obtenerPickers = () => {
+    obtenerPickers = async () => {
         var dbRef = Database.collection('TipoDocumento');
-        var dbDocs = dbRef.get().then(snapshot => {
-            var tiposDocumento = [];
-            snapshot.forEach(doc => {
-                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-            });
-            this.setState({ tiposDocumento });
+        var snapshot = await dbRef.get()
+        var tiposDocumento = [];
+        snapshot.forEach(doc => {
+            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
+        this.setState({ tiposDocumento });
     };
 
     handleFocus = event => {
@@ -110,23 +112,29 @@ class NuevoInvitado extends Component {
         this.props.navigation.goBack();
     }
 
-    registrarNuevoInvitado = (tipoDoc, numeroDoc) => {
+    registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
 
-        refInvitados.add({
-            Nombre: '',
-            Apellido: '',
-            Estado: true,
-            FechaAlta: new Date(),
-            FechaDesde: this.state.fechaDesde.toDate(),
-            FechaHasta: this.state.fechaHasta.toDate(),
-            Grupo: '',
-            IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
-            Documento: numeroDoc,
-            TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc)
-        });
-        return 0
+        try {
+            await refInvitados.add({
+                Nombre: '',
+                Apellido: '',
+                Estado: true,
+                FechaAlta: new Date(),
+                FechaDesde: this.state.fechaDesde.toDate(),
+                FechaHasta: this.state.fechaHasta.toDate(),
+                Grupo: '',
+                IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
+                Documento: numeroDoc,
+                TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc)
+            });
+            return 0
+        } catch (error) {
+            return 1
+        } finally {
+            this.setState({ showSpinner: false });
+        }
     };
 
     render() {
@@ -211,19 +219,27 @@ class NuevoInvitado extends Component {
                                     bordered
                                     success
                                     style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
-                                        this.setState({ showSpinner: true }, () => {
-                                            if ( this.registrarNuevoInvitado(this.state.picker, this.state.documento) == 0) {
-                                                this.setState({ showSpinner: false } , () => {
-                                                    Toast.show({
-                                                        text: "Invitado registrado exitosamente.",
-                                                        buttonText: "Aceptar",
-                                                        duration: 3000,
-                                                        position: "bottom",
-                                                        type: "success",
-                                                        onClose : this.onToastClosed.bind(this)
-                                                    })
-                                                });
+                                    onPress={async () => {
+                                        this.setState({ showSpinner: true }, async () => {
+                                            const result = await this.registrarNuevoInvitado(this.state.picker, this.state.documento)
+                                            if (result == 0) {
+                                                Toast.show({
+                                                    text: "Invitado registrado exitosamente.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 1) {
+                                                Toast.show({
+                                                    text: "Lo siento, ocurrió un error inesperado.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "danger",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
                                             }
                                         });
                                     }}>

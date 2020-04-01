@@ -276,44 +276,47 @@ export default class BasicFlatList extends Component {
         });
     };
 
-    agregarInvitados = () => {
-        this.setState({ showSpinner: true });
+    agregarInvitados = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva); //TODO: REEMPLAZAR EL ID POR THIS.STATE.RESERVA
         var refInvitados = refReserva.collection('Invitados');
         var alMenosUnInvitado = false;
-        for (var i = 0; i < selectedItems.length; i++) {
-            var nuevoInvitado = {
-                Nombre: selectedItems[i].nombre,
-                Apellido: selectedItems[i].apellido,
-                Documento: selectedItems[i].documento,
-                TipoDocumento: Database.doc('TipoDocumento/' + selectedItems[i].tipoDocumento),
-                Estado: true,
-                IdInvitado: selectedItems[i].key
-            };
-            if (this.state.invitadosReserva) {
-                if (
-                    !this.state.invitadosReserva.find(
-                        inv => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
-                    )
-                ) {
+        try {
+            for (var i = 0; i < selectedItems.length; i++) {
+                var nuevoInvitado = {
+                    Nombre: selectedItems[i].nombre,
+                    Apellido: selectedItems[i].apellido,
+                    Documento: selectedItems[i].documento,
+                    TipoDocumento: Database.doc('TipoDocumento/' + selectedItems[i].tipoDocumento),
+                    Estado: true,
+                    IdInvitado: selectedItems[i].key
+                };
+                if (this.state.invitadosReserva) {
+                    if (
+                        !this.state.invitadosReserva.find(
+                            inv => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
+                        )
+                    ) {
+                        alMenosUnInvitado = true;
+                        await refInvitados.add(nuevoInvitado);
+                    }
+                } else {
+                    //La lista está vacía. Entonces no hay invitados, agregamos a todos los que seleccione.
                     alMenosUnInvitado = true;
-                    refInvitados.add(nuevoInvitado);
+                    await refInvitados.add(nuevoInvitado);
                 }
-            } else {
-                //La lista está vacía. Entonces no hay invitados, agregamos a todos los que seleccione.
-                alMenosUnInvitado = true;
-                refInvitados.add(nuevoInvitado);
+                // TODO: FALTA DEFINIR LA LÓGICA PARA GESTIONAR LAS AUTORIZACIONES
             }
-
-            // TODO: FALTA DEFINIR LA LÓGICA PARA GESTIONAR LAS AUTORIZACIONES
-        }
-        this.setState({ showSpinner: false });
-        if (alMenosUnInvitado == true) {
-            return 0;
-        } else {
-            return 1;
+            if (alMenosUnInvitado == true) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } catch (error) {
+            return 2
+        } finally {
+            this.setState({ showSpinner: false })
         }
     };
 
@@ -330,7 +333,6 @@ export default class BasicFlatList extends Component {
                         <FlatList
                             data={this.state.flatListData}
                             renderItem={({ item, index }) => {
-                                // this.isFlatListItemSelected({ item, index });
                                 return (
                                     <FlatListItem
                                         navigation={this.props.navigation}
@@ -347,25 +349,37 @@ export default class BasicFlatList extends Component {
                                     success
                                     style={{ paddingHorizontal: '12%' }}
                                     onPress={() => {
-                                        if (this.agregarInvitados() == 0) {
-                                            Toast.show({
-                                                text: 'Invitado añadido exitosamente.',
-                                                buttonText: 'Aceptar',
-                                                duration: 3000,
-                                                position: 'bottom',
-                                                type: 'success',
-                                                onClose: this.onToastClosed.bind(this)
-                                            });
-                                        } else {
-                                            Toast.show({
-                                                text: 'Los invitados ya están en la lista.',
-                                                buttonText: 'Aceptar',
-                                                duration: 3000,
-                                                position: 'bottom',
-                                                type: 'warning',
-                                                onClose: this.onToastClosed.bind(this)
-                                            });
-                                        }
+                                        this.setState({ showSpinner: true }, async () => {
+                                            const result = await this.agregarInvitados()
+                                            if (result == 0) {
+                                                Toast.show({
+                                                    text: "Invitado añadido exitosamente.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "success",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            } else if (result == 1) {
+                                                Toast.show({
+                                                    text: 'Los invitados ya están en la lista.',
+                                                    buttonText: 'Aceptar',
+                                                    duration: 3000,
+                                                    position: 'bottom',
+                                                    type: 'warning',
+                                                    onClose: this.onToastClosed.bind(this)
+                                                });
+                                            } else if (result == 2) {
+                                                Toast.show({
+                                                    text: "Lo siento, ocurrió un error inesperado.",
+                                                    buttonText: "Aceptar",
+                                                    duration: 3000,
+                                                    position: "bottom",
+                                                    type: "danger",
+                                                    onClose : this.onToastClosed.bind(this)
+                                                })
+                                            }
+                                        });
                                     }}>
                                     <Text>Añadir</Text>
                                 </Button>

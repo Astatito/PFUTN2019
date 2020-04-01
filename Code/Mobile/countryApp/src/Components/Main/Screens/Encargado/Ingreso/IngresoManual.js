@@ -46,15 +46,14 @@ class IngresoManual extends Component {
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
-    obtenerPickers = () => {
+    obtenerPickers = async () => {
         var dbRef = Database.collection('TipoDocumento');
-        var dbDocs = dbRef.get().then(snapshot => {
-            var tiposDocumento = [];
-            snapshot.forEach(doc => {
-                tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-            });
-            this.setState({ tiposDocumento });
+        var snapshot = await dbRef.get()
+        var tiposDocumento = [];
+        snapshot.forEach(doc => {
+            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
+        this.setState({ tiposDocumento });
     };
 
     //Graba el ingreso en Firestore
@@ -124,7 +123,6 @@ class IngresoManual extends Component {
                 var result = this.grabarIngreso(docPropietario.Nombre, docPropietario.Apellido, tipoDoc, numeroDoc);
                 if (result == 0) {
                     this.setState({ showSpinner: false });
-                    console.log('entro')
                     return 0
                     } else {
                     this.setState({ showSpinner: false });
@@ -139,7 +137,6 @@ class IngresoManual extends Component {
                         var invitacion = this.obtenerInvitacionValida(snapshot.docs);
                         if (invitacion != -1) {
                             //Si hay una invitación válida, verifica que esté autenticado.
-            
                             if (this.estaAutenticado(invitacion)) {
                                 //Si está autenticado, registra el ingreso.
                                 var result = this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);

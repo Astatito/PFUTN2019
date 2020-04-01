@@ -29,17 +29,18 @@ class FlatListItem extends Component {
             });
     }
 
-    eliminarReserva = reserva => {
-        this.setState({ showSpinner: true });
+    eliminarReserva = async reserva => {
         var refReservaPropietario = Database.doc(
             'Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos + '/Reservas/' + reserva.key
         );
-        refReservaPropietario.set({ Cancelado: true }, { merge: true });
-
         var refReservaServicio = Database.doc(reserva.idReservaServicio);
-        refReservaServicio.set({ Cancelado: true }, { merge: true });
-        this.setState({ showSpinner: false });
-        return 0;
+        try {
+            await refReservaPropietario.set({ Cancelado: true }, { merge: true });
+            await refReservaServicio.set({ Cancelado: true }, { merge: true });
+            return 0;
+        } catch (error) {
+            return 1;
+        } 
     };
 
     render() {
@@ -59,7 +60,6 @@ class FlatListItem extends Component {
                     text: 'Eliminar',
                     type: 'delete',
                     onPress: () => {
-                        const deletingRow = this.state.activeRowKey;
                         Alert.alert(
                             'Atención',
                             '¿ Está seguro que desea eliminar la reserva ? ',
@@ -67,15 +67,24 @@ class FlatListItem extends Component {
                                 { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                 {
                                     text: 'Aceptar',
-                                    onPress: () => {
-                                        if (this.eliminarReserva(this.props.item) == 0) {
+                                    onPress: async () => {
+                                        const result = await this.eliminarReserva(this.props.item)
+                                        if (result == 0) {
                                             Toast.show({
-                                                text: 'Reserva eliminada exitosamente.',
-                                                buttonText: 'Aceptar',
+                                                text: "Reserva eliminada exitosamente.",
+                                                buttonText: "Aceptar",
                                                 duration: 3000,
-                                                position: 'bottom',
-                                                type: 'success'
-                                            });
+                                                position: "bottom",
+                                                type: "success"
+                                            })
+                                        } else if (result == 1) {
+                                            Toast.show({
+                                                text: "Lo siento, ocurrió un error inesperado.",
+                                                buttonText: "Aceptar",
+                                                duration: 3000,
+                                                position: "bottom",
+                                                type: "danger"
+                                            })
                                         }
                                     }
                                 }
@@ -215,9 +224,11 @@ export default class BasicFlatList extends Component {
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
-                <View>
-                    <Text style={styles.textDefault}> No hay ninguna reserva activa. </Text>
-                </View>
+                <Root>
+                    <View>
+                        <Text style={styles.textDefault}> No hay ninguna reserva activa. </Text>
+                    </View>
+                </Root>
             );
         } else {
             return (
