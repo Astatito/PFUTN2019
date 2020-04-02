@@ -175,12 +175,11 @@ class NuevoInvitado extends Component {
                         />
 
                         <View style={styles.datetime}>
-                            <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Desde</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '18%', fontSize: 15 }}>
-                                {this.state.fechaDesde.format('D/M/YYYY - HH:mm')}
+                            <Text style={{ color: '#8F8787' }}>Desde</Text>
+                            <Text style={{ color: '#1e90ff', fontSize: 15 }}>
+                                {this.state.fechaDesde.format('DD/MM/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
-                                style={{ alignSelf: 'center' }}
                                 onPress={() => {
                                     this.showPicker();
                                     this.setState({ esDesde: true });
@@ -192,8 +191,8 @@ class NuevoInvitado extends Component {
 
                         <View style={styles.datetime}>
                             <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Hasta</Text>
-                            <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '18%', fontSize: 15 }}>
-                                {this.state.fechaHasta.format('D/M/YYYY - HH:mm')}
+                            <Text style={{ alignSelf: 'center', color: '#1e90ff', fontSize: 15 }}>
+                                {this.state.fechaHasta.format('DD/MM/YYYY - HH:mm')}
                             </Text>
                             <IconFontAwesome
                                 style={{ alignSelf: 'center' }}
@@ -301,9 +300,10 @@ const styles = StyleSheet.create({
     },
     datetime: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'space-around',
         margin: '7%',
-        width: '80%'
+        width: '92%'
     },
     buttons: {
         alignItems: 'center',

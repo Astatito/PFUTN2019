@@ -80,10 +80,10 @@ class Login extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                <StatusBar backgroundColor="#96D0E8"></StatusBar>
-                <KeyboardAvoidingView behavior="height">
+            <KeyboardAvoidingView behavior="height" style= {styles.wrapper}>
+                <View style={styles.container}>
+                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                    <StatusBar backgroundColor="#96D0E8"></StatusBar>
                     <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
                         <Image
                             source={require('../../../assets/Images/LogoTransparente.png')}
@@ -106,8 +106,8 @@ class Login extends Component {
                         <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
                     </TouchableOpacity>
                     <Text style={styles.result}>{this.state.result}</Text>
-                </KeyboardAvoidingView>
-            </View>
+                </View>
+            </KeyboardAvoidingView>
         );
     }
 }

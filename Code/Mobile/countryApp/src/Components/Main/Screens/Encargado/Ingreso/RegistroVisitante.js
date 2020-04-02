@@ -256,12 +256,11 @@ class RegistroVisitante extends Component {
                             />
 
                             <View style={styles.datetime}>
-                                <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
-                                <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
-                                    {this.state.fechaNacimiento.format('D/M/YYYY')}
+                                <Text style={{ color: '#8F8787' }}>Fecha de nacimiento</Text>
+                                <Text style={{ color: '#1e90ff', fontSize: 15 }}>
+                                    {this.state.fechaNacimiento.format('DD/MM/YYYY')}
                                 </Text>
                                 <IconFontAwesome
-                                    style={{ alignSelf: 'center' }}
                                     onPress={() => {
                                         console.log(this.state.fechaNacimiento);
                                         this.showPicker();
@@ -374,9 +373,10 @@ const styles = StyleSheet.create({
     },
     datetime: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        justifyContent: 'space-around',
+        alignItems: 'center',
         marginTop: '10%',
-        width: '80%'
+        width: '85%'
     }
 });
 

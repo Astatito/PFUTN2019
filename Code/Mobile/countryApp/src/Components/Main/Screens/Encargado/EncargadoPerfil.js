@@ -250,12 +250,11 @@ class MiPerfil extends Component {
                             </View>
 
                             <View style={styles.datetime}>
-                                <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Fecha de nacimiento</Text>
-                                <Text style={{ alignSelf: 'center', color: '#1e90ff', paddingHorizontal: '10%', fontSize: 15 }}>
+                                <Text style={{ color: '#8F8787' }}>Fecha de nacimiento</Text>
+                                <Text style={{ color: '#1e90ff', fontSize: 15 }}>
                                     {this.state.fechaNacimiento.format('DD/MM/YYYY')}
                                 </Text>
                                 <IconFontAwesome
-                                    style={{ alignSelf: 'center' }}
                                     onPress={() => {
                                         this.showPicker();
                                     }}
@@ -355,7 +354,7 @@ const styles = StyleSheet.create({
         color: '#FFF'
     },
     picker: {
-        width: '92%',
+        width: '90%',
         fontSize: 18,
         marginTop: '5%',
         alignItems: 'flex-start'
@@ -374,9 +373,11 @@ const styles = StyleSheet.create({
     },
     datetime: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'space-around',
         marginTop: '10%',
-        width: '85%'
+        width: '92%',
+        marginBottom: '2%'
     },
     viewContainer: {
         flexDirection: 'row',
