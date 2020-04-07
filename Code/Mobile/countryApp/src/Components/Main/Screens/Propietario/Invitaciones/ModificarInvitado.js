@@ -179,7 +179,7 @@ class ModificarInvitado extends Component {
                             />
 
                             <View style={styles.datetime}>
-                                <Text style={{ color: '#8F8787' }}>Ingreso</Text>
+                                <Text style={{ color: '#8F8787' }}>Desde</Text>
                                 <Text style={{ color: '#1e90ff', fontSize: 15 }}>
                                     {this.state.fechaDesde.format('DD/MM/YYYY - HH:mm')}
                                 </Text>
@@ -194,7 +194,7 @@ class ModificarInvitado extends Component {
                             </View>
 
                             <View style={styles.datetime}>
-                                <Text style={{ color: '#8F8787' }}>Egreso</Text>
+                                <Text style={{ color: '#8F8787' }}>Hasta</Text>
                                 <Text style={{ color: '#1e90ff', fontSize: 15 }}>
                                     {this.state.fechaHasta.format('DD/MM/YYYY - HH:mm')}
                                 </Text>
@@ -213,6 +213,7 @@ class ModificarInvitado extends Component {
                                 onConfirm={this.handlePicker}
                                 onCancel={this.hidePicker}
                                 mode={'datetime'}
+                                date={new Date(this.state.fechaDesde)}
                                 is24Hour={true}></DateTimePicker>
 
                             <View style={{ flexDirection: 'row' }}>
@@ -342,6 +343,7 @@ class ModificarInvitado extends Component {
                                 onConfirm={this.handlePicker}
                                 onCancel={this.hidePicker}
                                 mode={'datetime'}
+                                date={new Date(this.state.fechaDesde)}
                                 is24Hour={true}></DateTimePicker>
 
                             <View style={{ flexDirection: 'row' }}>

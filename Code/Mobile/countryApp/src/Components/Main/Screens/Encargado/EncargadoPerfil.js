@@ -268,6 +268,7 @@ class MiPerfil extends Component {
                                 onConfirm={this.handlePicker}
                                 onCancel={this.hidePicker}
                                 mode={'date'}
+                                date={new Date(this.state.fechaNacimiento)}
                                 is24Hour={true}></DateTimePicker>
 
                             <View style={styles.viewContainer}>

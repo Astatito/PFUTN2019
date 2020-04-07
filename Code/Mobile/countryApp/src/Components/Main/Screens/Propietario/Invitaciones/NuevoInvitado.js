@@ -210,6 +210,7 @@ class NuevoInvitado extends Component {
                             onConfirm={this.handlePicker}
                             onCancel={this.hidePicker}
                             mode={'datetime'}
+                            date={new Date(this.state.fechaDesde)}
                             is24Hour={true}></DateTimePicker>
 
                         <View style={{ flexDirection: 'row' }}>
