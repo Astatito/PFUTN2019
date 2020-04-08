@@ -138,6 +138,14 @@ class ModificarInvitado extends Component {
         }
     };
 
+    obtenerDiaRelevante = () => {
+        if (this.state.esDesde) {
+            return this.state.fechaDesde
+        } else {
+            return this.state.fechaHasta
+        }
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -213,7 +221,7 @@ class ModificarInvitado extends Component {
                                 onConfirm={this.handlePicker}
                                 onCancel={this.hidePicker}
                                 mode={'datetime'}
-                                date={new Date(this.state.fechaDesde)}
+                                date={new Date(this.obtenerDiaRelevante())}
                                 is24Hour={true}></DateTimePicker>
 
                             <View style={{ flexDirection: 'row' }}>
@@ -343,7 +351,7 @@ class ModificarInvitado extends Component {
                                 onConfirm={this.handlePicker}
                                 onCancel={this.hidePicker}
                                 mode={'datetime'}
-                                date={new Date(this.state.fechaDesde)}
+                                date={new Date(this.obtenerDiaRelevante())}
                                 is24Hour={true}></DateTimePicker>
 
                             <View style={{ flexDirection: 'row' }}>
