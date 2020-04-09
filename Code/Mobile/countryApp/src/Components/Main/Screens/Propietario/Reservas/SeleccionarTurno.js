@@ -282,15 +282,30 @@ export default class BasicFlatList extends Component {
     };
 
     actualizarTurnos = reservas => {
+        const arrayNow = moment().format('HH:mm').toString().split(':')
+        const timeNow = arrayNow[0]*60 + parseInt(arrayNow[1])/60
+        const dia = moment().format('D');
         var turnos = this.state.flatListData.map(turno => {
+            if (this.state.selectedDate.format('D') == dia){
+                const arrayDesde = (turno.desde).toString().split(':')
+                const timeTurno = arrayDesde[0]*60 + parseInt(arrayDesde[1])/60
+                if (timeTurno < timeNow) {
+                    var estado = 'No Disponible'
+                } else {
+                    var estado = 'Disponible'
+                }
+            } else {
+                var estado = 'Disponible'
+            }
+            
             return {
                 key: turno.key,
-                estado: 'Disponible',
+                estado: estado,
                 desde: turno.desde,
                 hasta: turno.hasta
             };
         });
-
+        
         if (reservas.length > 0) {
             for (var reserva of reservas) {
                 for (var i = 0; i < turnos.length; i++) {

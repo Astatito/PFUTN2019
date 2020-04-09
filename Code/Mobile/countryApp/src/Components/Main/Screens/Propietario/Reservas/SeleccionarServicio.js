@@ -31,7 +31,6 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        console.log('No hay nombre',nombreReserva == '')
                                         if (nombreReserva == '') {
                                             Toast.show({
                                                 text: 'Debe ingresar un nombre válido para la reserva.',
