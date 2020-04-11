@@ -168,7 +168,6 @@ class ModificarInvitado extends Component {
                                 selectedValue={this.state.picker}
                                 enabled={!this.state.autenticado}
                                 onValueChange={itemValue => this.setState({ picker: itemValue })}>
-                                <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
                                 {this.state.tiposDocumento.map((item, index) => {
                                     return <Picker.Item label={item.nombre} value={item.id} key={index} />;
                                 })}
@@ -297,7 +296,6 @@ class ModificarInvitado extends Component {
                                 selectedValue={this.state.picker}
                                 enabled={!this.state.autenticado}
                                 onValueChange={itemValue => this.setState({ picker: itemValue })}>
-                                <Picker.Item label="Tipo de documento" value="-1" color="#7B7C7E" />
                                 {this.state.tiposDocumento.map((item, index) => {
                                     return <Picker.Item label={item.nombre} value={item.id} key={index} />;
                                 })}
