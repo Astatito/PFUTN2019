@@ -192,6 +192,17 @@ class RegistroVisitante extends Component {
         this.setState({ isVisible: true });
     };
 
+    verificarFechaNacimiento = async() => {
+        const today = moment()
+        const birthDate = this.state.fechaNacimiento
+        if (birthDate.isBefore(today)) {
+            return 0
+        } else {
+            this.setState({ showSpinner: false });
+            return 1
+        }
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -285,25 +296,36 @@ class RegistroVisitante extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.setState({ showSpinner: true }, async () => {
-                                                const result = await this.grabarDatos();  
-                                                if (result == 0) {
+                                                const verificacion = await this.verificarFechaNacimiento()
+                                                if (verificacion == 1) {
                                                     Toast.show({
-                                                        text: "Ingreso registrado exitosamente.",
+                                                        text: "La fecha de nacimiento debe ser anterior al día actual.",
                                                         buttonText: "Aceptar",
                                                         duration: 3000,
                                                         position: "bottom",
-                                                        type: "success",
-                                                        onClose : this.onToastClosed.bind(this)
+                                                        type: "warning",
                                                     })
-                                                } else if (result == 1) {
-                                                    Toast.show({
-                                                        text: "Lo siento, ocurrió un error inesperado.",
-                                                        buttonText: "Aceptar",
-                                                        duration: 3000,
-                                                        position: "bottom",
-                                                        type: "danger",
-                                                        onClose : this.onToastClosed.bind(this)
-                                                    })
+                                                } else if (verificacion == 0) {
+                                                    const result = await this.grabarDatos();  
+                                                    if (result == 0) {
+                                                        Toast.show({
+                                                            text: "Ingreso registrado exitosamente.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "success",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    } else if (result == 1) {
+                                                        Toast.show({
+                                                            text: "Lo siento, ocurrió un error inesperado.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "danger",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    }
                                                 }
                                             }); 
                                         }}>

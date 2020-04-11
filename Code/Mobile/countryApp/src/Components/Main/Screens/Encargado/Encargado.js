@@ -3,6 +3,18 @@ import { View, StyleSheet, Image, StatusBar } from 'react-native';
 import { Text, Content } from 'native-base';
 import { LocalStorage } from '../../../DataBase/Storage';
 
+//TODO: SOLO TESTING
+LocalStorage.save({
+    key: 'UsuarioLogueado',
+    data: {
+        usuario: 'encargado@countryapp.com',
+        tipoUsuario: 'Encargado',
+        country: 'nkB2OpDMe6znzVkQRCRf',
+        datos: 'j6cHI1TEPzYTN4l6vTUU'
+    }
+});
+//FIN DEL TODO
+
 class Encargado extends Component {
     static navigationOptions = {
         title: 'Home'
