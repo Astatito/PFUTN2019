@@ -19,34 +19,28 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
+// Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = props => (
-    <ScrollView>
-        <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
-            <View style={{ height: 150, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
+    <ScrollView contentContainerStyle={{flex: 1,  flexDirection: 'column', justifyContent: 'space-between' }}>
+        <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
+            <View style={{ height: '45%', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
                 <Image source={require('../../assets/Images/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
-            <DrawerItems {...props} />
-            <Text style={{ marginTop: '95%' }}> </Text>
-            <TouchableOpacity
-                onPress={() => {
+        <DrawerItems {...props} />
+        </SafeAreaView>
+        <TouchableOpacity                 
+            onPress={() => {
                     props.navigation.closeDrawer();
                     LocalStorage.remove({ key: 'UsuarioLogueado' });
-                    props.navigation.navigate('Login');
-                }}
-                style={{ flex: 1, flexDirection: 'row' }}>
-                <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '10%', color: 'gray' }}></IconEntypo>
-                <Text
-                    style={{
-                        paddingTop: '12%',
-                        paddingLeft: '8%',
-                        color: '#000',
-                        fontWeight: 'bold'
-                    }}>
-                    Cerrar Sesión
-                </Text>
-            </TouchableOpacity>
-        </SafeAreaView>
-    </ScrollView>
+                    props.navigation.navigate('Login') }}>
+        <View style={styles.item}>
+            <View style={styles.iconContainer}>
+            <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'5%', color:'gray'}}></IconEntypo>
+            </View>
+            <Text style={styles.label}>Cerrar Sesión</Text>
+        </View>
+        </TouchableOpacity>
+  </ScrollView>
 );
 
 // Stack 1 - El stack navigator para el home del encargado.
@@ -198,9 +192,24 @@ const EncargadoNavigation = createDrawerNavigator(
 );
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1
+    item: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    label: {
+      margin: 16,
+      fontWeight: 'bold',
+      color: 'rgba(0, 0, 0, .87)',
+    },
+    iconContainer: {
+      marginHorizontal: 16,
+      width: 24,
+      alignItems: 'center',
+    },
+    icon: {
+      width: 24,
+      height: 24,
     }
-});
+  });
 
 export default EncargadoNavigation;
