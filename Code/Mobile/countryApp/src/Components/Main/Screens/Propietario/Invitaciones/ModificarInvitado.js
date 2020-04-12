@@ -51,7 +51,6 @@ class ModificarInvitado extends Component {
         const usuario = navigation.getParam('usuario');
         const invitacion = navigation.getParam('invitacion');
         const autenticado = navigation.getParam('autenticado');
-
         this.setState({
             autenticado: autenticado,
             usuario: usuario,
@@ -62,8 +61,8 @@ class ModificarInvitado extends Component {
             fechaDesde: moment(invitacion.fechaDesde, 'D/M/YYYY HH:mm'),
             fechaHasta: moment(invitacion.fechaHasta, 'D/M/YYYY HH:mm'),
             idInvitacion: invitacion.key,
-            showSpinner: false
         });
+        this.obtenerPickers();
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
@@ -74,7 +73,7 @@ class ModificarInvitado extends Component {
         snapshot.forEach(doc => {
             tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
-        this.setState({ tiposDocumento });
+        this.setState({ tiposDocumento, showSpinner: false });
     };
 
     handleFocus = event => {
@@ -159,10 +158,6 @@ class ModificarInvitado extends Component {
 
     render() {
         const { isFocused } = this.state;
-
-        if (this.state.tiposDocumento.length < 3) {
-            this.obtenerPickers();
-        }
 
         if (this.state.nombre == '' && this.state.apellido == '') {
             return (

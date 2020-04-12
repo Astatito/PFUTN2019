@@ -39,6 +39,7 @@ class RegistroVisitante extends Component {
     };
 
     componentWillMount() {
+        this.setState({ showSpinner: true });
         const { navigation } = this.props;
         const esAcceso = navigation.getParam('esAcceso', false);
 
@@ -59,6 +60,7 @@ class RegistroVisitante extends Component {
             const invitacion = navigation.getParam('invitacion');
             this.setearDatos(tipoDoc, numeroDoc, nombre, apellido, fecha, tipoAcceso, usuario, autenticado, invitacion);
         }
+        this.obtenerPickers();
     }
 
     componentDidMount() {
@@ -79,7 +81,7 @@ class RegistroVisitante extends Component {
         snapshot.forEach(doc => {
             tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
-        this.setState({ tiposDocumento });
+        this.setState({ tiposDocumento, showSpinner: false});
     };
 
     setearDatos(tipo, numero, nombre, apellido, fecha, acceso, user, autent, invit) {
@@ -205,10 +207,6 @@ class RegistroVisitante extends Component {
 
     render() {
         const { isFocused } = this.state;
-
-        if (this.state.tiposDocumento.length < 3) {
-            this.obtenerPickers();
-        }
 
         return (
             <Root>

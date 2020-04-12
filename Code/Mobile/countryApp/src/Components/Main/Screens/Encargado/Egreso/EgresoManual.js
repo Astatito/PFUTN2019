@@ -28,6 +28,7 @@ class EgresoManual extends Component {
         })
             .then(usuario => {
                 this.setState({ usuario });
+                this.obtenerPickers();
             })
             .catch(error => {
                 this.setState({ showSpinner: false });
@@ -57,7 +58,7 @@ class EgresoManual extends Component {
         snapshot.forEach(doc => {
             tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
-        this.setState({ tiposDocumento });
+        this.setState({ tiposDocumento, showSpinner: false });
     };
 
     //Graba el egreso en Firestore
@@ -161,10 +162,6 @@ class EgresoManual extends Component {
 
     render() {
         const { isFocused } = this.state;
-
-        if (this.state.tiposDocumento.length < 3) {
-            this.obtenerPickers();
-        }
 
         return (
             <Root>

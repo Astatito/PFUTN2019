@@ -42,6 +42,7 @@ class NuevoInvitado extends Component {
         })
             .then(usuario => {
                 this.setState({ usuario });
+                this.obtenerPickers();
             })
             .catch(error => {
                 this.setState({ showSpinner: false });
@@ -63,7 +64,6 @@ class NuevoInvitado extends Component {
         }, 3000);
     }
 
-
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = async () => {
         var dbRef = Database.collection('TipoDocumento');
@@ -72,7 +72,7 @@ class NuevoInvitado extends Component {
         snapshot.forEach(doc => {
             tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
-        this.setState({ tiposDocumento });
+        this.setState({ tiposDocumento, showSpinner: false });
     };
 
     handleFocus = event => {
@@ -161,10 +161,6 @@ class NuevoInvitado extends Component {
 
     render() {
         const { isFocused } = this.state;
-
-        if (this.state.tiposDocumento.length < 3) {
-            this.obtenerPickers();
-        }
 
         return (
             <Root>  

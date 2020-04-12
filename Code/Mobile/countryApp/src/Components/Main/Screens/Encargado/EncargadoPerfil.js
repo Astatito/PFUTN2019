@@ -38,6 +38,7 @@ class MiPerfil extends Component {
         })
             .then(usuario => {
                 this.setState({ usuario });
+                this.obtenerPickers();
                 this.obtenerDatosPersonales();
             })
             .catch(error => {
@@ -168,10 +169,6 @@ class MiPerfil extends Component {
 
     render() {
         const { isFocused } = this.state;
-
-        if (this.state.tiposDocumento.length < 3) {
-            this.obtenerPickers();
-        }
 
         return (
             <Root>
