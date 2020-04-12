@@ -117,6 +117,17 @@ class ModificarInvitado extends Component {
         this.props.navigation.goBack();
     }
 
+    verificarFechaCorrecta = async() => {
+        const desde = this.state.fechaDesde
+        const hasta = this.state.fechaHasta
+        if (desde.isBefore(hasta)) {
+            return 0
+        } else {
+            this.setState({ showSpinner: false });
+            return 1
+        }
+    }
+
     actualizarInvitado = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitado = refCountry.collection('Invitados').doc(this.state.idInvitacion);
@@ -231,26 +242,38 @@ class ModificarInvitado extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.setState({ showSpinner: true }, async () => {
-                                                const result = await this.actualizarInvitado()
-                                                if (result == 0) {
+                                                const verificacion = await this.verificarFechaCorrecta()
+                                                if (verificacion == 1) {
                                                     Toast.show({
-                                                        text: "Invitado actualizado exitosamente.",
+                                                        text: "La fecha Desde debe ser anterior a la fecha Hasta.",
                                                         buttonText: "Aceptar",
                                                         duration: 3000,
                                                         position: "bottom",
-                                                        type: "success",
-                                                        onClose : this.onToastClosed.bind(this)
+                                                        type: "warning",
                                                     })
-                                                } else if (result == 1) {
-                                                    Toast.show({
-                                                        text: "Lo siento, ocurrió un error inesperado.",
-                                                        buttonText: "Aceptar",
-                                                        duration: 3000,
-                                                        position: "bottom",
-                                                        type: "danger",
-                                                        onClose : this.onToastClosed.bind(this)
-                                                    })
+                                                } else if (verificacion == 0) {
+                                                    const result = await this.actualizarInvitado()
+                                                    if (result == 0) {
+                                                        Toast.show({
+                                                            text: "Invitado actualizado exitosamente.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "success",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    } else if (result == 1) {
+                                                        Toast.show({
+                                                            text: "Lo siento, ocurrió un error inesperado.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "danger",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    }
                                                 }
+                                                
                                             });
                                         }}>
                                         <Text>Aceptar</Text>
@@ -360,25 +383,36 @@ class ModificarInvitado extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.setState({ showSpinner: true }, async () => {
-                                                const result = await this.actualizarInvitado()
-                                                if (result == 0) {
+                                                const verificacion = await this.verificarFechaCorrecta()
+                                                if (verificacion == 1) {
                                                     Toast.show({
-                                                        text: "Invitado actualizado exitosamente.",
+                                                        text: "Por favor, verifique la fecha desde o fecha hasta.",
                                                         buttonText: "Aceptar",
                                                         duration: 3000,
                                                         position: "bottom",
-                                                        type: "success",
-                                                        onClose : this.onToastClosed.bind(this)
+                                                        type: "warning",
                                                     })
-                                                } else if (result == 1) {
-                                                    Toast.show({
-                                                        text: "Lo siento, ocurrió un error inesperado.",
-                                                        buttonText: "Aceptar",
-                                                        duration: 3000,
-                                                        position: "bottom",
-                                                        type: "danger",
-                                                        onClose : this.onToastClosed.bind(this)
-                                                    })
+                                                } else if (verificacion == 0) {
+                                                    const result = await this.actualizarInvitado()
+                                                    if (result == 0) {
+                                                        Toast.show({
+                                                            text: "Invitado actualizado exitosamente.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "success",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    } else if (result == 1) {
+                                                        Toast.show({
+                                                            text: "Lo siento, ocurrió un error inesperado.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "danger",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    }
                                                 }
                                             });
                                         }}>

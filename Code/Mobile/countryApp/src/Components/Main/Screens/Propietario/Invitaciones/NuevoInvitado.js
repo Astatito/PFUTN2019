@@ -115,6 +115,17 @@ class NuevoInvitado extends Component {
         this.props.navigation.goBack();
     }
 
+    verificarFechaCorrecta = async() => {
+        const desde = this.state.fechaDesde
+        const hasta = this.state.fechaHasta
+        if (desde.isBefore(hasta)) {
+            return 0
+        } else {
+            this.setState({ showSpinner: false });
+            return 1
+        }
+    }
+
     registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
@@ -231,26 +242,37 @@ class NuevoInvitado extends Component {
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={async () => {
                                         this.setState({ showSpinner: true }, async () => {
-                                            const result = await this.registrarNuevoInvitado(this.state.picker, this.state.documento)
-                                            if (result == 0) {
-                                                Toast.show({
-                                                    text: "Invitado registrado exitosamente.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "success",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            } else if (result == 1) {
-                                                Toast.show({
-                                                    text: "Lo siento, ocurrió un error inesperado.",
-                                                    buttonText: "Aceptar",
-                                                    duration: 3000,
-                                                    position: "bottom",
-                                                    type: "danger",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
-                                            }
+                                            const verificacion = await this.verificarFechaCorrecta()
+                                                if (verificacion == 1) {
+                                                    Toast.show({
+                                                        text: "La fecha Desde debe ser anterior a la fecha Hasta.",
+                                                        buttonText: "Aceptar",
+                                                        duration: 3000,
+                                                        position: "bottom",
+                                                        type: "warning",
+                                                    })
+                                                } else if (verificacion == 0) {
+                                                    const result = await this.registrarNuevoInvitado(this.state.picker, this.state.documento)
+                                                    if (result == 0) {
+                                                        Toast.show({
+                                                            text: "Invitado registrado exitosamente.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "success",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    } else if (result == 1) {
+                                                        Toast.show({
+                                                            text: "Lo siento, ocurrió un error inesperado.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "danger",
+                                                            onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    }
+                                                }
                                         });
                                     }}>
                                     <Text>Aceptar</Text>
