@@ -163,6 +163,7 @@ export default class BasicFlatList extends Component {
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
                         keyboardType={'default'}
+                        maxLength={20}
                     />
                     <FlatList
                         data={this.state.flatListData}

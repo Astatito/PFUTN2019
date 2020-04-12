@@ -234,6 +234,7 @@ class NuevoInvitado extends Component {
                             onFocus={this.handleFocus}
                             onBlur={this.handleBlur}
                             keyboardType={'numeric'}
+                            maxLength={8}
                         />
 
                         <View style={styles.datetime}>

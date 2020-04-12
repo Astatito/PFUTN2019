@@ -94,6 +94,7 @@ class Login extends Component {
                         placeholder="Usuario"
                         onChangeText={email => this.setState({ email })}
                         underlineColorAndroid="transparent"
+                        maxLength={25}
                     />
                     <TextInput
                         style={styles.textInput}
@@ -101,6 +102,7 @@ class Login extends Component {
                         onChangeText={password => this.setState({ password })}
                         underlineColorAndroid="transparent"
                         secureTextEntry={true}
+                        maxLength={25}
                     />
                     <TouchableOpacity style={styles.btn} onPress={this.onButtonPress.bind(this)}>
                         <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>

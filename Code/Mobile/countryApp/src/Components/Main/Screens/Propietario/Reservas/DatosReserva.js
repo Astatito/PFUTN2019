@@ -131,6 +131,7 @@ class DatosReserva extends Component {
                             onFocus={this.handleFocus}
                             onBlur={this.handleBlur}
                             keyboardType={'default'}
+                            maxLength={20}
                         />
 
                         <View style={{ flexDirection: 'row' }}>

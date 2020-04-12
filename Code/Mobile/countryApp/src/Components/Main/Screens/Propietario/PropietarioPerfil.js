@@ -198,6 +198,7 @@ class MiPerfil extends Component {
                                     onBlur={this.handleBlur}
                                     keyboardType={'default'}
                                     value={this.state.nombre}
+                                    maxLength={25}
                                 />
                             </View>
 
@@ -212,6 +213,7 @@ class MiPerfil extends Component {
                                     onBlur={this.handleBlur}
                                     keyboardType={'default'}
                                     value={this.state.apellido}
+                                    maxLength={25}
                                 />
                             </View>
 
@@ -280,6 +282,7 @@ class MiPerfil extends Component {
                                     onBlur={this.handleBlur}
                                     keyboardType={'numeric'}
                                     value={this.state.celular}
+                                    maxLength={10}
                                 />
                             </View>
 

@@ -189,6 +189,7 @@ class ModificarInvitado extends Component {
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
                                 keyboardType={'numeric'}
+                                maxLength={8}
                             />
 
                             <View style={styles.datetime}>
@@ -329,6 +330,7 @@ class ModificarInvitado extends Component {
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
                                 keyboardType={'numeric'}
+                                maxLength={8}
                             />
 
                             <View style={styles.datetime}>
