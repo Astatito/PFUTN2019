@@ -116,9 +116,10 @@ class NuevoInvitado extends Component {
     }
 
     verificarFechaCorrecta = async() => {
+        const now = moment()
         const desde = this.state.fechaDesde
         const hasta = this.state.fechaHasta
-        if (desde.isBefore(hasta)) {
+        if (desde.isBefore(hasta) && desde.isAfter(now) ) {
             return 0
         } else {
             this.setState({ showSpinner: false });
@@ -241,7 +242,7 @@ class NuevoInvitado extends Component {
                                             const verificacion = await this.verificarFechaCorrecta()
                                                 if (verificacion == 1) {
                                                     Toast.show({
-                                                        text: "La fecha Desde debe ser anterior a la fecha Hasta.",
+                                                        text: "Por favor, revise la fecha Desde y la fecha Hasta.",
                                                         buttonText: "Aceptar",
                                                         duration: 3000,
                                                         position: "bottom",
