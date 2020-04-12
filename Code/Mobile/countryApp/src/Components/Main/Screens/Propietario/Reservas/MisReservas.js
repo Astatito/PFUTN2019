@@ -19,13 +19,13 @@ class FlatListItem extends Component {
                 this.setState({ usuario: response });
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     }
 
@@ -163,13 +163,14 @@ export default class BasicFlatList extends Component {
                 this.createListeners();
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+                this.setState({ showSpinner: false })
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     }
 

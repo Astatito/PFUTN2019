@@ -21,13 +21,8 @@ class EgresoManual extends Component {
 
     state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused: false, usuario: {} };
 
-    componentDidMount() {
-        setInterval(() => {
-            this.setState({
-                showSpinner: false
-            });
-        }, 3000);
-
+    componentWillMount() {
+        this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado'
         })
@@ -35,14 +30,23 @@ class EgresoManual extends Component {
                 this.setState({ usuario });
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+                this.setState({ showSpinner: false });
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
+    }   
+    
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 3000);
     }
 
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.

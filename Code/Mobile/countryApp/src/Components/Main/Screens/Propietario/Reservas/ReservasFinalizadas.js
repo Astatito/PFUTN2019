@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail } from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Root, Toast } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
@@ -19,13 +19,13 @@ class FlatListItem extends Component {
                 this.setState({ usuario: response });
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     }
 
@@ -81,13 +81,14 @@ export default class BasicFlatList extends Component {
                 this.createListeners();
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+                this.setState({ showSpinner: false })
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     }
 
@@ -142,26 +143,32 @@ export default class BasicFlatList extends Component {
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
-                <View>
-                    <Text style={styles.textDefault}> No hay reservas finalizadas. </Text>
-                </View>
+                <Root>
+                    <View>
+                        <Text style={styles.textDefault}> No hay reservas finalizadas. </Text>
+                    </View>
+                </Root>
+                
             );
         } else {
             return (
-                <View>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <FlatList
-                        data={this.state.flatListData}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <FlatListItem
-                                    navigation={this.props.navigation}
-                                    item={item}
-                                    index={index}
-                                    parentFlatList={this}></FlatListItem>
-                            );
-                        }}></FlatList>
-                </View>
+                <Root>
+                    <View>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <FlatList
+                            data={this.state.flatListData}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <FlatListItem
+                                        navigation={this.props.navigation}
+                                        item={item}
+                                        index={index}
+                                        parentFlatList={this}></FlatListItem>
+                                );
+                            }}></FlatList>
+                    </View>
+                </Root>
+                
             );
         }
     }

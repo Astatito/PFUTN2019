@@ -34,13 +34,13 @@ class Escaner extends Component {
                 this.setState({ usuario });
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     }
 

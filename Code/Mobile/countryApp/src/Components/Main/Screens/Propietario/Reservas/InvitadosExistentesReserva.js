@@ -22,13 +22,13 @@ class FlatListItem extends Component {
                 this.setState({ usuario: response });
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     }
 
@@ -191,14 +191,14 @@ export default class BasicFlatList extends Component {
                 this.obtenerInvitadosReserva();
             })
             .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
                 this.setState({ showSpinner: false });
+                Toast.show({
+                    text: "La key solicitada no existe.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     }
 
@@ -238,7 +238,13 @@ export default class BasicFlatList extends Component {
             })
             .catch(error => {
                 this.setState({ showSpinner: false });
-                Alert.alert('Atención', 'Ocurrió un error: ', error);
+                Toast.show({
+                    text: "No se pudo traer las invitaciones.",
+                    buttonText: "Aceptar",
+                    duration: 3000,
+                    position: "bottom",
+                    type: "danger",
+                })
             });
     };
 
