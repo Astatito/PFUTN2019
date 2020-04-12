@@ -32,7 +32,8 @@ class NuevoInvitado extends Component {
         isFocused: false,
         isVisible: false,
         esDesde: null,
-        usuario: {}
+        usuario: {},
+        invitados: []
     };
 
     componentWillMount() {
@@ -42,6 +43,7 @@ class NuevoInvitado extends Component {
         })
             .then(usuario => {
                 this.setState({ usuario });
+                this.obtenerInvitaciones();
                 this.obtenerPickers();
             })
             .catch(error => {
@@ -64,6 +66,39 @@ class NuevoInvitado extends Component {
         }, 3000);
     }
 
+    obtenerInvitaciones = () => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitados = refCountry.collection('Invitados');
+
+        this.snapshotInvitados = refInvitados
+            .where(
+                'IdPropietario',
+                '==',
+                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
+            )
+            .onSnapshot(snapshot => {
+                if (!snapshot.empty) {
+                    //El propietario tiene invitaciones
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        var invitado = {
+                            key: snapshot.docs[i].id,
+                            nombre: snapshot.docs[i].data().Nombre,
+                            apellido: snapshot.docs[i].data().Apellido,
+                            documento: snapshot.docs[i].data().Documento,
+                            tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
+                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
+                        };
+                        tempArray.push(invitado);
+                    }
+                    this.setState({ invitados: tempArray });
+                } else {
+                    this.setState({ invitados: [] });
+                }
+            });
+    };
+
     // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
     obtenerPickers = async () => {
         var dbRef = Database.collection('TipoDocumento');
@@ -72,7 +107,7 @@ class NuevoInvitado extends Component {
         snapshot.forEach(doc => {
             tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
-        this.setState({ tiposDocumento, showSpinner: false });
+        this.setState({ tiposDocumento, showSpinner : false });
     };
 
     handleFocus = event => {
@@ -128,11 +163,12 @@ class NuevoInvitado extends Component {
     }
 
     registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
+
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
 
         try {
-            await refInvitados.add({
+            var nuevoInvitado = {
                 Nombre: '',
                 Apellido: '',
                 Estado: true,
@@ -143,8 +179,16 @@ class NuevoInvitado extends Component {
                 IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
                 Documento: numeroDoc,
                 TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc)
-            });
-            return 0
+            }
+            if (!this.state.invitados.find(
+                inv => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento)) {
+                    await refInvitados.add(nuevoInvitado);
+                    return 0
+            } else {
+                    return 2
+            }
+            
+            
         } catch (error) {
             return 1
         } finally {
@@ -258,6 +302,14 @@ class NuevoInvitado extends Component {
                                                             position: "bottom",
                                                             type: "success",
                                                             onClose : this.onToastClosed.bind(this)
+                                                        })
+                                                    } else if (result == 2) {
+                                                        Toast.show({
+                                                            text: "El invitado ya se encuentra registrado.",
+                                                            buttonText: "Aceptar",
+                                                            duration: 3000,
+                                                            position: "bottom",
+                                                            type: "warning",
                                                         })
                                                     } else if (result == 1) {
                                                         Toast.show({
