@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Image, StatusBar } from 'react-native';
 import { Text, Content } from 'native-base';
 import { LocalStorage } from '../../../DataBase/Storage';
+import call from 'react-native-phone-call'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+const callArgs = {
+    number: '3512071228', //Poner el telefono de un guardia.
+    prompt: true 
+}
 
 //TODO: SOLO TESTING
 LocalStorage.save({
@@ -17,7 +24,8 @@ LocalStorage.save({
 
 class Propietario extends Component {
     static navigationOptions = {
-        title: 'Home'
+        title: 'Home',
+        headerRight: <MaterialIcons style={{ paddingRight: 20 }} name="call" size={25} onPress={() => call(callArgs).catch(console.error)}/>
     };
     
     render() {
@@ -53,6 +61,13 @@ const styles = StyleSheet.create({
         color: '#08477A',
         fontWeight: 'normal',
         fontStyle: 'normal'
+    },
+    btn: {
+        alignSelf: 'center',
+        padding: '3%',
+        alignItems: 'center',
+        backgroundColor: '#1e90ff',
+        width:'50%'
     }
 });
 export default Propietario;
