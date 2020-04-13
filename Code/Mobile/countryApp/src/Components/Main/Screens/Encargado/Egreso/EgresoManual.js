@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
         fontStyle: 'normal'
     },
     picker: {
-        width: '85%',
+        width: '83%',
         fontSize: 18,
         marginTop: '15%',
         alignItems: 'flex-start'

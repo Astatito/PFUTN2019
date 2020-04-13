@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
         fontStyle: 'normal'
     },
     picker: {
-        width: '85%',
+        width: '83%',
         fontSize: 18,
         marginTop: '5%',
         alignItems: 'flex-start'
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
         margin: '4%',
-        width: '80%'    
+        width: '78%'    
     },
     error: {
         color:'red',
