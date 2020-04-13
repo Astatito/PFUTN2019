@@ -16,7 +16,8 @@ class DatosReserva extends Component {
         isFocused: false,
         isVisible: false,
         esDesde: null,
-        usuario: {}
+        usuario: {},
+        nombreReservaError: ''
     };
 
     componentDidMount() {
@@ -111,6 +112,20 @@ class DatosReserva extends Component {
         }
     };
 
+    verificarTextInputs = async(inputArray) => {
+        let someEmpty = false
+        inputArray.forEach(text => {
+            const inputError= text + 'Error'
+            if (this.state[text] == '') {
+                someEmpty = true
+                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+            } else {
+                this.setState({ [inputError] : '' });
+            }
+        });
+        return someEmpty
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -133,14 +148,18 @@ class DatosReserva extends Component {
                             keyboardType={'default'}
                             maxLength={20}
                         />
-
+                        <Text style={styles.error}>{this.state.nombreReservaError}</Text>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={styles.buttons}>
                                 <Button
                                     bordered
                                     success
                                     style={{ paddingHorizontal: '5%' }}
-                                    onPress={() => {
+                                    onPress={async () => {
+                                        const textInputs = await this.verificarTextInputs(['nombreReserva'])
+                                            if ( textInputs == true) {
+                                                return false
+                                            }
                                         Alert.alert(
                                             'Atención',
                                             '¿ Está seguro que desea modificar esta reserva ? ',
@@ -226,13 +245,19 @@ const styles = StyleSheet.create({
         width: '80%',
         fontSize: 16,
         alignItems: 'flex-start',
-        margin: '7%'
+        marginTop: '7%'
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
         marginVertical: '5%'
+    },
+    error: {
+        color:'red',
+        alignSelf:'flex-start',
+        fontSize:12,
+        marginLeft:'10%'
     }
 });
 

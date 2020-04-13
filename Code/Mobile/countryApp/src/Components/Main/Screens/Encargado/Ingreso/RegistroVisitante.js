@@ -35,7 +35,9 @@ class RegistroVisitante extends Component {
         showSpinner: false,
         isVisible: false,
         isEditable: true,
-        idInvitacion: ''
+        idInvitacion: '',
+        nombreError:'',
+        apellidoError:''
     };
 
     componentWillMount() {
@@ -205,6 +207,20 @@ class RegistroVisitante extends Component {
         }
     }
 
+    verificarTextInputs = async(inputArray) => {
+        let someEmpty = false
+        inputArray.forEach(text => {
+            const inputError= text + 'Error'
+            if (this.state[text] == '') {
+                someEmpty = true
+                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+            } else {
+                this.setState({ [inputError] : '' });
+            }
+        });
+        return someEmpty
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -228,7 +244,7 @@ class RegistroVisitante extends Component {
                                 keyboardType={'default'}
                                 maxLength={25}
                             />
-
+                            <Text style={styles.error}>{this.state.nombreError}</Text>
                             <TextInput
                                 style={styles.textInput}
                                 placeholder="Apellido"
@@ -240,7 +256,7 @@ class RegistroVisitante extends Component {
                                 keyboardType={'default'}
                                 maxLength={25}
                             />
-
+                            <Text style={styles.error}>{this.state.apellidoError}</Text>
                             <Picker
                                 note
                                 mode="dropdown"
@@ -297,6 +313,10 @@ class RegistroVisitante extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.setState({ showSpinner: true }, async () => {
+                                                const textInputs = await this.verificarTextInputs(['nombre','apellido'])
+                                                if ( textInputs == true) {
+                                                    return false
+                                                } 
                                                 const verificacion = await this.verificarFechaNacimiento()
                                                 if (verificacion == 1) {
                                                     Toast.show({
@@ -371,7 +391,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 26,
         marginHorizontal: '5%',
-        marginTop: '7%',
+        marginTop: '6%',
+        marginBottom:'2%',
         color: '#08477A',
         fontWeight: 'normal',
         fontStyle: 'normal'
@@ -379,14 +400,14 @@ const styles = StyleSheet.create({
     picker: {
         width: '85%',
         fontSize: 18,
-        marginTop: '7%',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        marginTop:'2%'
     },
     textInput: {
         width: '82%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '7%'
+        marginTop: '4%'
     },
     buttons: {
         alignItems: 'center',
@@ -398,8 +419,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginTop: '10%',
+        marginTop: '7%',
         width: '85%'
+    },
+    error: {
+        color:'red',
+        alignSelf:'flex-start',
+        fontSize:12,
+        marginLeft:'10%'
     }
 });
 

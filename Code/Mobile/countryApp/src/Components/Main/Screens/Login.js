@@ -78,6 +78,20 @@ class Login extends Component {
         }, 3000);
     }
 
+    verificarTextInputs = async(inputArray) => {
+        let someEmpty = false
+        inputArray.forEach(text => {
+            const inputError= text + 'Error'
+            if (this.state[text] == '') {
+                someEmpty = true
+                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+            } else {
+                this.setState({ [inputError] : '' });
+            }
+        });
+        return someEmpty
+    }
+    
     render() {
         return (
             <KeyboardAvoidingView behavior="height" style= {styles.wrapper}>

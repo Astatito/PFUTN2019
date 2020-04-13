@@ -66,7 +66,11 @@ class MiPerfil extends Component {
         isFocused: false,
         showSpinner: false,
         isVisible: false,
-        usuario: {}
+        usuario: {},
+        legajoError: '',
+        nombreError: '',
+        apellidoError: '',
+        celularError: ''
     };
 
     obtenerDatosPersonales = () => {
@@ -167,6 +171,20 @@ class MiPerfil extends Component {
         }
     }
 
+    verificarTextInputs = async(inputArray) => {
+        let someEmpty = false
+        inputArray.forEach(text => {
+            const inputError= text + 'Error'
+            if (this.state[text] == '') {
+                someEmpty = true
+                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+            } else {
+                this.setState({ [inputError] : '' });
+            }
+        });
+        return someEmpty
+    }
+    
     render() {
         const { isFocused } = this.state;
 
@@ -177,56 +195,43 @@ class MiPerfil extends Component {
                         <View style={styles.container}>
                             <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                            <View style={styles.viewContainer}>
-                                <Text style={styles.textLabel}>Legajo</Text>
-                                <TextInput
-                                    style={{
-                                        width: '83%',
-                                        fontSize: 16,
-                                        alignItems: 'flex-start',
-                                        marginTop: '5%'
-                                    }}
-                                    placeholder="Legajo"
-                                    onChangeText={legajo => this.setState({ legajo })}
-                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                    onFocus={this.handleFocus}
-                                    onBlur={this.handleBlur}
-                                    keyboardType={'numeric'}
-                                    maxLength={5}
-                                    value={this.state.legajo}
-                                />
-                            </View>
-
-                            <View style={styles.viewContainer}>
-                                <Text style={styles.textLabel}>Nombre</Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Nombre"
-                                    onChangeText={nombre => this.setState({ nombre })}
-                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                    onFocus={this.handleFocus}
-                                    onBlur={this.handleBlur}
-                                    keyboardType={'default'}
-                                    value={this.state.nombre}
-                                    maxLength={25}
-                                />
-                            </View>
-
-                            <View style={styles.viewContainer}>
-                                <Text style={styles.textLabel}>Apellido</Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Apellido"
-                                    onChangeText={apellido => this.setState({ apellido })}
-                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                    onFocus={this.handleFocus}
-                                    onBlur={this.handleBlur}
-                                    keyboardType={'default'}
-                                    value={this.state.apellido}
-                                    maxLength={25}
-                                />
-                            </View>
-
+                         
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Legajo"
+                                onChangeText={legajo => this.setState({ legajo })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'numeric'}
+                                maxLength={5}
+                                value={this.state.legajo}
+                            />
+                            <Text style={styles.error}>{this.state.legajoError}</Text>        
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Nombre"
+                                value={this.state.nombre}
+                                onChangeText={nombre => this.setState({ nombre })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'default'}
+                                maxLength={25}
+                            />
+                            <Text style={styles.error}>{this.state.nombreError}</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Apellido"
+                                value={this.state.apellido}
+                                onChangeText={apellido => this.setState({ apellido })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'default'}
+                                maxLength={25}
+                            />
+                            <Text style={styles.error}>{this.state.apellidoError}</Text>      
                             <Picker
                                 note
                                 mode="dropdown"
@@ -239,25 +244,17 @@ class MiPerfil extends Component {
                                 })}
                             </Picker>
 
-                            <View style={styles.viewContainer}>
-                                <Text style={styles.textLabel}>Documento</Text>
-                                <TextInput
-                                    style={{
-                                        width: '70%',
-                                        fontSize: 16,
-                                        alignItems: 'flex-start',
-                                        marginTop: '5%'
-                                    }}
-                                    placeholder="Número de documento"
-                                    onChangeText={documento => this.setState({ documento })}
-                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                    onFocus={this.handleFocus}
-                                    onBlur={this.handleBlur}
-                                    keyboardType={'numeric'}
-                                    value={this.state.documento}
-                                    editable={false}
-                                />
-                            </View>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Documento"
+                                onChangeText={documento => this.setState({ documento })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'numeric'}
+                                value={this.state.documento}
+                                editable={false}
+                            />
 
                             <View style={styles.datetime}>
                                 <Text style={{ color: '#8F8787' }}>Fecha de nacimiento</Text>
@@ -281,21 +278,19 @@ class MiPerfil extends Component {
                                 date={new Date(this.state.fechaNacimiento)}
                                 is24Hour={true}></DateTimePicker>
 
-                            <View style={styles.viewContainer}>
-                                <Text style={styles.textLabel}>Celular</Text>
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Celular"
-                                    onChangeText={celular => this.setState({ celular })}
-                                    underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                    onFocus={this.handleFocus}
-                                    onBlur={this.handleBlur}
-                                    keyboardType={'numeric'}
-                                    value={this.state.celular}
-                                    maxLength={10}
-                                />
-                            </View>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="Celular"
+                                onChangeText={celular => this.setState({ celular })}
+                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
+                                onFocus={this.handleFocus}
+                                onBlur={this.handleBlur}
+                                keyboardType={'numeric'}
+                                value={this.state.celular}
+                                maxLength={10}
+                            />
 
+                            <Text style={styles.error}>{this.state.celularError}</Text>           
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={styles.buttons}>
                                     <Button
@@ -304,6 +299,10 @@ class MiPerfil extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={async () => {
                                             this.setState({ showSpinner: true }, async () => {
+                                                const textInputs = await this.verificarTextInputs(['legajo','nombre','apellido','celular'])
+                                                if ( textInputs == true) {
+                                                    return false
+                                                }
                                                 const verificacion = await this.verificarFechaNacimiento()
                                                 if (verificacion == 1) {
                                                     Toast.show({
@@ -377,41 +376,36 @@ const styles = StyleSheet.create({
         color: '#FFF'
     },
     picker: {
-        width: '90%',
+        width: '85%',
         fontSize: 18,
-        marginTop: '5%',
+        marginTop: '2%',
         alignItems: 'flex-start'
     },
     textInput: {
-        width: '80%',
+        width: '82%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '5%'
+        marginTop: '3%'
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '6%'
+        marginTop: '3%'
     },
     datetime: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
-        marginTop: '10%',
-        width: '92%',
-        marginBottom: '2%'
+        marginTop: '9%',
+        marginBottom: '4%',
+        width: '90%',
     },
-    viewContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '85%'
-    },
-    textLabel: {
-        alignSelf: 'center',
-        color: '#8F8787',
-        marginRight: '7%',
-        marginTop: '5%'
+    error: {
+        color:'red',
+        alignSelf:'flex-start',
+        fontSize:12,
+        marginLeft:'10%'
     }
 });
 

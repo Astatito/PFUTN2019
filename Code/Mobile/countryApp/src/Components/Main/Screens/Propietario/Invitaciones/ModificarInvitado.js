@@ -34,7 +34,8 @@ class ModificarInvitado extends Component {
         isVisible: false,
         esDesde: null,
         usuario: {},
-        autenticado: null
+        autenticado: null,
+        documentoError: ''
     };
 
     componentDidMount() {
@@ -156,6 +157,20 @@ class ModificarInvitado extends Component {
         }
     }
 
+    verificarTextInputs = async(inputArray) => {
+        let someEmpty = false
+        inputArray.forEach(text => {
+            const inputError= text + 'Error'
+            if (this.state[text] == '') {
+                someEmpty = true
+                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+            } else {
+                this.setState({ [inputError] : '' });
+            }
+        });
+        return someEmpty
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -191,7 +206,7 @@ class ModificarInvitado extends Component {
                                 keyboardType={'numeric'}
                                 maxLength={8}
                             />
-
+                            <Text style={styles.error}>{this.state.documentoError}</Text>
                             <View style={styles.datetime}>
                                 <Text style={{ color: '#8F8787' }}>Desde</Text>
                                 <Text style={{ color: '#1e90ff', fontSize: 15 }}>
@@ -238,6 +253,10 @@ class ModificarInvitado extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.setState({ showSpinner: true }, async () => {
+                                                const textInputs = await this.verificarTextInputs(['documento'])
+                                                if ( textInputs == true) {
+                                                    return false
+                                                } 
                                                 const verificacion = await this.verificarFechaCorrecta()
                                                 if (verificacion == 1) {
                                                     Toast.show({
@@ -469,7 +488,7 @@ const styles = StyleSheet.create({
         width: '80%',
         fontSize: 16,
         alignItems: 'flex-start',
-        margin: '7%'
+        marginTop: '7%'
     },
     datetime: {
         flexDirection: 'row',
@@ -490,6 +509,12 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         margin: '4%',
         width: '80%'    
+    },
+    error: {
+        color:'red',
+        alignSelf:'flex-start',
+        fontSize:12,
+        marginLeft:'10%'
     }
 });
 

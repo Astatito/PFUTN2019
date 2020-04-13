@@ -19,7 +19,7 @@ class EgresoManual extends Component {
         };
     };
 
-    state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused: false, usuario: {} };
+    state = { picker: '', tiposDocumento: [], documento: '', showSpinner: false, isFocused: false, usuario: {}, documentoError:'' };
 
     componentWillMount() {
         this.setState({ showSpinner: true });
@@ -160,6 +160,20 @@ class EgresoManual extends Component {
         }
     };
 
+    verificarTextInputs = async(inputArray) => {
+        let someEmpty = false
+        inputArray.forEach(text => {
+            const inputError= text + 'Error'
+            if (this.state[text] == '') {
+                someEmpty = true
+                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+            } else {
+                this.setState({ [inputError] : '' });
+            }
+        });
+        return someEmpty
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -193,7 +207,7 @@ class EgresoManual extends Component {
                                 keyboardType={'numeric'}
                                 maxLength={8}
                             />
-
+                            <Text style={styles.error}>{this.state.documentoError}</Text>
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={styles.buttons}>
                                     <Button
@@ -202,6 +216,10 @@ class EgresoManual extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={async () => {
                                             this.setState({ showSpinner: true }, async () => {
+                                                const textInputs = await this.verificarTextInputs(['documento'])
+                                                if ( textInputs == true) {
+                                                    return false
+                                                } 
                                                 const result = await this.registrarEgreso(this.state.picker, this.state.documento);
                                                 if (result == 0) {
                                                     Toast.show({
@@ -304,6 +322,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '45%',
         marginTop: '13%'
+    },
+    error: {
+        color:'red',
+        alignSelf:'flex-start',
+        fontSize:12,
+        marginLeft:'10%'
     }
 });
 
