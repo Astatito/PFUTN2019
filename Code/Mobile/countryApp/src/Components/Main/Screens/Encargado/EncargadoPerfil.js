@@ -13,6 +13,8 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
+let datosEncargado = {}
+
 const navigateAction = NavigationActions.navigate({
     routeName: 'Registros',
     action: NavigationActions.navigate({ routeName: 'Registros' }),
@@ -89,6 +91,7 @@ class MiPerfil extends Component {
                     celular: encargado.Celular,
                     fechaNacimiento: moment.unix(encargado.FechaNacimiento.seconds)
                 });
+                datosEncargado = encargado;
                 this.setState({ showSpinner: false });
             }
         });
@@ -115,6 +118,18 @@ class MiPerfil extends Component {
         } finally {
             this.setState({ showSpinner: false });
         }
+    };
+
+    cancelarCambios = () => {
+        this.setState({
+            nombre: datosEncargado.Nombre,
+            apellido: datosEncargado.Apellido,
+            legajo: datosEncargado.Legajo,
+            documento: datosEncargado.Documento,
+            picker: datosEncargado.TipoDocumento.id,
+            celular: datosEncargado.Celular,
+            fechaNacimiento: moment.unix(datosEncargado.FechaNacimiento.seconds)
+        });
     };
 
     obtenerPickers = async () => {
@@ -345,6 +360,7 @@ class MiPerfil extends Component {
                                         danger 
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
+                                            this.cancelarCambios();
                                             this.props.navigation.dispatch(navigateAction);
                                         }}>
                                         <Text>Cancelar</Text>

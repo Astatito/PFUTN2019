@@ -82,7 +82,6 @@ class MiPerfil extends Component {
                 this.setState({
                     nombre: propietario.Nombre,
                     apellido: propietario.Apellido,
-                    legajo: propietario.Legajo,
                     documento: propietario.Documento,
                     picker: propietario.TipoDocumento.id,
                     celular: propietario.Celular,
@@ -119,7 +118,6 @@ class MiPerfil extends Component {
         this.setState({
             nombre: datosPropietario.Nombre,
             apellido: datosPropietario.Apellido,
-            legajo: datosPropietario.Legajo,
             documento: datosPropietario.Documento,
             picker: datosPropietario.TipoDocumento.id,
             celular: datosPropietario.Celular,
