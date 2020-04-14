@@ -22,35 +22,31 @@ class Login extends Component {
     };
 
     onButtonPress = async() => {
+        this.setState({ showSpinner: true })
         try {
-            Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then(() => {
-                const home = this.logueoUsuario();
-                if (home == 1) {
-                    this.props.navigation.navigate('Propietario')
-                } else if (home == 2){
-                    this.props.navigation.navigate('Encargado')
-                }
-            })
-            .catch((error) => {
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        this.setState({ result: 'No existe el usuario.' });
-                        return 
-                    case 'auth/wrong-password':
-                        this.setState({ result: 'Contraseña incorrecta.' });
-                        return 
-                    default :
-                        this.setState({ result: 'Falló la autenticación.' });
-                        return
-                }
-            })
-            
+            await Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+            this.setState({ result: 'Logueado con éxito.' });
+            var home = await this.logueoUsuario()
         } catch (error) {
-            this.setState({ result: 'Falló la autenticación.' });
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    this.setState({ result: 'No existe el usuario.' });
+                    break
+                case 'auth/wrong-password':
+                    this.setState({ result: 'Contraseña incorrecta.' });
+                    break
+                default :
+                    this.setState({ result: 'Falló la autenticación.' });
+                    break
+            }
         } finally {
             this.setState({ showSpinner: false });
-        }   
+            if (home == 1) {
+                this.props.navigation.navigate('Propietario')
+            } else if (home == 2) {
+                this.props.navigation.navigate('Encargado')
+            }
+        }
     }
 
     storeUsuario = (keyStore, obj) => {
@@ -88,10 +84,10 @@ class Login extends Component {
             this.setState({
                 showSpinner: false
             });
-        }, 3000);
+        }, 5000);
     }
 
-    verificarTextInputs = async(inputArray) => {
+    verificarTextInputs = (inputArray) => {
         let someEmpty = false
         inputArray.forEach(text => {
             const inputError= text + 'Error'
@@ -105,7 +101,7 @@ class Login extends Component {
         return someEmpty
     }
     
-    validateEmail = async (email) => {
+    validateEmail =  (email) => {
         var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (regex.test(email)) {
             this.setState({ emailError: ''})
@@ -145,14 +141,12 @@ class Login extends Component {
                     />
                     <Text style={styles.error}>{this.state.passwordError}</Text>
                     <TouchableOpacity style={styles.btn} onPress={ async () => {
-                        this.setState({ showSpinner: true }, async () => {
-                            const emailFormat = await this.validateEmail(this.state.email)
-                            const textInputs = await this.verificarTextInputs(['password'])
+                            const emailFormat =  this.validateEmail(this.state.email)
+                            const textInputs = this.verificarTextInputs(['password'])
                             if (emailFormat == true || textInputs == true) {
                                 return
                             }
-                            this.onButtonPress()
-                        })
+                            await this.onButtonPress()
                     }}>
                         <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
                     </TouchableOpacity>
