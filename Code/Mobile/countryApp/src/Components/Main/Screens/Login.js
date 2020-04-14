@@ -24,12 +24,28 @@ class Login extends Component {
     onButtonPress = async() => {
         try {
             Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            const home = await this.logueoUsuario();
-            if (home == 1) {
-                this.props.navigation.navigate('Propietario')
-            } else if (home == 2){
-                this.props.navigation.navigate('Encargado')
-            }
+            .then(() => {
+                const home = this.logueoUsuario();
+                if (home == 1) {
+                    this.props.navigation.navigate('Propietario')
+                } else if (home == 2){
+                    this.props.navigation.navigate('Encargado')
+                }
+            })
+            .catch((error) => {
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        this.setState({ result: 'No existe el usuario.' });
+                        return 
+                    case 'auth/wrong-password':
+                        this.setState({ result: 'Contraseña incorrecta.' });
+                        return 
+                    default :
+                        this.setState({ result: 'Falló la autenticación.' });
+                        return
+                }
+            })
+            
         } catch (error) {
             this.setState({ result: 'Falló la autenticación.' });
         } finally {
