@@ -5,7 +5,7 @@ import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 class Login extends Component {
-    state = { email: '', password: '', result: '', showSpinner: false };
+    state = { email: '', password: '', result: '', showSpinner: false, passwordError:'', emailError:'' };
 
     navigationOptions = () => {
         return {
@@ -21,11 +21,9 @@ class Login extends Component {
         };
     };
 
-    async onButtonPress() {
-        this.setState({ showSpinner: true });
+    onButtonPress = async() => {
         try {
             Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            this.setState({ result: 'Logueo exitoso.' });
             const home = await this.logueoUsuario();
             if (home == 1) {
                 this.props.navigation.navigate('Propietario')
@@ -55,7 +53,6 @@ class Login extends Component {
         var dbRef = Database.collection('Usuarios');
         try {
             var doc = await dbRef.doc(this.state.email.toLowerCase()).get()
-            this.setState({ result: 'Logueo exitoso.' });
             if (doc.exists) {
                 this.storeUsuario('UsuarioLogueado', doc.data());
                 switch (doc.data().TipoUsuario.id) {
@@ -64,9 +61,9 @@ class Login extends Component {
                     case 'Encargado':
                         return 2
                 }
-            }
+            } 
         } catch (error) {
-            
+            this.setState({ result: 'Falló la autenticación.' });
         } 
     };
 
@@ -92,6 +89,17 @@ class Login extends Component {
         return someEmpty
     }
     
+    validateEmail = async (email) => {
+        var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (regex.test(email)) {
+            this.setState({ emailError: ''})
+            return false
+        } else {
+            this.setState({ emailError: '*No es un formato de email válido.', showSpinner: false})
+            return true
+        }
+    }
+
     render() {
         return (
             <KeyboardAvoidingView behavior="height" style= {styles.wrapper}>
@@ -108,8 +116,9 @@ class Login extends Component {
                         placeholder="Usuario"
                         onChangeText={email => this.setState({ email })}
                         underlineColorAndroid="transparent"
-                        maxLength={25}
+                        maxLength={40}
                     />
+                    <Text style={styles.error}>{this.state.emailError}</Text>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Contraseña"
@@ -118,7 +127,17 @@ class Login extends Component {
                         secureTextEntry={true}
                         maxLength={25}
                     />
-                    <TouchableOpacity style={styles.btn} onPress={this.onButtonPress.bind(this)}>
+                    <Text style={styles.error}>{this.state.passwordError}</Text>
+                    <TouchableOpacity style={styles.btn} onPress={ async () => {
+                        this.setState({ showSpinner: true }, async () => {
+                            const emailFormat = await this.validateEmail(this.state.email)
+                            const textInputs = await this.verificarTextInputs(['password'])
+                            if (emailFormat == true || textInputs == true) {
+                                return
+                            }
+                            this.onButtonPress()
+                        })
+                    }}>
                         <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
                     </TouchableOpacity>
                     <Text style={styles.result}>{this.state.result}</Text>
@@ -148,20 +167,28 @@ const styles = StyleSheet.create({
     textInput: {
         alignSelf: 'stretch',
         padding: '5%',
-        marginBottom: '10%',
+        marginBottom: '3%',
+        marginTop: '5%',
         backgroundColor: '#fff'
     },
     btn: {
         alignSelf: 'stretch',
         padding: '5%',
         alignItems: 'center',
-        backgroundColor: '#15692C'
+        backgroundColor: '#15692C',
+        marginTop: '5%'
     },
     result: {
         paddingTop: '10%',
         fontWeight: 'bold',
         color: '#35383D',
         alignSelf: 'flex-start'
+    },
+    error: {
+        color:'red',
+        alignSelf:'flex-start',
+        fontSize:12,
+        fontWeight:'bold'
     }
 });
 export default Login;
