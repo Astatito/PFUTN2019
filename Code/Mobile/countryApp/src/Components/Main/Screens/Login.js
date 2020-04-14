@@ -40,7 +40,6 @@ class Login extends Component {
                     break
             }
         } finally {
-            this.setState({ showSpinner: false });
             if (home == 1) {
                 this.props.navigation.navigate('Propietario')
             } else if (home == 2) {
@@ -147,6 +146,7 @@ class Login extends Component {
                                 return
                             }
                             await this.onButtonPress()
+                            this.setState({ showSpinner: false });
                     }}>
                         <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
                     </TouchableOpacity>
