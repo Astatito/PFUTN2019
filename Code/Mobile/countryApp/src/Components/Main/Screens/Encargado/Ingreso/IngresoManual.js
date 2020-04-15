@@ -31,7 +31,6 @@ class IngresoManual extends Component {
     };
 
     componentWillMount() {
-        this.setState({ showSpinner: true });
         LocalStorage.load({
             key: 'UsuarioLogueado',
         })
@@ -39,7 +38,6 @@ class IngresoManual extends Component {
                 this.setState({ usuario, tiposDocumento: global.tiposDocumento });
             })
             .catch((error) => {
-                this.setState({ showSpinner: false });
                 Toast.show({
                     text: 'La key solicitada no existe.',
                     buttonText: 'Aceptar',
