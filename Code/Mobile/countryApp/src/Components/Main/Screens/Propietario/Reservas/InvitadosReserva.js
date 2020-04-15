@@ -14,25 +14,10 @@ class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
 
     componentWillMount() {
-        // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                this.setState({ usuario: response });
-            })
-            .catch(error => {
-                Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
-                    duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
-            });
+        this.setState({ usuario: this.props.usuario });
     }
 
-    descartarInvitado = async invitado => {
+    descartarInvitado = async (invitado) => {
         if (invitado.estado == true) {
             // TODO: SE DEBE ELIMINAR TAMBIÉN LA INVITACIÓN PARA QUE NO PUEDA INGRESAR
         }
@@ -42,13 +27,13 @@ class FlatListItem extends Component {
         var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
         try {
             await refInvitado.delete();
-            return 0
+            return 0;
         } catch (error) {
-            return 1
+            return 1;
         }
     };
 
-    confirmarInvitado = async invitado => {
+    confirmarInvitado = async (invitado) => {
         // TODO: SE DEBE CREAR/ACTUALIZAR LA INVITACIÓN PARA QUE PUEDA INGRESAR
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
@@ -57,13 +42,13 @@ class FlatListItem extends Component {
         try {
             await refInvitado.set(
                 {
-                    Estado: true
+                    Estado: true,
                 },
                 { merge: true }
             );
             return 0;
         } catch (error) {
-            return 1
+            return 1;
         }
     };
 
@@ -92,34 +77,34 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: async () => {
-                                        const result = await this.descartarInvitado(this.props.item)
+                                        const result = await this.descartarInvitado(this.props.item);
                                         if (result == 0) {
                                             Toast.show({
-                                                text: "Invitación eliminada exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Invitación eliminada exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success"
-                                            })
+                                                position: 'bottom',
+                                                type: 'success',
+                                            });
                                         } else if (result == 1) {
                                             Toast.show({
-                                                text: "Lo siento, ocurrió un error inesperado.",
-                                                buttonText: "Aceptar",
+                                                text: 'Lo siento, ocurrió un error inesperado.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "danger"
-                                            })
+                                                position: 'bottom',
+                                                type: 'danger',
+                                            });
                                         }
-                                    }
-                                }
+                                    },
+                                },
                             ],
                             { cancelable: true }
                         );
-                    }
-                }
+                    },
+                },
             ],
             rowId: this.props.index,
-            sectionId: 1
+            sectionId: 1,
         };
         const swipeOutSettingsPendiente = {
             autoClose: true,
@@ -145,31 +130,31 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: async () => {
-                                        const result = await this.confirmarInvitado(this.props.item)
+                                        const result = await this.confirmarInvitado(this.props.item);
                                         if (result == 0) {
                                             Toast.show({
-                                                text: "Invitación confirmada exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Invitación confirmada exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success"
-                                            })
+                                                position: 'bottom',
+                                                type: 'success',
+                                            });
                                         } else if (result == 1) {
                                             Toast.show({
-                                                text: "Lo siento, ocurrió un error inesperado.",
-                                                buttonText: "Aceptar",
+                                                text: 'Lo siento, ocurrió un error inesperado.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "danger"
-                                            })
+                                                position: 'bottom',
+                                                type: 'danger',
+                                            });
                                         }
-                                    }
-                                }
+                                    },
+                                },
                             ],
                             { cancelable: true }
                         );
-                    }
-                }
+                    },
+                },
             ],
             right: [
                 {
@@ -184,34 +169,34 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: async () => {
-                                        const result = await this.descartarInvitado(this.props.item)
+                                        const result = await this.descartarInvitado(this.props.item);
                                         if (result == 0) {
                                             Toast.show({
-                                                text: "Invitación eliminada exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Invitación eliminada exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success"
-                                            })
+                                                position: 'bottom',
+                                                type: 'success',
+                                            });
                                         } else if (result == 1) {
                                             Toast.show({
-                                                text: "Lo siento, ocurrió un error inesperado.",
-                                                buttonText: "Aceptar",
+                                                text: 'Lo siento, ocurrió un error inesperado.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "danger"
-                                            })
+                                                position: 'bottom',
+                                                type: 'danger',
+                                            });
                                         }
-                                    }
-                                }
+                                    },
+                                },
                             ],
                             { cancelable: true }
                         );
-                    }
-                }
+                    },
+                },
             ],
             rowId: this.props.index,
-            sectionId: 1
+            sectionId: 1,
         };
 
         if (this.props.item.estado == false) {
@@ -247,7 +232,6 @@ class FlatListItem extends Component {
 }
 
 export default class BasicFlatList extends Component {
-
     state = { usuario: null, reserva: null };
     idCountry = '';
     idPropietario = '';
@@ -256,7 +240,7 @@ export default class BasicFlatList extends Component {
     componentDidMount() {
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 3000);
         this.obtenerInvitaciones();
@@ -276,7 +260,7 @@ export default class BasicFlatList extends Component {
 
         this.setState({
             usuario: usuario,
-            reserva: reserva
+            reserva: reserva,
         });
     }
 
@@ -302,7 +286,7 @@ export default class BasicFlatList extends Component {
                                 message:
                                     'Hola! Te envío la invitación para mi evento. Por favor, completa tus datos en el siguiente link: ' +
                                     link,
-                                subject: 'Invitación a mi evento'
+                                subject: 'Invitación a mi evento',
                             };
                             Share.open(shareOptions);
                         }}
@@ -316,13 +300,13 @@ export default class BasicFlatList extends Component {
                 </View>
             ),
             headerStyle: {
-                backgroundColor: '#1e90ff'
+                backgroundColor: '#1e90ff',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
                 textAlign: 'center',
-                flex: 1
-            }
+                flex: 1,
+            },
         };
     };
 
@@ -347,7 +331,7 @@ export default class BasicFlatList extends Component {
         var refReserva = refPropietario.collection('Reservas').doc(this.state.reserva.key);
         var refInvitados = refReserva.collection('Invitados');
 
-        this.snapshotInvitados = refInvitados.onSnapshot(snapshot => {
+        this.snapshotInvitados = refInvitados.onSnapshot((snapshot) => {
             if (!snapshot.empty) {
                 //El propietario tiene invitaciones
                 var tempArray = [];
@@ -359,7 +343,7 @@ export default class BasicFlatList extends Component {
                         estado: snapshot.docs[i].data().Estado,
                         documento: snapshot.docs[i].data().Documento,
                         tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
-                        reserva: this.state.reserva.key
+                        reserva: this.state.reserva.key,
                     };
                     tempArray.push(invitado);
                 }
@@ -391,6 +375,7 @@ export default class BasicFlatList extends Component {
                                 return (
                                     <FlatListItem
                                         navigation={this.props.navigation}
+                                        usuario={this.state.usuario}
                                         item={item}
                                         index={index}
                                         parentFlatList={this}></FlatListItem>
@@ -407,7 +392,7 @@ const styles = StyleSheet.create({
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     textDefault: {
         marginTop: '65%',
@@ -415,11 +400,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#8F8787',
         fontWeight: 'normal',
-        fontStyle: 'normal'
+        fontStyle: 'normal',
     },
     iconContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        width: 100
-    }
+        width: 100,
+    },
 });

@@ -11,25 +11,10 @@ class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
 
     componentWillMount() {
-        // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                this.setState({ usuario: response });
-            })
-            .catch(error => {
-                Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
-                    duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
-            });
+        this.setState({ usuario: this.props.usuario });
     }
 
-    eliminarReserva = async reserva => {
+    eliminarReserva = async (reserva) => {
         var refReservaPropietario = Database.doc(
             'Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos + '/Reservas/' + reserva.key
         );
@@ -40,7 +25,7 @@ class FlatListItem extends Component {
             return 0;
         } catch (error) {
             return 1;
-        } 
+        }
     };
 
     render() {
@@ -68,34 +53,34 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: async () => {
-                                        const result = await this.eliminarReserva(this.props.item)
+                                        const result = await this.eliminarReserva(this.props.item);
                                         if (result == 0) {
                                             Toast.show({
-                                                text: "Reserva eliminada exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Reserva eliminada exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success"
-                                            })
+                                                position: 'bottom',
+                                                type: 'success',
+                                            });
                                         } else if (result == 1) {
                                             Toast.show({
-                                                text: "Lo siento, ocurrió un error inesperado.",
-                                                buttonText: "Aceptar",
+                                                text: 'Lo siento, ocurrió un error inesperado.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "danger"
-                                            })
+                                                position: 'bottom',
+                                                type: 'danger',
+                                            });
                                         }
-                                    }
-                                }
+                                    },
+                                },
                             ],
                             { cancelable: true }
                         );
-                    }
-                }
+                    },
+                },
             ],
             rowId: this.props.index,
-            sectionId: 1
+            sectionId: 1,
         };
 
         return (
@@ -113,10 +98,10 @@ class FlatListItem extends Component {
                                     onPress: () => {
                                         this.props.navigation.navigate('InformacionReserva', {
                                             usuario: this.state.usuario,
-                                            reserva: this.props.item
+                                            reserva: this.props.item,
                                         });
-                                    }
-                                }
+                                    },
+                                },
                             ],
                             { cancelable: true }
                         );
@@ -147,7 +132,7 @@ export default class BasicFlatList extends Component {
     componentDidMount() {
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 3000);
     }
@@ -155,22 +140,22 @@ export default class BasicFlatList extends Component {
     componentWillMount() {
         this.setState({ showSpinner: true });
         LocalStorage.load({
-            key: 'UsuarioLogueado'
+            key: 'UsuarioLogueado',
         })
-            .then(response => {
+            .then((response) => {
                 this.setState({ usuario: response });
                 this.obtenerReservas();
                 this.createListeners();
             })
-            .catch(error => {
-                this.setState({ showSpinner: false })
+            .catch((error) => {
+                this.setState({ showSpinner: false });
                 Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
                     duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
     }
 
@@ -183,7 +168,7 @@ export default class BasicFlatList extends Component {
         this._subscribeSnapshot = this.props.navigation.addListener('didFocus', () => {
             this.obtenerReservas();
         });
-        
+
         this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
             this.snapshotReservas();
         });
@@ -191,16 +176,13 @@ export default class BasicFlatList extends Component {
 
     obtenerReservas = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-        var refReservas = refCountry
-            .collection('Propietarios')
-            .doc(this.state.usuario.datos)
-            .collection('Reservas');
+        var refReservas = refCountry.collection('Propietarios').doc(this.state.usuario.datos).collection('Reservas');
 
         this.snapshotReservas = refReservas
             .where('Cancelado', '==', false)
             .where('FechaDesde', '>=', new Date())
             .orderBy('FechaDesde')
-            .onSnapshot(snapshot => {
+            .onSnapshot((snapshot) => {
                 if (!snapshot.empty) {
                     //El propietario tiene reservas
                     var tempArray = [];
@@ -211,7 +193,7 @@ export default class BasicFlatList extends Component {
                             fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
                             fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
                             idReservaServicio: snapshot.docs[i].data().IdReservaServicio.path,
-                            servicio: snapshot.docs[i].data().Servicio
+                            servicio: snapshot.docs[i].data().Servicio,
                         };
                         tempArray.push(reserva);
                     }
@@ -242,6 +224,7 @@ export default class BasicFlatList extends Component {
                                 return (
                                     <FlatListItem
                                         navigation={this.props.navigation}
+                                        usuario={this.state.usuario}
                                         item={item}
                                         index={index}
                                         parentFlatList={this}></FlatListItem>
@@ -258,7 +241,7 @@ const styles = StyleSheet.create({
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     textDefault: {
         marginTop: '65%',
@@ -266,6 +249,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#8F8787',
         fontWeight: 'normal',
-        fontStyle: 'normal'
-    }
+        fontStyle: 'normal',
+    },
 });

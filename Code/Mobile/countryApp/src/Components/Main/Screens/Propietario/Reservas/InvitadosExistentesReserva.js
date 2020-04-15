@@ -14,27 +14,12 @@ class FlatListItem extends Component {
     state = { showSpinner: false, isSelected: false };
 
     componentWillMount() {
-        // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                this.setState({ usuario: response });
-            })
-            .catch(error => {
-                Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
-                    duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
-            });
+        this.setState({ usuario: this.props.usuario });
     }
 
     render() {
         const swipeOutSettings = {
-            style: { backgroundColor: '#fff' }
+            style: { backgroundColor: '#fff' },
         };
 
         if (this.props.item.nombre == null && this.props.item.apellido == null && this.state.isSelected == false) {
@@ -160,7 +145,7 @@ export default class BasicFlatList extends Component {
         return {
             title: 'Invitados personales',
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
-            headerRight: <View />
+            headerRight: <View />,
         };
     };
 
@@ -172,7 +157,7 @@ export default class BasicFlatList extends Component {
     componentDidMount() {
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 3000);
     }
@@ -183,22 +168,22 @@ export default class BasicFlatList extends Component {
         const reserva = navigation.getParam('reserva');
         this.setState({ showSpinner: true, idReserva: reserva });
         LocalStorage.load({
-            key: 'UsuarioLogueado'
+            key: 'UsuarioLogueado',
         })
-            .then(response => {
+            .then((response) => {
                 this.setState({ usuario: response });
                 this.obtenerInvitaciones();
                 this.obtenerInvitadosReserva();
             })
-            .catch(error => {
+            .catch((error) => {
                 this.setState({ showSpinner: false });
                 Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
                     duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
     }
 
@@ -213,7 +198,7 @@ export default class BasicFlatList extends Component {
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
             .get()
-            .then(snapshot => {
+            .then((snapshot) => {
                 if (!snapshot.empty) {
                     //El propietario tiene invitaciones
                     var tempArray = [];
@@ -226,7 +211,7 @@ export default class BasicFlatList extends Component {
                                 documento: snapshot.docs[i].data().Documento,
                                 tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
                                 fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
-                                fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
+                                fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
                             };
                             tempArray.push(invitado);
                         }
@@ -236,19 +221,19 @@ export default class BasicFlatList extends Component {
                     this.setState({ showSpinner: false, flatListData: [] });
                 }
             })
-            .catch(error => {
+            .catch((error) => {
                 this.setState({ showSpinner: false });
                 Toast.show({
-                    text: "No se pudo traer las invitaciones.",
-                    buttonText: "Aceptar",
+                    text: 'No se pudo traer las invitaciones.',
+                    buttonText: 'Aceptar',
                     duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
     };
 
-    onToastClosed = reason => {
+    onToastClosed = (reason) => {
         this.props.navigation.goBack();
     };
 
@@ -258,7 +243,7 @@ export default class BasicFlatList extends Component {
         var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva);
         var refInvitados = refReserva.collection('Invitados');
 
-        refInvitados.onSnapshot(snapshot => {
+        refInvitados.onSnapshot((snapshot) => {
             if (!snapshot.empty) {
                 //El propietario tiene invitaciones
                 var tempArray = [];
@@ -270,7 +255,7 @@ export default class BasicFlatList extends Component {
                         estado: snapshot.docs[i].data().Estado,
                         documento: snapshot.docs[i].data().Documento,
                         tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
-                        reserva: this.state.idReserva
+                        reserva: this.state.idReserva,
                     };
                     tempArray.push(invitado);
                 }
@@ -285,7 +270,7 @@ export default class BasicFlatList extends Component {
     agregarInvitados = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-        var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva); //TODO: REEMPLAZAR EL ID POR THIS.STATE.RESERVA
+        var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva);
         var refInvitados = refReserva.collection('Invitados');
         var alMenosUnInvitado = false;
         try {
@@ -296,12 +281,12 @@ export default class BasicFlatList extends Component {
                     Documento: selectedItems[i].documento,
                     TipoDocumento: Database.doc('TipoDocumento/' + selectedItems[i].tipoDocumento),
                     Estado: true,
-                    IdInvitado: selectedItems[i].key
+                    IdInvitado: selectedItems[i].key,
                 };
                 if (this.state.invitadosReserva) {
                     if (
                         !this.state.invitadosReserva.find(
-                            inv => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
+                            (inv) => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
                         )
                     ) {
                         alMenosUnInvitado = true;
@@ -320,9 +305,9 @@ export default class BasicFlatList extends Component {
                 return 1;
             }
         } catch (error) {
-            return 2
+            return 2;
         } finally {
-            this.setState({ showSpinner: false })
+            this.setState({ showSpinner: false });
         }
     };
 
@@ -342,6 +327,7 @@ export default class BasicFlatList extends Component {
                                 return (
                                     <FlatListItem
                                         navigation={this.props.navigation}
+                                        usuario={this.state.usuario}
                                         item={item}
                                         index={index}
                                         isSelected={false}
@@ -356,16 +342,16 @@ export default class BasicFlatList extends Component {
                                     style={{ paddingHorizontal: '12%' }}
                                     onPress={() => {
                                         this.setState({ showSpinner: true }, async () => {
-                                            const result = await this.agregarInvitados()
+                                            const result = await this.agregarInvitados();
                                             if (result == 0) {
                                                 Toast.show({
-                                                    text: "Invitado añadido exitosamente.",
-                                                    buttonText: "Aceptar",
+                                                    text: 'Invitado añadido exitosamente.',
+                                                    buttonText: 'Aceptar',
                                                     duration: 3000,
-                                                    position: "bottom",
-                                                    type: "success",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
+                                                    position: 'bottom',
+                                                    type: 'success',
+                                                    onClose: this.onToastClosed.bind(this),
+                                                });
                                             } else if (result == 1) {
                                                 Toast.show({
                                                     text: 'Los invitados ya están en la lista.',
@@ -373,17 +359,17 @@ export default class BasicFlatList extends Component {
                                                     duration: 3000,
                                                     position: 'bottom',
                                                     type: 'warning',
-                                                    onClose: this.onToastClosed.bind(this)
+                                                    onClose: this.onToastClosed.bind(this),
                                                 });
                                             } else if (result == 2) {
                                                 Toast.show({
-                                                    text: "Lo siento, ocurrió un error inesperado.",
-                                                    buttonText: "Aceptar",
+                                                    text: 'Lo siento, ocurrió un error inesperado.',
+                                                    buttonText: 'Aceptar',
                                                     duration: 3000,
-                                                    position: "bottom",
-                                                    type: "danger",
-                                                    onClose : this.onToastClosed.bind(this)
-                                                })
+                                                    position: 'bottom',
+                                                    type: 'danger',
+                                                    onClose: this.onToastClosed.bind(this),
+                                                });
                                             }
                                         });
                                     }}>
@@ -413,12 +399,12 @@ const styles = StyleSheet.create({
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '5%'
-    }
+        marginVertical: '5%',
+    },
 });

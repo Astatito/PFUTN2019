@@ -11,34 +11,18 @@ class FlatListItem extends Component {
     state = { activeRowKey: null, showSpinner: false };
 
     componentWillMount() {
-        // TODO: ESTO NO DEBERÍA HACERSE EN CADA ITEM DEL FLATLIST, ES PROVISORIO!!!!!
-        LocalStorage.load({
-            key: 'UsuarioLogueado'
-        })
-            .then(response => {
-                this.setState({ usuario: response });
-            })
-            .catch(error => {
-                this.setState({ showSpinner: false });
-                Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
-                    duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
-            });
+        this.setState({ usuario: this.props.usuario });
     }
 
-    eliminarInvitacion = async invitacion => {
+    eliminarInvitacion = async (invitacion) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
         try {
             await refInvitados.doc(invitacion).delete();
             return 0;
         } catch (error) {
-            return 1
-        } 
+            return 1;
+        }
     };
 
     render() {
@@ -66,34 +50,34 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: async () => {
-                                        const result = await this.eliminarInvitacion(this.props.item.key)
+                                        const result = await this.eliminarInvitacion(this.props.item.key);
                                         if (result == 0) {
                                             Toast.show({
-                                                text: "Invitado eliminado exitosamente.",
-                                                buttonText: "Aceptar",
+                                                text: 'Invitado eliminado exitosamente.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "success"
-                                            })
+                                                position: 'bottom',
+                                                type: 'success',
+                                            });
                                         } else if (result == 1) {
                                             Toast.show({
-                                                text: "Lo siento, ocurrió un error inesperado.",
-                                                buttonText: "Aceptar",
+                                                text: 'Lo siento, ocurrió un error inesperado.',
+                                                buttonText: 'Aceptar',
                                                 duration: 3000,
-                                                position: "bottom",
-                                                type: "danger"
-                                            })
+                                                position: 'bottom',
+                                                type: 'danger',
+                                            });
                                         }
-                                    }
-                                }
+                                    },
+                                },
                             ],
                             { cancelable: true }
                         );
-                    }
-                }
+                    },
+                },
             ],
             rowId: this.props.index,
-            sectionId: 1
+            sectionId: 1,
         };
         if (this.props.item.nombre == '' && this.props.item.apellido == '') {
             return (
@@ -112,10 +96,10 @@ class FlatListItem extends Component {
                                             this.props.navigation.navigate('ModificarInvitado', {
                                                 usuario: this.state.usuario,
                                                 invitacion: this.props.item,
-                                                autenticado: false
+                                                autenticado: false,
                                             });
-                                        }
-                                    }
+                                        },
+                                    },
                                 ],
                                 { cancelable: true }
                             );
@@ -150,10 +134,10 @@ class FlatListItem extends Component {
                                             this.props.navigation.navigate('ModificarInvitado', {
                                                 usuario: this.state.usuario,
                                                 invitacion: this.props.item,
-                                                autenticado: true
+                                                autenticado: true,
                                             });
-                                        }
-                                    }
+                                        },
+                                    },
                                 ],
                                 { cancelable: true }
                             );
@@ -179,7 +163,7 @@ class FlatListItem extends Component {
 export default class BasicFlatList extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Invitaciones'
+            title: 'Invitaciones',
         };
     };
 
@@ -191,7 +175,7 @@ export default class BasicFlatList extends Component {
     componentDidMount() {
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 3000);
     }
@@ -199,22 +183,22 @@ export default class BasicFlatList extends Component {
     componentWillMount() {
         this.setState({ showSpinner: true });
         LocalStorage.load({
-            key: 'UsuarioLogueado'
+            key: 'UsuarioLogueado',
         })
-            .then(response => {
+            .then((response) => {
                 this.setState({ usuario: response });
                 this.obtenerInvitaciones();
                 this.createListeners();
             })
-            .catch(error => {
+            .catch((error) => {
                 this.setState({ showSpinner: false });
                 Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
                     duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
     }
 
@@ -243,7 +227,7 @@ export default class BasicFlatList extends Component {
                 '==',
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
-            .onSnapshot(snapshot => {
+            .onSnapshot((snapshot) => {
                 if (!snapshot.empty) {
                     //El propietario tiene invitaciones
                     var tempArray = [];
@@ -255,7 +239,7 @@ export default class BasicFlatList extends Component {
                             documento: snapshot.docs[i].data().Documento,
                             tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
                             fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
-                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
+                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
                         };
                         tempArray.push(invitado);
                     }
@@ -266,10 +250,10 @@ export default class BasicFlatList extends Component {
             });
     };
 
-    refreshFlatList = deletedKey => {
-        this.setState(prevState => {
+    refreshFlatList = (deletedKey) => {
+        this.setState((prevState) => {
             return {
-                deletedRowKey: deletedKey
+                deletedRowKey: deletedKey,
             };
         });
     };
@@ -294,6 +278,7 @@ export default class BasicFlatList extends Component {
                                 return (
                                     <FlatListItem
                                         navigation={this.props.navigation}
+                                        usuario={this.state.usuario}
                                         item={item}
                                         index={index}
                                         parentFlatList={this}></FlatListItem>
@@ -310,7 +295,7 @@ const styles = StyleSheet.create({
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     textDefault: {
         marginTop: '65%',
@@ -318,6 +303,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#8F8787',
         fontWeight: 'normal',
-        fontStyle: 'normal'
-    }
+        fontStyle: 'normal',
+    },
 });
