@@ -91,9 +91,9 @@ class NuevoInvitado extends Component {
                         };
                         tempArray.push(invitado);
                     }
-                    this.setState({ invitados: tempArray });
+                    this.setState({ invitados: tempArray , showSpinner: false });
                 } else {
-                    this.setState({ invitados: [] });
+                    this.setState({ invitados: [] , showSpinner: false});
                 }
             });
     };

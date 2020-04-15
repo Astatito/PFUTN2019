@@ -61,6 +61,7 @@ class ModificarInvitado extends Component {
             fechaDesde: moment(invitacion.fechaDesde, 'D/M/YYYY HH:mm'),
             fechaHasta: moment(invitacion.fechaHasta, 'D/M/YYYY HH:mm'),
             idInvitacion: invitacion.key,
+            showSpinner: false
         });
     }
 

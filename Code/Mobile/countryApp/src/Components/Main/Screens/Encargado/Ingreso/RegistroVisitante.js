@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, StatusBar, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { Database } from '../../../../DataBase/Firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -41,7 +41,7 @@ class RegistroVisitante extends Component {
     };
 
     componentWillMount() {
-        this.setState({ showSpinner: false, tiposDocumento: global.tiposDocumento });
+        this.setState({ showSpinner: true, tiposDocumento: global.tiposDocumento });
         const { navigation } = this.props;
         const esAcceso = navigation.getParam('esAcceso', false);
 
@@ -85,6 +85,7 @@ class RegistroVisitante extends Component {
             usuario: user,
             isEditable: autent,
             idInvitacion: invit,
+            showSpinner: false
         });
     }
 
