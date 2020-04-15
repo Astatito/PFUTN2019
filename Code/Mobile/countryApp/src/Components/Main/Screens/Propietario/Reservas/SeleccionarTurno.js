@@ -418,15 +418,6 @@ export default class BasicFlatList extends Component {
                                         success
                                         style={{ paddingHorizontal: '8%' }}
                                         onPress={ () => {
-                                            if (selectedItems.length == 0) {
-                                                Toast.show({
-                                                    text: 'Debe seleccionar al menos un turno.',
-                                                    buttonText: 'Aceptar',
-                                                    duration: 3000,
-                                                    position: 'bottom',
-                                                    type: 'warning'
-                                                });
-                                            } else {
                                                 Alert.alert(
                                                     'Atención',
                                                     '¿ Desea confirmar la reserva ? ',
@@ -436,6 +427,19 @@ export default class BasicFlatList extends Component {
                                                             text: 'Aceptar',
                                                             onPress: async () => {                                                        
                                                                     this.setState({ showSpinner: true }, async () => {
+
+                                                                        if (selectedItems.length == 0) {
+                                                                            Toast.show({
+                                                                                text: 'Debe seleccionar al menos un turno.',
+                                                                                buttonText: 'Aceptar',
+                                                                                duration: 3000,
+                                                                                position: 'bottom',
+                                                                                type: 'warning'
+                                                                            });
+                                                                            this.setState({ showSpinner: false });
+                                                                            return
+                                                                        }
+
                                                                         const result = await this.generarReserva()
                                                                         if ( result == 0) {
                                                                             Toast.show({
@@ -470,7 +474,6 @@ export default class BasicFlatList extends Component {
                                                     ],
                                                     { cancelable: true }
                                                 );
-                                            }
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>

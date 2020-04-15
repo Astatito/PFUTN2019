@@ -36,15 +36,6 @@ class FlatListItem extends Component {
                 <ListItem
                     avatar
                     onPress={() => {
-                        if (nombreReserva == '') {
-                            Toast.show({
-                                text: 'Debe ingresar un nombre válido para la reserva.',
-                                buttonText: 'Aceptar',
-                                duration: 3000,
-                                position: 'bottom',
-                                type: 'warning'
-                            });
-                        } else {
                             Alert.alert(
                                 'Atención',
                                 '¿ Desea reservar el servicio ? ',
@@ -52,19 +43,32 @@ class FlatListItem extends Component {
                                     { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
                                     {
                                         text: 'Aceptar',
-                                        onPress: () => {
-                                            this.props.navigation.navigate('SeleccionarTurno', {
-                                                servicio: this.props.item,
-                                                nombreReserva: nombreReserva
-                                            });
-                                            nombreReserva = '';
-                                        }
-                                    }
+                                        onPress: async () => {
+                                            this.setState({ showSpinner: true }, async () => {
+                                                if (nombreReserva == '') {
+                                                    Toast.show({
+                                                        text: 'Debe ingresar un nombre válido para la reserva.',
+                                                        buttonText: 'Aceptar',
+                                                        duration: 3000,
+                                                        position: 'bottom',
+                                                        type: 'warning'
+                                                    });
+                                                    this.setState({ showSpinner: false })
+                                                    return
+                                                }
+                                                this.props.navigation.navigate('SeleccionarTurno', {
+                                                    servicio: this.props.item,
+                                                    nombreReserva: nombreReserva
+                                                });
+                                                nombreReserva = '';
+                                                this.setState({ showSpinner: false })
+                                        })
+                                    }}
                                 ],
                                 { cancelable: true }
                             );
                         }
-                    }}>
+                    }>
                     <Left>
                         <Thumbnail source={require('../../../../../assets/Images/servicios.jpg')} />
                     </Left>
