@@ -13,12 +13,11 @@ const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
 class NuevoInvitado extends Component {
-
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Nuevo Invitado',
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
-            headerRight: <View />
+            headerRight: <View />,
         };
     };
 
@@ -34,35 +33,34 @@ class NuevoInvitado extends Component {
         esDesde: null,
         usuario: {},
         invitados: [],
-        documentoError: ''
+        documentoError: '',
     };
 
     componentWillMount() {
         this.setState({ showSpinner: true });
         LocalStorage.load({
-            key: 'UsuarioLogueado'
+            key: 'UsuarioLogueado',
         })
-            .then(usuario => {
-                this.setState({ usuario });
+            .then((usuario) => {
+                this.setState({ usuario, tiposDocumento: global.tiposDocumento });
                 this.obtenerInvitaciones();
-                this.obtenerPickers();
             })
-            .catch(error => {
+            .catch((error) => {
                 this.setState({ showSpinner: false });
                 Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
                     duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
-    }   
-    
+    }
+
     componentDidMount() {
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 3000);
     }
@@ -77,7 +75,7 @@ class NuevoInvitado extends Component {
                 '==',
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
-            .onSnapshot(snapshot => {
+            .onSnapshot((snapshot) => {
                 if (!snapshot.empty) {
                     //El propietario tiene invitaciones
                     var tempArray = [];
@@ -89,7 +87,7 @@ class NuevoInvitado extends Component {
                             documento: snapshot.docs[i].data().Documento,
                             tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
                             fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
-                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm')
+                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
                         };
                         tempArray.push(invitado);
                     }
@@ -100,41 +98,30 @@ class NuevoInvitado extends Component {
             });
     };
 
-    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
-    obtenerPickers = async () => {
-        var dbRef = Database.collection('TipoDocumento');
-        var snapshot = await dbRef.get()
-        var tiposDocumento = [];
-        snapshot.forEach(doc => {
-            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-        });
-        this.setState({ tiposDocumento, showSpinner : false });
-    };
-
-    handleFocus = event => {
+    handleFocus = (event) => {
         this.setState({ isFocused: true });
         if (this.props.onFocus) {
             this.props.onFocus(event);
         }
     };
 
-    handleBlur = event => {
+    handleBlur = (event) => {
         this.setState({ isFocused: false });
         if (this.props.onBlur) {
             this.props.onBlur(event);
         }
     };
 
-    handlePicker = datetime => {
+    handlePicker = (datetime) => {
         if (this.state.esDesde == true) {
             this.setState({
                 isVisible: false,
-                fechaDesde: moment(datetime)
+                fechaDesde: moment(datetime),
             });
         } else {
             this.setState({
                 isVisible: false,
-                fechaHasta: moment(datetime)
+                fechaHasta: moment(datetime),
             });
         }
     };
@@ -149,22 +136,21 @@ class NuevoInvitado extends Component {
 
     onToastClosed = (reason) => {
         this.props.navigation.goBack();
-    }
+    };
 
-    verificarFechaCorrecta = async() => {
-        const now = moment().subtract(1, "minutes")
-        const desde = this.state.fechaDesde
-        const hasta = this.state.fechaHasta
-        if (desde.isBefore(hasta) && desde.isAfter(now) ) {
-            return 0
+    verificarFechaCorrecta = async () => {
+        const now = moment().subtract(1, 'minutes');
+        const desde = this.state.fechaDesde;
+        const hasta = this.state.fechaHasta;
+        if (desde.isBefore(hasta) && desde.isAfter(now)) {
+            return 0;
         } else {
             this.setState({ showSpinner: false });
-            return 1
+            return 1;
         }
-    }
+    };
 
     registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
-
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
 
@@ -179,19 +165,22 @@ class NuevoInvitado extends Component {
                 Grupo: '',
                 IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
                 Documento: numeroDoc,
-                TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc)
-            }
-            if (!this.state.invitados.find(
-                inv => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento)) {
-                    await refInvitados.add(nuevoInvitado);
-                    return 0
+                TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc),
+            };
+            console.log(nuevoInvitado);
+            if (
+                !this.state.invitados.find(
+                    (inv) => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
+                )
+            ) {
+                await refInvitados.add(nuevoInvitado);
+                return 0;
             } else {
-                    return 2
+                return 2;
             }
-            
-            
         } catch (error) {
-            return 1
+            console.log(error);
+            return 1;
         } finally {
             this.setState({ showSpinner: false });
         }
@@ -199,31 +188,31 @@ class NuevoInvitado extends Component {
 
     obtenerDiaRelevante = () => {
         if (this.state.esDesde) {
-            return this.state.fechaDesde
+            return this.state.fechaDesde;
         } else {
-            return this.state.fechaHasta
+            return this.state.fechaHasta;
         }
-    }
+    };
 
-    verificarTextInputs = async(inputArray) => {
-        let someEmpty = false
-        inputArray.forEach(text => {
-            const inputError= text + 'Error'
+    verificarTextInputs = async (inputArray) => {
+        let someEmpty = false;
+        inputArray.forEach((text) => {
+            const inputError = text + 'Error';
             if (this.state[text] == '') {
-                someEmpty = true
-                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+                someEmpty = true;
+                this.setState({ [inputError]: '*Campo requerido', showSpinner: false });
             } else {
-                this.setState({ [inputError] : '' });
+                this.setState({ [inputError]: '' });
             }
         });
-        return someEmpty
-    }
+        return someEmpty;
+    };
 
     render() {
         const { isFocused } = this.state;
 
         return (
-            <Root>  
+            <Root>
                 <Content>
                     <View style={styles.container}>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
@@ -235,7 +224,7 @@ class NuevoInvitado extends Component {
                             mode="dropdown"
                             style={styles.picker}
                             selectedValue={this.state.picker}
-                            onValueChange={itemValue => this.setState({ picker: itemValue })}>
+                            onValueChange={(itemValue) => this.setState({ picker: itemValue })}>
                             {this.state.tiposDocumento.map((item, index) => {
                                 return <Picker.Item label={item.nombre} value={item.id} key={index} />;
                             })}
@@ -244,7 +233,7 @@ class NuevoInvitado extends Component {
                         <TextInput
                             style={styles.textInput}
                             placeholder="Número de documento"
-                            onChangeText={documento => this.setState({ documento })}
+                            onChangeText={(documento) => this.setState({ documento })}
                             underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                             onFocus={this.handleFocus}
                             onBlur={this.handleBlur}
@@ -254,9 +243,7 @@ class NuevoInvitado extends Component {
                         <Text style={styles.error}>{this.state.documentoError}</Text>
                         <View style={styles.datetime}>
                             <Text style={{ color: '#8F8787' }}>Desde</Text>
-                            <Text style={{ color: '#1e90ff', fontSize: 15 }}>
-                                {this.state.fechaDesde.format('DD/MM/YYYY - HH:mm')}
-                            </Text>
+                            <Text style={{ color: '#1e90ff', fontSize: 15 }}>{this.state.fechaDesde.format('DD/MM/YYYY - HH:mm')}</Text>
                             <IconFontAwesome
                                 onPress={() => {
                                     this.showPicker();
@@ -299,49 +286,49 @@ class NuevoInvitado extends Component {
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={async () => {
                                         this.setState({ showSpinner: true }, async () => {
-                                            const textInputs = await this.verificarTextInputs(['documento'])
-                                                if ( textInputs == true) {
-                                                    return false
-                                                } 
-                                            const verificacion = await this.verificarFechaCorrecta()
-                                                if (verificacion == 1) {
+                                            const textInputs = await this.verificarTextInputs(['documento']);
+                                            if (textInputs == true) {
+                                                return false;
+                                            }
+                                            const verificacion = await this.verificarFechaCorrecta();
+                                            if (verificacion == 1) {
+                                                Toast.show({
+                                                    text: 'Por favor, revise la fecha Desde y la fecha Hasta.',
+                                                    buttonText: 'Aceptar',
+                                                    duration: 3000,
+                                                    position: 'bottom',
+                                                    type: 'warning',
+                                                });
+                                            } else if (verificacion == 0) {
+                                                const result = await this.registrarNuevoInvitado(this.state.picker, this.state.documento);
+                                                if (result == 0) {
                                                     Toast.show({
-                                                        text: "Por favor, revise la fecha Desde y la fecha Hasta.",
-                                                        buttonText: "Aceptar",
+                                                        text: 'Invitado registrado exitosamente.',
+                                                        buttonText: 'Aceptar',
                                                         duration: 3000,
-                                                        position: "bottom",
-                                                        type: "warning",
-                                                    })
-                                                } else if (verificacion == 0) {
-                                                    const result = await this.registrarNuevoInvitado(this.state.picker, this.state.documento)
-                                                    if (result == 0) {
-                                                        Toast.show({
-                                                            text: "Invitado registrado exitosamente.",
-                                                            buttonText: "Aceptar",
-                                                            duration: 3000,
-                                                            position: "bottom",
-                                                            type: "success",
-                                                            onClose : this.onToastClosed.bind(this)
-                                                        })
-                                                    } else if (result == 2) {
-                                                        Toast.show({
-                                                            text: "El invitado ya se encuentra registrado.",
-                                                            buttonText: "Aceptar",
-                                                            duration: 3000,
-                                                            position: "bottom",
-                                                            type: "warning",
-                                                        })
-                                                    } else if (result == 1) {
-                                                        Toast.show({
-                                                            text: "Lo siento, ocurrió un error inesperado.",
-                                                            buttonText: "Aceptar",
-                                                            duration: 3000,
-                                                            position: "bottom",
-                                                            type: "danger",
-                                                            onClose : this.onToastClosed.bind(this)
-                                                        })
-                                                    }
+                                                        position: 'bottom',
+                                                        type: 'success',
+                                                        onClose: this.onToastClosed.bind(this),
+                                                    });
+                                                } else if (result == 2) {
+                                                    Toast.show({
+                                                        text: 'El invitado ya se encuentra registrado.',
+                                                        buttonText: 'Aceptar',
+                                                        duration: 3000,
+                                                        position: 'bottom',
+                                                        type: 'warning',
+                                                    });
+                                                } else if (result == 1) {
+                                                    Toast.show({
+                                                        text: 'Lo siento, ocurrió un error inesperado.',
+                                                        buttonText: 'Aceptar',
+                                                        duration: 3000,
+                                                        position: 'bottom',
+                                                        type: 'danger',
+                                                        onClose: this.onToastClosed.bind(this),
+                                                    });
                                                 }
+                                            }
                                         });
                                     }}>
                                     <Text>Aceptar</Text>
@@ -372,12 +359,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginHorizontal: '3%',
         marginVertical: '5%',
-        flex: 1
+        flex: 1,
     },
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     header: {
         textAlign: 'center',
@@ -386,39 +373,39 @@ const styles = StyleSheet.create({
         marginVertical: '9%',
         color: '#08477A',
         fontWeight: 'normal',
-        fontStyle: 'normal'
+        fontStyle: 'normal',
     },
     picker: {
         width: '83%',
         fontSize: 18,
         marginTop: '5%',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
     textInput: {
         width: '80%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '7%'
+        marginTop: '7%',
     },
     datetime: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
         margin: '7%',
-        width: '92%'
+        width: '92%',
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '5%'
+        marginVertical: '5%',
     },
     error: {
-        color:'red',
-        alignSelf:'flex-start',
-        fontSize:12,
-        marginLeft:'10%'
-    }
+        color: 'red',
+        alignSelf: 'flex-start',
+        fontSize: 12,
+        marginLeft: '10%',
+    },
 });
 
 export default NuevoInvitado;

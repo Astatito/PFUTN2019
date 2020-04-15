@@ -16,7 +16,7 @@ class RegistroVisitante extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Registrar visitante',
-            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />
+            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
         };
     };
 
@@ -36,12 +36,12 @@ class RegistroVisitante extends Component {
         isVisible: false,
         isEditable: true,
         idInvitacion: '',
-        nombreError:'',
-        apellidoError:''
+        nombreError: '',
+        apellidoError: '',
     };
 
     componentWillMount() {
-        this.setState({ showSpinner: true });
+        this.setState({ showSpinner: false, tiposDocumento: global.tiposDocumento });
         const { navigation } = this.props;
         const esAcceso = navigation.getParam('esAcceso', false);
 
@@ -62,29 +62,17 @@ class RegistroVisitante extends Component {
             const invitacion = navigation.getParam('invitacion');
             this.setearDatos(tipoDoc, numeroDoc, nombre, apellido, fecha, tipoAcceso, usuario, autenticado, invitacion);
         }
-        this.obtenerPickers();
     }
 
     componentDidMount() {
         Toast.show({
-            text: "El visitante no está autenticado, complete el formulario.",
-            buttonText: "Aceptar",
+            text: 'El visitante no está autenticado, complete el formulario.',
+            buttonText: 'Aceptar',
             duration: 3000,
-            position: "bottom",
-            type: "warning",
-        })
-    }
-
-    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
-    obtenerPickers = async () => {
-        var dbRef = Database.collection('TipoDocumento');
-        var snapshot = await dbRef.get()
-        var tiposDocumento = [];
-        snapshot.forEach(doc => {
-            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
+            position: 'bottom',
+            type: 'warning',
         });
-        this.setState({ tiposDocumento, showSpinner: false});
-    };
+    }
 
     setearDatos(tipo, numero, nombre, apellido, fecha, acceso, user, autent, invit) {
         this.setState({
@@ -96,7 +84,7 @@ class RegistroVisitante extends Component {
             tipoAcceso: acceso,
             usuario: user,
             isEditable: autent,
-            idInvitacion: invit
+            idInvitacion: invit,
         });
     }
 
@@ -107,21 +95,21 @@ class RegistroVisitante extends Component {
             var resultGrab = await this.grabarIngreso(this.state.nombre, this.state.apellido, this.state.picker, this.state.documento);
             if (resultAut == 0) {
                 if (resultGrab == 0) {
-                    return 0
+                    return 0;
                 } else {
-                    return 1
+                    return 1;
                 }
             } else {
-                return 1
+                return 1;
             }
         } catch (error) {
-            return 1
+            return 1;
         } finally {
             this.setState({ showSpinner: false });
         }
     };
 
-    onToastClosed = reason => {
+    onToastClosed = (reason) => {
         this.props.navigation.navigate('Ingreso');
     };
 
@@ -135,7 +123,7 @@ class RegistroVisitante extends Component {
                 {
                     Nombre: this.state.nombre,
                     Apellido: this.state.apellido,
-                    FechaNacimiento: this.state.fechaNacimiento.toDate()
+                    FechaNacimiento: this.state.fechaNacimiento.toDate(),
                 },
                 { merge: true }
             );
@@ -159,7 +147,7 @@ class RegistroVisitante extends Component {
                 Egreso: true,
                 Estado: true,
                 Fecha: new Date(),
-                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos)
+                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
             });
             return 0;
         } catch (error) {
@@ -167,24 +155,24 @@ class RegistroVisitante extends Component {
         }
     };
 
-    handleFocus = event => {
+    handleFocus = (event) => {
         this.setState({ isFocused: true });
         if (this.props.onFocus) {
             this.props.onFocus(event);
         }
     };
 
-    handleBlur = event => {
+    handleBlur = (event) => {
         this.setState({ isFocused: false });
         if (this.props.onBlur) {
             this.props.onBlur(event);
         }
     };
 
-    handlePicker = datetime => {
+    handlePicker = (datetime) => {
         this.setState({
             isVisible: false,
-            fechaNacimiento: moment(datetime)
+            fechaNacimiento: moment(datetime),
         });
     };
 
@@ -196,30 +184,30 @@ class RegistroVisitante extends Component {
         this.setState({ isVisible: true });
     };
 
-    verificarFechaNacimiento = async() => {
-        const today = moment()
-        const birthDate = this.state.fechaNacimiento
+    verificarFechaNacimiento = async () => {
+        const today = moment();
+        const birthDate = this.state.fechaNacimiento;
         if (birthDate.isBefore(today)) {
-            return 0
+            return 0;
         } else {
             this.setState({ showSpinner: false });
-            return 1
+            return 1;
         }
-    }
+    };
 
-    verificarTextInputs = async(inputArray) => {
-        let someEmpty = false
-        inputArray.forEach(text => {
-            const inputError= text + 'Error'
+    verificarTextInputs = async (inputArray) => {
+        let someEmpty = false;
+        inputArray.forEach((text) => {
+            const inputError = text + 'Error';
             if (this.state[text] == '') {
-                someEmpty = true
-                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+                someEmpty = true;
+                this.setState({ [inputError]: '*Campo requerido', showSpinner: false });
             } else {
-                this.setState({ [inputError] : '' });
+                this.setState({ [inputError]: '' });
             }
         });
-        return someEmpty
-    }
+        return someEmpty;
+    };
 
     render() {
         const { isFocused } = this.state;
@@ -237,7 +225,7 @@ class RegistroVisitante extends Component {
                                 style={styles.textInput}
                                 placeholder="Nombre"
                                 value={this.state.nombre}
-                                onChangeText={nombre => this.setState({ nombre })}
+                                onChangeText={(nombre) => this.setState({ nombre })}
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
@@ -249,7 +237,7 @@ class RegistroVisitante extends Component {
                                 style={styles.textInput}
                                 placeholder="Apellido"
                                 value={this.state.apellido}
-                                onChangeText={apellido => this.setState({ apellido })}
+                                onChangeText={(apellido) => this.setState({ apellido })}
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
@@ -273,7 +261,7 @@ class RegistroVisitante extends Component {
                                 style={styles.textInput}
                                 placeholder="Número de documento"
                                 value={this.state.documento}
-                                onChangeText={documento => this.setState({ documento })}
+                                onChangeText={(documento) => this.setState({ documento })}
                                 editable={this.state.isEditable}
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
@@ -284,9 +272,7 @@ class RegistroVisitante extends Component {
 
                             <View style={styles.datetime}>
                                 <Text style={{ color: '#8F8787' }}>Fecha de nacimiento</Text>
-                                <Text style={{ color: '#1e90ff', fontSize: 15 }}>
-                                    {this.state.fechaNacimiento.format('DD/MM/YYYY')}
-                                </Text>
+                                <Text style={{ color: '#1e90ff', fontSize: 15 }}>{this.state.fechaNacimiento.format('DD/MM/YYYY')}</Text>
                                 <IconFontAwesome
                                     onPress={() => {
                                         console.log(this.state.fechaNacimiento);
@@ -313,42 +299,42 @@ class RegistroVisitante extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.setState({ showSpinner: true }, async () => {
-                                                const textInputs = await this.verificarTextInputs(['nombre','apellido'])
-                                                if ( textInputs == true) {
-                                                    return false
-                                                } 
-                                                const verificacion = await this.verificarFechaNacimiento()
+                                                const textInputs = await this.verificarTextInputs(['nombre', 'apellido']);
+                                                if (textInputs == true) {
+                                                    return false;
+                                                }
+                                                const verificacion = await this.verificarFechaNacimiento();
                                                 if (verificacion == 1) {
                                                     Toast.show({
-                                                        text: "La fecha de nacimiento debe ser anterior al día actual.",
-                                                        buttonText: "Aceptar",
+                                                        text: 'La fecha de nacimiento debe ser anterior al día actual.',
+                                                        buttonText: 'Aceptar',
                                                         duration: 3000,
-                                                        position: "bottom",
-                                                        type: "warning",
-                                                    })
+                                                        position: 'bottom',
+                                                        type: 'warning',
+                                                    });
                                                 } else if (verificacion == 0) {
-                                                    const result = await this.grabarDatos();  
+                                                    const result = await this.grabarDatos();
                                                     if (result == 0) {
                                                         Toast.show({
-                                                            text: "Ingreso registrado exitosamente.",
-                                                            buttonText: "Aceptar",
+                                                            text: 'Ingreso registrado exitosamente.',
+                                                            buttonText: 'Aceptar',
                                                             duration: 3000,
-                                                            position: "bottom",
-                                                            type: "success",
-                                                            onClose : this.onToastClosed.bind(this)
-                                                        })
+                                                            position: 'bottom',
+                                                            type: 'success',
+                                                            onClose: this.onToastClosed.bind(this),
+                                                        });
                                                     } else if (result == 1) {
                                                         Toast.show({
-                                                            text: "Lo siento, ocurrió un error inesperado.",
-                                                            buttonText: "Aceptar",
+                                                            text: 'Lo siento, ocurrió un error inesperado.',
+                                                            buttonText: 'Aceptar',
                                                             duration: 3000,
-                                                            position: "bottom",
-                                                            type: "danger",
-                                                            onClose : this.onToastClosed.bind(this)
-                                                        })
+                                                            position: 'bottom',
+                                                            type: 'danger',
+                                                            onClose: this.onToastClosed.bind(this),
+                                                        });
                                                     }
                                                 }
-                                            }); 
+                                            });
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>
@@ -380,54 +366,54 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginHorizontal: '3%',
         marginVertical: '5%',
-        flex: 1
+        flex: 1,
     },
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     header: {
         textAlign: 'center',
         fontSize: 26,
         marginHorizontal: '5%',
         marginTop: '6%',
-        marginBottom:'2%',
+        marginBottom: '2%',
         color: '#08477A',
         fontWeight: 'normal',
-        fontStyle: 'normal'
+        fontStyle: 'normal',
     },
     picker: {
         width: '85%',
         fontSize: 18,
         alignItems: 'flex-start',
-        marginTop:'2%'
+        marginTop: '2%',
     },
     textInput: {
         width: '82%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '4%'
+        marginTop: '4%',
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '7%'
+        marginTop: '7%',
     },
     datetime: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
         marginTop: '7%',
-        width: '85%'
+        width: '85%',
     },
     error: {
-        color:'red',
-        alignSelf:'flex-start',
-        fontSize:12,
-        marginLeft:'10%'
-    }
+        color: 'red',
+        alignSelf: 'flex-start',
+        fontSize: 12,
+        marginLeft: '10%',
+    },
 });
 
 export default RegistroVisitante;

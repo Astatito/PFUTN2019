@@ -17,13 +17,13 @@ let datosPropietario = {};
 
 const navigateAction = NavigationActions.navigate({
     routeName: 'Propietario',
-    action: NavigationActions.navigate({ routeName: 'Propietario' })
+    action: NavigationActions.navigate({ routeName: 'Propietario' }),
 });
 
 class MiPerfil extends Component {
     static navigationOptions = {
         title: 'Actualizar Datos',
-        headerRight: <View />
+        headerRight: <View />,
     };
 
     componentWillMount() {
@@ -31,27 +31,26 @@ class MiPerfil extends Component {
 
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 3000);
 
         LocalStorage.load({
-            key: 'UsuarioLogueado'
+            key: 'UsuarioLogueado',
         })
-            .then(usuario => {
-                this.setState({ usuario });
-                this.obtenerPickers();
+            .then((usuario) => {
+                this.setState({ usuario, tiposDocumento: global.tiposDocumento });
                 this.obtenerDatosPersonales(usuario);
             })
-            .catch(error => {
+            .catch((error) => {
                 this.setState({ showSpinner: false });
                 Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
                     duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
     }
 
@@ -69,14 +68,14 @@ class MiPerfil extends Component {
         isVisible: false,
         nombreError: '',
         apellidoError: '',
-        celularError: ''
+        celularError: '',
     };
 
     obtenerDatosPersonales = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
 
-        refPropietarios.doc(this.state.usuario.datos).onSnapshot(doc => {
+        refPropietarios.doc(this.state.usuario.datos).onSnapshot((doc) => {
             if (doc.exists) {
                 var propietario = doc.data();
                 this.setState({
@@ -85,7 +84,7 @@ class MiPerfil extends Component {
                     documento: propietario.Documento,
                     picker: propietario.TipoDocumento.id,
                     celular: propietario.Celular,
-                    fechaNacimiento: moment.unix(propietario.FechaNacimiento.seconds)
+                    fechaNacimiento: moment.unix(propietario.FechaNacimiento.seconds),
                 });
                 datosPropietario = propietario;
                 this.setState({ showSpinner: false });
@@ -102,13 +101,13 @@ class MiPerfil extends Component {
                     Nombre: this.state.nombre,
                     Apellido: this.state.apellido,
                     Celular: this.state.celular,
-                    FechaNacimiento: this.state.fechaNacimiento.toDate()
+                    FechaNacimiento: this.state.fechaNacimiento.toDate(),
                 },
                 { merge: true }
             );
-            return 0
+            return 0;
         } catch (error) {
-            return 1
+            return 1;
         } finally {
             this.setState({ showSpinner: false });
         }
@@ -121,38 +120,28 @@ class MiPerfil extends Component {
             documento: datosPropietario.Documento,
             picker: datosPropietario.TipoDocumento.id,
             celular: datosPropietario.Celular,
-            fechaNacimiento: moment.unix(datosPropietario.FechaNacimiento.seconds)
+            fechaNacimiento: moment.unix(datosPropietario.FechaNacimiento.seconds),
         });
     };
 
-    obtenerPickers = async () => {
-        var dbRef = Database.collection('TipoDocumento');
-        var snapshot = await dbRef.get()
-        var tiposDocumento = [];
-        snapshot.forEach(doc => {
-            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-        });
-        this.setState({ tiposDocumento });
-    };
-
-    handleFocus = event => {
+    handleFocus = (event) => {
         this.setState({ isFocused: true });
         if (this.props.onFocus) {
             this.props.onFocus(event);
         }
     };
 
-    handleBlur = event => {
+    handleBlur = (event) => {
         this.setState({ isFocused: false });
         if (this.props.onBlur) {
             this.props.onBlur(event);
         }
     };
 
-    handlePicker = datetime => {
+    handlePicker = (datetime) => {
         this.setState({
             isVisible: false,
-            fechaNacimiento: moment(datetime)
+            fechaNacimiento: moment(datetime),
         });
     };
 
@@ -164,34 +153,34 @@ class MiPerfil extends Component {
         this.setState({ isVisible: true });
     };
 
-    onToastClosed = reason => {
+    onToastClosed = (reason) => {
         this.props.navigation.dispatch(navigateAction);
     };
 
-    verificarFechaNacimiento = async() => {
-        const today = moment()
-        const birthDate = this.state.fechaNacimiento
+    verificarFechaNacimiento = async () => {
+        const today = moment();
+        const birthDate = this.state.fechaNacimiento;
         if (birthDate.isBefore(today)) {
-            return 0
+            return 0;
         } else {
             this.setState({ showSpinner: false });
-            return 1
+            return 1;
         }
-    }
+    };
 
-    verificarTextInputs = async(inputArray) => {
-        let someEmpty = false
-        inputArray.forEach(text => {
-            const inputError= text + 'Error'
+    verificarTextInputs = async (inputArray) => {
+        let someEmpty = false;
+        inputArray.forEach((text) => {
+            const inputError = text + 'Error';
             if (this.state[text] == '') {
-                someEmpty = true
-                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+                someEmpty = true;
+                this.setState({ [inputError]: '*Campo requerido', showSpinner: false });
             } else {
-                this.setState({ [inputError] : '' });
+                this.setState({ [inputError]: '' });
             }
         });
-        return someEmpty
-    }
+        return someEmpty;
+    };
 
     render() {
         const { isFocused } = this.state;
@@ -207,7 +196,7 @@ class MiPerfil extends Component {
                                 style={styles.textInput}
                                 placeholder="Nombre"
                                 value={this.state.nombre}
-                                onChangeText={nombre => this.setState({ nombre })}
+                                onChangeText={(nombre) => this.setState({ nombre })}
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
@@ -219,7 +208,7 @@ class MiPerfil extends Component {
                                 style={styles.textInput}
                                 placeholder="Apellido"
                                 value={this.state.apellido}
-                                onChangeText={apellido => this.setState({ apellido })}
+                                onChangeText={(apellido) => this.setState({ apellido })}
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
@@ -242,7 +231,7 @@ class MiPerfil extends Component {
                             <TextInput
                                 style={styles.textInput}
                                 placeholder="Documento"
-                                onChangeText={documento => this.setState({ documento })}
+                                onChangeText={(documento) => this.setState({ documento })}
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
@@ -250,12 +239,10 @@ class MiPerfil extends Component {
                                 value={this.state.documento}
                                 editable={false}
                             />
-                     
+
                             <View style={styles.datetime}>
                                 <Text style={{ color: '#8F8787' }}>Fecha de nacimiento</Text>
-                                <Text style={{ color: '#1e90ff', fontSize: 15 }}>
-                                    {this.state.fechaNacimiento.format('DD/MM/YYYY')}
-                                </Text>
+                                <Text style={{ color: '#1e90ff', fontSize: 15 }}>{this.state.fechaNacimiento.format('DD/MM/YYYY')}</Text>
                                 <IconFontAwesome
                                     onPress={() => {
                                         this.showPicker();
@@ -277,7 +264,7 @@ class MiPerfil extends Component {
                                 style={styles.textInput}
                                 placeholder="Celular"
                                 value={this.state.celular}
-                                onChangeText={celular => this.setState({ celular })}
+                                onChangeText={(celular) => this.setState({ celular })}
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
@@ -293,39 +280,39 @@ class MiPerfil extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={async () => {
                                             this.setState({ showSpinner: true }, async () => {
-                                                const textInputs = await this.verificarTextInputs(['nombre','apellido','celular'])
-                                                if ( textInputs == true) {
-                                                    return false
-                                                } 
-                                                const verificacion = await this.verificarFechaNacimiento()
+                                                const textInputs = await this.verificarTextInputs(['nombre', 'apellido', 'celular']);
+                                                if (textInputs == true) {
+                                                    return false;
+                                                }
+                                                const verificacion = await this.verificarFechaNacimiento();
                                                 if (verificacion == 1) {
                                                     Toast.show({
-                                                        text: "La fecha de nacimiento debe ser anterior al día actual.",
-                                                        buttonText: "Aceptar",
+                                                        text: 'La fecha de nacimiento debe ser anterior al día actual.',
+                                                        buttonText: 'Aceptar',
                                                         duration: 3000,
-                                                        position: "bottom",
-                                                        type: "warning",
-                                                    })
+                                                        position: 'bottom',
+                                                        type: 'warning',
+                                                    });
                                                 } else if (verificacion == 0) {
-                                                    const result = await this.actualizarDatos()
+                                                    const result = await this.actualizarDatos();
                                                     if (result == 0) {
                                                         Toast.show({
-                                                            text: "Datos personales actualizados.",
-                                                            buttonText: "Aceptar",
+                                                            text: 'Datos personales actualizados.',
+                                                            buttonText: 'Aceptar',
                                                             duration: 3000,
-                                                            position: "bottom",
-                                                            type: "success",
-                                                            onClose : this.onToastClosed.bind(this)
-                                                        })
+                                                            position: 'bottom',
+                                                            type: 'success',
+                                                            onClose: this.onToastClosed.bind(this),
+                                                        });
                                                     } else if (result == 1) {
                                                         Toast.show({
-                                                            text: "Lo siento, ocurrió un error inesperado.",
-                                                            buttonText: "Aceptar",
+                                                            text: 'Lo siento, ocurrió un error inesperado.',
+                                                            buttonText: 'Aceptar',
                                                             duration: 3000,
-                                                            position: "bottom",
-                                                            type: "danger",
-                                                            onClose : this.onToastClosed.bind(this)
-                                                        })
+                                                            position: 'bottom',
+                                                            type: 'danger',
+                                                            onClose: this.onToastClosed.bind(this),
+                                                        });
                                                     }
                                                 }
                                             });
@@ -362,30 +349,30 @@ const styles = StyleSheet.create({
         marginHorizontal: '2%',
         marginVertical: '9%',
         flexDirection: 'column',
-        flex: 1
+        flex: 1,
     },
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     picker: {
         width: '85%',
         fontSize: 18,
         marginTop: '2%',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
     textInput: {
         width: '82%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '3%'
+        marginTop: '3%',
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '6%'
+        marginTop: '6%',
     },
     datetime: {
         flexDirection: 'row',
@@ -396,11 +383,11 @@ const styles = StyleSheet.create({
         width: '90%',
     },
     error: {
-        color:'red',
-        alignSelf:'flex-start',
-        fontSize:12,
-        marginLeft:'10%'
-    }
+        color: 'red',
+        alignSelf: 'flex-start',
+        fontSize: 12,
+        marginLeft: '10%',
+    },
 });
 
 export default MiPerfil;
