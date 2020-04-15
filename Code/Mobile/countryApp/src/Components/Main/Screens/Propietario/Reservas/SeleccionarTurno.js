@@ -377,7 +377,7 @@ export default class BasicFlatList extends Component {
         if (this.state.hayTurnos == false) {
             return (
                 <Root>
-                        <View>
+                    <View>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <Calendar
                             selectedDate={this.state.selectedDate}
@@ -388,7 +388,6 @@ export default class BasicFlatList extends Component {
                         <Text style={styles.textDefault}> No hay turnos para mostrar. </Text>
                     </View>
                 </Root>
-                
             );
         } else {
             return (
@@ -418,63 +417,60 @@ export default class BasicFlatList extends Component {
                                         bordered
                                         success
                                         style={{ paddingHorizontal: '8%' }}
-                                        onPress={() => {
-                                            Alert.alert(
-                                                'Atención',
-                                                '¿ Desea confirmar la reserva ? ',
-                                                [
-                                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                                    {
-                                                        text: 'Aceptar',
-                                                        onPress: async () => {
-                                                            console.log('Items', selectedItems.length)
-                                                            if (selectedItems.length > 0) {
-                                                                this.setState({ showSpinner: true }, async () => {
-                                                                    const result = await this.generarReserva()
-                                                                    if ( result == 0) {
-                                                                        Toast.show({
-                                                                            text: 'Reserva realizada exitosamente.',
-                                                                            buttonText: 'Aceptar',
-                                                                            duration: 3000,
-                                                                            position: 'bottom',
-                                                                            type: 'success',
-                                                                            onClose: this.onToastClosed.bind(this)
-                                                                        });
-                                                                    } else if (result == 1) {
-                                                                        Toast.show({
-                                                                            text: 'Los turnos seleccionados deben ser consecutivos.',
-                                                                            buttonText: 'Aceptar',
-                                                                            duration: 3000,
-                                                                            position: 'bottom',
-                                                                            type: 'warning'
-                                                                        });
-                                                                    } else if (result == 2) {
-                                                                        Toast.show({
-                                                                            text: "Lo siento, ocurrió un error inesperado.",
-                                                                            buttonText: "Aceptar",
-                                                                            duration: 3000,
-                                                                            position: "bottom",
-                                                                            type: "danger",
-                                                                            onClose : this.onToastClosed.bind(this)
-                                                                        })
-                                                                    }
-
-
+                                        onPress={ () => {
+                                            if (selectedItems.length == 0) {
+                                                Toast.show({
+                                                    text: 'Debe seleccionar al menos un turno.',
+                                                    buttonText: 'Aceptar',
+                                                    duration: 3000,
+                                                    position: 'bottom',
+                                                    type: 'warning'
+                                                });
+                                            } else {
+                                                Alert.alert(
+                                                    'Atención',
+                                                    '¿ Desea confirmar la reserva ? ',
+                                                    [
+                                                        { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                                        {
+                                                            text: 'Aceptar',
+                                                            onPress: async () => {                                                        
+                                                                    this.setState({ showSpinner: true }, async () => {
+                                                                        const result = await this.generarReserva()
+                                                                        if ( result == 0) {
+                                                                            Toast.show({
+                                                                                text: 'Reserva realizada exitosamente.',
+                                                                                buttonText: 'Aceptar',
+                                                                                duration: 3000,
+                                                                                position: 'bottom',
+                                                                                type: 'success',
+                                                                                onClose: this.onToastClosed.bind(this)
+                                                                            });
+                                                                        } else if (result == 1) {
+                                                                            Toast.show({
+                                                                                text: 'Los turnos seleccionados deben ser consecutivos.',
+                                                                                buttonText: 'Aceptar',
+                                                                                duration: 3000,
+                                                                                position: 'bottom',
+                                                                                type: 'warning'
+                                                                            });
+                                                                        } else if (result == 2) {
+                                                                            Toast.show({
+                                                                                text: "Lo siento, ocurrió un error inesperado.",
+                                                                                buttonText: "Aceptar",
+                                                                                duration: 3000,
+                                                                                position: "bottom",
+                                                                                type: "danger",
+                                                                                onClose : this.onToastClosed.bind(this)
+                                                                            })
+                                                                        }
                                                                     })
-                                                            } else {
-                                                                Toast.show({
-                                                                    text: 'Debe seleccionar al menos un turno.',
-                                                                    buttonText: 'Aceptar',
-                                                                    duration: 3000,
-                                                                    position: 'bottom',
-                                                                    type: 'warning'
-                                                                });
                                                             }
                                                         }
-                                                    }
-                                                ],
-                                                { cancelable: true }
-                                            );
+                                                    ],
+                                                    { cancelable: true }
+                                                );
+                                            }
                                         }}>
                                         <Text>Aceptar</Text>
                                     </Button>
