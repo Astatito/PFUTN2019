@@ -14,6 +14,19 @@ let nombreReserva = '';
 class FlatListItem extends Component {
     state = { showSpinner: false };
 
+    checkName = () => {
+        if (nombreReserva == '') {
+            Toast.show({
+                text: 'Debe ingresar un nombre válido para la reserva.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'warning'
+            });
+            return false
+        }
+        return true
+    }
     render() {
         const swipeOutSettings = {
             style: { backgroundColor: '#fff' }
@@ -23,23 +36,23 @@ class FlatListItem extends Component {
                 <ListItem
                     avatar
                     onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea reservar el servicio ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        if (nombreReserva == '') {
-                                            Toast.show({
-                                                text: 'Debe ingresar un nombre válido para la reserva.',
-                                                buttonText: 'Aceptar',
-                                                duration: 3000,
-                                                position: 'bottom',
-                                                type: 'warning'
-                                            });
-                                        } else {
+                        if (nombreReserva == '') {
+                            Toast.show({
+                                text: 'Debe ingresar un nombre válido para la reserva.',
+                                buttonText: 'Aceptar',
+                                duration: 3000,
+                                position: 'bottom',
+                                type: 'warning'
+                            });
+                        } else {
+                            Alert.alert(
+                                'Atención',
+                                '¿ Desea reservar el servicio ? ',
+                                [
+                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                    {
+                                        text: 'Aceptar',
+                                        onPress: () => {
                                             this.props.navigation.navigate('SeleccionarTurno', {
                                                 servicio: this.props.item,
                                                 nombreReserva: nombreReserva
@@ -47,10 +60,10 @@ class FlatListItem extends Component {
                                             nombreReserva = '';
                                         }
                                     }
-                                }
-                            ],
-                            { cancelable: true }
-                        );
+                                ],
+                                { cancelable: true }
+                            );
+                        }
                     }}>
                     <Left>
                         <Thumbnail source={require('../../../../../assets/Images/servicios.jpg')} />

@@ -64,13 +64,13 @@ class RegistroVisitante extends Component {
         }
     }
 
-    componentDidMount() {
-        Toast.show({
-            text: 'El visitante no está autenticado, complete el formulario.',
-            buttonText: 'Aceptar',
-            duration: 3000,
-            position: 'bottom',
-            type: 'warning',
+    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
+    obtenerPickers = async () => {
+        var dbRef = Database.collection('TipoDocumento');
+        var snapshot = await dbRef.get()
+        var tiposDocumento = [];
+        snapshot.forEach(doc => {
+            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
         });
     }
 
