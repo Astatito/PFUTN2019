@@ -17,36 +17,45 @@ import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
+import { Firebase } from '../DataBase/Firebase';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 // Este es el custom drawer que permite agregarle cosas al drawer original.
-const CustomDrawerContentComponent = props => (
-    <ScrollView contentContainerStyle={{flex: 1,  flexDirection: 'column', justifyContent: 'space-between' }}>
+const CustomDrawerContentComponent = (props) => (
+    <ScrollView contentContainerStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
         <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
             <View style={{ height: '45%', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
                 <Image source={require('../../assets/Images/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
-        <DrawerItems {...props} />
+            <DrawerItems {...props} />
         </SafeAreaView>
-        <TouchableOpacity                 
+        <TouchableOpacity
             onPress={() => {
-                    props.navigation.closeDrawer();
-                    LocalStorage.remove({ key: 'UsuarioLogueado' });
-                    props.navigation.navigate('Login') }}>
-        <View style={styles.item}>
-            <View style={styles.iconContainer}>
-            <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'5%', color:'gray'}}></IconEntypo>
+                Firebase.auth()
+                    .signOut()
+                    .then(() => {
+                        props.navigation.closeDrawer();
+                        LocalStorage.remove({ key: 'UsuarioLogueado' });
+                        props.navigation.navigate('Login');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }}>
+            <View style={styles.item}>
+                <View style={styles.iconContainer}>
+                    <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+                </View>
+                <Text style={styles.label}>Cerrar Sesión</Text>
             </View>
-            <Text style={styles.label}>Cerrar Sesión</Text>
-        </View>
         </TouchableOpacity>
-  </ScrollView>
+    </ScrollView>
 );
 
 // Stack 1 - El stack navigator para el home del encargado.
 const EncargadoStackNavigator = createStackNavigator(
     {
-        Encargado: Encargado
+        Encargado: Encargado,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -54,15 +63,15 @@ const EncargadoStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -72,7 +81,7 @@ const IngresoStackNavigator = createStackNavigator(
         Ingreso: Ingreso,
         IngresoManual: IngresoManual,
         Escaner: Escaner,
-        RegistroVisitante: RegistroVisitante
+        RegistroVisitante: RegistroVisitante,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -80,15 +89,15 @@ const IngresoStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -98,7 +107,7 @@ const EgresoStackNavigator = createStackNavigator(
         Egreso: Egreso,
         EgresoManual: EgresoManual,
         Escaner: Escaner,
-        RegistroVisitante
+        RegistroVisitante,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -106,15 +115,15 @@ const EgresoStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -124,28 +133,28 @@ const EncargadoTabNavigator = createBottomTabNavigator({
     Home: {
         screen: EncargadoStackNavigator,
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <IconEntypo name="home" size={24} color="#346ECD" />
-        }
+            tabBarIcon: ({ tintColor }) => <IconEntypo name="home" size={24} color="#346ECD" />,
+        },
     },
     'Nuevo Ingreso': {
         screen: IngresoStackNavigator,
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <IconCommunity name="run" size={24} color="#346ECD" />
-        }
+            tabBarIcon: ({ tintColor }) => <IconCommunity name="run" size={24} color="#346ECD" />,
+        },
     },
     'Nuevo Egreso': {
         screen: EgresoStackNavigator,
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <IconCommunity name="exit-run" size={24} color="#346ECD" />
-        }
-    }
+            tabBarIcon: ({ tintColor }) => <IconCommunity name="exit-run" size={24} color="#346ECD" />,
+        },
+    },
 });
 
 // Stack - El stack navigator para el apartado MiPerfil.
 const EncargadoPerfilStackNavigator = createStackNavigator(
     {
         EncargadoPerfil: EncargadoPerfil,
-        Encargado: Encargado
+        Encargado: Encargado,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -153,16 +162,16 @@ const EncargadoPerfilStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
 
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -173,43 +182,43 @@ const EncargadoNavigation = createDrawerNavigator(
         Registros: {
             screen: EncargadoTabNavigator,
             navigationOptions: {
-                drawerIcon: ({ tintColor }) => <IconEntypo name="home" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
-            }
+                drawerIcon: ({ tintColor }) => <IconEntypo name="home" style={{ fontSize: 25, color: tintColor }}></IconEntypo>,
+            },
         },
         'Mi Perfil': {
             screen: EncargadoPerfilStackNavigator,
             navigationOptions: {
-                drawerIcon: ({ tintColor }) => <IconEntypo name="user" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
-            }
-        }
+                drawerIcon: ({ tintColor }) => <IconEntypo name="user" style={{ fontSize: 25, color: tintColor }}></IconEntypo>,
+            },
+        },
     },
     {
         contentComponent: CustomDrawerContentComponent,
         contentOptions: {
-            activeTintColor: '#346ECD'
-        }
+            activeTintColor: '#346ECD',
+        },
     }
 );
 
 const styles = StyleSheet.create({
     item: {
-      flexDirection: 'row',
-      alignItems: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     label: {
-      margin: 16,
-      fontWeight: 'bold',
-      color: 'rgba(0, 0, 0, .87)',
+        margin: 16,
+        fontWeight: 'bold',
+        color: 'rgba(0, 0, 0, .87)',
     },
     iconContainer: {
-      marginHorizontal: 16,
-      width: 24,
-      alignItems: 'center',
+        marginHorizontal: 16,
+        width: 24,
+        alignItems: 'center',
     },
     icon: {
-      width: 24,
-      height: 24,
-    }
-  });
+        width: 24,
+        height: 24,
+    },
+});
 
 export default EncargadoNavigation;

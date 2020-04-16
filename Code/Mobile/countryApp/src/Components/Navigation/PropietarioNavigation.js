@@ -25,36 +25,47 @@ import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
+import { Firebase } from '../DataBase/Firebase';
 import ModificarInvitado from '../Main/Screens/Propietario/Invitaciones/ModificarInvitado';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
-const CustomDrawerContentComponent = props => (
-    <ScrollView contentContainerStyle={{flex: 1,  flexDirection: 'column', justifyContent: 'space-between' }}>
+const CustomDrawerContentComponent = (props) => (
+    <ScrollView contentContainerStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
         <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
             <View style={{ height: '35%', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                <Image source={require('../../assets/Images/propietario.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
+                <Image
+                    source={require('../../assets/Images/propietario.jpg')}
+                    style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
             </View>
-        <DrawerItems {...props} />
+            <DrawerItems {...props} />
         </SafeAreaView>
-        <TouchableOpacity                 
+        <TouchableOpacity
             onPress={() => {
-                    props.navigation.closeDrawer();
-                    LocalStorage.remove({ key: 'UsuarioLogueado' });
-                    props.navigation.navigate('Login') }}>
-        <View style={styles.item}>
-            <View style={styles.iconContainer}>
-            <IconEntypo name= "log-out" style={{fontSize:25,paddingLeft:'6%',paddingTop:'5%', color:'gray'}}></IconEntypo>
+                Firebase.auth()
+                    .signOut()
+                    .then(() => {
+                        props.navigation.closeDrawer();
+                        LocalStorage.remove({ key: 'UsuarioLogueado' });
+                        props.navigation.navigate('Login');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }}>
+            <View style={styles.item}>
+                <View style={styles.iconContainer}>
+                    <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+                </View>
+                <Text style={styles.label}>Cerrar Sesión</Text>
             </View>
-            <Text style={styles.label}>Cerrar Sesión</Text>
-        </View>
         </TouchableOpacity>
-  </ScrollView>
+    </ScrollView>
 );
 
 // Stack - El stack navigator para el home del propietario
 const PropietarioStackNavigator = createStackNavigator(
     {
-        Propietario: Propietario
+        Propietario: Propietario,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -62,15 +73,15 @@ const PropietarioStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -79,15 +90,15 @@ const PropietarioTabNavigator = createBottomTabNavigator({
     Home: {
         screen: PropietarioStackNavigator,
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <IconEntypo name="home" size={24} color="#346ECD" />
-        }
-    }
+            tabBarIcon: ({ tintColor }) => <IconEntypo name="home" size={24} color="#346ECD" />,
+        },
+    },
 });
 
 // Stack - El stack navigator para el apartado MiPerfil.
 const PropietarioPerfilStackNavigator = createStackNavigator(
     {
-        PropietarioPerfil: PropietarioPerfil
+        PropietarioPerfil: PropietarioPerfil,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -95,15 +106,15 @@ const PropietarioPerfilStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -111,7 +122,7 @@ const PropietarioPerfilStackNavigator = createStackNavigator(
 const PropietarioUbicacionStackNavigator = createStackNavigator(
     {
         UbicacionPropietario: UbicacionPropietario,
-        ModalForImage: ModalForImage
+        ModalForImage: ModalForImage,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -119,29 +130,27 @@ const PropietarioUbicacionStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
 // Stack - El stack navigator para el apartado MiPerfil.
-const PropietarioEventosInvitadosStackNavigator = createStackNavigator(
-    {
-        InvitadosReserva : InvitadosReserva
-    }
-);
+const PropietarioEventosInvitadosStackNavigator = createStackNavigator({
+    InvitadosReserva: InvitadosReserva,
+});
 
 // Stack - El stack navigator para el apartado MiPerfil.
 const PropietarioDatosReservaStackNavigator = createStackNavigator(
     {
-        DatosReserva : DatosReserva
+        DatosReserva: DatosReserva,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -150,15 +159,15 @@ const PropietarioDatosReservaStackNavigator = createStackNavigator(
                 headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack(null)} name="arrow-back" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -167,49 +176,55 @@ const PropietarioReservaTabNavigator = createBottomTabNavigator({
     'Mis Invitados': {
         screen: PropietarioEventosInvitadosStackNavigator,
         navigationOptions: {
-            title:'Invitados',
-            tabBarIcon: ({ tintColor }) => <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}/>,
-        }
+            title: 'Invitados',
+            tabBarIcon: ({ tintColor }) => <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }} />,
+        },
     },
     'Datos de reserva': {
         screen: PropietarioDatosReservaStackNavigator,
         navigationOptions: {
-            title:'Reserva',
+            title: 'Reserva',
             headerRight: <View></View>,
             tabBarIcon: ({ tintColor }) => <IconEntypo name="text-document" style={{ fontSize: 25, color: tintColor }} color="#346ECD" />,
-        }
+        },
     },
-
 });
 
 // Stack - El stack navigator para las reservas activas.
 const PropietarioReservasActivasStackNavigator = createStackNavigator(
     {
-        ReservasPendientes : MisReservas
+        ReservasPendientes: MisReservas,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
                 title: 'Mis Reservas',
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight: <IconAntDesign style={{ paddingRight: 10 }} name="plus" size={25} onPress={() => navigation.navigate('SeleccionarServicio')}/>,
+                headerRight: (
+                    <IconAntDesign
+                        style={{ paddingRight: 10 }}
+                        name="plus"
+                        size={25}
+                        onPress={() => navigation.navigate('SeleccionarServicio')}
+                    />
+                ),
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
 // Stack - El stack navigator para las reservas finalizadas.
 const PropietarioReservasFinalizadasStackNavigator = createStackNavigator(
     {
-        ReservasFinalizadas : ReservasFinalizadas
+        ReservasFinalizadas: ReservasFinalizadas,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -218,38 +233,40 @@ const PropietarioReservasFinalizadasStackNavigator = createStackNavigator(
                 headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
                 headerRight: <View />,
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
 //TabNavigator para el manejo de las reservas pendientes y pasadas.
-const PropietarioMisReservasTabNavigator = createBottomTabNavigator({
-    'Activas': {
-        screen: PropietarioReservasActivasStackNavigator,
-        navigationOptions: {
-            title:'Activas',
-            tabBarIcon: ({ tintColor }) => <MaterialCommunityIcons name="account-group" style={{ fontSize: 30, color: tintColor }}/>,
-        }
-    },
-    'Finalizadas': {
-        screen: PropietarioReservasFinalizadasStackNavigator,
-        navigationOptions: {
-            title:'Finalizadas',
-            tabBarIcon: ({ tintColor }) => <IconAntDesign name="book" style={{ fontSize: 25, color: tintColor }}/>,
-        }
-    }},
+const PropietarioMisReservasTabNavigator = createBottomTabNavigator(
     {
-        initialRouteName: "Activas"
+        Activas: {
+            screen: PropietarioReservasActivasStackNavigator,
+            navigationOptions: {
+                title: 'Activas',
+                tabBarIcon: ({ tintColor }) => <MaterialCommunityIcons name="account-group" style={{ fontSize: 30, color: tintColor }} />,
+            },
+        },
+        Finalizadas: {
+            screen: PropietarioReservasFinalizadasStackNavigator,
+            navigationOptions: {
+                title: 'Finalizadas',
+                tabBarIcon: ({ tintColor }) => <IconAntDesign name="book" style={{ fontSize: 25, color: tintColor }} />,
+            },
+        },
+    },
+    {
+        initialRouteName: 'Activas',
     }
-    );
+);
 
 // Stack - El stack navigator para el apartado de reserva de eventos.
 const PropietarioEventosStackNavigator = createStackNavigator(
@@ -257,34 +274,34 @@ const PropietarioEventosStackNavigator = createStackNavigator(
         MisReservas: {
             screen: PropietarioMisReservasTabNavigator,
             navigationOptions: {
-            header: null
-            }
+                header: null,
+            },
         },
         InvitadosReserva: InvitadosReserva,
         DatosReserva: DatosReserva,
         InformacionReserva: {
             screen: PropietarioReservaTabNavigator,
             navigationOptions: {
-            header: null
-            }
+                header: null,
+            },
         },
         SeleccionarServicio: SeleccionarServicio,
         SeleccionarTurno: SeleccionarTurno,
-        InvitadosExistentesReserva: InvitadosExistentesReserva
+        InvitadosExistentesReserva: InvitadosExistentesReserva,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
             return {
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -308,15 +325,15 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
                     />
                 ),
                 headerStyle: {
-                    backgroundColor: '#1e90ff'
+                    backgroundColor: '#1e90ff',
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
                     textAlign: 'center',
-                    flex: 1
-                }
+                    flex: 1,
+                },
             };
-        }
+        },
     }
 );
 
@@ -326,63 +343,63 @@ const PropietarioNavigation = createDrawerNavigator(
         Home: {
             screen: PropietarioTabNavigator,
             navigationOptions: {
-                drawerIcon: ({ tintColor }) => <IconEntypo name="home" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
-            }
+                drawerIcon: ({ tintColor }) => <IconEntypo name="home" style={{ fontSize: 25, color: tintColor }}></IconEntypo>,
+            },
         },
         'Mi Perfil': {
             screen: PropietarioPerfilStackNavigator,
             navigationOptions: {
-                drawerIcon: ({ tintColor }) => <IconEntypo name="user" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
-            }
+                drawerIcon: ({ tintColor }) => <IconEntypo name="user" style={{ fontSize: 25, color: tintColor }}></IconEntypo>,
+            },
         },
         'Mi Ubicación': {
             screen: PropietarioUbicacionStackNavigator,
             navigationOptions: {
-                drawerIcon: ({ tintColor }) => <IconEntypo name="location-pin" style={{ fontSize: 25, color: tintColor }}></IconEntypo>
-            }
+                drawerIcon: ({ tintColor }) => <IconEntypo name="location-pin" style={{ fontSize: 25, color: tintColor }}></IconEntypo>,
+            },
         },
         Eventos: {
             screen: PropietarioEventosStackNavigator,
             navigationOptions: {
-                drawerIcon: ({ tintColor }) => <IconIonicons name="ios-people" style={{ fontSize: 25, color: tintColor }}></IconIonicons>
-            }
+                drawerIcon: ({ tintColor }) => <IconIonicons name="ios-people" style={{ fontSize: 25, color: tintColor }}></IconIonicons>,
+            },
         },
         Invitaciones: {
             screen: PropietarioInvitacionesStackNavigator,
             navigationOptions: {
                 drawerIcon: ({ tintColor }) => (
                     <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}></IconAntDesign>
-                )
-            }
-        }
+                ),
+            },
+        },
     },
     {
         contentComponent: CustomDrawerContentComponent,
         contentOptions: {
-            activeTintColor: '#346ECD'
-        }
+            activeTintColor: '#346ECD',
+        },
     }
 );
 
 const styles = StyleSheet.create({
     item: {
-      flexDirection: 'row',
-      alignItems: 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     label: {
-      margin: 16,
-      fontWeight: 'bold',
-      color: 'rgba(0, 0, 0, .87)',
+        margin: 16,
+        fontWeight: 'bold',
+        color: 'rgba(0, 0, 0, .87)',
     },
     iconContainer: {
-      marginHorizontal: 16,
-      width: 24,
-      alignItems: 'center',
+        marginHorizontal: 16,
+        width: 24,
+        alignItems: 'center',
     },
     icon: {
-      width: 24,
-      height: 24,
-    }
-  });
+        width: 24,
+        height: 24,
+    },
+});
 
 export default PropietarioNavigation;
