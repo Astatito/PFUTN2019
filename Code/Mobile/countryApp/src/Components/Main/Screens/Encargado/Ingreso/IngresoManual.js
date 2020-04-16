@@ -204,6 +204,22 @@ class IngresoManual extends Component {
         return someEmpty;
     };
 
+    getKeyboard = () => {
+        if (this.state.picker == 'Pasaporte' ) {
+            return 'default'
+        } else {
+            return 'numeric'
+        }
+    }
+
+    getLimit = () => {
+        if (this.state.picker = 'Documento') {
+            return 8
+        } else {
+            return 10
+        }
+    }
+
     render() {
         const { isFocused } = this.state;
 
@@ -234,8 +250,8 @@ class IngresoManual extends Component {
                                 underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
                                 onFocus={this.handleFocus}
                                 onBlur={this.handleBlur}
-                                keyboardType={'numeric'}
-                                maxLength={8}
+                                keyboardType={this.getKeyboard()}
+                                maxLength={this.getLimit()}
                             />
                             <Text style={styles.error}>{this.state.documentoError}</Text>
                             <View style={{ flexDirection: 'row' }}>

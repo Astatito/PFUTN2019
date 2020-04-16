@@ -15,7 +15,6 @@ const LIGHT_GRAY = '#D3D3D3';
 class RegistroVisitante extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Registrar visitante',
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
         };
     };
