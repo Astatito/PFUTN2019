@@ -3,50 +3,54 @@ import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, 
 import { Firebase, Database } from '../../DataBase/Firebase';
 import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 class Login extends Component {
-    state = { email: '', password: '', result: '', showSpinner: false, passwordError:'', emailError:'' };
+    state = { email: '', password: '', result: '', showSpinner: false, passwordError: '', emailError: '' };
 
     navigationOptions = () => {
         return {
             headerRight: <View />,
             headerStyle: {
-                backgroundColor: '#1e90ff'
+                backgroundColor: '#1e90ff',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
                 textAlign: 'center',
-                flex: 1
-            }
+                flex: 1,
+            },
         };
     };
 
-    onButtonPress = async() => {
-        this.setState({ showSpinner: true })
+    onButtonPress = async () => {
+        this.setState({ showSpinner: true });
         try {
-            await Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+            await Firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+            await Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
             this.setState({ result: 'Logueado con éxito.' });
-            var home = await this.logueoUsuario()
+            var home = await this.registrarUsuarioLogueado();
         } catch (error) {
             switch (error.code) {
                 case 'auth/user-not-found':
                     this.setState({ result: 'No existe el usuario.' });
-                    break
+                    break;
                 case 'auth/wrong-password':
                     this.setState({ result: 'Contraseña incorrecta.' });
-                    break
-                default :
+                    break;
+                default:
+                    console.log(error.message);
                     this.setState({ result: 'Falló la autenticación.' });
-                    break
+                    break;
             }
         } finally {
             if (home == 1) {
-                this.props.navigation.navigate('Propietario')
+                this.props.navigation.navigate('Propietario');
             } else if (home == 2) {
-                this.props.navigation.navigate('Encargado')
+                this.props.navigation.navigate('Encargado');
             }
         }
-    }
+    };
 
     storeUsuario = (keyStore, obj) => {
         LocalStorage.save({
@@ -55,65 +59,78 @@ class Login extends Component {
                 usuario: obj.NombreUsuario,
                 tipoUsuario: obj.TipoUsuario.id,
                 country: obj.IdCountry.id,
-                datos: obj.IdPersona.id
-            }
+                datos: obj.IdPersona.id,
+            },
         });
     };
 
-    logueoUsuario = async () => {
+    registrarUsuarioLogueado = async () => {
         var dbRef = Database.collection('Usuarios');
         try {
-            var doc = await dbRef.doc(this.state.email.toLowerCase()).get()
+            var doc = await dbRef.doc(this.state.email.toLowerCase()).get();
             if (doc.exists) {
                 this.storeUsuario('UsuarioLogueado', doc.data());
                 switch (doc.data().TipoUsuario.id) {
                     case 'Propietario':
-                        return 1
+                        return 1;
                     case 'Encargado':
-                        return 2
+                        return 2;
                 }
-            } 
+            }
         } catch (error) {
             this.setState({ result: 'Falló la autenticación.' });
-        } 
+        }
+    };
+
+    isAlreadyLogged = () => {
+        Firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log('Hay un usuario logueado:', user);
+                return true;
+            } else {
+                console.log('No hay ningún usuario logueado.');
+                return false;
+            }
+        });
     };
 
     componentDidMount() {
+        isLogged = this.isAlreadyLogged();
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 5000);
     }
 
     verificarTextInputs = (inputArray) => {
-        let someEmpty = false
-        inputArray.forEach(text => {
-            const inputError= text + 'Error'
+        let someEmpty = false;
+        inputArray.forEach((text) => {
+            const inputError = text + 'Error';
             if (this.state[text] == '') {
-                someEmpty = true
-                this.setState({ [inputError] : '*Campo requerido', showSpinner: false  });
+                someEmpty = true;
+                this.setState({ [inputError]: '*Campo requerido', showSpinner: false });
             } else {
-                this.setState({ [inputError] : '' });
+                this.setState({ [inputError]: '' });
             }
         });
-        return someEmpty
-    }
-    
-    validateEmail =  (email) => {
+        return someEmpty;
+    };
+
+    validateEmail = (email) => {
         var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (regex.test(email)) {
-            this.setState({ emailError: ''})
-            return false
+            this.setState({ emailError: '' });
+            return false;
         } else {
-            this.setState({ emailError: '*No es un formato de email válido.', showSpinner: false})
-            return true
+            this.setState({ emailError: '*No es un formato de email válido.', showSpinner: false });
+            return true;
         }
-    }
+    };
 
     render() {
         return (
-            <KeyboardAvoidingView behavior="height" style= {styles.wrapper}>
+            <KeyboardAvoidingView behavior="height" style={styles.wrapper}>
                 <View style={styles.container}>
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <StatusBar backgroundColor="#96D0E8"></StatusBar>
@@ -125,7 +142,7 @@ class Login extends Component {
                     <TextInput
                         style={styles.textInput}
                         placeholder="Usuario"
-                        onChangeText={email => this.setState({ email })}
+                        onChangeText={(email) => this.setState({ email })}
                         underlineColorAndroid="transparent"
                         maxLength={40}
                     />
@@ -133,21 +150,23 @@ class Login extends Component {
                     <TextInput
                         style={styles.textInput}
                         placeholder="Contraseña"
-                        onChangeText={password => this.setState({ password })}
+                        onChangeText={(password) => this.setState({ password })}
                         underlineColorAndroid="transparent"
                         secureTextEntry={true}
                         maxLength={25}
                     />
                     <Text style={styles.error}>{this.state.passwordError}</Text>
-                    <TouchableOpacity style={styles.btn} onPress={ async () => {
-                            const emailFormat =  this.validateEmail(this.state.email)
-                            const textInputs = this.verificarTextInputs(['password'])
+                    <TouchableOpacity
+                        style={styles.btn}
+                        onPress={async () => {
+                            const emailFormat = this.validateEmail(this.state.email);
+                            const textInputs = this.verificarTextInputs(['password']);
                             if (emailFormat == true || textInputs == true) {
-                                return
+                                return;
                             }
-                            await this.onButtonPress()
+                            await this.onButtonPress();
                             this.setState({ showSpinner: false });
-                    }}>
+                        }}>
                         <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
                     </TouchableOpacity>
                     <Text style={styles.result}>{this.state.result}</Text>
@@ -159,12 +178,12 @@ class Login extends Component {
 
 const styles = StyleSheet.create({
     wrapper: {
-        flex: 1
+        flex: 1,
     },
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     container: {
         flex: 1,
@@ -172,33 +191,33 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#96D0E8',
         paddingLeft: '10%',
-        paddingRight: '10%'
+        paddingRight: '10%',
     },
     textInput: {
         alignSelf: 'stretch',
         padding: '5%',
         marginBottom: '3%',
         marginTop: '5%',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     btn: {
         alignSelf: 'stretch',
         padding: '5%',
         alignItems: 'center',
         backgroundColor: '#15692C',
-        marginTop: '5%'
+        marginTop: '5%',
     },
     result: {
         paddingTop: '10%',
         fontWeight: 'bold',
         color: '#35383D',
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
     },
     error: {
-        color:'red',
-        alignSelf:'flex-start',
-        fontSize:12,
-        fontWeight:'bold'
-    }
+        color: 'red',
+        alignSelf: 'flex-start',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
 });
 export default Login;
