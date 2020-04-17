@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
+import {Toast , Root} from 'native-base'
 import { Firebase, Database } from '../../DataBase/Firebase';
 import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -85,7 +86,26 @@ class Login extends Component {
     isAlreadyLogged = () => {
         Firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                console.log('Hay un usuario logueado:', user);
+                LocalStorage.load({
+                    key: 'UsuarioLogueado',
+                }).then((response) => {
+                    switch (response.tipoUsuario) {
+                        case 'Propietario':
+                            this.setState({
+                                showSpinner: false,
+                            });
+                            console.warn('Propietario')
+                            this.props.navigation.navigate('Propietario')
+                            break
+                        case 'Encargado':
+                            this.setState({
+                                showSpinner: false,
+                            });
+                            console.warn('Encargado')
+                            this.props.navigation.navigate('Encargado');
+                            break
+                    }
+                } )
                 return true;
             } else {
                 console.log('No hay ningún usuario logueado.');
@@ -95,7 +115,15 @@ class Login extends Component {
     };
 
     componentDidMount() {
-        isLogged = this.isAlreadyLogged();
+        this.setState({
+            showSpinner: true,
+        });
+        if (!this.isAlreadyLogged()) {
+            this.setState({
+                showSpinner: false,
+            });
+        }
+
         setInterval(() => {
             this.setState({
                 showSpinner: false,
@@ -130,48 +158,50 @@ class Login extends Component {
 
     render() {
         return (
-            <KeyboardAvoidingView behavior="height" style={styles.wrapper}>
-                <View style={styles.container}>
-                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
-                    <StatusBar backgroundColor="#96D0E8"></StatusBar>
-                    <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image
-                            source={require('../../../assets/Images/LogoTransparente.png')}
-                            style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
+            <Root>
+                <KeyboardAvoidingView behavior="height" style={styles.wrapper}>
+                    <View style={styles.container}>
+                        <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
+                        <StatusBar backgroundColor="#96D0E8"></StatusBar>
+                        <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
+                            <Image
+                                source={require('../../../assets/Images/LogoTransparente.png')}
+                                style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
+                        </View>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Usuario"
+                            onChangeText={(email) => this.setState({ email })}
+                            underlineColorAndroid="transparent"
+                            maxLength={40}
+                        />
+                        <Text style={styles.error}>{this.state.emailError}</Text>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Contraseña"
+                            onChangeText={(password) => this.setState({ password })}
+                            underlineColorAndroid="transparent"
+                            secureTextEntry={true}
+                            maxLength={25}
+                        />
+                        <Text style={styles.error}>{this.state.passwordError}</Text>
+                        <TouchableOpacity
+                            style={styles.btn}
+                            onPress={async () => {
+                                const emailFormat = this.validateEmail(this.state.email);
+                                const textInputs = this.verificarTextInputs(['password']);
+                                if (emailFormat == true || textInputs == true) {
+                                    return;
+                                }
+                                await this.onButtonPress();
+                                this.setState({ showSpinner: false });
+                            }}>
+                            <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.result}>{this.state.result}</Text>
                     </View>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Usuario"
-                        onChangeText={(email) => this.setState({ email })}
-                        underlineColorAndroid="transparent"
-                        maxLength={40}
-                    />
-                    <Text style={styles.error}>{this.state.emailError}</Text>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Contraseña"
-                        onChangeText={(password) => this.setState({ password })}
-                        underlineColorAndroid="transparent"
-                        secureTextEntry={true}
-                        maxLength={25}
-                    />
-                    <Text style={styles.error}>{this.state.passwordError}</Text>
-                    <TouchableOpacity
-                        style={styles.btn}
-                        onPress={async () => {
-                            const emailFormat = this.validateEmail(this.state.email);
-                            const textInputs = this.verificarTextInputs(['password']);
-                            if (emailFormat == true || textInputs == true) {
-                                return;
-                            }
-                            await this.onButtonPress();
-                            this.setState({ showSpinner: false });
-                        }}>
-                        <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.result}>{this.state.result}</Text>
-                </View>
-            </KeyboardAvoidingView>
+                </KeyboardAvoidingView>
+            </Root>
         );
     }
 }

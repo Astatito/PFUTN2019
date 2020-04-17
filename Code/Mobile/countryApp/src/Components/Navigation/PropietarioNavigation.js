@@ -20,6 +20,7 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Toast, Root } from 'native-base'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
@@ -30,36 +31,44 @@ import ModificarInvitado from '../Main/Screens/Propietario/Invitaciones/Modifica
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = (props) => (
-    <ScrollView contentContainerStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
-        <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
-            <View style={{ height: '35%', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                <Image
-                    source={require('../../assets/Images/propietario.jpg')}
-                    style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
-            </View>
-            <DrawerItems {...props} />
-        </SafeAreaView>
-        <TouchableOpacity
-            onPress={() => {
-                Firebase.auth()
-                    .signOut()
-                    .then(() => {
-                        props.navigation.closeDrawer();
-                        LocalStorage.remove({ key: 'UsuarioLogueado' });
-                        props.navigation.navigate('Login');
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-            }}>
-            <View style={styles.item}>
-                <View style={styles.iconContainer}>
-                    <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+    <Root>
+        <ScrollView contentContainerStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
+            <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
+                <View style={{ height: '35%', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
+                    <Image
+                        source={require('../../assets/Images/propietario.jpg')}
+                        style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
                 </View>
-                <Text style={styles.label}>Cerrar Sesión</Text>
-            </View>
-        </TouchableOpacity>
-    </ScrollView>
+                <DrawerItems {...props} />
+            </SafeAreaView>
+            <TouchableOpacity
+                onPress={() => {
+                    Firebase.auth()
+                        .signOut()
+                        .then(() => {
+                            props.navigation.closeDrawer();
+                            LocalStorage.remove({ key: 'UsuarioLogueado' });
+                            props.navigation.navigate('Login');
+                        })
+                        .catch((error) => {
+                            Toast.show({
+                                text: "Lo siento, ocurrió un error inesperado.",
+                                buttonText: "Aceptar",
+                                duration: 3000,
+                                position: "bottom",
+                                type: "danger",
+                            })
+                        });
+                }}>
+                <View style={styles.item}>
+                    <View style={styles.iconContainer}>
+                        <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+                    </View>
+                    <Text style={styles.label}>Cerrar Sesión</Text>
+                </View>
+            </TouchableOpacity>
+        </ScrollView>
+    </Root>
 );
 
 // Stack - El stack navigator para el home del propietario

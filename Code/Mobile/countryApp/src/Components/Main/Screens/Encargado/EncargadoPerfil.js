@@ -57,7 +57,6 @@ class MiPerfil extends Component {
     state = {
         tiposDocumento: [],
         tipoAcceso: '',
-        legajo: '',
         nombre: '',
         apellido: '',
         picker: '',
@@ -68,7 +67,6 @@ class MiPerfil extends Component {
         showSpinner: false,
         isVisible: false,
         usuario: {},
-        legajoError: '',
         nombreError: '',
         apellidoError: '',
         celularError: '',
@@ -200,18 +198,6 @@ class MiPerfil extends Component {
                             <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
 
-                            <TextInput
-                                style={styles.textInput}
-                                placeholder="Legajo"
-                                onChangeText={(legajo) => this.setState({ legajo })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
-                                keyboardType={'numeric'}
-                                maxLength={5}
-                                value={this.state.legajo}
-                            />
-                            <Text style={styles.error}>{this.state.legajoError}</Text>
                             <TextInput
                                 style={styles.textInput}
                                 placeholder="Nombre"
