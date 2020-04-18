@@ -12,18 +12,18 @@ class MiUbicacion extends Component {
         headerRight: <View />,
     };
 
-    urlImagen = '';
+    urlImagen = ''
+    nombreCountry = ''
 
     componentWillMount() {
         LocalStorage.load({
             key: 'UsuarioLogueado',
         })
             .then(async (usuario) => {
-                path = await this.obtenerPath(usuario.country);
-                urlImagen = await this.obtenerUrlImagen(path);
+                const path = await this.obtenerPath(usuario.country);
+                urlImagen = await Storage.ref().child(path).getDownloadURL()
             })
             .catch((error) => {
-                this.setState({ showSpinner: false });
                 Toast.show({
                     text: 'La key solicitada no existe.',
                     buttonText: 'Aceptar',
@@ -35,38 +35,24 @@ class MiUbicacion extends Component {
     }
 
     obtenerPath = async (country) => {
-        var refCountry = Database.collection('Country').doc(country);
-        var doc = await refCountry.get();
-        var path = doc.data().Imagen;
+        const refCountry = Database.collection('Country').doc(country);
+        const doc = await refCountry.get();
+        const path = doc.data().Imagen;
+        nombreCountry = doc.data().Nombre
         return path;
     };
 
-    obtenerUrlImagen = async (path) => {
-        return await Storage.ref().child(path).getDownloadURL();
-    };
-
     shareImage = async () => {
-        share = async (base64image) => {
-            console.log(urlImagen);
-            let shareOptions = {
-                title: 'Compartir',
-                url: base64image,
-                message: 'Hola! Aquí te envío el mapa del country MartinDale.',
-                subject: 'Mapa del country - MartinDale',
-            };
-            try {
-                await Share.open(shareOptions);
-            } catch (error) {}
+        const resp = await RNFetchBlob.fetch('GET', urlImagen);
+        let base64image = resp.data;
+        const url = 'data:image/png;base64,' + base64image
+        let shareOptions = {
+            title: 'Compartir',
+            url: url,
+            message: 'Hola! Aquí te envío el mapa del country ' + nombreCountry + ' .',
+            subject: 'Mapa del country - MartinDale',
         };
-
-        try {
-            const resp = await RNFetchBlob.fetch('GET', `http://www.malubaibiene.com.ar/images/Plano_Martindale.jpg`);
-            let base64image = resp.data;
-            share('data:image/png;base64,' + base64image);
-            return 0;
-        } catch (error) {
-            return 1;
-        }
+        await Share.open(shareOptions);
     };
 
     render() {
