@@ -3,36 +3,70 @@ import { View, Image, StyleSheet } from 'react-native';
 import Share from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob';
 import { Text, Button, Root, Toast } from 'native-base';
+import { Database, Storage } from '../../../../DataBase/Firebase';
+import { LocalStorage } from '../../../../DataBase/Storage';
 
 class MiUbicacion extends Component {
     static navigationOptions = {
         title: 'Mi Ubicación',
-        headerRight: <View />
+        headerRight: <View />,
+    };
+
+    urlImagen = '';
+
+    componentWillMount() {
+        LocalStorage.load({
+            key: 'UsuarioLogueado',
+        })
+            .then(async (usuario) => {
+                path = await this.obtenerPath(usuario.country);
+                urlImagen = await this.obtenerUrlImagen(path);
+            })
+            .catch((error) => {
+                this.setState({ showSpinner: false });
+                Toast.show({
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
+                    duration: 3000,
+                    position: 'bottom',
+                    type: 'danger',
+                });
+            });
+    }
+
+    obtenerPath = async (country) => {
+        var refCountry = Database.collection('Country').doc(country);
+        var doc = await refCountry.get();
+        var path = doc.data().Imagen;
+        return path;
+    };
+
+    obtenerUrlImagen = async (path) => {
+        return await Storage.ref().child(path).getDownloadURL();
     };
 
     shareImage = async () => {
-
-        share = async base64image => {
+        share = async (base64image) => {
+            console.log(urlImagen);
             let shareOptions = {
                 title: 'Compartir',
                 url: base64image,
                 message: 'Hola! Aquí te envío el mapa del country MartinDale.',
-                subject: 'Mapa del country - MartinDale'
+                subject: 'Mapa del country - MartinDale',
             };
             try {
                 await Share.open(shareOptions);
-            } catch (error) {
-            }
+            } catch (error) {}
         };
 
         try {
-            const resp = await RNFetchBlob.fetch('GET', `http://www.malubaibiene.com.ar/images/Plano_Martindale.jpg`)
+            const resp = await RNFetchBlob.fetch('GET', `http://www.malubaibiene.com.ar/images/Plano_Martindale.jpg`);
             let base64image = resp.data;
             share('data:image/png;base64,' + base64image);
-            return 0
+            return 0;
         } catch (error) {
-            return 1
-        } 
+            return 1;
+        }
     };
 
     render() {
@@ -63,12 +97,12 @@ class MiUbicacion extends Component {
                                     result = await this.shareImage();
                                     if (result == 1) {
                                         Toast.show({
-                                            text: "Lo siento, ocurrió un error inesperado.",
-                                            buttonText: "Aceptar",
+                                            text: 'Lo siento, ocurrió un error inesperado.',
+                                            buttonText: 'Aceptar',
                                             duration: 3000,
-                                            position: "bottom",
-                                            type: "danger"
-                                        })
+                                            position: 'bottom',
+                                            type: 'danger',
+                                        });
                                     }
                                 }}>
                                 <Text>Compartir</Text>
@@ -77,7 +111,6 @@ class MiUbicacion extends Component {
                     </View>
                 </View>
             </Root>
-            
         );
     }
 }
@@ -90,8 +123,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingLeft: '4%',
         paddingRight: '4%',
-        paddingTop: '4%'
-    }
+        paddingTop: '4%',
+    },
 });
 
 export default MiUbicacion;
