@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
-import {Toast , Root} from 'native-base'
+import { Toast, Root } from 'native-base';
 import { Firebase, Database } from '../../DataBase/Firebase';
 import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -30,7 +30,7 @@ class Login extends Component {
             await Firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
             await Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
             this.setState({ result: 'Logueado con éxito.' });
-            var home = await this.registrarUsuarioLogueado();
+            var home = await this.registrarUsuarioLogueado(this.state.email.toLowerCase());
         } catch (error) {
             switch (error.code) {
                 case 'auth/user-not-found':
@@ -54,6 +54,7 @@ class Login extends Component {
     };
 
     storeUsuario = (keyStore, obj) => {
+        console.log('Save in LocalStorage:', obj);
         LocalStorage.save({
             key: keyStore,
             data: {
@@ -65,10 +66,10 @@ class Login extends Component {
         });
     };
 
-    registrarUsuarioLogueado = async () => {
+    registrarUsuarioLogueado = async (email) => {
         var dbRef = Database.collection('Usuarios');
         try {
-            var doc = await dbRef.doc(this.state.email.toLowerCase()).get();
+            var doc = await dbRef.doc(email).get();
             if (doc.exists) {
                 this.storeUsuario('UsuarioLogueado', doc.data());
                 switch (doc.data().TipoUsuario.id) {
@@ -84,28 +85,23 @@ class Login extends Component {
     };
 
     isAlreadyLogged = () => {
-        Firebase.auth().onAuthStateChanged((user) => {
+        Firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
-                LocalStorage.load({
-                    key: 'UsuarioLogueado',
-                }).then((response) => {
-                    switch (response.tipoUsuario) {
-                        case 'Propietario':
-                            this.setState({
-                                showSpinner: false,
-                            });
-                            console.warn('Propietario')
-                            this.props.navigation.navigate('Propietario')
-                            break
-                        case 'Encargado':
-                            this.setState({
-                                showSpinner: false,
-                            });
-                            console.warn('Encargado')
-                            this.props.navigation.navigate('Encargado');
-                            break
-                    }
-                } )
+                var home = await this.registrarUsuarioLogueado(user.email.toLowerCase());
+                switch (home) {
+                    case 1:
+                        this.setState({
+                            showSpinner: false,
+                        });
+                        this.props.navigation.navigate('Propietario');
+                        break;
+                    case 2:
+                        this.setState({
+                            showSpinner: false,
+                        });
+                        this.props.navigation.navigate('Encargado');
+                        break;
+                }
                 return true;
             } else {
                 console.log('No hay ningún usuario logueado.');
@@ -163,7 +159,8 @@ class Login extends Component {
                     <View style={styles.container}>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <StatusBar backgroundColor="#96D0E8"></StatusBar>
-                        <View style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
+                        <View
+                            style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
                             <Image
                                 source={require('../../../assets/Images/LogoTransparente.png')}
                                 style={{ height: 250, width: 300, borderRadius: 0, marginBottom: 50 }}></Image>
