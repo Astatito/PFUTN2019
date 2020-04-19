@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
-import { Toast, Root } from 'native-base';
 import { Firebase, Database } from '../../DataBase/Firebase';
 import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -40,7 +39,6 @@ class Login extends Component {
                     this.setState({ result: 'Contraseña incorrecta.' });
                     break;
                 default:
-                    console.log(error.message);
                     this.setState({ result: 'Falló la autenticación.' });
                     break;
             }
@@ -54,7 +52,6 @@ class Login extends Component {
     };
 
     storeUsuario = (keyStore, obj) => {
-        console.log('Save in LocalStorage:', obj);
         LocalStorage.save({
             key: keyStore,
             data: {
@@ -84,42 +81,7 @@ class Login extends Component {
         }
     };
 
-    isAlreadyLogged = () => {
-        Firebase.auth().onAuthStateChanged(async (user) => {
-            if (user) {
-                var home = await this.registrarUsuarioLogueado(user.email.toLowerCase());
-                switch (home) {
-                    case 1:
-                        this.setState({
-                            showSpinner: false,
-                        });
-                        this.props.navigation.navigate('Propietario');
-                        break;
-                    case 2:
-                        this.setState({
-                            showSpinner: false,
-                        });
-                        this.props.navigation.navigate('Encargado');
-                        break;
-                }
-                return true;
-            } else {
-                console.log('No hay ningún usuario logueado.');
-                return false;
-            }
-        });
-    };
-
     componentDidMount() {
-        this.setState({
-            showSpinner: true,
-        });
-        if (!this.isAlreadyLogged()) {
-            this.setState({
-                showSpinner: false,
-            });
-        }
-
         setInterval(() => {
             this.setState({
                 showSpinner: false,
@@ -154,7 +116,6 @@ class Login extends Component {
 
     render() {
         return (
-            <Root>
                 <KeyboardAvoidingView behavior="height" style={styles.wrapper}>
                     <View style={styles.container}>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
@@ -198,7 +159,6 @@ class Login extends Component {
                         <Text style={styles.result}>{this.state.result}</Text>
                     </View>
                 </KeyboardAvoidingView>
-            </Root>
         );
     }
 }
