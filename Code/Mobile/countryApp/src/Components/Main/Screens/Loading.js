@@ -43,7 +43,6 @@ class Loading extends Component {
                             style={{ height: 250, width: 300, borderRadius: 0}}></Image>
                         <Text style={styles.version}> v1.0 </Text>
                     </View>
-                    
                 </View>
         );
     }
