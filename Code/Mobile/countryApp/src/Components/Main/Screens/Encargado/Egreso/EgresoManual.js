@@ -183,7 +183,7 @@ class EgresoManual extends Component {
     }
 
     getLimit = () => {
-        if (this.state.picker = 'Documento') {
+        if (this.state.picker == 'DocumentoDeIdentidad') {
             return 8
         } else {
             return 10
