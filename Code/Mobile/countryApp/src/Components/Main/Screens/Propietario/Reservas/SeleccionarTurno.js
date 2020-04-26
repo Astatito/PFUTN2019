@@ -49,7 +49,7 @@ class FlatListItem extends Component {
                         </ListItem>
                     </Swipeout>
                 );
-            } else {
+            } else if (this.props.item.estado == 'Reservado') {
                 return (
                     <Swipeout {...swipeOutSettings}>
                         <ListItem
@@ -80,6 +80,8 @@ class FlatListItem extends Component {
                         </ListItem>
                     </Swipeout>
                 );
+            } else {
+                return null
             }
         } else {
             if (this.props.item.estado == 'Disponible') {
@@ -111,7 +113,7 @@ class FlatListItem extends Component {
                         </ListItem>
                     </Swipeout>
                 );
-            } else {
+            } else if (this.props.item.estado == 'Reservado') {
                 return (
                     <Swipeout {...swipeOutSettings}>
                         <ListItem
@@ -140,6 +142,8 @@ class FlatListItem extends Component {
                         </ListItem>
                     </Swipeout>
                 );
+            } else {
+                return null
             }
         }
     }
