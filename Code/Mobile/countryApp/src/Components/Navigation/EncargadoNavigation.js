@@ -10,6 +10,7 @@ import EgresoManual from '../Main/Screens/Encargado/Egreso/EgresoManual';
 import EncargadoPerfil from '../Main/Screens/Encargado/EncargadoPerfil';
 import Escaner from '../Main/Screens/Encargado/Escaner';
 import RegistroVisitante from '../Main/Screens/Encargado/Ingreso/RegistroVisitante';
+import ListadoDePropietarios from '../Main/Screens/Encargado/Ingreso/ListaDePropietarios';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -88,8 +89,9 @@ const IngresoStackNavigator = createStackNavigator(
     {
         Ingreso: Ingreso,
         IngresoManual: IngresoManual,
+        ListadoDePropietarios: ListadoDePropietarios,
         Escaner: Escaner,
-        RegistroVisitante: RegistroVisitante,
+        RegistroVisitante: RegistroVisitante
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
