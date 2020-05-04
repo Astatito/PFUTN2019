@@ -1,6 +1,3 @@
-// Para que funcione correctamente hay que respetar exactamente el orden en el que están los stacks y los drawers.
-// Se lee de abajo hacia arriba.
-
 import React from 'react';
 import Propietario from '../Main/Screens/Propietario/Propietario';
 import PropietarioPerfil from '../Main/Screens/Propietario/PropietarioPerfil';
@@ -41,32 +38,46 @@ const CustomDrawerContentComponent = (props) => (
                 </View>
                 <DrawerItems {...props} />
             </SafeAreaView>
-            <TouchableOpacity
-                onPress={() => {
-                    Firebase.auth()
-                        .signOut()
-                        .then(() => {
-                            props.navigation.closeDrawer();
-                            LocalStorage.remove({ key: 'UsuarioLogueado' });
-                            props.navigation.navigate('Login');
-                        })
-                        .catch((error) => {
-                            Toast.show({
-                                text: "Lo siento, ocurrió un error inesperado.",
-                                buttonText: "Aceptar",
-                                duration: 3000,
-                                position: "bottom",
-                                type: "danger",
-                            })
-                        });
-                }}>
-                <View style={styles.item}>
-                    <View style={styles.iconContainer}>
-                        <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+            <SafeAreaView>
+                <TouchableOpacity
+                    onPress={() => {
+                                props.navigation.closeDrawer();
+                                props.navigation.navigate('CambiarContraseña');
+                    }}>
+                    <View style={styles.item}>
+                        <View style={styles.iconContainer}>
+                            <IconEntypo name="key" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+                        </View>
+                        <Text style={{marginHorizontal: 16, fontWeight: 'bold',color: 'rgba(0, 0, 0, .87)'}}>Contraseña</Text>
                     </View>
-                    <Text style={styles.label}>Cerrar Sesión</Text>
-                </View>
-            </TouchableOpacity>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        Firebase.auth()
+                            .signOut()
+                            .then(() => {
+                                props.navigation.closeDrawer();
+                                LocalStorage.remove({ key: 'UsuarioLogueado' });
+                                props.navigation.navigate('Login');
+                            })
+                            .catch((error) => {
+                                Toast.show({
+                                    text: "Lo siento, ocurrió un error inesperado.",
+                                    buttonText: "Aceptar",
+                                    duration: 3000,
+                                    position: "bottom",
+                                    type: "danger",
+                                })
+                            });
+                    }}>
+                    <View style={styles.item}>
+                        <View style={styles.iconContainer}>
+                            <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+                        </View>
+                        <Text style={styles.label}>Cerrar Sesión</Text>
+                    </View>
+                </TouchableOpacity>
+            </SafeAreaView>
         </ScrollView>
     </Root>
 );
@@ -380,7 +391,7 @@ const PropietarioNavigation = createDrawerNavigator(
                     <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}></IconAntDesign>
                 ),
             },
-        },
+        }
     },
     {
         contentComponent: CustomDrawerContentComponent,
@@ -396,9 +407,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     label: {
-        margin: 16,
+        marginHorizontal: 16,
+        marginVertical: 26,
         fontWeight: 'bold',
-        color: 'rgba(0, 0, 0, .87)',
+        color: 'rgba(0, 0, 0, .87)'
     },
     iconContainer: {
         marginHorizontal: 16,
