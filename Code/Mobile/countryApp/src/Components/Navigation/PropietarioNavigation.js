@@ -25,6 +25,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
 import { Firebase } from '../DataBase/Firebase';
 import ModificarInvitado from '../Main/Screens/Propietario/Invitaciones/ModificarInvitado';
+import CambiarContraseña from '../Main/Screens/CambiarContraseña';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = (props) => (
@@ -39,18 +40,6 @@ const CustomDrawerContentComponent = (props) => (
                 <DrawerItems {...props} />
             </SafeAreaView>
             <SafeAreaView>
-                <TouchableOpacity
-                    onPress={() => {
-                                props.navigation.closeDrawer();
-                                props.navigation.navigate('CambiarContraseña');
-                    }}>
-                    <View style={styles.item}>
-                        <View style={styles.iconContainer}>
-                            <IconEntypo name="key" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
-                        </View>
-                        <Text style={{marginHorizontal: 16, fontWeight: 'bold',color: 'rgba(0, 0, 0, .87)'}}>Contraseña</Text>
-                    </View>
-                </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         Firebase.auth()
@@ -80,6 +69,29 @@ const CustomDrawerContentComponent = (props) => (
             </SafeAreaView>
         </ScrollView>
     </Root>
+);
+
+const CambiarContraseñaStackNavigator = createStackNavigator(
+    {
+        CambiarContraseña: CambiarContraseña,
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                title: 'Actualizar contraseña',
+                headerRight: <View></View>,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1,
+                },
+            };
+        },
+    }
 );
 
 // Stack - El stack navigator para el home del propietario
@@ -389,6 +401,14 @@ const PropietarioNavigation = createDrawerNavigator(
             navigationOptions: {
                 drawerIcon: ({ tintColor }) => (
                     <IconAntDesign name="addusergroup" style={{ fontSize: 25, color: tintColor }}></IconAntDesign>
+                ),
+            },
+        },
+        Contraseña: {
+            screen: CambiarContraseñaStackNavigator,
+            navigationOptions: {
+                drawerIcon: ({ tintColor }) => (
+                    <IconEntypo name="key" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
                 ),
             },
         }

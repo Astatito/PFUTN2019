@@ -20,6 +20,7 @@ import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LocalStorage } from '../DataBase/Storage';
 import { Firebase } from '../DataBase/Firebase';
+import CambiarContraseña from '../Main/Screens/CambiarContraseña';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = (props) => (
@@ -59,6 +60,29 @@ const CustomDrawerContentComponent = (props) => (
             </TouchableOpacity>
         </ScrollView>
     </Root>
+);
+
+const CambiarContraseñaStackNavigator = createStackNavigator(
+    {
+        CambiarContraseña: CambiarContraseña,
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                title: 'Actualizar contraseña',
+                headerRight: <View></View>,
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1,
+                },
+            };
+        },
+    }
 );
 
 // Stack 1 - El stack navigator para el home del encargado.
@@ -201,6 +225,14 @@ const EncargadoNavigation = createDrawerNavigator(
                 drawerIcon: ({ tintColor }) => <IconEntypo name="user" style={{ fontSize: 25, color: tintColor }}></IconEntypo>,
             },
         },
+        Contraseña: {
+            screen: CambiarContraseñaStackNavigator,
+            navigationOptions: {
+                drawerIcon: ({ tintColor }) => (
+                    <IconEntypo name="key" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+                ),
+            },
+        }
     },
     {
         contentComponent: CustomDrawerContentComponent,

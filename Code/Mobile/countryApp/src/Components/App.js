@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Login from './Main/Screens/Login';
 import Loading from './Main/Screens/Loading';
-import CambiarContraseñaStackNavigator from './Navigation/CambiarContraseñaNavigation';
 import EncargadoNavigation from './Navigation/EncargadoNavigation';
 import PropietarioNavigation from './Navigation/PropietarioNavigation';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
@@ -27,7 +26,6 @@ export default App;
 const AppSwitchNavigator = createSwitchNavigator({
     Loading: { screen: Loading},
     Login: { screen: Login },
-    CambiarContraseña: {screen: CambiarContraseñaStackNavigator},
     Propietario: { screen: PropietarioNavigation },
     Encargado: { screen: EncargadoNavigation },
 });

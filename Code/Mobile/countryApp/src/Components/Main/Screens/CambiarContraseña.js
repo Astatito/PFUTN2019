@@ -3,20 +3,41 @@ import { View, StyleSheet, TextInput, StatusBar } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Content, Button, Text, Root, Toast} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { NavigationActions } from 'react-navigation';
+import { LocalStorage } from '../../DataBase/Storage';
 
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
-const navigateAction = NavigationActions.navigate({
-    routeName: 'Propietario',
-    action: NavigationActions.navigate({ routeName: 'Propietario' }),
-});
-
 class CambiarContraseña extends Component {
+
+    state = {routeName: ''}
 
     componentWillMount() {
         // this.setState({ showSpinner: true });
+
+        LocalStorage.load({
+            key: 'UsuarioLogueado',
+        })
+            .then((usuario) => {
+                switch (usuario.tipoUsuario) {
+                    case 'Encargado':
+                        this.setState({routeName: 'Encargado'});
+                        break;
+                    case 'Propietario':
+                        this.setState({routeName: 'Propietario'});
+                        break;
+                }
+            })
+            .catch((error) => {
+                Toast.show({
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
+                    duration: 3000,
+                    position: 'bottom',
+                    type: 'danger',
+                });
+            });
+
         setInterval(() => {
             this.setState({
                 showSpinner: false,
@@ -53,7 +74,7 @@ class CambiarContraseña extends Component {
 
     onToastClosed = (reason) => {
         this.limpiarCampos();
-        this.props.navigation.dispatch(navigateAction);
+        this.props.navigation.navigate(this.state.routeName)
     };
 
     actualizarContraseña = async() => {
@@ -208,7 +229,7 @@ class CambiarContraseña extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.limpiarCampos();
-                                            this.props.navigation.dispatch(navigateAction);
+                                            this.props.navigation.navigate(this.state.routeName)
                                         }}>
                                         <Text>Cancelar</Text>
                                     </Button>
