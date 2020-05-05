@@ -114,8 +114,8 @@ class FlatListItem extends Component {
                         <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.servicio} </Text>
                     </Body>
                     <Right style={{ alignSelf: 'center', marginTop: '1.3%' }}>
-                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
-                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
+                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde.format('D/M/YYYY HH:mm')} </Text>
+                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta.format('D/M/YYYY HH:mm')} </Text>
                     </Right>
                 </ListItem>
             </Swipeout>
@@ -190,8 +190,8 @@ export default class BasicFlatList extends Component {
                         var reserva = {
                             key: snapshot.docs[i].id,
                             nombre: snapshot.docs[i].data().Nombre,
-                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
-                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
+                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds),
+                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds),
                             idReservaServicio: snapshot.docs[i].data().IdReservaServicio.path,
                             servicio: snapshot.docs[i].data().Servicio,
                         };

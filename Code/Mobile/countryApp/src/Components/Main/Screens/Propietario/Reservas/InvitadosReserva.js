@@ -34,10 +34,23 @@ class FlatListItem extends Component {
     };
 
     confirmarInvitado = async (invitado) => {
-        // TODO: SE DEBE CREAR/ACTUALIZAR LA INVITACIÓN PARA QUE PUEDA INGRESAR
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+
+        // TODO: Tanto la invitacion al evento como el update del estado forman parte de una transaccion
+        // Crea la invitación al evento
+        var refInvitacionesEventos = refCountry.collection('InvitacionesEventos');
+        var invitacionEvento = {
+            Documento: invitado.documento,
+            FechaDesde: invitado.reserva.fechaDesde.subtract(30, 'minutes').toDate(),
+            FechaHasta: invitado.reserva.fechaHasta.add(30, 'minutes').toDate(),
+            TipoDocumento: Database.doc('TipoDocumento/' + invitado.tipoDocumento),
+            IdReserva: Database.doc(invitado.reserva.idReservaServicio),
+        };
+        await refInvitacionesEventos.add(invitacionEvento);
+
+        // Actualiza el estado del invitado a la reserva
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-        var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva);
+        var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva.key);
         var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
         try {
             await refInvitado.set(
@@ -343,7 +356,7 @@ export default class BasicFlatList extends Component {
                         estado: snapshot.docs[i].data().Estado,
                         documento: snapshot.docs[i].data().Documento,
                         tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
-                        reserva: this.state.reserva.key,
+                        reserva: this.state.reserva,
                     };
                     tempArray.push(invitado);
                 }
