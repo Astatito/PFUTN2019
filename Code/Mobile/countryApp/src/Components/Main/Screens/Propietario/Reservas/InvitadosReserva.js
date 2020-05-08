@@ -18,12 +18,24 @@ class FlatListItem extends Component {
     }
 
     descartarInvitado = async (invitado) => {
-        if (invitado.estado == true) {
-            // TODO: SE DEBE ELIMINAR TAMBIÉN LA INVITACIÓN PARA QUE NO PUEDA INGRESAR
-        }
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        console.log(invitado);
+        // TODO: Tanto la eliminacion de la autorización como el invitado de la reserva forman parte de una transaccion
+        if (invitado.estado == true) {
+            // Elimina la autorización para ingresar
+            var refInvitacionesEventos = refCountry.collection('InvitacionesEventos');
+            var snapshot = await refInvitacionesEventos
+                .where('Documento', '==', invitado.documento)
+                .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + invitado.tipoDocumento))
+                .where('IdReserva', '==', Database.doc(invitado.reserva.idReservaServicio))
+                .get();
+            var refInvitacion = refInvitacionesEventos.doc(snapshot.docs[0].id);
+            await refInvitacion.delete();
+        }
+
+        // Elimina el invitado de la reserva
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-        var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva);
+        var refReserva = refPropietario.collection('Reservas').doc(invitado.reserva.key);
         var refInvitado = refReserva.collection('Invitados').doc(invitado.key);
         try {
             await refInvitado.delete();
