@@ -166,7 +166,7 @@ export default class BasicFlatList extends Component {
         selectedItems = [];
         const { navigation } = this.props;
         const reserva = navigation.getParam('reserva');
-        this.setState({ showSpinner: true, idReserva: reserva });
+        this.setState({ showSpinner: true, reserva: reserva });
         LocalStorage.load({
             key: 'UsuarioLogueado',
         })
@@ -240,7 +240,7 @@ export default class BasicFlatList extends Component {
     obtenerInvitadosReserva = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-        var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva);
+        var refReserva = refPropietario.collection('Reservas').doc(this.state.reserva.key);
         var refInvitados = refReserva.collection('Invitados');
 
         refInvitados.onSnapshot((snapshot) => {
@@ -255,7 +255,7 @@ export default class BasicFlatList extends Component {
                         estado: snapshot.docs[i].data().Estado,
                         documento: snapshot.docs[i].data().Documento,
                         tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
-                        reserva: this.state.idReserva,
+                        reserva: this.state.reserva.key,
                     };
                     tempArray.push(invitado);
                 }
@@ -270,7 +270,7 @@ export default class BasicFlatList extends Component {
     agregarInvitados = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
-        var refReserva = refPropietario.collection('Reservas').doc(this.state.idReserva);
+        var refReserva = refPropietario.collection('Reservas').doc(this.state.reserva.key);
         var refInvitados = refReserva.collection('Invitados');
         var alMenosUnInvitado = false;
         try {
@@ -297,7 +297,16 @@ export default class BasicFlatList extends Component {
                     alMenosUnInvitado = true;
                     await refInvitados.add(nuevoInvitado);
                 }
-                // TODO: FALTA DEFINIR LA LÓGICA PARA GESTIONAR LAS AUTORIZACIONES
+
+                var refInvitacionesEventos = refCountry.collection('InvitacionesEventos');
+                var invitacionEvento = {
+                    Documento: selectedItems[i].documento,
+                    FechaDesde: this.state.reserva.fechaDesde.subtract(30, 'minutes').toDate(),
+                    FechaHasta: this.state.reserva.fechaHasta.add(30, 'minutes').toDate(),
+                    TipoDocumento: Database.doc('TipoDocumento/' + selectedItems[i].tipoDocumento),
+                    IdReserva: Database.doc(this.state.reserva.idReservaServicio),
+                };
+                await refInvitacionesEventos.add(invitacionEvento);
             }
             if (alMenosUnInvitado == true) {
                 return 0;

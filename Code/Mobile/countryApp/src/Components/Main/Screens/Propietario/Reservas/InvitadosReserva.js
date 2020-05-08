@@ -260,7 +260,7 @@ export default class BasicFlatList extends Component {
     state = { usuario: null, reserva: null };
     idCountry = '';
     idPropietario = '';
-    idReserva = '';
+    Reserva = {};
 
     componentDidMount() {
         setInterval(() => {
@@ -281,7 +281,7 @@ export default class BasicFlatList extends Component {
 
         idCountry = usuario.country;
         idPropietario = usuario.datos;
-        idReserva = reserva.key;
+        Reserva = reserva;
 
         this.setState({
             usuario: usuario,
@@ -320,7 +320,7 @@ export default class BasicFlatList extends Component {
                         style={{ paddingRight: 10 }}
                         name="plus"
                         size={25}
-                        onPress={() => navigation.navigate('InvitadosExistentesReserva', { reserva: idReserva })}
+                        onPress={() => navigation.navigate('InvitadosExistentesReserva', { reserva: Reserva })}
                     />
                 </View>
             ),
