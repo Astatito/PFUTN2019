@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView , Alert} from 'react-native';
 import { Firebase, Database } from '../../DataBase/Firebase';
 import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -24,7 +24,6 @@ class Login extends Component {
     };
 
     onButtonPress = async () => {
-        this.setState({ showSpinner: true });
         try {
             await Firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
             await Firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
@@ -62,6 +61,24 @@ class Login extends Component {
             },
         });
     };
+
+    esUsuarioTemporal = async(email) => {
+        this.setState({ showSpinner: true });
+        var dbRef = Database.collection('UsuariosTemp');
+        try {
+            var doc = await dbRef.doc(email).get();
+            console.log(doc)
+            if (doc.exists) {
+                this.setState({ showSpinner: false });
+                Alert.alert('Atención', 'Bienvenido a LiveSafe, debe realizar el primer ingreso a través de nuestra web.');
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            this.setState({ result: 'Falló la autenticación.' });
+        }
+    }
 
     registrarUsuarioLogueado = async (email) => {
         var dbRef = Database.collection('Usuarios');
@@ -148,7 +165,8 @@ class Login extends Component {
                             onPress={async () => {
                                 const emailFormat = this.validateEmail(this.state.email);
                                 const textInputs = this.verificarTextInputs(['password']);
-                                if (emailFormat == true || textInputs == true) {
+                                const usuarioTemp = await this.esUsuarioTemporal(this.state.email);
+                                if (emailFormat == true || textInputs == true || usuarioTemp == true) {
                                     return;
                                 }
                                 await this.onButtonPress();
