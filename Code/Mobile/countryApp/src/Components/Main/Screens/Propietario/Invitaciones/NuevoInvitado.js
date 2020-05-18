@@ -9,7 +9,6 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
-
 const LIGHT_GRAY = '#D3D3D3';
 
 class NuevoInvitado extends Component {
@@ -90,9 +89,9 @@ class NuevoInvitado extends Component {
                         };
                         tempArray.push(invitado);
                     }
-                    this.setState({ invitados: tempArray , showSpinner: false });
+                    this.setState({ invitados: tempArray, showSpinner: false });
                 } else {
-                    this.setState({ invitados: [] , showSpinner: false});
+                    this.setState({ invitados: [], showSpinner: false });
                 }
             });
     };
@@ -100,7 +99,7 @@ class NuevoInvitado extends Component {
     onBlur() {
         this.setState({ isFocused: false });
     }
-    
+
     onFocus() {
         this.setState({ isFocused: true });
     }
@@ -143,10 +142,18 @@ class NuevoInvitado extends Component {
         }
     };
 
-    registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
+    estaAutenticado = (invitaciones) => {
+        return invitaciones.docs.length > 0 && invitaciones.docs[0].data().Apellido != '';
+    };
 
+    registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
+
+        var invitaciones = await refInvitados
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .get();
 
         try {
             var nuevoInvitado = {
@@ -161,7 +168,11 @@ class NuevoInvitado extends Component {
                 Documento: numeroDoc,
                 TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc),
             };
-
+            if (this.estaAutenticado(invitaciones)) {
+                nuevoInvitado.Apellido = invitaciones.docs[0].data().Apellido;
+                nuevoInvitado.Nombre = invitaciones.docs[0].data().Nombre;
+                nuevoInvitado.FechaNacimiento = moment.unix(invitaciones.docs[0].data().FechaNacimiento.seconds).toDate();
+            }
             if (
                 !this.state.invitados.find(
                     (inv) => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
@@ -203,23 +214,22 @@ class NuevoInvitado extends Component {
     };
 
     getKeyboard = () => {
-        if (this.state.picker == 'Pasaporte' ) {
-            return 'default'
+        if (this.state.picker == 'Pasaporte') {
+            return 'default';
         } else {
-            return 'numeric'
+            return 'numeric';
         }
-    }
+    };
 
     getLimit = () => {
         if (this.state.picker == 'DocumentoDeIdentidad') {
-            return 8
+            return 8;
         } else {
-            return 10
+            return 10;
         }
-    }
+    };
 
     render() {
-
         return (
             <Root>
                 <Content>
@@ -295,7 +305,6 @@ class NuevoInvitado extends Component {
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={async () => {
                                         this.setState({ showSpinner: true }, async () => {
-                                            
                                             const textInputs = await this.verificarTextInputs(['documento']);
                                             if (textInputs == true) {
                                                 return false;
