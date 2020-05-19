@@ -64,16 +64,6 @@ class RegistroVisitante extends Component {
         }
     }
 
-    // TODO: extraer este metodo a un modulo aparte para evitar consultas repetitivas a la BD.
-    obtenerPickers = async () => {
-        var dbRef = Database.collection('TipoDocumento');
-        var snapshot = await dbRef.get()
-        var tiposDocumento = [];
-        snapshot.forEach(doc => {
-            tiposDocumento.push({ id: doc.id, nombre: doc.data().Nombre });
-        });
-    }
-
     setearDatos(tipo, numero, nombre, apellido, fecha, acceso, user, autent, invit) {
         this.setState({
             picker: tipo,
@@ -85,7 +75,7 @@ class RegistroVisitante extends Component {
             usuario: user,
             isEditable: autent,
             idInvitacion: invit,
-            showSpinner: false
+            showSpinner: false,
         });
     }
 
@@ -98,12 +88,15 @@ class RegistroVisitante extends Component {
                 if (resultGrab == 0) {
                     return 0;
                 } else {
+                    console.log('Falló la grabación');
                     return 1;
                 }
             } else {
+                console.log('Falló la autenticación');
                 return 1;
             }
         } catch (error) {
+            console.log('Entró al catch:', error);
             return 1;
         } finally {
             this.setState({ showSpinner: false });
@@ -118,18 +111,27 @@ class RegistroVisitante extends Component {
     autenticarVisitante = async () => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-            var refInvitacion = refCountry.collection('Invitados').doc(this.state.idInvitacion);
+            var refInvitados = refCountry.collection('Invitados');
 
-            await refInvitacion.set(
-                {
-                    Nombre: this.state.nombre,
-                    Apellido: this.state.apellido,
-                    FechaNacimiento: this.state.fechaNacimiento.toDate(),
-                },
-                { merge: true }
-            );
+            invitaciones = await refInvitados
+                .where('Documento', '==', this.state.documento)
+                .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + this.state.picker))
+                .get();
+
+            for (var i = 0; i < invitaciones.docs.length; i++) {
+                var refInvitacion = refInvitados.doc(invitaciones.docs[i].id);
+                await refInvitacion.set(
+                    {
+                        Nombre: this.state.nombre,
+                        Apellido: this.state.apellido,
+                        FechaNacimiento: this.state.fechaNacimiento.toDate(),
+                    },
+                    { merge: true }
+                );
+            }
             return 0;
         } catch (error) {
+            console.log(error);
             return 1;
         }
     };
