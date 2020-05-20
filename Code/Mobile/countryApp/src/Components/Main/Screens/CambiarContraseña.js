@@ -4,16 +4,27 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Content, Button, Text, Root, Toast} from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../DataBase/Storage';
+import * as firebase from 'firebase';
 
 const BLUE = '#428AF8';
 const LIGHT_GRAY = '#D3D3D3';
 
 class CambiarContraseña extends Component {
 
-    state = {routeName: ''}
+    state = {
+        routeName: '',
+        passwordActual: '',
+        passwordNuevo: '',
+        passwordNuevoRepetido : '',
+        isFocused: false,
+        showSpinner: false,
+        isVisible: false,
+        passwordActualError: '',
+        passwordNuevoError: '',
+        passwordNuevoRepetidoError: ''
+    }   
 
     componentWillMount() {
-        // this.setState({ showSpinner: true });
 
         LocalStorage.load({
             key: 'UsuarioLogueado',
@@ -42,21 +53,8 @@ class CambiarContraseña extends Component {
             this.setState({
                 showSpinner: false,
             });
-        }, 3000);
+        }, 10000);
     }
-
-    state = {
-        passwordActualFirebase: 'PasswordFirebase',
-        passwordActual: '',
-        passwordNuevo: '',
-        passwordNuevoRepetido : '',
-        isFocused: false,
-        showSpinner: false,
-        isVisible: false,
-        passwordActualError: '',
-        passwordNuevoError: '',
-        passwordNuevoRepetidoError: ''
-    };
 
     handleFocus = (event) => {
         this.setState({ isFocused: true });
@@ -76,11 +74,6 @@ class CambiarContraseña extends Component {
         this.limpiarCampos();
         this.props.navigation.navigate(this.state.routeName)
     };
-
-    actualizarContraseña = async() => {
-        //Logica de Firebase para actualizar la contraseña.
-        return 0
-    }
 
     verificarTextInputs = async (inputArray) => {
         let someEmpty = false;
@@ -111,6 +104,32 @@ class CambiarContraseña extends Component {
         });
     };
 
+    reAuthenticate = async () => {
+        var user = firebase.auth().currentUser;
+        var cred = firebase.auth.EmailAuthProvider.credential(user.email, this.state.passwordActual);
+        return user.reauthenticateWithCredential(cred);
+    }
+
+    updatePassword = async () => {
+        var user = firebase.auth().currentUser;
+        try {
+            await this.reAuthenticate()
+            await user.updatePassword(this.state.passwordNuevo)
+            return 0
+        } catch (error) {
+            switch (error.code) {
+                case "auth/wrong-password":
+                    return 1
+                case "auth/weak-password":
+                    return 2
+                default:
+                    return 3
+            }
+        } finally {
+            this.setState({showSpinner: false});
+        }
+    }
+    
     render() {
         const { isFocused } = this.state;
 
@@ -175,17 +194,6 @@ class CambiarContraseña extends Component {
                                                 if (textInputs == true) {
                                                     return false;
                                                 }
-                                                if (this.state.passwordActual != this.state.passwordActualFirebase) {
-                                                    Toast.show({
-                                                        text: 'Las contraseña actual no es correcta.',
-                                                        buttonText: 'Aceptar',
-                                                        duration: 3000,
-                                                        position: 'bottom',
-                                                        type: 'warning',
-                                                    });
-                                                    this.setState({ showSpinner: false })
-                                                    return false
-                                                }
                                                 if (this.state.passwordNuevo != this.state.passwordNuevoRepetido) {
                                                     Toast.show({
                                                         text: 'Las contraseñas no coinciden.',
@@ -197,7 +205,7 @@ class CambiarContraseña extends Component {
                                                     this.setState({ showSpinner: false })
                                                     return false
                                                 }
-                                                const result = await this.actualizarContraseña()
+                                                const result = await this.updatePassword()
                                                 if (result == 0) {
                                                     Toast.show({
                                                         text: 'Contraseña actualizada correctamente.',
@@ -208,6 +216,22 @@ class CambiarContraseña extends Component {
                                                         onClose: this.onToastClosed.bind(this),
                                                     });
                                                 } else if (result == 1) {
+                                                    Toast.show({
+                                                        text: 'La contraseña ingresada es incorrecta.',
+                                                        buttonText: 'Aceptar',
+                                                        duration: 3000,
+                                                        position: 'bottom',
+                                                        type: 'danger',
+                                                    });
+                                                } else if (result == 2) {
+                                                    Toast.show({
+                                                        text: 'La contraseña debe contener al menos 6 caracteres.',
+                                                        buttonText: 'Aceptar',
+                                                        duration: 3000,
+                                                        position: 'bottom',
+                                                        type: 'danger',
+                                                    });
+                                                } else if (result == 3) {
                                                     Toast.show({
                                                         text: 'Lo siento, ocurrió un error inesperado.',
                                                         buttonText: 'Aceptar',

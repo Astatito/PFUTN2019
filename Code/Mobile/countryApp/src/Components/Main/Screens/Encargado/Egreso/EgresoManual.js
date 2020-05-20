@@ -200,7 +200,7 @@ class EgresoManual extends Component {
                         <View style={styles.container}>
                             <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                            <Text style={styles.header}> Registrar nuevo Egreso</Text>
+                            <Text style={styles.header}> Registrar nuevo egreso</Text>
 
                             <Picker
                                 note

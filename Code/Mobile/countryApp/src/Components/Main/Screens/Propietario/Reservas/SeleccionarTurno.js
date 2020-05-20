@@ -415,7 +415,7 @@ export default class BasicFlatList extends Component {
                                 }}
                             />
 
-                            <View style={{ flexDirection: 'row', marginLeft: '10%', marginVertical: '2.5%' }}>
+                            <View style={{ flexDirection: 'row', marginLeft: '10%'}}>
                                 <View style={styles.buttons}>
                                     <Button
                                         bordered
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '2.5%'
+        marginBottom: '10%'
     },
     textDefault: {
         marginTop: '55%',
