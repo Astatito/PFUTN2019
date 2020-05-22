@@ -6,7 +6,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../DataBase/Storage';
 import * as firebase from 'firebase';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 
 class CambiarContraseña extends Component {
@@ -56,19 +56,13 @@ class CambiarContraseña extends Component {
         }, 10000);
     }
 
-    handleFocus = (event) => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-
-    handleBlur = (event) => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     onToastClosed = (reason) => {
         this.limpiarCampos();
@@ -131,8 +125,7 @@ class CambiarContraseña extends Component {
     }
     
     render() {
-        const { isFocused } = this.state;
-
+        
         return (
             <Root>
                 <ScrollView>
@@ -145,9 +138,9 @@ class CambiarContraseña extends Component {
                                 placeholder="Contraseña actual"
                                 value= {this.state.passwordActual}
                                 onChangeText={(passwordActual) => this.setState({ passwordActual })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'default'}
                                 maxLength={25}
                                 secureTextEntry={true}
@@ -159,9 +152,9 @@ class CambiarContraseña extends Component {
                                 placeholder="Nueva Contraseña"
                                 value= {this.state.passwordNuevo}
                                 onChangeText={(passwordNuevo) => this.setState({ passwordNuevo })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'default'}
                                 maxLength={25}
                                 secureTextEntry={true}
@@ -173,9 +166,9 @@ class CambiarContraseña extends Component {
                                 placeholder="Nueva Contraseña"
                                 value= {this.state.passwordNuevoRepetido}
                                 onChangeText={(passwordNuevoRepetido) => this.setState({ passwordNuevoRepetido })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'default'}
                                 maxLength={25}
                                 secureTextEntry={true}

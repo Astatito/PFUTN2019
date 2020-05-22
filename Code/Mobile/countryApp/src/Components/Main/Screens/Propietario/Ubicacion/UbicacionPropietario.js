@@ -43,16 +43,20 @@ class MiUbicacion extends Component {
     };
 
     shareImage = async () => {
-        const resp = await RNFetchBlob.fetch('GET', urlImagen);
-        let base64image = resp.data;
-        const url = 'data:image/png;base64,' + base64image
-        let shareOptions = {
-            title: 'Compartir',
-            url: url,
-            message: 'Hola! Aquí te envío el mapa del country ' + nombreCountry + ' .',
-            subject: 'Mapa del country - MartinDale',
-        };
-        await Share.open(shareOptions);
+        try {
+            const resp = await RNFetchBlob.fetch('GET', urlImagen);
+            let base64image = resp.data;
+            const url = 'data:image/png;base64,' + base64image
+            let shareOptions = {
+                title: 'Compartir',
+                url: url,
+                message: 'Hola! Aquí te envío el mapa del country ' + nombreCountry + ' .',
+                subject: 'Mapa del country - MartinDale',
+            };
+            await Share.open(shareOptions);
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     render() {

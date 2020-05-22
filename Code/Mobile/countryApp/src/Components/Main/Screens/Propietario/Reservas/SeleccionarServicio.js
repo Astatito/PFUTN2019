@@ -7,7 +7,7 @@ import { Database } from '../../../../DataBase/Firebase';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 let nombreReserva = '';
 
@@ -152,22 +152,16 @@ export default class BasicFlatList extends Component {
         }, 3000);
     }
 
-    handleFocus = event => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-
-    handleBlur = event => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     render() {
-        const { isFocused } = this.state;
+        
         return (
             <Root>
                 <View>
@@ -176,9 +170,9 @@ export default class BasicFlatList extends Component {
                         style={styles.textInput}
                         placeholder="Ingrese el nombre de su reserva"
                         onChangeText={nombre => (nombreReserva = nombre)}
-                        underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
+                        underlineColorAndroid={LIGHT_GRAY}
+                        onFocus={() => this.onFocus()}
+                        onBlur={() => this.onBlur()}
                         keyboardType={'default'}
                         maxLength={20}
                     />

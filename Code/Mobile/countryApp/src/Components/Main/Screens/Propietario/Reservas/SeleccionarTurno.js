@@ -155,7 +155,7 @@ export default class BasicFlatList extends Component {
             header: null
         };
     };
-
+    
     componentWillMount() {
         const { navigation } = this.props;
         const servicio = navigation.getParam('servicio');
@@ -308,17 +308,25 @@ export default class BasicFlatList extends Component {
                 desde: turno.desde,
                 hasta: turno.hasta
             };
-        });
-        
-        if (reservas.length > 0) {
-            for (var reserva of reservas) {
-                for (var i = 0; i < turnos.length; i++) {
-                    if (turnos[i].desde >= reserva.desde && turnos[i].desde < reserva.hasta) {
-                        turnos[i].estado = 'Reservado';
+        })
+
+        var turnosNuevos = turnos.filter(turno =>  turno.estado !== 'No Disponible' );
+        if (turnosNuevos.length > 0) {
+            
+            if (reservas.length > 0) {
+                for (var reserva of reservas) {
+                    for (var i = 0; i < turnos.length; i++) {
+                        if (turnos[i].desde >= reserva.desde && turnos[i].desde < reserva.hasta) {
+                            turnos[i].estado = 'Reservado';
+                        }
                     }
                 }
             }
+            this.setState({hayTurnos: true});
+        } else {
+            this.setState({hayTurnos: false});
         }
+        
         this.setState({ flatListData: turnos, showSpinner: false });
     };
 
@@ -378,7 +386,7 @@ export default class BasicFlatList extends Component {
     };
 
     render() {
-        if (this.state.hayTurnos == false) {
+        if (this.state.hayTurnos === false) {
             return (
                 <Root>
                     <View>

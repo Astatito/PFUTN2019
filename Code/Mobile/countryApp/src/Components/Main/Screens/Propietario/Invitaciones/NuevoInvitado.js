@@ -9,13 +9,12 @@ import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 
 class NuevoInvitado extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Nuevo Invitado',
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
             headerRight: <View />,
         };
@@ -98,19 +97,13 @@ class NuevoInvitado extends Component {
             });
     };
 
-    handleFocus = (event) => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-
-    handleBlur = (event) => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     handlePicker = (datetime) => {
         if (this.state.esDesde == true) {
@@ -225,7 +218,6 @@ class NuevoInvitado extends Component {
     }
 
     render() {
-        const { isFocused } = this.state;
 
         return (
             <Root>
@@ -233,7 +225,7 @@ class NuevoInvitado extends Component {
                     <View style={styles.container}>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                        <Text style={styles.header}> Registrar nuevo invitado </Text>
+                        <Text style={styles.header}> Nuevo invitado </Text>
 
                         <Picker
                             note
@@ -250,9 +242,9 @@ class NuevoInvitado extends Component {
                             style={styles.textInput}
                             placeholder="Número de documento"
                             onChangeText={(documento) => this.setState({ documento })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
+                            underlineColorAndroid={LIGHT_GRAY}
+                            onFocus={() => this.onFocus()}
+                            onBlur={() => this.onBlur()}
                             keyboardType={this.getKeyboard()}
                             maxLength={this.getLimit()}
                         />
@@ -392,29 +384,30 @@ const styles = StyleSheet.create({
         fontStyle: 'normal',
     },
     picker: {
-        width: '83%',
+        width: '85%',
         fontSize: 18,
-        marginTop: '5%',
+        marginTop: '2%',
         alignItems: 'flex-start',
     },
     textInput: {
-        width: '80%',
+        width: '82%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '7%',
+        marginTop: '8%',
     },
     datetime: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around',
-        margin: '7%',
-        width: '92%',
+        justifyContent: 'space-between',
+        marginTop: '10%',
+        marginBottom: '3%',
+        width: '80%',
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '5%',
+        marginTop: '6%',
     },
     error: {
         color: 'red',

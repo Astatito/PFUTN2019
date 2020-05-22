@@ -8,7 +8,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 
 class ModificarInvitado extends Component {
@@ -65,19 +65,13 @@ class ModificarInvitado extends Component {
         });
     }
 
-    handleFocus = (event) => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-
-    handleBlur = (event) => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     handlePicker = (datetime) => {
         if (this.state.esDesde == true) {
@@ -176,7 +170,6 @@ class ModificarInvitado extends Component {
     }
 
     render() {
-        const { isFocused } = this.state;
 
         if (this.state.nombre == '' && this.state.apellido == '') {
             return (
@@ -204,9 +197,9 @@ class ModificarInvitado extends Component {
                                 value={this.state.documento}
                                 editable={!this.state.autenticado}
                                 onChangeText={(documento) => this.setState({ documento })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={this.getKeyboard()}
                                 maxLength={this.getLimit()}
                             />
@@ -319,7 +312,6 @@ class ModificarInvitado extends Component {
                             <Text style={styles.header}> Modificar invitado </Text>
 
                             <View style={styles.name}>
-                                <Text style={{ alignSelf: 'center', color: '#8F8787' }}>Nombre y Apellido : </Text>
                                 <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%' }}>
                                     {this.state.nombre + ' ' + this.state.apellido}
                                 </Text>
@@ -343,9 +335,9 @@ class ModificarInvitado extends Component {
                                 value={this.state.documento}
                                 onChangeText={(documento) => this.setState({ documento })}
                                 editable={!this.state.autenticado}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={this.getKeyboard()}
                                 maxLength={this.getLimit()}
                             />
@@ -472,36 +464,36 @@ const styles = StyleSheet.create({
         fontStyle: 'normal',
     },
     picker: {
-        width: '83%',
+        width: '85%',
         fontSize: 18,
-        marginTop: '5%',
+        marginTop: '2%',
         alignItems: 'flex-start',
     },
     textInput: {
-        width: '80%',
+        width: '82%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '7%',
+        marginTop: '6%',
     },
     datetime: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around',
-        margin: '7%',
-        width: '92%',
+        justifyContent: 'space-between',
+        marginTop: '12%',
+        width: '80%',
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '2%',
+        marginTop: '8%',
     },
     name: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
-        margin: '4%',
-        width: '78%',
+        marginVertical: '4%',
+        width: '83%',
     },
     error: {
         color: 'red',

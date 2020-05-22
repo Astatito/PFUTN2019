@@ -9,7 +9,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 
 class RegistroVisitante extends Component {
@@ -155,19 +155,13 @@ class RegistroVisitante extends Component {
         }
     };
 
-    handleFocus = (event) => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-
-    handleBlur = (event) => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     handlePicker = (datetime) => {
         this.setState({
@@ -210,8 +204,7 @@ class RegistroVisitante extends Component {
     };
 
     render() {
-        const { isFocused } = this.state;
-
+        
         return (
             <Root>
                 <ScrollView>
@@ -226,9 +219,9 @@ class RegistroVisitante extends Component {
                                 placeholder="Nombre"
                                 value={this.state.nombre}
                                 onChangeText={(nombre) => this.setState({ nombre })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'default'}
                                 maxLength={25}
                             />
@@ -238,9 +231,9 @@ class RegistroVisitante extends Component {
                                 placeholder="Apellido"
                                 value={this.state.apellido}
                                 onChangeText={(apellido) => this.setState({ apellido })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'default'}
                                 maxLength={25}
                             />
@@ -263,9 +256,9 @@ class RegistroVisitante extends Component {
                                 value={this.state.documento}
                                 onChangeText={(documento) => this.setState({ documento })}
                                 editable={this.state.isEditable}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'numeric'}
                                 maxLength={8}
                             />

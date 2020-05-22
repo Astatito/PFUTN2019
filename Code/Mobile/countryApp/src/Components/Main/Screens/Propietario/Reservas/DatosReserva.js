@@ -5,7 +5,7 @@ import { Content, Button, Text, Root, Toast } from 'native-base';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 
 class DatosReserva extends Component {
@@ -43,19 +43,13 @@ class DatosReserva extends Component {
         });
     }
 
-    handleFocus = event => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-
-    handleBlur = event => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     handlePicker = datetime => {
         if (this.state.esDesde == true) {
@@ -127,7 +121,6 @@ class DatosReserva extends Component {
     }
 
     render() {
-        const { isFocused } = this.state;
 
         return (
             <Root>
@@ -142,9 +135,9 @@ class DatosReserva extends Component {
                             placeholder="Nombre de reserva"
                             value={this.state.nombreReserva}
                             onChangeText={nombreReserva => this.setState({ nombreReserva })}
-                            underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                            onFocus={this.handleFocus}
-                            onBlur={this.handleBlur}
+                            underlineColorAndroid={LIGHT_GRAY}
+                            onFocus={() => this.onFocus()}
+                            onBlur={() => this.onBlur()}
                             keyboardType={'default'}
                             maxLength={20}
                         />

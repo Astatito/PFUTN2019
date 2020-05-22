@@ -10,7 +10,7 @@ import { NavigationActions } from 'react-navigation';
 import moment from 'moment';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 
 let datosEncargado = {};
@@ -129,19 +129,13 @@ class MiPerfil extends Component {
         });
     };
 
-    handleFocus = (event) => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-
-    handleBlur = (event) => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     handlePicker = (datetime) => {
         this.setState({
@@ -188,8 +182,7 @@ class MiPerfil extends Component {
     };
 
     render() {
-        const { isFocused } = this.state;
-
+        
         return (
             <Root>
                 <ScrollView>
@@ -203,9 +196,9 @@ class MiPerfil extends Component {
                                 placeholder="Nombre"
                                 value={this.state.nombre}
                                 onChangeText={(nombre) => this.setState({ nombre })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'default'}
                                 maxLength={25}
                             />
@@ -215,9 +208,9 @@ class MiPerfil extends Component {
                                 placeholder="Apellido"
                                 value={this.state.apellido}
                                 onChangeText={(apellido) => this.setState({ apellido })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'default'}
                                 maxLength={25}
                             />
@@ -238,9 +231,9 @@ class MiPerfil extends Component {
                                 style={styles.textInput}
                                 placeholder="Documento"
                                 onChangeText={(documento) => this.setState({ documento })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'numeric'}
                                 value={this.state.documento}
                                 editable={false}
@@ -270,9 +263,9 @@ class MiPerfil extends Component {
                                 style={styles.textInput}
                                 placeholder="Celular"
                                 onChangeText={(celular) => this.setState({ celular })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={'numeric'}
                                 value={this.state.celular}
                                 maxLength={10}
@@ -384,15 +377,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '3%',
+        marginTop: '6%',
     },
     datetime: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around',
-        marginTop: '9%',
-        marginBottom: '4%',
-        width: '90%',
+        justifyContent: 'space-between',
+        marginTop: '13%',
+        marginBottom: '3%',
+        width: '80%',
     },
     error: {
         color: 'red',

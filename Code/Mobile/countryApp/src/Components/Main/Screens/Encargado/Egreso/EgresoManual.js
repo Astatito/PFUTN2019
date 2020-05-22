@@ -8,7 +8,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
-const BLUE = '#428AF8';
+
 const LIGHT_GRAY = '#D3D3D3';
 
 class EgresoManual extends Component {
@@ -147,18 +147,13 @@ class EgresoManual extends Component {
         this.props.navigation.navigate('Egreso');
     };
 
-    handleFocus = (event) => {
-        this.setState({ isFocused: true });
-        if (this.props.onFocus) {
-            this.props.onFocus(event);
-        }
-    };
-    handleBlur = (event) => {
+    onBlur() {
         this.setState({ isFocused: false });
-        if (this.props.onBlur) {
-            this.props.onBlur(event);
-        }
-    };
+    }
+    
+    onFocus() {
+        this.setState({ isFocused: true });
+    }
 
     verificarTextInputs = async (inputArray) => {
         let someEmpty = false;
@@ -191,7 +186,6 @@ class EgresoManual extends Component {
     }
     
     render() {
-        const { isFocused } = this.state;
 
         return (
             <Root>
@@ -217,9 +211,9 @@ class EgresoManual extends Component {
                                 style={styles.textInput}
                                 placeholder="Número de documento"
                                 onChangeText={(documento) => this.setState({ documento })}
-                                underlineColorAndroid={isFocused ? BLUE : LIGHT_GRAY}
-                                onFocus={this.handleFocus}
-                                onBlur={this.handleBlur}
+                                underlineColorAndroid={LIGHT_GRAY}
+                                onFocus={() => this.onFocus()}
+                                onBlur={() => this.onBlur()}
                                 keyboardType={this.getKeyboard()}
                                 maxLength={this.getLimit()}
                             />
