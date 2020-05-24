@@ -22,6 +22,8 @@ class IngresoManual extends Component {
     state = {
         picker: '',
         tiposDocumento: [],
+        nombre: '',
+        apellido: '',
         documento: '',
         showSpinner: false,
         isFocused: false,
@@ -109,7 +111,51 @@ class IngresoManual extends Component {
         });
     };
 
-    //Registra el ingreso según tipo y número de documento
+    buscarInvitacionesEventos = async (tipoDoc, numeroDoc, autenticado = undefined, nombre = undefined, apellido = undefined) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitaciones = refCountry.collection('InvitacionesEventos');
+        const invitaciones = await refInvitaciones
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .get();
+        if (!invitaciones.empty) {
+            console.log('Tiene invitaciones a eventos');
+            var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
+            if (invitacion != -1) {
+                console.log('Tiene una invitacion a eventos valida');
+                console.log('Está autenticado:', autenticado);
+                if (autenticado) {
+                    console.log('Esta autenticado');
+                    var result = await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
+                    if (result == 0) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                } else if (autenticado == undefined) {
+                    // TODO: HAY QUE VER QUE SE HACE EN ESTE CASO;
+                    console.log('No necesita autenticación');
+                    var result = 0; // await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
+                    if (result == 0) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    console.log('No está autenticado');
+                    return 2;
+                }
+            } else {
+                console.log('No tiene invitaciones validas para un evento');
+                return 3;
+            }
+        } else {
+            console.log('No tiene ninguna invitacion a eventos');
+            return 4;
+        }
+    };
+
+    // Registra el ingreso según tipo y número de documento
     registrarIngreso = async (tipoDoc, numeroDoc) => {
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
@@ -140,7 +186,8 @@ class IngresoManual extends Component {
                     var invitacion = this.obtenerInvitacionValida(snapshot.docs);
                     if (invitacion != -1) {
                         //Si hay una invitación válida, verifica que esté autenticado.
-                        if (this.estaAutenticado(invitacion)) {
+                        var autenticado = this.estaAutenticado(invitacion);
+                        if (autenticado) {
                             //Si está autenticado, registra el ingreso.
                             var result = await this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                             if (result == 0) {
@@ -154,12 +201,20 @@ class IngresoManual extends Component {
                             return 2;
                         }
                     } else {
-                        // Existe pero no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
-                        return 3;
+                        console.log('Existe pero no tiene invitaciones válidas, buscando en los eventos...');
+                        var result = await this.buscarInvitacionesEventos(
+                            tipoDoc,
+                            numeroDoc,
+                            this.estaAutenticado(snapshot.docs[0].data()),
+                            snapshot.docs[0].data().Nombre,
+                            snapshot.docs[0].data().Apellido
+                        );
+                        return result;
                     }
                 } else {
-                    //La persona no existe , TODO:se debe generar una nueva invitación por ese día.
-                    return 4;
+                    console.log('No tiene invitaciones, buscando en los eventos...');
+                    var result = await this.buscarInvitacionesEventos(tipoDoc, numeroDoc);
+                    return result;
                 }
             }
         } catch (error) {
@@ -200,20 +255,20 @@ class IngresoManual extends Component {
     };
 
     getKeyboard = () => {
-        if (this.state.picker == 'Pasaporte' ) {
-            return 'default'
+        if (this.state.picker == 'Pasaporte') {
+            return 'default';
         } else {
-            return 'numeric'
+            return 'numeric';
         }
-    }
+    };
 
     getLimit = () => {
         if (this.state.picker == 'DocumentoDeIdentidad') {
-            return 8
+            return 8;
         } else {
-            return 10
+            return 10;
         }
-    }
+    };
 
     render() {
         
