@@ -153,7 +153,6 @@ class Escaner extends Component {
                             //Si no está autenticado, se debe autenticar.
                             this.setState({ invitacionId: invitacion.id });
                             return 2
-                            this.autenticarVisitante(persona, this.state.usuario, invitacion.id);
                         }
                     } else {
                         // Existe pero no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
