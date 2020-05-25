@@ -132,15 +132,6 @@ class IngresoManual extends Component {
                     } else {
                         return 1;
                     }
-                } else if (autenticado == undefined) {
-                    // TODO: HAY QUE VER QUE SE HACE EN ESTE CASO;
-                    console.log('No necesita autenticación');
-                    var result = 0; // await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
-                    if (result == 0) {
-                        return 0;
-                    } else {
-                        return 1;
-                    }
                 } else {
                     console.log('No está autenticado');
                     return 2;

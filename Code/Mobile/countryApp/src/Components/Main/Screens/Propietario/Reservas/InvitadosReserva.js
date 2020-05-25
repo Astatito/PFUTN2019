@@ -49,6 +49,29 @@ class FlatListItem extends Component {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
 
         // TODO: Tanto la invitacion al evento como el update del estado forman parte de una transaccion
+        var refInvitados = refCountry.collection('Invitados');
+        var snapshot = await refInvitados
+            .where('Documento', '==', invitado.documento)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + invitado.tipoDocumento))
+            .get();
+
+        if (snapshot.empty) {
+            var nuevoInvitado = {
+                Nombre: '',
+                Apellido: '',
+                Estado: false,
+                FechaAlta: new Date(),
+                FechaDesde: new Date(),
+                FechaHasta: new Date(),
+                Grupo: '',
+                IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
+                Documento: invitado.documento,
+                TipoDocumento: Database.doc('TipoDocumento/' + invitado.tipoDocumento),
+            };
+
+            refInvitados.add(nuevoInvitado);
+        }
+
         // Crea la invitación al evento
         var refInvitacionesEventos = refCountry.collection('InvitacionesEventos');
         var invitacionEvento = {
