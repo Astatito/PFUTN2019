@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '7%',
+        marginTop: '5%',
     },
     datetime: {
         flexDirection: 'row',

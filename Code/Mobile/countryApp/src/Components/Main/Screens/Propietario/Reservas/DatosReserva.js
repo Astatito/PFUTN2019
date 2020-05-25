@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '5%'
+        marginTop: '8%'
     },
     error: {
         color:'red',

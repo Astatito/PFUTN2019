@@ -352,7 +352,8 @@ const styles = StyleSheet.create({
     picker: {
         width: '85%',
         fontSize: 18,
-        marginTop: '2%',
+        marginTop: '3%',
+        marginBottom: '3%',
         alignItems: 'flex-start',
     },
     textInput: {
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '6%',
+        marginTop: '5%',
     },
     datetime: {
         flexDirection: 'row',

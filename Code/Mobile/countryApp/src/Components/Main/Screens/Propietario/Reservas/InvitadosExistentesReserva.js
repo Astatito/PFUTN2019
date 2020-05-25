@@ -405,6 +405,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginVertical: '5%',
+        marginVertical: '8%',
     },
 });

@@ -520,7 +520,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginBottom: '10%'
+        marginTop: '3%',
+        marginBottom: '15%'
     },
     textDefault: {
         marginTop: '55%',
