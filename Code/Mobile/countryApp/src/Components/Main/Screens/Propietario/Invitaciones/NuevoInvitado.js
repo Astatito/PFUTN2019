@@ -144,6 +144,7 @@ class NuevoInvitado extends Component {
     };
 
     registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
+
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
 
@@ -160,7 +161,7 @@ class NuevoInvitado extends Component {
                 Documento: numeroDoc,
                 TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc),
             };
-            console.log(nuevoInvitado);
+
             if (
                 !this.state.invitados.find(
                     (inv) => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
@@ -294,6 +295,7 @@ class NuevoInvitado extends Component {
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={async () => {
                                         this.setState({ showSpinner: true }, async () => {
+                                            
                                             const textInputs = await this.verificarTextInputs(['documento']);
                                             if (textInputs == true) {
                                                 return false;
