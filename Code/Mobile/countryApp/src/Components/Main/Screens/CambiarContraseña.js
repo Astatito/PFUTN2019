@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '6%',
+        marginTop: '7%',
     },
     error: {
         color: 'red',

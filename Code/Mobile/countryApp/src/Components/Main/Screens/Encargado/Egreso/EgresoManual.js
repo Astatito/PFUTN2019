@@ -194,7 +194,7 @@ class EgresoManual extends Component {
                         <View style={styles.container}>
                             <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                            <Text style={styles.header}> Registrar nuevo egreso</Text>
+                            <Text style={styles.header}> Nuevo egreso</Text>
 
                             <Picker
                                 note
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '45%',
-        marginTop: '13%',
+        marginTop: '12%',
     },
     error: {
         color: 'red',

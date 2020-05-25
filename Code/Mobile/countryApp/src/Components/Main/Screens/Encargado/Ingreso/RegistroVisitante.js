@@ -15,6 +15,7 @@ const LIGHT_GRAY = '#D3D3D3';
 class RegistroVisitante extends Component {
     static navigationOptions = ({ navigation }) => {
         return {
+            title: 'Nuevo visitante',
             headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
         };
     };
@@ -212,8 +213,6 @@ class RegistroVisitante extends Component {
                         <View style={styles.container}>
                             <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                            <Text style={styles.header}> Registrar nuevo visitante</Text>
-
                             <TextInput
                                 style={styles.textInput}
                                 placeholder="Nombre"
@@ -366,27 +365,18 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
         color: '#FFF',
     },
-    header: {
-        textAlign: 'center',
-        fontSize: 26,
-        marginHorizontal: '5%',
-        marginTop: '6%',
-        marginBottom: '2%',
-        color: '#08477A',
-        fontWeight: 'normal',
-        fontStyle: 'normal',
-    },
     picker: {
         width: '85%',
         fontSize: 18,
+        marginTop: '3%',
+        marginBottom: '3%',
         alignItems: 'flex-start',
-        marginTop: '2%',
     },
     textInput: {
         width: '82%',
         fontSize: 16,
         alignItems: 'flex-start',
-        marginTop: '4%',
+        marginTop: '3%',
     },
     buttons: {
         alignItems: 'center',
@@ -396,10 +386,11 @@ const styles = StyleSheet.create({
     },
     datetime: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
         alignItems: 'center',
-        marginTop: '7%',
-        width: '85%',
+        justifyContent: 'space-between',
+        marginTop: '13%',
+        marginBottom: '3%',
+        width: '80%',
     },
     error: {
         color: 'red',
