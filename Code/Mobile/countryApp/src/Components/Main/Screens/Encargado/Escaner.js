@@ -251,6 +251,39 @@ class Escaner extends Component {
         }
     };
 
+    buscarInvitacionesEventosEgreso = async (tipoDoc, numeroDoc, invitacionPersonal = undefined) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitaciones = refCountry.collection('InvitacionesEventos');
+
+        const invitaciones = await refInvitaciones
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .get();
+        if (!invitaciones.empty) {
+            console.log('Tiene invitaciones a eventos');
+            var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
+            if (invitacion != -1) {
+                console.log('Tiene una invitacion a eventos valida');
+                var result = await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                if (result == 0) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else {
+                await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                return 2;
+            }
+        } else {
+            console.log('No tiene ninguna invitacion a eventos');
+            var result = invitacionPersonal == undefined ? 3 : 2;
+            if (result == 2) {
+                await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+            }
+            return result;
+        }
+    };
+
     //Registra el egreso según tipo y número de documento
     registrarEgreso = async (persona) => {
         //Busca si es un propietario
@@ -299,12 +332,12 @@ class Escaner extends Component {
                             return 1;
                         }
                     } else {
-                        //Si no tiene invitaciones, emitir alerta.
-                        return 2;
+                        var result = await this.buscarInvitacionesEventosEgreso(tipoDoc, numeroDoc, snapshot.docs[0].data());
+                        return result;
                     }
                 } else {
-                    //Si no es propietario ni visitante, emitir alerta.
-                    return 3;
+                    var result = await this.buscarInvitacionesEventosEgreso(tipoDoc, numeroDoc);
+                    return result;
                 }
             }
         } catch (error) {

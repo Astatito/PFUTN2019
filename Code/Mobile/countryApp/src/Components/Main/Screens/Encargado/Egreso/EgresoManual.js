@@ -8,7 +8,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
-
 const LIGHT_GRAY = '#D3D3D3';
 
 class EgresoManual extends Component {
@@ -90,6 +89,39 @@ class EgresoManual extends Component {
         return -1;
     };
 
+    buscarInvitacionesEventos = async (tipoDoc, numeroDoc, invitacionPersonal = undefined) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitaciones = refCountry.collection('InvitacionesEventos');
+
+        const invitaciones = await refInvitaciones
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .get();
+        if (!invitaciones.empty) {
+            console.log('Tiene invitaciones a eventos');
+            var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
+            if (invitacion != -1) {
+                console.log('Tiene una invitacion a eventos valida');
+                var result = await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                if (result == 0) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else {
+                await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                return 2;
+            }
+        } else {
+            console.log('No tiene ninguna invitacion a eventos');
+            var result = invitacionPersonal == undefined ? 3 : 2;
+            if (result == 2) {
+                await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+            }
+            return result;
+        }
+    };
+
     //Registra el egreso según tipo y número de documento
     registrarEgreso = async (tipoDoc, numeroDoc) => {
         //Busca si es un propietario
@@ -128,15 +160,16 @@ class EgresoManual extends Component {
                             return 1;
                         }
                     } else {
-                        //Si no tiene invitaciones, emitir alerta.
-                        return 2;
+                        var result = await this.buscarInvitacionesEventos(tipoDoc, numeroDoc, snapshot.docs[0].data());
+                        return result;
                     }
                 } else {
-                    //Si no es propietario ni visitante, emitir alerta.
-                    return 3;
+                    var result = await this.buscarInvitacionesEventos(tipoDoc, numeroDoc);
+                    return result;
                 }
             }
         } catch (error) {
+            console.log(error);
             return 1;
         } finally {
             this.setState({ showSpinner: false });
@@ -150,7 +183,7 @@ class EgresoManual extends Component {
     onBlur() {
         this.setState({ isFocused: false });
     }
-    
+
     onFocus() {
         this.setState({ isFocused: true });
     }
@@ -170,23 +203,22 @@ class EgresoManual extends Component {
     };
 
     getKeyboard = () => {
-        if (this.state.picker == 'Pasaporte' ) {
-            return 'default'
+        if (this.state.picker == 'Pasaporte') {
+            return 'default';
         } else {
-            return 'numeric'
+            return 'numeric';
         }
-    }
+    };
 
     getLimit = () => {
         if (this.state.picker == 'DocumentoDeIdentidad') {
-            return 8
+            return 8;
         } else {
-            return 10
+            return 10;
         }
-    }
-    
-    render() {
+    };
 
+    render() {
         return (
             <Root>
                 <ScrollView>
@@ -260,7 +292,7 @@ class EgresoManual extends Component {
                                                     });
                                                 } else if (result == 3) {
                                                     Toast.show({
-                                                        text: 'Esta persona es un fantasma.',
+                                                        text: 'La persona no se encuentra registrada en el sistema.',
                                                         buttonText: 'Aceptar',
                                                         duration: 3000,
                                                         position: 'bottom',
