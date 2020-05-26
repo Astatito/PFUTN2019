@@ -8,7 +8,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import moment from 'moment';
 
-
 const LIGHT_GRAY = '#D3D3D3';
 
 class IngresoManual extends Component {
@@ -134,6 +133,7 @@ class IngresoManual extends Component {
                     }
                 } else {
                     console.log('No está autenticado');
+                    this.setState({ invitacionId: invitacion.id });
                     return 2;
                 }
             } else {
@@ -336,7 +336,7 @@ class IngresoManual extends Component {
                                                     });
                                                 } else if (result == 3) {
                                                     Toast.show({
-                                                        text: 'El invitado no tiene ninguna invitación activa.',
+                                                        text: 'El invitado tiene vencida su invitación.',
                                                         buttonText: 'Aceptar',
                                                         duration: 3000,
                                                         position: 'bottom',

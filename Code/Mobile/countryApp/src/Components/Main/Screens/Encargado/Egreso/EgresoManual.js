@@ -283,11 +283,11 @@ class EgresoManual extends Component {
                                                     });
                                                 } else if (result == 2) {
                                                     Toast.show({
-                                                        text: 'El visitante no tiene invitaciones activas.',
+                                                        text: 'Egreso registrado exitosamente (Invitación vencida).',
                                                         buttonText: 'Aceptar',
                                                         duration: 3000,
                                                         position: 'bottom',
-                                                        type: 'warning',
+                                                        type: 'success',
                                                         onClose: this.onToastClosed.bind(this),
                                                     });
                                                 } else if (result == 3) {
