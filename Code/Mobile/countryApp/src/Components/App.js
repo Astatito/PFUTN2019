@@ -17,7 +17,7 @@ class App extends Component {
     }
 
     render() {
-        console.disableYellowBox = true;
+        // console.disableYellowBox = true;
         return <AppContainer />;
     }
 }
