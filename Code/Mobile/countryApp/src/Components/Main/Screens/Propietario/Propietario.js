@@ -4,11 +4,7 @@ import { Text, Content } from 'native-base';
 import { LocalStorage } from '../../../DataBase/Storage';
 import call from 'react-native-phone-call'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-const callArgs = {
-    number: '3512071228', //Poner el telefono de un guardia.
-    prompt: true 
-}
+import { Database } from '../../../DataBase/Firebase';
 
 //TODO: SOLO TESTING
 LocalStorage.save({
@@ -22,10 +18,42 @@ LocalStorage.save({
 });
 //FIN DEL TODO
 
+var number = ''
+
 class Propietario extends Component {
+
+    componentWillMount() {
+    
+        LocalStorage.load({
+            key: 'UsuarioLogueado',
+        })
+            .then((usuario) => {
+                this.setState({ usuario }, () => {
+                    var doc = Database.collection('Country').doc(this.state.usuario.country).get().then( (doc) => {
+                        if (doc.exists) {
+                            var celular = doc.data().Celular;
+                            number = celular
+                        }
+                    });
+                });
+            })
+            .catch((error) => {
+                Toast.show({
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
+                    duration: 3000,
+                    position: 'bottom',
+                    type: 'danger',
+                });
+            });
+    }
+
     static navigationOptions = {
         title: 'Home',
-        headerRight: <MaterialIcons style={{ paddingRight: 20 }} name="call" size={25} onPress={() => call(callArgs).catch(console.error)}/>
+        headerRight: <MaterialIcons style={{ paddingRight: 20 }} name="call" size={25} onPress={() => call({
+            number: number,
+            prompt: true 
+        }).catch(console.error)}/>
     };
     
     render() {

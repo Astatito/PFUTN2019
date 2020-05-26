@@ -2,21 +2,32 @@ import React, { Component } from 'react';
 import { Modal } from 'react-native';
 import {ImageViewer} from 'react-native-image-zoom-viewer'
 
-const image = [
-    {
-        props: {
-            source: require('../../../../../assets/Images/countrymapa.jpg')
-        }
-    }
-]
-
 class ModalForImage extends Component {
+
     static navigationOptions = {
         header:null
     };
+
     state= {
         modalVisible:true,
+        url: ''
     };
+
+    componentWillMount () {
+        const { navigation } = this.props;
+        const url = navigation.getParam('url');
+        this.setState({url: url})
+    }
+
+    getUrl = () => {
+        const image = [
+            {
+                url : this.state.url
+            }
+        ]
+        return image
+    }
+
     render() {
         return (
             <Modal onRequestClose={() => {
@@ -24,7 +35,7 @@ class ModalForImage extends Component {
                 this.setState({modalVisible: false})
             }}  
             visible={this.state.modalVisible} transparent={true}>
-                <ImageViewer imageUrls={image}/>
+                <ImageViewer imageUrls={this.getUrl()}/>
             </Modal>
         );
     }

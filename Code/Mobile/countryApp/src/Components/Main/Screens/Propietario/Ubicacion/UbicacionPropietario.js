@@ -59,6 +59,17 @@ class MiUbicacion extends Component {
         }
     };
 
+    getUrlForModal = async () => {
+        try {
+            const resp = await RNFetchBlob.fetch('GET', urlImagen);
+            let base64image = resp.data;
+            const url = 'data:image/png;base64,' + base64image
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     render() {
         return (
             <Root>
@@ -71,8 +82,9 @@ class MiUbicacion extends Component {
                                 bordered
                                 primary
                                 block
-                                onPress={() => {
-                                    this.props.navigation.navigate('ModalForImage', { visible: true });
+                                onPress={async () => {
+                                    url = await this.getUrlForModal();
+                                    this.props.navigation.navigate('ModalForImage', { visible: true, url: urlImagen });
                                 }}>
                                 <Text>Ver Ubicación</Text>
                             </Button>
