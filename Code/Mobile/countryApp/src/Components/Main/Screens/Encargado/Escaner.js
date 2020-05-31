@@ -133,6 +133,7 @@ class Escaner extends Component {
                     }
                 } else {
                     console.log('No está autenticado');
+                    this.setState({ invitacionId: invitacion.id });
                     return 2;
                 }
             } else {
@@ -394,7 +395,7 @@ class Escaner extends Component {
                     });
                 } else if (result == 3) {
                     Toast.show({
-                        text: 'El invitado no tiene ninguna invitación activa.',
+                        text: 'El invitado tiene vencida su invitación.',
                         buttonText: 'Aceptar',
                         duration: 3000,
                         position: 'bottom',
@@ -433,16 +434,16 @@ class Escaner extends Component {
                     });
                 } else if (result == 2) {
                     Toast.show({
-                        text: 'El visitante no tiene invitaciones activas.',
+                        text: 'Egreso registrado exitosamente (Invitación vencida).',
                         buttonText: 'Aceptar',
                         duration: 3000,
                         position: 'bottom',
-                        type: 'warning',
+                        type: 'success',
                         onClose: this.onToastClosedEgreso.bind(this),
                     });
                 } else if (result == 3) {
                     Toast.show({
-                        text: 'Esta persona es un fantasma.',
+                        text: 'La persona no se encuentra registrada en el sistema.',
                         buttonText: 'Aceptar',
                         duration: 3000,
                         position: 'bottom',

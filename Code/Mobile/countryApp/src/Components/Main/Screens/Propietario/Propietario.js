@@ -4,6 +4,7 @@ import { Text, Content } from 'native-base';
 import { LocalStorage } from '../../../DataBase/Storage';
 import call from 'react-native-phone-call'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
 import { Database } from '../../../DataBase/Firebase';
 
 //TODO: SOLO TESTING
@@ -48,12 +49,19 @@ class Propietario extends Component {
             });
     }
 
-    static navigationOptions = {
-        title: 'Home',
-        headerRight: <MaterialIcons style={{ paddingRight: 20 }} name="call" size={25} onPress={() => call({
-            number: number,
-            prompt: true 
-        }).catch(console.error)}/>
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Home',
+            headerRight: (
+            <View style={{flexDirection: 'row', justifyContent: 'space-evenly', width: 100,}}>
+                <MaterialIcons style={{ paddingRight: 20 }} name="call" size={25} onPress={() => call({
+                    number: number,
+                    prompt: true 
+                }).catch(console.error)}/>
+                <IconIonicons style={{ paddingRight: 20 }} name="ios-notifications" size={25} onPress={() => navigation.navigate('Notificaciones')} ></IconIonicons>
+            </View>
+            )
+        }
     };
     
     render() {
@@ -96,6 +104,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#1e90ff',
         width:'50%'
-    }
+    },
+    iconContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        width: 100,
+    },
 });
 export default Propietario;

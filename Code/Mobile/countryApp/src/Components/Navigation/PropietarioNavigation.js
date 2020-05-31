@@ -26,6 +26,7 @@ import { LocalStorage } from '../DataBase/Storage';
 import { Firebase } from '../DataBase/Firebase';
 import ModificarInvitado from '../Main/Screens/Propietario/Invitaciones/ModificarInvitado';
 import CambiarContraseña from '../Main/Screens/CambiarContraseña';
+import Notificaciones from '../Main/Screens/Propietario/Notificaciones';
 
 // Este es el custom drawer que permite agregarle cosas al drawer original.
 const CustomDrawerContentComponent = (props) => (
@@ -94,38 +95,6 @@ const CambiarContraseñaStackNavigator = createStackNavigator(
     }
 );
 
-// Stack - El stack navigator para el home del propietario
-const PropietarioStackNavigator = createStackNavigator(
-    {
-        Propietario: Propietario,
-    },
-    {
-        defaultNavigationOptions: ({ navigation }) => {
-            return {
-                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
-                headerRight: <View />,
-                headerStyle: {
-                    backgroundColor: '#1e90ff',
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                    textAlign: 'center',
-                    flex: 1,
-                },
-            };
-        },
-    }
-);
-
-// Tab Navigator - Este es el Tab Navigator de Home.
-const PropietarioTabNavigator = createBottomTabNavigator({
-    Home: {
-        screen: PropietarioStackNavigator,
-        navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <IconEntypo name="home" size={24} color="#346ECD" />,
-        },
-    },
-});
 
 // Stack - El stack navigator para el apartado MiPerfil.
 const PropietarioPerfilStackNavigator = createStackNavigator(
@@ -369,11 +338,40 @@ const PropietarioInvitacionesStackNavigator = createStackNavigator(
     }
 );
 
-//Este es el Drawer del Encargado. Home, Mi Perfil, Eventos y Cerrar Sesión son las opciones que figuran en el menú lateral de la pantalla Encargado.
+// Stack - El stack navigator para el home del propietario
+const PropietarioStackNavigator = createStackNavigator(
+    {
+        Propietario: Propietario,
+        Notificaciones: Notificaciones,
+        InformacionReserva: {
+            screen: PropietarioReservaTabNavigator,
+            navigationOptions: {
+                header: null,
+            },
+        },
+    },
+    {
+        defaultNavigationOptions: ({ navigation }) => {
+            return {
+                headerLeft: <IconEvil style={{ paddingLeft: 10 }} onPress={() => navigation.openDrawer()} name="navicon" size={30} />,
+                headerRight: <View />,
+                headerStyle: {
+                    backgroundColor: '#1e90ff',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    textAlign: 'center',
+                    flex: 1,
+                },
+            };
+        },
+    }
+);
+
 const PropietarioNavigation = createDrawerNavigator(
     {
         Home: {
-            screen: PropietarioTabNavigator,
+            screen: PropietarioStackNavigator,
             navigationOptions: {
                 drawerIcon: ({ tintColor }) => <IconEntypo name="home" style={{ fontSize: 25, color: tintColor }}></IconEntypo>,
             },
