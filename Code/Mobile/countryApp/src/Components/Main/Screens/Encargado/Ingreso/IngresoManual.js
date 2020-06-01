@@ -299,6 +299,7 @@ class IngresoManual extends Component {
                                     <Button
                                         bordered
                                         success
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={async () => {
                                             this.setState({ showSpinner: true }, async () => {
@@ -362,6 +363,7 @@ class IngresoManual extends Component {
                                     <Button
                                         bordered
                                         danger
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.props.navigation.goBack();

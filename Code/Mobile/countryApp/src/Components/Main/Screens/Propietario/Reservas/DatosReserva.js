@@ -147,6 +147,7 @@ class DatosReserva extends Component {
                                 <Button
                                     bordered
                                     success
+                                    disabled={this.state.showSpinner}
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={async () => {
                                         const textInputs = await this.verificarTextInputs(['nombreReserva'])
@@ -196,6 +197,7 @@ class DatosReserva extends Component {
                                 <Button
                                     bordered
                                     danger
+                                    disabled={this.state.showSpinner}
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={() => {
                                         this.props.navigation.navigate('MisReservas');

@@ -180,6 +180,7 @@ class CambiarContraseña extends Component {
                                     <Button
                                         bordered
                                         success
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={async () => {
                                             this.setState({ showSpinner: true }, async () => {
@@ -243,6 +244,7 @@ class CambiarContraseña extends Component {
                                     <Button
                                         bordered
                                         danger
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.limpiarCampos();

@@ -290,6 +290,7 @@ class RegistroVisitante extends Component {
                                     <Button
                                         bordered
                                         success
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.setState({ showSpinner: true }, async () => {
@@ -337,6 +338,7 @@ class RegistroVisitante extends Component {
                                     <Button
                                         bordered
                                         danger
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.props.navigation.goBack();

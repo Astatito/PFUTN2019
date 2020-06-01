@@ -428,6 +428,7 @@ export default class BasicFlatList extends Component {
                                     <Button
                                         bordered
                                         success
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '8%' }}
                                         onPress={ () => {
                                                 Alert.alert(
@@ -494,6 +495,7 @@ export default class BasicFlatList extends Component {
                                     <Button
                                         bordered
                                         danger
+                                        disabled={this.state.showSpinner}
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={() => {
                                             this.props.navigation.goBack();

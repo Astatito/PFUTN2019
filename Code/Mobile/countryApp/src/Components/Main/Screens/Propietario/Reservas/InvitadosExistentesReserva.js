@@ -348,6 +348,7 @@ export default class BasicFlatList extends Component {
                                 <Button
                                     bordered
                                     success
+                                    disabled={this.state.showSpinner}
                                     style={{ paddingHorizontal: '12%' }}
                                     onPress={() => {
                                         this.setState({ showSpinner: true }, async () => {
@@ -389,6 +390,7 @@ export default class BasicFlatList extends Component {
                                 <Button
                                     bordered
                                     danger
+                                    disabled={this.state.showSpinner}
                                     style={{ paddingHorizontal: '5%' }}
                                     onPress={() => {
                                         this.props.navigation.goBack();
