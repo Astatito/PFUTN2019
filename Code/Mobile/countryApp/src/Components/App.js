@@ -10,7 +10,7 @@ class App extends Component {
         super();
 
         global.tiposDocumento = [
-            { id: 'DocumentoDeIdentidad', nombre: 'Documento de Identidad' },
+            { id: 'DocumentoDeIdentidad', nombre: 'Documento Nacional de Identidad' },
             { id: 'LicenciaDeConducir', nombre: 'Licencia de Conducir' },
             { id: 'Pasaporte', nombre: 'Pasaporte' },
         ];

@@ -304,6 +304,7 @@ export default class BasicFlatList extends Component {
 
         idCountry = usuario.country;
         idPropietario = usuario.datos;
+        idReserva = reserva.key;
         Reserva = reserva;
 
         this.setState({

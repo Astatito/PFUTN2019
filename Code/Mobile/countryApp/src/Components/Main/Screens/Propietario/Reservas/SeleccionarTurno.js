@@ -52,20 +52,7 @@ class FlatListItem extends Component {
             } else if (this.props.item.estado == 'Reservado') {
                 return (
                     <Swipeout {...swipeOutSettings}>
-                        <ListItem
-                            avatar
-                            onPress={() => {
-                                if (this.props.item.estado === 'Disponible') {
-                                    if (selectedItems.includes(this.props.item)) {
-                                        let index = selectedItems.indexOf(this.props.item);
-                                        selectedItems.splice(index, 1);
-                                        this.setState({ isSelected: false });
-                                    } else {
-                                        selectedItems.push(this.props.item);
-                                        this.setState({ isSelected: true });
-                                    }
-                                }
-                            }}>
+                        <ListItem avatar>
                             <Left>
                                 <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
                             </Left>
@@ -104,35 +91,6 @@ class FlatListItem extends Component {
                             </Left>
                             <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
                                 <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
-                            </Body>
-                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                            </Right>
-                        </ListItem>
-                    </Swipeout>
-                );
-            } else if (this.props.item.estado == 'Reservado') {
-                return (
-                    <Swipeout {...swipeOutSettings}>
-                        <ListItem
-                            avatar
-                            onPress={() => {
-                                if (selectedItems.includes(this.props.item)) {
-                                    let index = selectedItems.indexOf(this.props.item);
-                                    selectedItems.splice(index, 1);
-                                    this.setState({ isSelected: false });
-                                } else {
-                                    selectedItems.push(this.props.item);
-                                    this.setState({ isSelected: true });
-                                }
-                            }}>
-                            <Left>
-                                <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
-                            </Left>
-                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
                             </Body>
                             <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
                                 <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>

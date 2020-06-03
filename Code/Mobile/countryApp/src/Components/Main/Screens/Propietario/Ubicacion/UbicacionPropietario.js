@@ -5,6 +5,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { Text, Button, Root, Toast } from 'native-base';
 import { Database, Storage } from '../../../../DataBase/Firebase';
 import { LocalStorage } from '../../../../DataBase/Storage';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class MiUbicacion extends Component {
     static navigationOptions = {
@@ -14,6 +15,8 @@ class MiUbicacion extends Component {
 
     urlImagen = ''
     nombreCountry = ''
+
+    state = {showSpinner: false}
 
     componentWillMount() {
         LocalStorage.load({
@@ -32,6 +35,14 @@ class MiUbicacion extends Component {
                     type: 'danger',
                 });
             });
+    }
+
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false,
+            });
+        }, 3000);
     }
 
     obtenerPath = async (country) => {
@@ -53,10 +64,11 @@ class MiUbicacion extends Component {
                 message: 'Hola! Aquí te envío el mapa del country ' + nombreCountry + ' .',
                 subject: 'Mapa del country - MartinDale',
             };
+            this.setState({showSpinner: false})
             await Share.open(shareOptions);
         } catch (error) {
             console.log(error)
-        }
+        } 
     };
 
     getUrlForModal = async () => {
@@ -66,7 +78,15 @@ class MiUbicacion extends Component {
             const url = 'data:image/png;base64,' + base64image
             
         } catch (error) {
-            console.log(error)
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        } finally {
+            this.setState({showSpinner: false});
         }
     }
 
@@ -74,6 +94,7 @@ class MiUbicacion extends Component {
         return (
             <Root>
                 <View style={styles.container}>
+                    <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <Image style={{ width: '100%', height: '73%' }} source={require('../../../../../assets/Images/ubicacionhome.jpg')} />
 
                     <View style={{ padding: '5%', width: '100%' }}>
@@ -83,8 +104,10 @@ class MiUbicacion extends Component {
                                 primary
                                 block
                                 onPress={async () => {
-                                    url = await this.getUrlForModal();
-                                    this.props.navigation.navigate('ModalForImage', { visible: true, url: urlImagen });
+                                    this.setState({showSpinner: true}, async () => {
+                                        url = await this.getUrlForModal();
+                                        this.props.navigation.navigate('ModalForImage', { visible: true, url: urlImagen });
+                                    })
                                 }}>
                                 <Text>Ver Ubicación</Text>
                             </Button>
@@ -96,16 +119,18 @@ class MiUbicacion extends Component {
                                 primary
                                 block
                                 onPress={async () => {
-                                    result = await this.shareImage();
-                                    if (result == 1) {
-                                        Toast.show({
-                                            text: 'Lo siento, ocurrió un error inesperado.',
-                                            buttonText: 'Aceptar',
-                                            duration: 3000,
-                                            position: 'bottom',
-                                            type: 'danger',
-                                        });
-                                    }
+                                    this.setState({showSpinner: true}, async () => {
+                                        result = await this.shareImage();
+                                        if (result == 1) {
+                                            Toast.show({
+                                                text: 'Lo siento, ocurrió un error inesperado.',
+                                                buttonText: 'Aceptar',
+                                                duration: 3000,
+                                                position: 'bottom',
+                                                type: 'danger',
+                                            });
+                                        }
+                                    })
                                 }}>
                                 <Text>Compartir</Text>
                             </Button>
@@ -127,6 +152,11 @@ const styles = StyleSheet.create({
         paddingRight: '4%',
         paddingTop: '4%',
     },
+    spinnerTextStyle: {
+        fontSize: 20,
+        fontWeight: 'normal',
+        color: '#FFF',
+    }
 });
 
 export default MiUbicacion;
