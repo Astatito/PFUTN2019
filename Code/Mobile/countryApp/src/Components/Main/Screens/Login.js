@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView , Alert} from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TextInput, TouchableOpacity, Image, KeyboardAvoidingView , Alert, PermissionsAndroid} from 'react-native';
 import { Firebase, Database } from '../../DataBase/Firebase';
+import {Toast, Root} from 'native-base';
 import { LocalStorage } from '../../DataBase/Storage';
 import Spinner from 'react-native-loading-spinner-overlay';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import RNFetchBlob from 'rn-fetch-blob';
 
 class Login extends Component {
     state = { email: '', password: '', result: '', showSpinner: false, passwordError: '', emailError: '' };
@@ -67,7 +70,6 @@ class Login extends Component {
         var dbRef = Database.collection('UsuariosTemp');
         try {
             var doc = await dbRef.doc(email).get();
-            console.log(doc)
             if (doc.exists) {
                 this.setState({ showSpinner: false });
                 Alert.alert('Atención', 'Bienvenido a LiveSafe, debe realizar el primer ingreso a través de nuestra web.');
@@ -130,13 +132,66 @@ class Login extends Component {
             return true;
         }
     };
+    
+    getPdf = async () => {
+
+        var storage = firebase.storage();
+        var gsReference = storage.refFromURL('gs://countryapp-f0ce1.appspot.com/Img/Manual Mobile - LiveSafe.pdf')
+        try {
+            const url = await gsReference.getDownloadURL()
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                const { dirs } = RNFetchBlob.fs;
+
+                RNFetchBlob.config({
+                    fileCache: true,
+                    addAndroidDownloads: {
+                    useDownloadManager: true,
+                    notification: true,
+                    mediaScannable: true,
+                    title: `LiveSafe.pdf`,
+                    path: `${dirs.DownloadDir}/LiveSafe.pdf`,
+                    },
+                    }).fetch('GET', url)
+
+                return 0
+            }
+        } catch (error) {
+            return 1
+        } finally {
+            this.setState({showSpinner: false})
+        }
+    }
 
     render() {
         return (
+            <Root>
                 <KeyboardAvoidingView behavior="height" style={styles.wrapper}>
                     <View style={styles.container}>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <StatusBar backgroundColor="#96D0E8"></StatusBar>
+                        <IconEntypo name="help" style={{ fontSize: 35, color: "#1e90ff", position:"relative", left: '50%' }} onPress={async () => {
+                            this.setState({ showSpinner: true }, async () => {
+                                const result = await this.getPdf();
+                                if (result == 0) {
+                                    Toast.show({
+                                        text: 'Manual de usuario descargado.',
+                                        buttonText: 'Aceptar',
+                                        duration: 3000,
+                                        position: 'bottom',
+                                        type: 'success',
+                                    });
+                                } else if (result == 1) {
+                                    Toast.show({
+                                        text: 'Lo siento, ocurrió un error inesperado.',
+                                        buttonText: 'Aceptar',
+                                        duration: 3000,
+                                        position: 'bottom',
+                                        type: 'danger',
+                                    });
+                                }
+                            });
+                        }}></IconEntypo>
                         <View
                             style={{ height: 250, width: 250, backgroundColor: '#96D0E8', alignItems: 'center', justifyContent: 'center' }}>
                             <Image
@@ -172,11 +227,13 @@ class Login extends Component {
                                 await this.onButtonPress();
                                 this.setState({ showSpinner: false });
                             }}>
-                            <Text style={{ color: '#fff', fontSize: 18 }}>Log in</Text>
+                            <Text style={{ color: '#fff', fontSize: 18 }}>Iniciar Sesión</Text>
                         </TouchableOpacity>
                         <Text style={styles.result}>{this.state.result}</Text>
                     </View>
                 </KeyboardAvoidingView>
+            </Root>
+
         );
     }
 }

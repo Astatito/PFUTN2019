@@ -55,7 +55,12 @@ class MiUbicacion extends Component {
 
     shareImage = async () => {
         try {
-            const resp = await RNFetchBlob.fetch('GET', urlImagen);
+            const resp = await RNFetchBlob
+            .config({
+                useDownloadManager : true, 
+                fileCache : true
+            }) 
+            .fetch('GET', urlImagen);
             let base64image = resp.data;
             const url = 'data:image/png;base64,' + base64image
             let shareOptions = {
@@ -73,7 +78,12 @@ class MiUbicacion extends Component {
 
     getUrlForModal = async () => {
         try {
-            const resp = await RNFetchBlob.fetch('GET', urlImagen);
+            const resp = await RNFetchBlob
+            .config({
+                useDownloadManager : true, 
+                fileCache : true
+            }) 
+            .fetch('GET', urlImagen);
             let base64image = resp.data;
             const url = 'data:image/png;base64,' + base64image
             
