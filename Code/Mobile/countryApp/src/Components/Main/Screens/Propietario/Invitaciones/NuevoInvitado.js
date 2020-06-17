@@ -86,6 +86,7 @@ class NuevoInvitado extends Component {
                             tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
                             fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
                             fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
+                            estado: snapshot.docs[i].data().Estado,
                         };
                         tempArray.push(invitado);
                     }
@@ -173,12 +174,23 @@ class NuevoInvitado extends Component {
                 nuevoInvitado.Nombre = invitaciones.docs[0].data().Nombre;
                 nuevoInvitado.FechaNacimiento = moment.unix(invitaciones.docs[0].data().FechaNacimiento.seconds).toDate();
             }
-            if (
-                !this.state.invitados.find(
-                    (inv) => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
-                )
-            ) {
+            console.log(this.state.invitados);
+            let invitadoExistente = this.state.invitados.find(
+                (inv) => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
+            );
+            console.log(invitadoExistente);
+            if (!invitadoExistente) {
                 await refInvitados.add(nuevoInvitado);
+                return 0;
+            } else if (invitadoExistente.estado == false) {
+                await refInvitados.doc(invitadoExistente.key).set(
+                    {
+                        FechaDesde: this.state.fechaDesde.toDate(),
+                        FechaHasta: this.state.fechaHasta.toDate(),
+                        Estado: true,
+                    },
+                    { merge: true }
+                );
                 return 0;
             } else {
                 return 2;

@@ -18,7 +18,12 @@ class FlatListItem extends Component {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
         try {
-            await refInvitados.doc(invitacion).delete();
+            await refInvitados.doc(invitacion).set(
+                {
+                    Estado: false,
+                },
+                { merge: true }
+            );
             return 0;
         } catch (error) {
             return 1;
@@ -227,6 +232,7 @@ export default class BasicFlatList extends Component {
                 '==',
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
+            .where('Estado', '==', true)
             .onSnapshot((snapshot) => {
                 if (!snapshot.empty) {
                     //El propietario tiene invitaciones
