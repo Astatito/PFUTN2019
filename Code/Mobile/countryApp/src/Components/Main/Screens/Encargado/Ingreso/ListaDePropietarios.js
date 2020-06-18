@@ -7,34 +7,38 @@ import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-//FLATLIST DE PRUEBA : REEMPLAZAR LUEGO LOS FLATLISTDATA POR THIS.STATE.FLATLISTDATA !!
-const flatListData = [
-    {
-        key: 'hwkd9729',
-        nombre: 'Alexis',
-        apellido: 'Pagura',
-        documento: 39611837
-    },
-    {
-        key: 'aosr8208',
-        nombre: 'Fabian',
-        apellido: 'Guidobaldi',
-        documento: 39611837
-    },
-    {
-        key: 'sneo9248',
-        nombre: 'Ezequiel',
-        apellido: 'Braicovich',
-        documento: 39611837
-    }
+var datosInvitado = {};
 
-]
 class FlatListItem extends Component {
     state = { showSpinner: false };
 
     componentWillMount() {
         this.setState({ usuario: this.props.usuario });
     }
+
+    grabarIngreso = async (invitado, idPropietario) => {
+        try {
+            var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+            var refIngresos = refCountry.collection('Ingresos');
+            var propietario = {
+                Nombre: invitado.nombre,
+                Apellido: invitado.apellido,
+                Documento: invitado.numeroDoc,
+                TipoDocumento: Database.doc('TipoDocumento/' + invitado.tipoDoc),
+                Descripcion: '',
+                Egreso: true,
+                Estado: true,
+                Fecha: new Date(),
+                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
+                IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario),
+            };
+            await refIngresos.add(propietario);
+            return 0;
+        } catch (error) {
+            console.log(error);
+            return 1;
+        }
+    };
 
     render() {
         const swipeOutSettings = {
@@ -56,7 +60,7 @@ class FlatListItem extends Component {
                                 {
                                     text: 'Aceptar',
                                     onPress: () => {
-                                        // Navegar a donde corresponda y enviar los datos del propietario
+                                        this.grabarIngreso(datosInvitado, this.props.item.key);
                                     },
                                 },
                             ],
@@ -67,9 +71,8 @@ class FlatListItem extends Component {
                         <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
                     </Left>
                     <Body style={{ alignSelf: 'center' }}>
-                            <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
-                            <Text style={{ fontSize: 14 }}> {this.props.item.documento} </Text>
-                        </Body>
+                        <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
+                    </Body>
                 </ListItem>
             </Swipeout>
         );
@@ -99,13 +102,18 @@ export default class BasicFlatList extends Component {
 
     componentWillMount() {
         this.setState({ showSpinner: true });
+
+        const { navigation } = this.props;
+        datosInvitado = navigation.getParam('invitado');
+        const propietarios = navigation.getParam('propietarios');
+        this.setState({ propietarios });
+
         LocalStorage.load({
             key: 'UsuarioLogueado',
         })
             .then((response) => {
                 this.setState({ usuario: response });
-                // this.obtenerPropietarios();
-                this.createListeners();
+                this.obtenerPropietarios(this.state.propietarios);
             })
             .catch((error) => {
                 this.setState({ showSpinner: false });
@@ -119,43 +127,25 @@ export default class BasicFlatList extends Component {
             });
     }
 
-    componentWillUnmount() {
-        this._unsubscribeSnapshot.remove();
-        this._subscribeSnapshot.remove();
-    }
-
-    createListeners() {
-        this._subscribeSnapshot = this.props.navigation.addListener('didFocus', () => {
-            this.obtenerPropietarios();
-        });
-
-        this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
-            this.snapshotPropietarios();
-        });
-    }
-
-    obtenerPropietarios = () => {
+    obtenerPropietarios = async (propietarios) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-        var refInvitados = refCountry.collection('Invitados');
+        var refPropietarios = refCountry.collection('Propietarios');
         //Reemplazar por la lógica que corresponda.
-        this.snapshotPropietarios = refInvitados
-            .where(
-                'IdPropietario',
-                '==',
-                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
-            )
-            .onSnapshot((snapshot) => {
-                if (!snapshot.empty) {
-                    //Logica ...
-                    this.setState({ showSpinner: false, flatListData: tempArray });
-                } else {
-                    this.setState({ showSpinner: false, flatListData: [] });
-                }
-            });
+        var tempArray = [];
+        for (const key of propietarios) {
+            prop = await refPropietarios.doc(key).get();
+            var aux = {
+                key: key,
+                nombre: prop.data().Nombre,
+                apellido: prop.data().Apellido,
+            };
+            tempArray.push(aux);
+        }
+        this.setState({ flatListData: tempArray });
     };
 
     render() {
-        if (flatListData && flatListData.length == 0) {
+        if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
                 <Root>
                     <View>
@@ -169,7 +159,7 @@ export default class BasicFlatList extends Component {
                     <View>
                         <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                         <FlatList
-                            data={flatListData}
+                            data={this.state.flatListData}
                             renderItem={({ item, index }) => {
                                 return (
                                     <FlatListItem

@@ -9,7 +9,6 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
-
 const LIGHT_GRAY = '#D3D3D3';
 
 class RegistroVisitante extends Component {
@@ -38,6 +37,8 @@ class RegistroVisitante extends Component {
         idInvitacion: '',
         nombreError: '',
         apellidoError: '',
+        propietarios: [],
+        invitado: {},
     };
 
     componentWillMount() {
@@ -60,11 +61,13 @@ class RegistroVisitante extends Component {
             }
             const autenticado = false;
             const invitacion = navigation.getParam('invitacion');
-            this.setearDatos(tipoDoc, numeroDoc, nombre, apellido, fecha, tipoAcceso, usuario, autenticado, invitacion);
+            const propietarios = navigation.getParam('propietarios');
+
+            this.setearDatos(tipoDoc, numeroDoc, nombre, apellido, fecha, tipoAcceso, usuario, autenticado, invitacion, propietarios);
         }
     }
 
-    setearDatos(tipo, numero, nombre, apellido, fecha, acceso, user, autent, invit) {
+    setearDatos(tipo, numero, nombre, apellido, fecha, acceso, user, autent, invit, prop) {
         this.setState({
             picker: tipo,
             documento: numero,
@@ -76,6 +79,7 @@ class RegistroVisitante extends Component {
             isEditable: autent,
             idInvitacion: invit,
             showSpinner: false,
+            propietarios: prop,
         });
     }
 
@@ -83,7 +87,24 @@ class RegistroVisitante extends Component {
     grabarDatos = async () => {
         try {
             var resultAut = await this.autenticarVisitante();
-            var resultGrab = await this.grabarIngreso(this.state.nombre, this.state.apellido, this.state.picker, this.state.documento);
+            if (this.state.propietarios.length > 1) {
+                var inv = {
+                    nombre: this.state.nombre,
+                    apellido: this.state.apellido,
+                    tipoDoc: this.state.picker,
+                    numeroDoc: this.state.documento,
+                };
+                this.setState({ invitado: inv });
+                return 2;
+            }
+
+            var resultGrab = await this.grabarIngreso(
+                this.state.nombre,
+                this.state.apellido,
+                this.state.picker,
+                this.state.documento,
+                this.state.propietarios[0]
+            );
             if (resultAut == 0) {
                 if (resultGrab == 0) {
                     return 0;
@@ -105,6 +126,13 @@ class RegistroVisitante extends Component {
 
     onToastClosed = (reason) => {
         this.props.navigation.navigate('Ingreso');
+    };
+
+    propietariosToast = (reason) => {
+        this.props.navigation.navigate('ListaDePropietarios', {
+            invitado: this.state.invitado,
+            propietarios: this.state.propietarios,
+        });
     };
 
     //Autentica los datos del visitante en Firestore
@@ -137,11 +165,11 @@ class RegistroVisitante extends Component {
     };
 
     //Graba el ingreso en Firestore
-    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc, idPropietario = undefined) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            await refIngresos.add({
+            var ingreso = {
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -151,7 +179,11 @@ class RegistroVisitante extends Component {
                 Estado: true,
                 Fecha: new Date(),
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
-            });
+            };
+            if (idPropietario) {
+                ingreso.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
+            }
+            await refIngresos.add(ingreso);
             return 0;
         } catch (error) {
             return 1;
@@ -161,7 +193,7 @@ class RegistroVisitante extends Component {
     onBlur() {
         this.setState({ isFocused: false });
     }
-    
+
     onFocus() {
         this.setState({ isFocused: true });
     }
@@ -207,7 +239,6 @@ class RegistroVisitante extends Component {
     };
 
     render() {
-        
         return (
             <Root>
                 <ScrollView>
@@ -326,6 +357,15 @@ class RegistroVisitante extends Component {
                                                             position: 'bottom',
                                                             type: 'danger',
                                                             onClose: this.onToastClosed.bind(this),
+                                                        });
+                                                    } else if (result == 2) {
+                                                        Toast.show({
+                                                            text: 'Debe seleccionar el propietario a visitar.',
+                                                            buttonText: 'Aceptar',
+                                                            duration: 3000,
+                                                            position: 'bottom',
+                                                            type: 'warning',
+                                                            onClose: this.propietariosToast.bind(this),
                                                         });
                                                     }
                                                 }

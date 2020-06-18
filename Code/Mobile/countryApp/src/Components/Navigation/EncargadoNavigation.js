@@ -10,11 +10,11 @@ import EgresoManual from '../Main/Screens/Encargado/Egreso/EgresoManual';
 import EncargadoPerfil from '../Main/Screens/Encargado/EncargadoPerfil';
 import Escaner from '../Main/Screens/Encargado/Escaner';
 import RegistroVisitante from '../Main/Screens/Encargado/Ingreso/RegistroVisitante';
-import ListadoDePropietarios from '../Main/Screens/Encargado/Ingreso/ListaDePropietarios';
+import ListaDePropietarios from '../Main/Screens/Encargado/Ingreso/ListaDePropietarios';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Toast, Root } from 'native-base'
+import { Toast, Root } from 'native-base';
 import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
 import { createDrawerNavigator, createBottomTabNavigator, createStackNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -28,7 +28,9 @@ const CustomDrawerContentComponent = (props) => (
         <ScrollView contentContainerStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}>
             <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
                 <View style={{ height: '45%', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
-                    <Image source={require('../../assets/Images/guardia.jpg')} style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
+                    <Image
+                        source={require('../../assets/Images/guardia.jpg')}
+                        style={{ height: 120, width: 120, borderRadius: 60 }}></Image>
                 </View>
                 <DrawerItems {...props} />
             </SafeAreaView>
@@ -43,17 +45,19 @@ const CustomDrawerContentComponent = (props) => (
                         })
                         .catch((error) => {
                             Toast.show({
-                                text: "Lo siento, ocurrió un error inesperado.",
-                                buttonText: "Aceptar",
+                                text: 'Lo siento, ocurrió un error inesperado.',
+                                buttonText: 'Aceptar',
                                 duration: 3000,
-                                position: "bottom",
-                                type: "danger",
-                            })
+                                position: 'bottom',
+                                type: 'danger',
+                            });
                         });
                 }}>
                 <View style={styles.item}>
                     <View style={styles.iconContainer}>
-                        <IconEntypo name="log-out" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
+                        <IconEntypo
+                            name="log-out"
+                            style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
                     </View>
                     <Text style={styles.label}>Cerrar Sesión</Text>
                 </View>
@@ -113,9 +117,9 @@ const IngresoStackNavigator = createStackNavigator(
     {
         Ingreso: Ingreso,
         IngresoManual: IngresoManual,
-        ListadoDePropietarios: ListadoDePropietarios,
+        ListaDePropietarios: ListaDePropietarios,
         Escaner: Escaner,
-        RegistroVisitante: RegistroVisitante
+        RegistroVisitante: RegistroVisitante,
     },
     {
         defaultNavigationOptions: ({ navigation }) => {
@@ -232,7 +236,7 @@ const EncargadoNavigation = createDrawerNavigator(
                     <IconEntypo name="key" style={{ fontSize: 25, paddingLeft: '6%', paddingTop: '5%', color: 'gray' }}></IconEntypo>
                 ),
             },
-        }
+        },
     },
     {
         contentComponent: CustomDrawerContentComponent,

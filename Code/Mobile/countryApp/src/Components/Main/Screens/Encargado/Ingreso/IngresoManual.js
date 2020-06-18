@@ -29,6 +29,8 @@ class IngresoManual extends Component {
         usuario: {},
         invitacionId: null,
         documentoError: '',
+        propietarios: [],
+        invitado: {},
     };
 
     componentWillMount() {
@@ -58,11 +60,11 @@ class IngresoManual extends Component {
     }
 
     //Graba el ingreso en Firestore
-    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc, idPropietario = undefined) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            await refIngresos.add({
+            var propietario = {
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -72,9 +74,14 @@ class IngresoManual extends Component {
                 Estado: true,
                 Fecha: new Date(),
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
-            });
+            };
+            if (idPropietario) {
+                propietario.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
+            }
+            await refIngresos.add(propietario);
             return 0;
         } catch (error) {
+            console.log(error);
             return 1;
         }
     };
@@ -82,15 +89,15 @@ class IngresoManual extends Component {
     //Devuelve la primer invitación válida a partir de un conjunto de invitaciones
     obtenerInvitacionValida = (invitaciones) => {
         var now = moment().unix(); //Se obtiene la fecha actual en formato Timestamp para facilitar la comparación
-
+        var result = [];
         for (var i = 0; i < invitaciones.length; i++) {
             var docInvitacion = invitaciones[i].data();
             if (now >= docInvitacion.FechaDesde.seconds && now <= docInvitacion.FechaHasta.seconds) {
                 docInvitacion.id = invitaciones[i].id;
-                return docInvitacion;
+                result.push(docInvitacion);
             }
         }
-        return -1;
+        return result;
     };
 
     //Verifica si el visitante está autenticado o no
@@ -99,7 +106,7 @@ class IngresoManual extends Component {
     };
 
     //Redirige al formulario para autenticar el visitante
-    autenticarVisitante = (tipoDocumento, numeroDocumento, usuario, invitacion) => {
+    autenticarVisitante = (tipoDocumento, numeroDocumento, usuario, invitacion, propietarios) => {
         this.props.navigation.navigate('RegistroVisitante', {
             esAcceso: true,
             tipoAcceso: 'Ingreso',
@@ -107,6 +114,7 @@ class IngresoManual extends Component {
             numeroDocumento: numeroDocumento,
             usuario: usuario,
             invitacion: invitacion,
+            propietarios: propietarios,
         });
     };
 
@@ -174,25 +182,48 @@ class IngresoManual extends Component {
                     .get();
                 if (!snapshot.empty) {
                     //Si tiene invitaciones, verifica que haya alguna invitación válida.
-                    var invitacion = this.obtenerInvitacionValida(snapshot.docs);
-                    if (invitacion != -1) {
+                    var invitaciones = this.obtenerInvitacionValida(snapshot.docs);
+                    if (invitaciones.length > 0) {
                         //Si hay una invitación válida, verifica que esté autenticado.
-                        var autenticado = this.estaAutenticado(invitacion);
+                        var autenticado = this.estaAutenticado(invitaciones[0]);
                         if (autenticado) {
                             //Si está autenticado, registra el ingreso.
-                            var result = await this.grabarIngreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
-                            if (result == 0) {
-                                return 0;
+                            if (invitaciones.length == 1) {
+                                console.log(invitaciones[0]);
+                                var result = await this.grabarIngreso(
+                                    invitaciones[0].Nombre,
+                                    invitaciones[0].Apellido,
+                                    tipoDoc,
+                                    numeroDoc,
+                                    invitaciones[0].IdPropietario.id
+                                );
+                                if (result == 0) {
+                                    return 0;
+                                } else {
+                                    return 1;
+                                }
                             } else {
-                                return 1;
+                                propietarios = invitaciones.map((inv) => {
+                                    return inv.IdPropietario.id;
+                                });
+                                var inv = {
+                                    nombre: invitaciones[0].Nombre,
+                                    apellido: invitaciones[0].Apellido,
+                                    tipoDoc: tipoDoc,
+                                    numeroDoc: numeroDoc,
+                                };
+                                this.setState({ invitado: inv, propietarios: propietarios });
+                                return 5;
                             }
                         } else {
                             //Si no está autenticado, se debe autenticar.
-                            this.setState({ invitacionId: invitacion.id });
+                            propietarios = invitaciones.map((inv) => {
+                                return inv.IdPropietario.id;
+                            });
+                            this.setState({ invitacionId: invitaciones[0].id, propietarios: propietarios });
                             return 2;
                         }
                     } else {
-                        console.log('Existe pero no tiene invitaciones válidas, buscando en los eventos...');
                         var result = await this.buscarInvitacionesEventos(
                             tipoDoc,
                             numeroDoc,
@@ -203,7 +234,6 @@ class IngresoManual extends Component {
                         return result;
                     }
                 } else {
-                    console.log('No tiene invitaciones, buscando en los eventos...');
                     var result = await this.buscarInvitacionesEventos(tipoDoc, numeroDoc);
                     return result;
                 }
@@ -220,13 +250,26 @@ class IngresoManual extends Component {
     };
 
     autenticarToast = (reason) => {
-        this.autenticarVisitante(this.state.picker, this.state.documento, this.state.usuario, this.state.invitacionId);
+        this.autenticarVisitante(
+            this.state.picker,
+            this.state.documento,
+            this.state.usuario,
+            this.state.invitacionId,
+            this.state.propietarios
+        );
+    };
+
+    propietariosToast = (reason) => {
+        this.props.navigation.navigate('ListaDePropietarios', {
+            invitado: this.state.invitado,
+            propietarios: this.state.propietarios,
+        });
     };
 
     onBlur() {
         this.setState({ isFocused: false });
     }
-    
+
     onFocus() {
         this.setState({ isFocused: true });
     }
@@ -262,7 +305,6 @@ class IngresoManual extends Component {
     };
 
     render() {
-        
         return (
             <Root>
                 <ScrollView>
@@ -352,6 +394,15 @@ class IngresoManual extends Component {
                                                         position: 'bottom',
                                                         type: 'warning',
                                                         onClose: this.onToastClosed.bind(this),
+                                                    });
+                                                } else if (result == 5) {
+                                                    Toast.show({
+                                                        text: 'Debe seleccionar el propietario a visitar',
+                                                        buttonText: 'Aceptar',
+                                                        duration: 3000,
+                                                        position: 'bottom',
+                                                        type: 'warning',
+                                                        onClose: this.propietariosToast.bind(this),
                                                     });
                                                 }
                                             });
