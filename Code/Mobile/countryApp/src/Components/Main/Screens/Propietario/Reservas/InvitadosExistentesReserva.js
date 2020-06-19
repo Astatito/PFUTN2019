@@ -197,6 +197,7 @@ export default class BasicFlatList extends Component {
                 '==',
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
+            .where('Estado', '==', true)
             .get()
             .then((snapshot) => {
                 if (!snapshot.empty) {

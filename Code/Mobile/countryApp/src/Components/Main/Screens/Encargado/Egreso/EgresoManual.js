@@ -96,6 +96,7 @@ class EgresoManual extends Component {
         const invitaciones = await refInvitaciones
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .where('Estado', '==', true)
             .get();
         if (!invitaciones.empty) {
             console.log('Tiene invitaciones a eventos');

@@ -60,11 +60,11 @@ class IngresoManual extends Component {
     }
 
     //Graba el ingreso en Firestore
-    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc, idPropietario = undefined) => {
+    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc, idPropietario) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            var propietario = {
+            var ingreso = {
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -76,9 +76,9 @@ class IngresoManual extends Component {
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
             };
             if (idPropietario) {
-                propietario.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
+                ingreso.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
             }
-            await refIngresos.add(propietario);
+            await refIngresos.add(ingreso);
             return 0;
         } catch (error) {
             console.log(error);
@@ -179,6 +179,7 @@ class IngresoManual extends Component {
                 const snapshot = await refInvitados
                     .where('Documento', '==', numeroDoc)
                     .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+                    .where('Estado', '==', true)
                     .get();
                 if (!snapshot.empty) {
                     //Si tiene invitaciones, verifica que haya alguna invitación válida.
@@ -397,7 +398,7 @@ class IngresoManual extends Component {
                                                     });
                                                 } else if (result == 5) {
                                                     Toast.show({
-                                                        text: 'Debe seleccionar el propietario a visitar',
+                                                        text: 'Debe seleccionar el propietario a visitar.',
                                                         buttonText: 'Aceptar',
                                                         duration: 3000,
                                                         position: 'bottom',
