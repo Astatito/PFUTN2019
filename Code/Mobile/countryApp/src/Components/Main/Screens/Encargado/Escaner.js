@@ -45,11 +45,11 @@ class Escaner extends Component {
     }
 
     //Graba el ingreso en Firestore
-    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc, idPropietario) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            await refIngresos.add({
+            var ingreso = {
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -59,7 +59,11 @@ class Escaner extends Component {
                 Estado: true,
                 Fecha: new Date(),
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
-            });
+            };
+            if (idPropietario) {
+                ingreso.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
+            }
+            await refIngresos.add();
             return 0;
         } catch (error) {
             return 1;
@@ -69,16 +73,15 @@ class Escaner extends Component {
     //Devuelve la primer invitación válida a partir de un conjunto de invitaciones
     obtenerInvitacionValida = (invitaciones) => {
         var now = moment().unix(); //Se obtiene la fecha actual en formato Timestamp para facilitar la comparación
-
+        var result = [];
         for (var i = 0; i < invitaciones.length; i++) {
             var docInvitacion = invitaciones[i].data();
             if (now >= docInvitacion.FechaDesde.seconds && now <= docInvitacion.FechaHasta.seconds) {
                 docInvitacion.id = invitaciones[i].id;
-                return docInvitacion;
+                result.push(docInvitacion);
             }
         }
-
-        return -1;
+        return result;
     };
 
     //Verifica si el visitante está autenticado o no
@@ -98,6 +101,7 @@ class Escaner extends Component {
             fechaNacimiento: persona.FechaNacimiento,
             usuario: usuario,
             invitacion: invitacion,
+            propietarios: propietarios,
         });
     };
 
@@ -117,15 +121,6 @@ class Escaner extends Component {
                 if (autenticado) {
                     console.log('Esta autenticado');
                     var result = await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
-                    if (result == 0) {
-                        return 0;
-                    } else {
-                        return 1;
-                    }
-                } else if (autenticado == undefined) {
-                    // TODO: HAY QUE VER QUE SE HACE EN ESTE CASO;
-                    console.log('No necesita autenticación');
-                    var result = 0; // await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
                     if (result == 0) {
                         return 0;
                     } else {
@@ -175,33 +170,51 @@ class Escaner extends Component {
                 const snapshot = await refInvitados
                     .where('Documento', '==', persona.Documento)
                     .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
+                    .where('Estado', '==', true)
                     .get();
                 if (!snapshot.empty) {
                     //Si tiene invitaciones, verifica que haya alguna invitación válida.
-                    var invitacion = this.obtenerInvitacionValida(snapshot.docs);
-                    if (invitacion != -1) {
+                    var invitaciones = this.obtenerInvitacionValida(snapshot.docs);
+                    if (invitaciones.length > 0) {
                         //Si hay una invitación válida, verifica que esté autenticado.
-                        var autenticado = this.estaAutenticado(invitacion);
+                        var autenticado = this.estaAutenticado(invitaciones[0]);
                         if (autenticado) {
                             //Si está autenticado, registra el ingreso.
-                            var result = await this.grabarIngreso(
-                                invitacion.Nombre,
-                                invitacion.Apellido,
-                                persona.TipoDocumento,
-                                persona.Documento
-                            );
-                            if (result == 0) {
-                                return 0;
+                            if (invitaciones.length == 1) {
+                                var result = await this.grabarIngreso(
+                                    invitacion.Nombre,
+                                    invitacion.Apellido,
+                                    persona.TipoDocumento,
+                                    persona.Documento,
+                                    invitaciones[0].IdPropietario.id
+                                );
+                                if (result == 0) {
+                                    return 0;
+                                } else {
+                                    return 1;
+                                }
                             } else {
-                                return 1;
+                                propietarios = invitaciones.map((inv) => {
+                                    return inv.IdPropietario.id;
+                                });
+                                var inv = {
+                                    nombre: invitaciones[0].Nombre,
+                                    apellido: invitaciones[0].Apellido,
+                                    tipoDoc: tipoDoc,
+                                    numeroDoc: numeroDoc,
+                                };
+                                this.setState({ invitado: inv, propietarios: propietarios });
+                                return 5;
                             }
                         } else {
                             //Si no está autenticado, se debe autenticar.
+                            propietarios = invitaciones.map((inv) => {
+                                return inv.IdPropietario.id;
+                            });
                             this.setState({ invitacionId: invitacion.id });
                             return 2;
                         }
                     } else {
-                        console.log('Existe pero no tiene invitaciones válidas, buscando en los eventos...');
                         var result = await this.buscarInvitacionesEventos(
                             persona.TipoDocumento,
                             persona.Documento,
@@ -212,7 +225,6 @@ class Escaner extends Component {
                         return result;
                     }
                 } else {
-                    console.log('No tiene invitaciones, buscando en los eventos...');
                     var result = await this.buscarInvitacionesEventos(persona.TipoDocumento, persona.Documento);
                     return result;
                 }
@@ -230,6 +242,13 @@ class Escaner extends Component {
 
     autenticarToast = (persona) => {
         this.autenticarVisitante(persona, this.state.usuario, this.state.invitacionId);
+    };
+
+    propietariosToast = (reason) => {
+        this.props.navigation.navigate('ListaDePropietarios', {
+            invitado: this.state.invitado,
+            propietarios: this.state.propietarios,
+        });
     };
 
     //Graba el egreso en Firestore
@@ -315,6 +334,7 @@ class Escaner extends Component {
                 const snapshot = await refInvitados
                     .where('Documento', '==', persona.Documento)
                     .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
+                    .where('Estado', '==', true)
                     .get();
                 if (!snapshot.empty) {
                     //Si tiene invitaciones, verifica que haya alguna invitación válida.
@@ -410,6 +430,15 @@ class Escaner extends Component {
                         position: 'bottom',
                         type: 'warning',
                         onClose: this.onToastClosedIngreso.bind(this),
+                    });
+                } else if (result == 5) {
+                    Toast.show({
+                        text: 'Debe seleccionar el propietario a visitar.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'warning',
+                        onClose: this.propietariosToast.bind(this),
                     });
                 }
             } else {

@@ -81,7 +81,6 @@ class IngresoManual extends Component {
             await refIngresos.add(ingreso);
             return 0;
         } catch (error) {
-            console.log(error);
             return 1;
         }
     };
@@ -190,7 +189,6 @@ class IngresoManual extends Component {
                         if (autenticado) {
                             //Si está autenticado, registra el ingreso.
                             if (invitaciones.length == 1) {
-                                console.log(invitaciones[0]);
                                 var result = await this.grabarIngreso(
                                     invitaciones[0].Nombre,
                                     invitaciones[0].Apellido,

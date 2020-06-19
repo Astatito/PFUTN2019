@@ -148,6 +148,7 @@ class EgresoManual extends Component {
                 const snapshot = await refInvitados
                     .where('Documento', '==', numeroDoc)
                     .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+                    .where('Estado', '==', true)
                     .get();
                 if (!snapshot.empty) {
                     //Si tiene invitaciones, verifica que haya alguna invitación válida.
