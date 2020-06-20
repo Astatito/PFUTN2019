@@ -16,11 +16,24 @@ class FlatListItem extends Component {
         this.setState({ usuario: this.props.usuario });
     }
 
+    generarNotificacionIngreso = async (idPropietario, nombre, apellido) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refNotificaciones = refCountry.collection('Notificaciones');
+        var notificacion = {
+            Fecha: new Date(),
+            Tipo: 'Ingreso',
+            Texto: nombre + ' ' + apellido + ' ha ingresado al complejo.',
+            IdPropietario: idPropietario,
+            Visto: false,
+        };
+        await refNotificaciones.add(notificacion);
+    };
+
     grabarIngreso = async (invitado, idPropietario) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            var propietario = {
+            var ingreso = {
                 Nombre: invitado.nombre,
                 Apellido: invitado.apellido,
                 Documento: invitado.numeroDoc,
@@ -32,7 +45,8 @@ class FlatListItem extends Component {
                 IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
                 IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario),
             };
-            await refIngresos.add(propietario);
+            this.generarNotificacionIngreso(idPropietario, invitado.nombre, invitado.apellido);
+            await refIngresos.add(ingreso);
             return 0;
         } catch (error) {
             console.log(error);

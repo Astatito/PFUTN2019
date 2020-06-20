@@ -59,6 +59,19 @@ class IngresoManual extends Component {
         }, 3000);
     }
 
+    generarNotificacionIngreso = async (idPropietario, nombre, apellido) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refNotificaciones = refCountry.collection('Notificaciones');
+        var notificacion = {
+            Fecha: new Date(),
+            Tipo: 'Ingreso',
+            Texto: nombre + ' ' + apellido + ' ha ingresado al complejo.',
+            IdPropietario: idPropietario,
+            Visto: false,
+        };
+        await refNotificaciones.add(notificacion);
+    };
+
     //Graba el ingreso en Firestore
     grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc, idPropietario) => {
         try {
@@ -77,6 +90,7 @@ class IngresoManual extends Component {
             };
             if (idPropietario) {
                 ingreso.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
+                this.generarNotificacionIngreso(idPropietario, nombre, apellido);
             }
             await refIngresos.add(ingreso);
             return 0;
