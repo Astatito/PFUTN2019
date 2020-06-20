@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, StyleSheet, View, Alert} from 'react-native';
+import { FlatList, StyleSheet, View, Alert } from 'react-native';
 import { ListItem, Left, Body, Text, Thumbnail, Root, Toast, Right } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,13 +11,13 @@ import moment from 'moment';
 //FLATLIST DE PRUEBA : REEMPLAZAR LUEGO LOS FLATLISTDATA POR THIS.STATE.FLATLISTDATA !!
 
 const reservaItem = {
-        idReservaServicio: "Country/nkB2OpDMe6znzVkQRCRf/Servicios/i9KeauCpNWGt1SJCywOW/Reservas/MeLvCqo2YNFHjFXg4dmB",
-        key: "j2xl9mgK1TlKHIvPXRlN",
-        nombre: "Entrenamiento",
-        servicio: "Polo",
-        fechaDesde: moment(),
-        fechaHasta: moment()
-    }
+    idReservaServicio: 'Country/nkB2OpDMe6znzVkQRCRf/Servicios/i9KeauCpNWGt1SJCywOW/Reservas/MeLvCqo2YNFHjFXg4dmB',
+    key: 'j2xl9mgK1TlKHIvPXRlN',
+    nombre: 'Entrenamiento',
+    servicio: 'Polo',
+    fechaDesde: moment(),
+    fechaHasta: moment(),
+};
 
 class FlatListItem extends Component {
     state = { showSpinner: false };
@@ -32,41 +32,44 @@ class FlatListItem extends Component {
             rowId: this.props.index,
             sectionId: 1,
         };
-        
+
         if (this.props.item.tipo == 'Evento') {
             return (
                 <Swipeout {...swipeOutSettings}>
                     <ListItem
-                    avatar
-                    onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea acceder a esta reserva ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.props.navigation.navigate('InformacionReserva', {
-                                            usuario: this.state.usuario,
-                                            reserva: reservaItem,
-                                        });
+                        avatar
+                        onPress={() => {
+                            Alert.alert(
+                                'Atención',
+                                '¿ Desea acceder a esta reserva ? ',
+                                [
+                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
+                                    {
+                                        text: 'Aceptar',
+                                        onPress: () => {
+                                            this.props.navigation.navigate('InformacionReserva', {
+                                                usuario: this.state.usuario,
+                                                reserva: reservaItem,
+                                            });
+                                        },
                                     },
-                                },
-                            ],
-                            { cancelable: true }
-                        );
-                    }}>
+                                ],
+                                { cancelable: true }
+                            );
+                        }}>
                         <Left>
                             <Thumbnail source={require('../../../../assets/Images/notificaciones.png')} />
                         </Left>
                         <Body style={{ alignSelf: 'center' }}>
-                                <Text style={{ fontSize: 13, fontWeight:'bold' }}> {this.props.item.tipo} </Text>
-                                <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
+                            <Text style={{ fontSize: 13, fontWeight: 'bold' }}> {this.props.item.tipo} </Text>
+                            <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
                         </Body>
                         <Right style={{ alignSelf: 'center', marginTop: '3.3%' }}>
-                                <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center' ,justifyContent:'center'}}> {this.props.item.time} </Text>
-                                <Text></Text>
+                            <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent: 'center' }}>
+                                {' '}
+                                {this.props.item.time}{' '}
+                            </Text>
+                            <Text></Text>
                         </Right>
                     </ListItem>
                 </Swipeout>
@@ -74,23 +77,24 @@ class FlatListItem extends Component {
         } else {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem
-                        avatar>
+                    <ListItem avatar>
                         <Left>
                             <Thumbnail source={require('../../../../assets/Images/notificaciones.png')} />
                         </Left>
                         <Body style={{ alignSelf: 'center' }}>
-                                <Text style={{ fontSize: 13, fontWeight:'bold' }}> {this.props.item.tipo} </Text>
-                                <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
+                            <Text style={{ fontSize: 13, fontWeight: 'bold' }}> {this.props.item.tipo} </Text>
+                            <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center' , marginTop: '5%'}}>
-                                <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent:'center' }}> {this.props.item.time} </Text>
+                        <Right style={{ alignSelf: 'center', marginTop: '5%' }}>
+                            <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent: 'center' }}>
+                                {' '}
+                                {this.props.item.time}{' '}
+                            </Text>
                         </Right>
                     </ListItem>
                 </Swipeout>
             );
         }
-        
     }
 }
 
@@ -123,8 +127,8 @@ export default class BasicFlatList extends Component {
         })
             .then((response) => {
                 this.setState({ usuario: response });
-                this.setData()
-
+                this.obtenerNotificaciones();
+                this.createListeners();
             })
             .catch((error) => {
                 this.setState({ showSpinner: false });
@@ -138,34 +142,54 @@ export default class BasicFlatList extends Component {
             });
     }
 
-    //REEMPLAZAR POR LA FUNCIÓN QUE OBTIENE LAS NOTIFICACIONES.
-    setData = () => {
-        this.setState({
-            flatListData : [
-                {
-                    key: 'hwkd9729',
-                    tipo: 'Ingreso',
-                    texto: 'Alexis Pagura ha ingresado. ',
-                    time: '28/05/20 9:35'
-                },
-                {
-                    key: 'aosr8208',
-                    tipo: 'Egreso',
-                    texto: 'Ezequiel Braicovich ha egresado.',
-                    time: '29/05/20 10:00'
-                },
-                {
-                    key: 'sneo9248',
-                    tipo: 'Evento',
-                    texto: "Luis Quiroga se ha inscripto para el evento 'Futbol 5'",
-                    time: '29/05/20 19:00'
-                }
-            ]
-        })
-        this.setState({
-            showSpinner: false,
+    componentWillUnmount() {
+        this._unsubscribeSnapshot.remove();
+        this._subscribeSnapshot.remove();
+    }
+
+    createListeners() {
+        this._subscribeSnapshot = this.props.navigation.addListener('didFocus', () => {
+            this.obtenerNotificaciones();
+        });
+
+        this._unsubscribeSnapshot = this.props.navigation.addListener('didBlur', () => {
+            this.snapshotNotificaciones();
         });
     }
+
+    obtenerNotificaciones = () => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refNotificaciones = refCountry.collection('Notificaciones');
+        console.log(refNotificaciones);
+        this.snapshotNotificaciones = refNotificaciones
+            .where(
+                'IdPropietario',
+                '==',
+                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
+            )
+            .orderBy('Fecha')
+            .onSnapshot((snapshot) => {
+                if (!snapshot.empty) {
+                    // El propietario tiene notificaciones
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        var notificacion = {
+                            key: snapshot.docs[i].id,
+                            texto: snapshot.docs[i].data().Texto,
+                            tipo: snapshot.docs[i].data().Tipo,
+                            visto: snapshot.docs[i].data().Visto,
+                            fecha: moment.unix(snapshot.docs[i].data().Fecha.seconds).format('D/M/YYYY HH:mm'),
+                            // referencia: "?????"
+                        };
+                        tempArray.push(notificacion);
+                    }
+                    this.setState({ showSpinner: false, flatListData: tempArray });
+                } else {
+                    this.setState({ showSpinner: false, flatListData: [] });
+                }
+            });
+    };
+
     render() {
         if (this.state.flatListData && this.state.flatListData.length == 0) {
             return (
