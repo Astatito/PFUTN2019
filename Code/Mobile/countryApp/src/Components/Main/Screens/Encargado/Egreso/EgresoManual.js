@@ -54,6 +54,28 @@ class EgresoManual extends Component {
         }, 3000);
     }
 
+    generarNotificacionEgreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refIngresos = refCountry.collection('Ingresos');
+
+        var ingreso = await refIngresos
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .orderBy('Fecha', 'desc')
+            .limit(1)
+            .get();
+
+        var refNotificaciones = refCountry.collection('Notificaciones');
+        var notificacion = {
+            Fecha: new Date(),
+            Tipo: 'Egreso',
+            Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
+            IdPropietario: ingreso.docs[0].data().IdPropietario.id,
+            Visto: false,
+        };
+        await refNotificaciones.add(notificacion);
+    };
+
     //Graba el egreso en Firestore
     grabarEgreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
         try {
@@ -155,6 +177,7 @@ class EgresoManual extends Component {
                     var invitacion = this.obtenerInvitacionValida(snapshot.docs);
                     if (invitacion != -1) {
                         //Si hay una invitación válida, registra el egreso.
+                        var notif = await this.generarNotificacionEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                         var result = await this.grabarEgreso(invitacion.Nombre, invitacion.Apellido, tipoDoc, numeroDoc);
                         if (result == 0) {
                             return 0;
