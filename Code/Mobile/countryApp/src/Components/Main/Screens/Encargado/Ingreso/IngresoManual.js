@@ -410,7 +410,7 @@ class IngresoManual extends Component {
                                                     });
                                                 } else if (result == 5) {
                                                     Toast.show({
-                                                        text: 'Debe seleccionar el propietario a visitar.',
+                                                        text: 'Debe seleccionar un propietario a visitar.',
                                                         buttonText: 'Aceptar',
                                                         duration: 3000,
                                                         position: 'bottom',

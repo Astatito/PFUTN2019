@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View } from 'react-native';
-import { ListItem, Left, Body, Text, Thumbnail, Root, Toast } from 'native-base';
+import { ListItem, Left, Body, Text, Thumbnail, Root, Toast, Button } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { LocalStorage } from '../../../../DataBase/Storage';
@@ -8,13 +8,101 @@ import { Database } from '../../../../DataBase/Firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 var datosInvitado = {};
+let selectedItem = []
 
 class FlatListItem extends Component {
-    state = { showSpinner: false };
+    state = { showSpinner: false, isSelected: false };
 
     componentWillMount() {
         this.setState({ usuario: this.props.usuario });
     }
+
+    render() {
+        const swipeOutSettings = {
+            style: { backgroundColor: '#fff' },
+            rowId: this.props.index,
+            sectionId: 1,
+        };
+
+        if (this.state.isSelected == false) {
+            return (
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItem.includes(this.props.item)) {
+                                let index = selectedItem.indexOf(this.props.item);
+                                selectedItem.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItem.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                        }}>
+                        <Left>
+                            <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
+                        </Left>
+                        <Body style={{ alignSelf: 'center' }}>
+                            <Text></Text>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
+                        </Body>
+                    </ListItem>
+                </Swipeout>
+            );
+        } else {
+            return (
+                <Swipeout {...swipeOutSettings}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItem.includes(this.props.item)) {
+                                let index = selectedItem.indexOf(this.props.item);
+                                selectedItem.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItem.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                        }}>
+                        <Left>
+                            <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
+                        </Left>
+                        <Body style={{ alignSelf: 'center' }}>
+                            <Text></Text>
+                            <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
+                        </Body>
+                    </ListItem>
+                </Swipeout>
+            );
+        }
+    }
+}
+
+export default class BasicFlatList extends Component {
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: 'Propietarios',
+            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
+        };
+    };
+
+    constructor(props) {
+        super(props);
+        state = { flatListData: [] };
+    }
+
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({
+                showSpinner: false,
+            });
+        }, 3000);
+    }
+
+    onToastClosed = (reason) => {
+        this.props.navigation.navigate('Ingreso');
+        selectedItem = []
+    };
 
     generarNotificacionIngreso = async (idPropietario, nombre, apellido) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
@@ -51,68 +139,10 @@ class FlatListItem extends Component {
         } catch (error) {
             console.log(error);
             return 1;
+        } finally {
+            this.setState({ showSpinner: false })
         }
     };
-
-    render() {
-        const swipeOutSettings = {
-            style: { backgroundColor: '#fff' },
-            rowId: this.props.index,
-            sectionId: 1,
-        };
-
-        return (
-            <Swipeout {...swipeOutSettings}>
-                <ListItem
-                    avatar
-                    onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea visitar a este propietario ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.grabarIngreso(datosInvitado, this.props.item.key);
-                                    },
-                                },
-                            ],
-                            { cancelable: true }
-                        );
-                    }}>
-                    <Left>
-                        <Thumbnail source={require('../../../../../assets/Images/invitado.jpg')} />
-                    </Left>
-                    <Body style={{ alignSelf: 'center' }}>
-                        <Text style={{ fontSize: 14 }}> {this.props.item.nombre + ' ' + this.props.item.apellido} </Text>
-                    </Body>
-                </ListItem>
-            </Swipeout>
-        );
-    }
-}
-
-export default class BasicFlatList extends Component {
-    static navigationOptions = ({ navigation }) => {
-        return {
-            title: 'Propietarios',
-            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
-        };
-    };
-
-    constructor(props) {
-        super(props);
-        state = { flatListData: [] };
-    }
-
-    componentDidMount() {
-        setInterval(() => {
-            this.setState({
-                showSpinner: false,
-            });
-        }, 3000);
-    }
 
     componentWillMount() {
         this.setState({ showSpinner: true });
@@ -155,7 +185,7 @@ export default class BasicFlatList extends Component {
             };
             tempArray.push(aux);
         }
-        this.setState({ flatListData: tempArray });
+        this.setState({ flatListData: tempArray , showSpinner: false});
     };
 
     render() {
@@ -184,6 +214,64 @@ export default class BasicFlatList extends Component {
                                         parentFlatList={this}></FlatListItem>
                                 );
                             }}></FlatList>
+                        <View style={{ flexDirection: 'row' , alignContent:'space-between', justifyContent: 'center',}}>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    success
+                                    disabled={this.state.showSpinner}
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={async () => {
+                                        this.setState({ showSpinner: true }, async () => {
+                                            if (selectedItem.length !== 1) {
+                                                Toast.show({
+                                                    text: 'Debe seleccionar un propietario.',
+                                                    buttonText: 'Aceptar',
+                                                    duration: 3000,
+                                                    position: 'bottom',
+                                                    type: 'warning'
+                                                });
+                                                this.setState({ showSpinner: false })
+                                                return
+                                            }
+                                            const result = await this.grabarIngreso(datosInvitado, selectedItem[0].key);
+                                            if (result == 0) {
+                                                Toast.show({
+                                                    text: 'Ingreso registrado exitosamente.',
+                                                    buttonText: 'Aceptar',
+                                                    duration: 3000,
+                                                    position: 'bottom',
+                                                    type: 'success',
+                                                    onClose: this.onToastClosed.bind(this),
+                                                });
+                                            } else if (result == 1) {
+                                                Toast.show({
+                                                    text: 'Lo siento, ocurrió un error inesperado.',
+                                                    buttonText: 'Aceptar',
+                                                    duration: 3000,
+                                                    position: 'bottom',
+                                                    type: 'danger',
+                                                    onClose: this.onToastClosed.bind(this),
+                                                });
+                                            }
+                                        });
+                                    }}>
+                                    <Text>Aceptar</Text>
+                                </Button>
+                            </View>
+                            <View style={styles.buttons}>
+                                <Button
+                                    bordered
+                                    danger
+                                    disabled={this.state.showSpinner}
+                                    style={{ paddingHorizontal: '5%' }}
+                                    onPress={() => {
+                                        this.props.navigation.goBack()
+                                    }}>
+                                    <Text>Cancelar</Text>
+                                </Button>
+                            </View>
+                        </View>
                     </View>
                 </Root>
             );
@@ -205,4 +293,10 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
         fontStyle: 'normal',
     },
+    buttons: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '40%',
+        marginTop: '7%',
+    }
 });
