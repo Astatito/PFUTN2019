@@ -60,14 +60,13 @@ class FlatListItem extends Component {
                         <Left>
                             <Thumbnail source={require('../../../../assets/Images/notificaciones.png')} />
                         </Left>
-                        <Body style={{ alignSelf: 'center' }}>
+                        <Body style={{ alignSelf: 'center' , marginTop: 'auto'}}>
                             <Text style={{ fontSize: 13, fontWeight: 'bold' }}> {this.props.item.tipo} </Text>
                             <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center', marginTop: '3.3%' }}>
+                        <Right style={{ alignSelf: 'center', marginTop: 'auto' }}>
                             <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent: 'center' }}>
-                                {' '}
-                                {this.props.item.time}{' '}
+                                {this.props.item.fecha}
                             </Text>
                             <Text></Text>
                         </Right>
@@ -81,14 +80,13 @@ class FlatListItem extends Component {
                         <Left>
                             <Thumbnail source={require('../../../../assets/Images/notificaciones.png')} />
                         </Left>
-                        <Body style={{ alignSelf: 'center' }}>
+                        <Body style={{ alignSelf: 'center' , marginTop: 'auto'}}>
                             <Text style={{ fontSize: 13, fontWeight: 'bold' }}> {this.props.item.tipo} </Text>
                             <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
                         </Body>
-                        <Right style={{ alignSelf: 'center', marginTop: '5%' }}>
+                        <Right style={{ alignSelf: 'center', marginTop: 'auto' }}>
                             <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent: 'center' }}>
-                                {' '}
-                                {this.props.item.time}{' '}
+                                {this.props.item.fecha}
                             </Text>
                         </Right>
                     </ListItem>
