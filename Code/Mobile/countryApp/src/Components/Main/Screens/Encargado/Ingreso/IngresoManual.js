@@ -244,6 +244,9 @@ class IngresoManual extends Component {
                             snapshot.docs[0].data().Nombre,
                             snapshot.docs[0].data().Apellido
                         );
+                        if (result == 4) {
+                            return 3;
+                        }
                         return result;
                     }
                 } else {
