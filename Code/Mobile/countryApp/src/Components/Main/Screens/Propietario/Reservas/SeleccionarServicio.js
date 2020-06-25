@@ -8,29 +8,30 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const LIGHT_GRAY = '#D3D3D3';
-let selectedItem = []
+let selectedItem = [];
 
 class FlatListItem extends Component {
-    state = { showSpinner: false , isSelected: false};
+    state = { showSpinner: false, isSelected: false };
 
     render() {
         const swipeOutSettings = {
-            style: { backgroundColor: '#fff' }
+            style: { backgroundColor: '#fff' },
         };
         if (this.state.isSelected == false) {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem avatar 
-                    onPress={() => {
-                        if (selectedItem.includes(this.props.item)) {
-                            let index = selectedItem.indexOf(this.props.item);
-                            selectedItem.splice(index, 1);
-                            this.setState({ isSelected: false });
-                        } else {
-                            selectedItem.push(this.props.item);
-                            this.setState({ isSelected: true });
-                        }
-                    }}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItem.includes(this.props.item)) {
+                                let index = selectedItem.indexOf(this.props.item);
+                                selectedItem.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItem.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                        }}>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/servicios.jpg')} />
                         </Left>
@@ -43,17 +44,18 @@ class FlatListItem extends Component {
         } else {
             return (
                 <Swipeout {...swipeOutSettings}>
-                    <ListItem avatar 
-                    onPress={() => {
-                        if (selectedItem.includes(this.props.item)) {
-                            let index = selectedItem.indexOf(this.props.item);
-                            selectedItem.splice(index, 1);
-                            this.setState({ isSelected: false });
-                        } else {
-                            selectedItem.push(this.props.item);
-                            this.setState({ isSelected: true });
-                        }
-                    }}>
+                    <ListItem
+                        avatar
+                        onPress={() => {
+                            if (selectedItem.includes(this.props.item)) {
+                                let index = selectedItem.indexOf(this.props.item);
+                                selectedItem.splice(index, 1);
+                                this.setState({ isSelected: false });
+                            } else {
+                                selectedItem.push(this.props.item);
+                                this.setState({ isSelected: true });
+                            }
+                        }}>
                         <Left>
                             <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
                         </Left>
@@ -64,40 +66,38 @@ class FlatListItem extends Component {
                 </Swipeout>
             );
         }
-        
     }
 }
 
 export default class BasicFlatList extends Component {
-
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Servicios',
             headerRight: <View></View>,
-            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />
+            headerLeft: <Icon style={{ paddingLeft: 10 }} onPress={() => navigation.goBack()} name="arrow-back" size={30} />,
         };
     };
 
-    state = {nombreReserva : ''}
+    state = { nombreReserva: '' };
 
     componentWillMount() {
         this.setState({ showSpinner: true });
         LocalStorage.load({
-            key: 'UsuarioLogueado'
+            key: 'UsuarioLogueado',
         })
-            .then(response => {
+            .then((response) => {
                 this.setState({ usuario: response });
                 this.obtenerServicios();
             })
-            .catch(error => {
+            .catch((error) => {
                 this.setState({ showSpinner: false });
                 Toast.show({
-                    text: "La key solicitada no existe.",
-                    buttonText: "Aceptar",
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
                     duration: 3000,
-                    position: "bottom",
-                    type: "danger",
-                })
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
     }
 
@@ -106,7 +106,7 @@ export default class BasicFlatList extends Component {
         var refServicios = refCountry.collection('Servicios');
 
         try {
-            const snapshot = await refServicios.get()
+            const snapshot = await refServicios.get();
             if (!snapshot.empty) {
                 var tempArray = [];
                 for (var i = 0; i < snapshot.docs.length; i++) {
@@ -116,7 +116,8 @@ export default class BasicFlatList extends Component {
                         disponibilidad: snapshot.docs[i].data().Disponibilidad,
                         horaInicio: new Date(snapshot.docs[i].data().HoraInicio.seconds * 1000),
                         horaFin: new Date(snapshot.docs[i].data().HoraFin.seconds * 1000),
-                        duracionTurno: snapshot.docs[i].data().DuracionTurno
+                        duracionTurno: snapshot.docs[i].data().DuracionTurno,
+                        maxTurnos: snapshot.docs[i].data().TurnosMax,
                     };
                     tempArray.push(servicio);
                 }
@@ -124,9 +125,9 @@ export default class BasicFlatList extends Component {
             } else {
                 this.setState({ flatListData: [] });
             }
-            return 0
+            return 0;
         } catch (error) {
-            return 1
+            return 1;
         } finally {
             this.setState({ showSpinner: false });
         }
@@ -135,7 +136,7 @@ export default class BasicFlatList extends Component {
     componentDidMount() {
         setInterval(() => {
             this.setState({
-                showSpinner: false
+                showSpinner: false,
             });
         }, 3000);
     }
@@ -143,13 +144,12 @@ export default class BasicFlatList extends Component {
     onBlur() {
         this.setState({ isFocused: false });
     }
-    
+
     onFocus() {
         this.setState({ isFocused: true });
     }
 
     render() {
-        
         return (
             <Root>
                 <View>
@@ -165,7 +165,7 @@ export default class BasicFlatList extends Component {
                         maxLength={20}
                     />
                     <FlatList
-                        style={{marginLeft:'3%'}}
+                        style={{ marginLeft: '3%' }}
                         data={this.state.flatListData}
                         renderItem={({ item, index }) => {
                             return (
@@ -177,7 +177,7 @@ export default class BasicFlatList extends Component {
                             );
                         }}></FlatList>
 
-                    <View style={{ flexDirection: 'row' , alignContent:'space-between', justifyContent: 'center',}}>
+                    <View style={{ flexDirection: 'row', alignContent: 'space-between', justifyContent: 'center' }}>
                         <View style={styles.buttons}>
                             <Button
                                 bordered
@@ -192,10 +192,10 @@ export default class BasicFlatList extends Component {
                                                 buttonText: 'Aceptar',
                                                 duration: 3000,
                                                 position: 'bottom',
-                                                type: 'warning'
+                                                type: 'warning',
                                             });
-                                            this.setState({ showSpinner: false })
-                                            return
+                                            this.setState({ showSpinner: false });
+                                            return;
                                         }
                                         if (selectedItem.length !== 1) {
                                             Toast.show({
@@ -203,15 +203,15 @@ export default class BasicFlatList extends Component {
                                                 buttonText: 'Aceptar',
                                                 duration: 3000,
                                                 position: 'bottom',
-                                                type: 'warning'
+                                                type: 'warning',
                                             });
-                                            this.setState({ showSpinner: false })
-                                            return
+                                            this.setState({ showSpinner: false });
+                                            return;
                                         }
-                                        this.setState({ showSpinner: false })
+                                        this.setState({ showSpinner: false });
                                         this.props.navigation.navigate('SeleccionarTurno', {
                                             servicio: selectedItem[0],
-                                            nombreReserva: this.state.nombreReserva
+                                            nombreReserva: this.state.nombreReserva,
                                         });
                                     });
                                 }}>
@@ -225,7 +225,7 @@ export default class BasicFlatList extends Component {
                                 disabled={this.state.showSpinner}
                                 style={{ paddingHorizontal: '5%' }}
                                 onPress={() => {
-                                    this.props.navigation.goBack()
+                                    this.props.navigation.goBack();
                                 }}>
                                 <Text>Cancelar</Text>
                             </Button>
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     spinnerTextStyle: {
         fontSize: 20,
         fontWeight: 'normal',
-        color: '#FFF'
+        color: '#FFF',
     },
     textInput: {
         width: '80%',
@@ -249,12 +249,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         marginHorizontal: '7%',
         marginTop: '7%',
-        marginVertical: '3%'
+        marginVertical: '3%',
     },
     buttons: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '40%',
         marginTop: '7%',
-    }
+    },
 });
