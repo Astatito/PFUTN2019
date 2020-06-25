@@ -70,7 +70,9 @@ class EgresoManual extends Component {
             Fecha: new Date(),
             Tipo: 'Egreso',
             Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
-            IdPropietario: ingreso.docs[0].data().IdPropietario.id,
+            IdPropietario: Database.doc(
+                'Country/' + this.state.usuario.country + '/Propietarios/' + ingreso.docs[0].data().IdPropietario.id
+            ),
             Visto: false,
         };
         await refNotificaciones.add(notificacion);

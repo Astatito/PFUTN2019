@@ -66,7 +66,7 @@ class IngresoManual extends Component {
             Fecha: new Date(),
             Tipo: 'Ingreso',
             Texto: nombre + ' ' + apellido + ' ha ingresado al complejo.',
-            IdPropietario: idPropietario,
+            IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario),
             Visto: false,
         };
         await refNotificaciones.add(notificacion);

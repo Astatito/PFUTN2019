@@ -51,7 +51,7 @@ class Escaner extends Component {
             Fecha: new Date(),
             Tipo: 'Ingreso',
             Texto: nombre + ' ' + apellido + ' ha ingresado al complejo.',
-            IdPropietario: idPropietario,
+            IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario),
             Visto: false,
         };
         await refNotificaciones.add(notificacion);
@@ -284,7 +284,9 @@ class Escaner extends Component {
             Fecha: new Date(),
             Tipo: 'Egreso',
             Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
-            IdPropietario: ingreso.docs[0].data().IdPropietario.id,
+            IdPropietario: Database.doc(
+                'Country/' + this.state.usuario.country + '/Propietarios/' + ingreso.docs[0].data().IdPropietario.id
+            ),
             Visto: false,
         };
         await refNotificaciones.add(notificacion);

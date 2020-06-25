@@ -8,17 +8,6 @@ import { Database } from '../../../DataBase/Firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
-//FLATLIST DE PRUEBA : REEMPLAZAR LUEGO LOS FLATLISTDATA POR THIS.STATE.FLATLISTDATA !!
-
-const reservaItem = {
-    idReservaServicio: 'Country/nkB2OpDMe6znzVkQRCRf/Servicios/i9KeauCpNWGt1SJCywOW/Reservas/MeLvCqo2YNFHjFXg4dmB',
-    key: 'j2xl9mgK1TlKHIvPXRlN',
-    nombre: 'Entrenamiento',
-    servicio: 'Polo',
-    fechaDesde: moment(),
-    fechaHasta: moment(),
-};
-
 class FlatListItem extends Component {
     state = { showSpinner: false };
 
@@ -33,66 +22,24 @@ class FlatListItem extends Component {
             sectionId: 1,
         };
 
-        if (this.props.item.tipo == 'Evento') {
-            return (
-                <Swipeout {...swipeOutSettings}>
-                    <ListItem
-                        avatar
-                        onPress={() => {
-                            Alert.alert(
-                                'Atención',
-                                '¿ Desea acceder a esta reserva ? ',
-                                [
-                                    { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                    {
-                                        text: 'Aceptar',
-                                        onPress: () => {
-                                            this.props.navigation.navigate('InformacionReserva', {
-                                                usuario: this.state.usuario,
-                                                reserva: reservaItem,
-                                            });
-                                        },
-                                    },
-                                ],
-                                { cancelable: true }
-                            );
-                        }}>
-                        <Left>
-                            <Thumbnail source={require('../../../../assets/Images/notificaciones.png')} />
-                        </Left>
-                        <Body style={{ alignSelf: 'center' , marginTop: 'auto'}}>
-                            <Text style={{ fontSize: 13, fontWeight: 'bold' }}> {this.props.item.tipo} </Text>
-                            <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
-                        </Body>
-                        <Right style={{ alignSelf: 'center', marginTop: 'auto' }}>
-                            <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent: 'center' }}>
-                                {this.props.item.fecha}
-                            </Text>
-                            <Text></Text>
-                        </Right>
-                    </ListItem>
-                </Swipeout>
-            );
-        } else {
-            return (
-                <Swipeout {...swipeOutSettings}>
-                    <ListItem avatar>
-                        <Left>
-                            <Thumbnail source={require('../../../../assets/Images/notificaciones.png')} />
-                        </Left>
-                        <Body style={{ alignSelf: 'center' , marginTop: 'auto'}}>
-                            <Text style={{ fontSize: 13, fontWeight: 'bold' }}> {this.props.item.tipo} </Text>
-                            <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
-                        </Body>
-                        <Right style={{ alignSelf: 'center', marginTop: 'auto' }}>
-                            <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent: 'center' }}>
-                                {this.props.item.fecha}
-                            </Text>
-                        </Right>
-                    </ListItem>
-                </Swipeout>
-            );
-        }
+        return (
+            <Swipeout {...swipeOutSettings}>
+                <ListItem avatar>
+                    <Left>
+                        <Thumbnail source={require('../../../../assets/Images/notificaciones.png')} />
+                    </Left>
+                    <Body style={{ alignSelf: 'center', marginTop: 'auto' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold' }}> {this.props.item.tipo} </Text>
+                        <Text style={{ fontSize: 12 }}> {this.props.item.texto} </Text>
+                    </Body>
+                    <Right style={{ alignSelf: 'center', marginTop: 'auto' }}>
+                        <Text style={{ fontSize: 11, color: 'gray', alignSelf: 'center', justifyContent: 'center' }}>
+                            {this.props.item.fecha}
+                        </Text>
+                    </Right>
+                </ListItem>
+            </Swipeout>
+        );
     }
 }
 
@@ -165,7 +112,7 @@ export default class BasicFlatList extends Component {
                 '==',
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
-            .orderBy('Fecha')
+            .orderBy('Fecha', 'desc')
             .limit(15)
             .onSnapshot((snapshot) => {
                 if (!snapshot.empty) {
