@@ -74,6 +74,7 @@ export default class BasicFlatList extends Component {
                 this.setState({ usuario: response });
                 this.obtenerNotificaciones();
                 this.createListeners();
+                this.actualizarNotificaciones(this.state.flatListData);
             })
             .catch((error) => {
                 this.setState({ showSpinner: false });
@@ -105,7 +106,6 @@ export default class BasicFlatList extends Component {
     obtenerNotificaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refNotificaciones = refCountry.collection('Notificaciones');
-        console.log(refNotificaciones);
         this.snapshotNotificaciones = refNotificaciones
             .where(
                 'IdPropietario',
@@ -125,15 +125,33 @@ export default class BasicFlatList extends Component {
                             tipo: snapshot.docs[i].data().Tipo,
                             visto: snapshot.docs[i].data().Visto,
                             fecha: moment.unix(snapshot.docs[i].data().Fecha.seconds).format('D/M/YYYY HH:mm'),
-                            // referencia: "?????"
                         };
                         tempArray.push(notificacion);
                     }
                     this.setState({ showSpinner: false, flatListData: tempArray });
+                    var aux = tempArray.filter((notif) => !notif.visto);
+                    if (aux.length > 0) {
+                        this.actualizarNotificaciones(aux);
+                    }
                 } else {
                     this.setState({ showSpinner: false, flatListData: [] });
                 }
             });
+    };
+
+    actualizarNotificaciones = async (notificaciones) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refNotificaciones = refCountry.collection('Notificaciones');
+
+        for (var i = 0; i < notificaciones.length; i++) {
+            var refNotificacion = refNotificaciones.doc(notificaciones[i].key);
+            await refNotificacion.set(
+                {
+                    Visto: true,
+                },
+                { merge: true }
+            );
+        }
     };
 
     render() {
