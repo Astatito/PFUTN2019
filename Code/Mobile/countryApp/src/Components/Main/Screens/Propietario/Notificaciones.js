@@ -113,7 +113,7 @@ export default class BasicFlatList extends Component {
                 Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
             )
             .orderBy('Fecha', 'desc')
-            .limit(15)
+            .limit(8)
             .onSnapshot((snapshot) => {
                 if (!snapshot.empty) {
                     // El propietario tiene notificaciones
