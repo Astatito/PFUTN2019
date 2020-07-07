@@ -31,6 +31,7 @@ class FlatListItem extends Component {
                                         this.setState({ isSelected: false });
                                     } else {
                                         selectedItems.push(this.props.item);
+                                        console.log(selectedItems);
                                         this.setState({ isSelected: true });
                                     }
                                 }
@@ -83,6 +84,7 @@ class FlatListItem extends Component {
                                     this.setState({ isSelected: false });
                                 } else {
                                     selectedItems.push(this.props.item);
+                                    console.log(selectedItems);
                                     this.setState({ isSelected: true });
                                 }
                             }}>
@@ -126,7 +128,6 @@ export default class BasicFlatList extends Component {
         })
             .then((response) => {
                 this.setState({ usuario: response });
-                this.generarTurnos();
                 this.fechaSeleccionada(moment());
                 this.setState({ selectedDate: moment() });
             })
@@ -150,32 +151,40 @@ export default class BasicFlatList extends Component {
         return new Date(date.getTime() + minutes * 60000);
     };
 
-    generarTurnos = () => {
-        var diferencia = Math.ceil(Math.abs(this.state.servicio.horaFin - this.state.servicio.horaInicio) / 60000);
+    generarTurnos = (dia) => {
+        var franjas = this.state.servicio.disponibilidad[dia - 1].horarios.sort((a, b) => {
+            return a.id - b.id;
+        });
         var duracionTurno = this.state.servicio.duracionTurno;
-        var cantidadTurnos = diferencia / duracionTurno;
-
         var tempArray = [];
+        var key = 1;
 
-        var auxDate = moment(this.state.servicio.horaInicio);
+        for (franja of franjas) {
+            var desde = new Date(franja.desde.seconds * 1000);
+            var hasta = new Date(franja.hasta.seconds * 1000);
+            var diferencia = Math.ceil(Math.abs(hasta - desde) / 60000);
+            var cantidadTurnos = diferencia / duracionTurno;
 
-        for (var i = 1; i < cantidadTurnos + 1; i++) {
-            var key = i.toString();
-            var estado = 'Disponible';
+            var auxDate = moment(desde);
 
-            var desde = auxDate.format('HH:mm');
-            auxDate.add(duracionTurno, 'minutes');
-            var hasta = auxDate.format('HH:mm');
+            for (var i = 1; i < cantidadTurnos + 1; i++) {
+                var estado = 'Disponible';
 
-            var turno = {
-                key: key,
-                estado: estado,
-                desde: desde,
-                hasta: hasta,
-            };
-            tempArray.push(turno);
+                var desde = auxDate.format('HH:mm');
+                auxDate.add(duracionTurno, 'minutes');
+                var hasta = auxDate.format('HH:mm');
+
+                var turno = {
+                    key: key,
+                    estado: estado,
+                    desde: desde,
+                    hasta: hasta,
+                    franja: franja.id,
+                };
+                tempArray.push(turno);
+                key++;
+            }
         }
-
         this.setState({ showSpinner: false, flatListData: tempArray });
     };
 
@@ -189,8 +198,12 @@ export default class BasicFlatList extends Component {
 
     fechaSeleccionada = async (fecha) => {
         this.setState({ showSpinner: true });
-        selectedItems = [];
         var dia = moment(fecha).format('E');
+
+        this.generarTurnos(dia);
+
+        selectedItems = [];
+
         if (this.state.servicio.disponibilidad[dia - 1]) {
             this.setState({ fechaSeleccionada: fecha.toDate(), hayTurnos: true });
             await this.obtenerReservasPorDia(fecha);
@@ -296,10 +309,18 @@ export default class BasicFlatList extends Component {
         return turnos.length == compareValue;
     };
 
+    validarFranjaHoraria = (turnos) => {
+        return turnos.map((item) => item.franja).filter((value, index, self) => self.indexOf(value) === index).length === 1;
+    };
+
     generarReserva = async () => {
         try {
             if (selectedItems.length > this.state.servicio.maxTurnos) {
                 return 3;
+            }
+
+            if (!this.validarFranjaHoraria(selectedItems)) {
+                return 4;
             }
 
             if (this.validarTurnos(selectedItems)) {
@@ -336,6 +357,7 @@ export default class BasicFlatList extends Component {
                 return 1;
             }
         } catch (error) {
+            console.log(error);
             return 2;
         } finally {
             this.setState({ showSpinner: false });
@@ -442,6 +464,15 @@ export default class BasicFlatList extends Component {
                                                                             'No puede reservar más de ' +
                                                                             this.state.servicio.maxTurnos +
                                                                             ' turnos por reserva.',
+                                                                        buttonText: 'Aceptar',
+                                                                        duration: 3000,
+                                                                        position: 'bottom',
+                                                                        type: 'warning',
+                                                                    });
+                                                                } else if (result == 4) {
+                                                                    Toast.show({
+                                                                        text:
+                                                                            'Todos los turnos deben pertenecer a la misma franja horaria.',
                                                                         buttonText: 'Aceptar',
                                                                         duration: 3000,
                                                                         position: 'bottom',

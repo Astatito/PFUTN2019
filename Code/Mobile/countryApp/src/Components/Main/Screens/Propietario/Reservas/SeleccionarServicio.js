@@ -106,7 +106,7 @@ export default class BasicFlatList extends Component {
         var refServicios = refCountry.collection('Servicios');
 
         try {
-            const snapshot = await refServicios.get();
+            const snapshot = await refServicios.where('Estado', '==', true).get();
             if (!snapshot.empty) {
                 var tempArray = [];
                 for (var i = 0; i < snapshot.docs.length; i++) {
@@ -114,8 +114,6 @@ export default class BasicFlatList extends Component {
                         key: snapshot.docs[i].id,
                         nombre: snapshot.docs[i].data().Nombre,
                         disponibilidad: snapshot.docs[i].data().Disponibilidad,
-                        horaInicio: new Date(snapshot.docs[i].data().HoraInicio.seconds * 1000),
-                        horaFin: new Date(snapshot.docs[i].data().HoraFin.seconds * 1000),
                         duracionTurno: snapshot.docs[i].data().DuracionTurno,
                         maxTurnos: snapshot.docs[i].data().TurnosMax,
                     };
