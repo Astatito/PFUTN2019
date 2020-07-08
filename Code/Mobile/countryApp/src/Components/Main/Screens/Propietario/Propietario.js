@@ -8,8 +8,8 @@ import IconIonicons from 'react-native-vector-icons/Ionicons';
 import { Database } from '../../../DataBase/Firebase';
 
 var number = '';
-const withNotifications = '#FCAC00';
-const withoutNotifications = '#070D5A'; // Aca hay que ajustar el color posta que usa el drawer, yo le puse uno aproximado
+const withNotifications = '#FCCB00';
+const withoutNotifications = '#0E4275'; 
 
 class Propietario extends Component {
     componentWillMount() {
