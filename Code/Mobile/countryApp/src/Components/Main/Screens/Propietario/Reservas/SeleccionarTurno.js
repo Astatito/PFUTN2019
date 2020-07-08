@@ -204,7 +204,7 @@ export default class BasicFlatList extends Component {
 
         selectedItems = [];
 
-        if (this.state.servicio.disponibilidad[dia - 1]) {
+        if (this.state.servicio.disponibilidad[dia - 1].horarios.length > 0) {
             this.setState({ fechaSeleccionada: fecha.toDate(), hayTurnos: true });
             await this.obtenerReservasPorDia(fecha);
         } else {
@@ -217,21 +217,16 @@ export default class BasicFlatList extends Component {
         var refServicio = refCountry.collection('Servicios').doc(this.state.servicio.key);
         var refReservas = refServicio.collection('Reservas');
 
-        var desde = new Date(
-            fecha.year(),
-            fecha.month(),
-            fecha.date(),
-            this.state.servicio.horaInicio.getHours(),
-            this.state.servicio.horaInicio.getMinutes()
-        );
+        var dia = moment(fecha).format('E');
+        var franjas = this.state.servicio.disponibilidad[dia - 1].horarios.sort((a, b) => {
+            return a.id - b.id;
+        });
 
-        var hasta = new Date(
-            fecha.year(),
-            fecha.month(),
-            fecha.date(),
-            this.state.servicio.horaFin.getHours(),
-            this.state.servicio.horaFin.getMinutes()
-        );
+        var franjaInicio = new Date(franjas[0].desde.seconds * 1000);
+        var franjaFin = new Date(franjas[franjas.length - 1].hasta.seconds * 1000);
+
+        var desde = new Date(fecha.year(), fecha.month(), fecha.date(), franjaInicio.getHours(), franjaInicio.getMinutes());
+        var hasta = new Date(fecha.year(), fecha.month(), fecha.date(), franjaFin.getHours(), franjaFin.getMinutes());
 
         try {
             const snapshot = await refReservas
