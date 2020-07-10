@@ -139,6 +139,10 @@ export default class BasicFlatList extends Component {
         }, 3000);
     }
 
+    componentWillUnmount() {
+        selectedItem = [];
+    }
+
     onBlur() {
         this.setState({ isFocused: false });
     }
