@@ -10,6 +10,10 @@ let datesBlacklist = [{
 
 class Calendar extends Component {
     
+    shouldComponentUpdate() {
+        return false
+    }
+    
     render() {
         return(
             <CalendarStrip

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet, View, StatusBar } from 'react-native';
-import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root } from 'native-base';
+import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root} from 'native-base';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import Swipeout from 'react-native-swipeout';
@@ -9,99 +9,213 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import moment from 'moment';
 
 let selectedItems = [];
+var franjaAnterior = 0
+let esNuevaFranja = false
 
 class FlatListItem extends Component {
-    state = { showSpinner: false, selectedDate: '', isSelected: false, hayTurnos: null };
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return false
+    }
+
+    state = { showSpinner: false, selectedDate: '', isSelected: false, hayTurnos: null };
+    
     render() {
         const swipeOutSettings = {
             style: { backgroundColor: '#fff' },
         };
+
+        if (this.props.franja == franjaAnterior) {
+            esNuevaFranja = false
+        } else {
+            esNuevaFranja = true
+            franjaAnterior = this.props.franja
+        }
+
         if (this.state.isSelected == false) {
             if (this.props.item.estado == 'Disponible') {
-                return (
-                    <Swipeout {...swipeOutSettings}>
-                        <ListItem
-                            avatar
-                            onPress={() => {
-                                if (this.props.item.estado === 'Disponible') {
+                if (esNuevaFranja === false) {
+                    return (
+                        <Swipeout {...swipeOutSettings}>
+                            <ListItem
+                                avatar
+                                onPress={() => {
+                                    if (this.props.item.estado === 'Disponible') {
+                                        if (selectedItems.includes(this.props.item)) {
+                                            let index = selectedItems.indexOf(this.props.item);
+                                            selectedItems.splice(index, 1);
+                                            this.setState({ isSelected: false });
+                                        } else {
+                                            selectedItems.push(this.props.item);
+                                            this.setState({ isSelected: true });
+                                        }
+                                    }
+                                }}>
+                                <Left>
+                                    <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
+                                </Left>
+                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                                </Body>
+                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                                </Right>
+                            </ListItem>
+                        </Swipeout>
+                    );
+                } else {
+                    return (
+                        <Swipeout {...swipeOutSettings}>
+                            <View style={{margin: '2%'}}>
+                                <ListItem itemDivider style={{ backgroundColor:'#A1EAC4', width:'100%',justifyContent:'center'}}>
+                                    <Text style={{fontSize:15, fontWeight:'bold', textAlign:'center'}}>Franja horaria #{this.props.franja} </Text>
+                                </ListItem>
+                            </View>
+                            <ListItem
+                                avatar
+                                onPress={() => {
+                                    if (this.props.item.estado === 'Disponible') {
+                                        if (selectedItems.includes(this.props.item)) {
+                                            let index = selectedItems.indexOf(this.props.item);
+                                            selectedItems.splice(index, 1);
+                                            this.setState({ isSelected: false });
+                                        } else {
+                                            selectedItems.push(this.props.item);
+                                            this.setState({ isSelected: true });
+                                        }
+                                    }
+                                }}>
+                                <Left>
+                                    <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
+                                </Left>
+                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                                </Body>
+                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                                </Right>
+                            </ListItem>
+                        </Swipeout>
+                    );
+                }
+                
+            } else if (this.props.item.estado == 'Reservado') {
+                if (esNuevaFranja === false) {
+                    return (
+                        <Swipeout {...swipeOutSettings}>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
+                                </Left>
+                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                    <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
+                                </Body>
+                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                                </Right>
+                            </ListItem>
+                        </Swipeout>
+                    );
+                } else {
+                    return (
+                        <Swipeout {...swipeOutSettings}>
+                            <View style={{margin: '2%'}}>
+                                <ListItem itemDivider style={{ backgroundColor:'#A1EAC4', width:'100%',justifyContent:'center'}}>
+                                    <Text style={{fontSize:15, fontWeight:'bold', textAlign:'center'}}>Franja horaria #{this.props.franja} </Text>
+                                </ListItem>
+                            </View>
+                            <ListItem avatar>
+                                <Left>
+                                    <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
+                                </Left>
+                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                    <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
+                                </Body>
+                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                                </Right>
+                            </ListItem>
+                        </Swipeout>
+                    );
+                }
+            } else {
+                return null;
+            }
+        } else {
+            if (this.props.item.estado == 'Disponible') {
+                if (esNuevaFranja === false) {
+                    return (
+                        <Swipeout {...swipeOutSettings}>
+                            <ListItem
+                                avatar
+                                onPress={() => {
                                     if (selectedItems.includes(this.props.item)) {
                                         let index = selectedItems.indexOf(this.props.item);
                                         selectedItems.splice(index, 1);
                                         this.setState({ isSelected: false });
                                     } else {
                                         selectedItems.push(this.props.item);
-                                        console.log(selectedItems);
                                         this.setState({ isSelected: true });
                                     }
-                                }
-                            }}>
-                            <Left>
-                                <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
-                            </Left>
-                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
-                            </Body>
-                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                            </Right>
-                        </ListItem>
-                    </Swipeout>
-                );
-            } else if (this.props.item.estado == 'Reservado') {
-                return (
-                    <Swipeout {...swipeOutSettings}>
-                        <ListItem avatar>
-                            <Left>
-                                <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
-                            </Left>
-                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
-                            </Body>
-                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                            </Right>
-                        </ListItem>
-                    </Swipeout>
-                );
-            } else {
-                return null;
-            }
-        } else {
-            if (this.props.item.estado == 'Disponible') {
-                return (
-                    <Swipeout {...swipeOutSettings}>
-                        <ListItem
-                            avatar
-                            onPress={() => {
-                                if (selectedItems.includes(this.props.item)) {
-                                    let index = selectedItems.indexOf(this.props.item);
-                                    selectedItems.splice(index, 1);
-                                    this.setState({ isSelected: false });
-                                } else {
-                                    selectedItems.push(this.props.item);
-                                    console.log(selectedItems);
-                                    this.setState({ isSelected: true });
-                                }
-                            }}>
-                            <Left>
-                                <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
-                            </Left>
-                            <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
-                            </Body>
-                            <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                                <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                            </Right>
-                        </ListItem>
-                    </Swipeout>
-                );
+                                }}>
+                                <Left>
+                                    <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
+                                </Left>
+                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                                </Body>
+                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                                </Right>
+                            </ListItem>
+                        </Swipeout>
+                    );
+                } else {
+                    return (
+                        <Swipeout {...swipeOutSettings}>
+                            <View style={{margin: '2%'}}>
+                                <ListItem itemDivider style={{ backgroundColor:'#A1EAC4', width:'100%',justifyContent:'center'}}>
+                                    <Text style={{fontSize:15, fontWeight:'bold', textAlign:'center'}}>Franja horaria #{this.props.franja} </Text>
+                                </ListItem>
+                            </View>
+                            <ListItem
+                                avatar
+                                onPress={() => {
+                                    if (selectedItems.includes(this.props.item)) {
+                                        let index = selectedItems.indexOf(this.props.item);
+                                        selectedItems.splice(index, 1);
+                                        this.setState({ isSelected: false });
+                                    } else {
+                                        selectedItems.push(this.props.item);
+                                        this.setState({ isSelected: true });
+                                    }
+                                }}>
+                                <Left>
+                                    <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
+                                </Left>
+                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
+                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                                </Body>
+                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
+                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
+                                </Right>
+                            </ListItem>
+                        </Swipeout>
+                    );
+                }
+                
             } else {
                 return null;
             }
@@ -122,14 +236,12 @@ export default class BasicFlatList extends Component {
         const nombreReserva = navigation.getParam('nombreReserva');
 
         this.setState({ showSpinner: true, servicio: servicio, fechaSeleccionada: new Date(), nombreReserva: nombreReserva });
-
         LocalStorage.load({
             key: 'UsuarioLogueado',
         })
             .then((response) => {
-                this.setState({ usuario: response });
+                this.setState({ usuario: response, selectedDate: moment()});
                 this.fechaSeleccionada(moment());
-                this.setState({ selectedDate: moment() });
             })
             .catch((error) => {
                 this.setState({ showSpinner: false });
@@ -185,7 +297,7 @@ export default class BasicFlatList extends Component {
                 key++;
             }
         }
-        this.setState({ showSpinner: false, flatListData: tempArray });
+        this.setState({ showSpinner: false, tempArray: tempArray });
     };
 
     componentDidMount() {
@@ -193,22 +305,25 @@ export default class BasicFlatList extends Component {
             this.setState({
                 showSpinner: false,
             });
-        }, 3000);
+        }, 4000);
     }
 
     fechaSeleccionada = async (fecha) => {
-        this.setState({ showSpinner: true });
+        franjaAnterior = 0
         var dia = moment(fecha).format('E');
-
         this.generarTurnos(dia);
-
         selectedItems = [];
-
-        if (this.state.servicio.disponibilidad[dia - 1].horarios.length > 0) {
-            this.setState({ fechaSeleccionada: fecha.toDate(), hayTurnos: true });
-            await this.obtenerReservasPorDia(fecha);
-        } else {
-            this.setState({ showSpinner: false, hayTurnos: false });
+        try {
+            if (this.state.servicio.disponibilidad[dia - 1].horarios.length > 0) {
+                this.setState({ fechaSeleccionada: fecha.toDate(), hayTurnos: true });
+                await this.obtenerReservasPorDia(fecha);
+            } else {
+                this.setState({hayTurnos: false, showSpinner: false });
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setTimeout(() => {this.setState({ showSpinner: false })}, 1000)
         }
     };
 
@@ -246,34 +361,25 @@ export default class BasicFlatList extends Component {
             }
             this.actualizarTurnos(reservas);
         } catch (error) {
-            this.setState({ showSpinner: false });
             Alert.alert('Atención', 'Ocurrió un error: ', error);
-        }
+        } 
     };
 
     actualizarTurnos = (reservas) => {
         const arrayNow = moment().format('HH:mm').toString().split(':');
         const timeNow = arrayNow[0] * 60 + parseInt(arrayNow[1]) / 60;
         const dia = moment().format('D');
-        var turnos = this.state.flatListData.map((turno) => {
+        var turnos = [];
+        this.state.tempArray.map((turno) => {
             if (this.state.selectedDate.format('D') == dia) {
                 const arrayDesde = turno.desde.toString().split(':');
                 const timeTurno = arrayDesde[0] * 60 + parseInt(arrayDesde[1]) / 60;
-                if (timeTurno < timeNow) {
-                    var estado = 'No Disponible';
-                } else {
-                    var estado = 'Disponible';
-                }
+                if (timeTurno > timeNow) {
+                    turnos.push(turno);
+                } 
             } else {
-                var estado = 'Disponible';
+                turnos.push(turno);
             }
-
-            return {
-                key: turno.key,
-                estado: estado,
-                desde: turno.desde,
-                hasta: turno.hasta,
-            };
         });
 
         var turnosNuevos = turnos.filter((turno) => turno.estado !== 'No Disponible');
@@ -291,8 +397,7 @@ export default class BasicFlatList extends Component {
         } else {
             this.setState({ hayTurnos: false });
         }
-
-        this.setState({ flatListData: turnos, showSpinner: false });
+        this.setState({ flatListData: turnos });
     };
 
     validarTurnos = (turnos) => {
@@ -368,7 +473,7 @@ export default class BasicFlatList extends Component {
                         <Calendar
                             selectedDate={this.state.selectedDate}
                             onDateSelected={(date) => {
-                                this.fechaSeleccionada(date), this.setState({ selectedDate: date });
+                                this.fechaSeleccionada(date), this.setState({ selectedDate: date, showSpinner: true });
                             }}
                         />
                         <Text style={styles.textDefault}> No hay turnos para mostrar. </Text>
@@ -382,18 +487,17 @@ export default class BasicFlatList extends Component {
                         <View>
                             <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                             <StatusBar backgroundColor="#1e90ff"></StatusBar>
-
                             <Calendar
                                 selectedDate={this.state.selectedDate}
                                 onDateSelected={(date) => {
-                                    this.fechaSeleccionada(date), this.setState({ selectedDate: date });
+                                    this.fechaSeleccionada(date), this.setState({ selectedDate: date, showSpinner: true });
                                 }}
                             />
 
                             <FlatList
                                 data={this.state.flatListData}
                                 renderItem={({ item, index }) => {
-                                    return <FlatListItem item={item} index={index} parentFlatList={this} />;
+                                    return <FlatListItem franja={item.franja} item={item} index={index} parentFlatList={this} />;
                                 }}
                             />
 
