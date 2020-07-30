@@ -10,31 +10,31 @@ import moment from 'moment';
 
 let selectedItems = [];
 var franjaAnterior = 0
-let esNuevaFranja = false
+
+class FranjaListItem extends Component {
+    render () {
+        return (
+            <View style={{margin: '2%'}}>
+                <ListItem itemDivider style={{ backgroundColor:'#A1EAC4', width:'100%',justifyContent:'center'}}>
+                    <Text style={{fontSize:15, fontWeight:'bold', textAlign:'center'}}>Franja horaria #{this.props.franja} </Text>
+                </ListItem>
+            </View>
+        )
+    }
+}
 
 class FlatListItem extends Component {
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return false
-    }
+    state = { showSpinner: false, selectedDate: '', isSelected: false, hayTurnos: null};
 
-    state = { showSpinner: false, selectedDate: '', isSelected: false, hayTurnos: null };
-    
     render() {
+
         const swipeOutSettings = {
             style: { backgroundColor: '#fff' },
         };
 
-        if (this.props.franja == franjaAnterior) {
-            esNuevaFranja = false
-        } else {
-            esNuevaFranja = true
-            franjaAnterior = this.props.franja
-        }
-
         if (this.state.isSelected == false) {
-            if (this.props.item.estado == 'Disponible') {
-                if (esNuevaFranja === false) {
+                if (this.props.esNuevaFranja === false) {
                     return (
                         <Swipeout {...swipeOutSettings}>
                             <ListItem
@@ -55,7 +55,7 @@ class FlatListItem extends Component {
                                     <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
                                 </Left>
                                 <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                                    <Text style={{ fontSize: 14, color: this.props.color }}> {this.props.item.estado} </Text>
                                 </Body>
                                 <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
                                     <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
@@ -68,11 +68,7 @@ class FlatListItem extends Component {
                 } else {
                     return (
                         <Swipeout {...swipeOutSettings}>
-                            <View style={{margin: '2%'}}>
-                                <ListItem itemDivider style={{ backgroundColor:'#A1EAC4', width:'100%',justifyContent:'center'}}>
-                                    <Text style={{fontSize:15, fontWeight:'bold', textAlign:'center'}}>Franja horaria #{this.props.franja} </Text>
-                                </ListItem>
-                            </View>
+                            <FranjaListItem franja={this.props.franja}/>
                             <ListItem
                                 avatar
                                 onPress={() => {
@@ -91,51 +87,7 @@ class FlatListItem extends Component {
                                     <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
                                 </Left>
                                 <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
-                                </Body>
-                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                                </Right>
-                            </ListItem>
-                        </Swipeout>
-                    );
-                }
-                
-            } else if (this.props.item.estado == 'Reservado') {
-                if (esNuevaFranja === false) {
-                    return (
-                        <Swipeout {...swipeOutSettings}>
-                            <ListItem avatar>
-                                <Left>
-                                    <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
-                                </Left>
-                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                    <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
-                                </Body>
-                                <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
-                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
-                                    <Text style={{ fontSize: 12, color: 'gray' }}> - </Text>
-                                    <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.hasta + ' hs.'} </Text>
-                                </Right>
-                            </ListItem>
-                        </Swipeout>
-                    );
-                } else {
-                    return (
-                        <Swipeout {...swipeOutSettings}>
-                            <View style={{margin: '2%'}}>
-                                <ListItem itemDivider style={{ backgroundColor:'#A1EAC4', width:'100%',justifyContent:'center'}}>
-                                    <Text style={{fontSize:15, fontWeight:'bold', textAlign:'center'}}>Franja horaria #{this.props.franja} </Text>
-                                </ListItem>
-                            </View>
-                            <ListItem avatar>
-                                <Left>
-                                    <Thumbnail source={require('../../../../../assets/Images/turnos.png')} />
-                                </Left>
-                                <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                    <Text style={{ fontSize: 14, color: 'red' }}> {this.props.item.estado} </Text>
+                                    <Text style={{ fontSize: 14, color: this.props.color }}> {this.props.item.estado} </Text>
                                 </Body>
                                 <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
                                     <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
@@ -147,11 +99,7 @@ class FlatListItem extends Component {
                     );
                 }
             } else {
-                return null;
-            }
-        } else {
-            if (this.props.item.estado == 'Disponible') {
-                if (esNuevaFranja === false) {
+                if (this.props.esNuevaFranja === false) {
                     return (
                         <Swipeout {...swipeOutSettings}>
                             <ListItem
@@ -170,7 +118,7 @@ class FlatListItem extends Component {
                                     <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
                                 </Left>
                                 <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                                    <Text style={{ fontSize: 14, color: this.props.color }}> {this.props.item.estado} </Text>
                                 </Body>
                                 <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
                                     <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
@@ -183,11 +131,7 @@ class FlatListItem extends Component {
                 } else {
                     return (
                         <Swipeout {...swipeOutSettings}>
-                            <View style={{margin: '2%'}}>
-                                <ListItem itemDivider style={{ backgroundColor:'#A1EAC4', width:'100%',justifyContent:'center'}}>
-                                    <Text style={{fontSize:15, fontWeight:'bold', textAlign:'center'}}>Franja horaria #{this.props.franja} </Text>
-                                </ListItem>
-                            </View>
+                            <FranjaListItem franja={this.props.franja}/>
                             <ListItem
                                 avatar
                                 onPress={() => {
@@ -204,7 +148,7 @@ class FlatListItem extends Component {
                                     <Thumbnail source={require('../../../../../assets/Images/check-azul.png')} />
                                 </Left>
                                 <Body style={{ alignSelf: 'center', marginTop: '1%' }}>
-                                    <Text style={{ fontSize: 14, color: 'green' }}> {this.props.item.estado} </Text>
+                                    <Text style={{ fontSize: 14, color: this.props.color }}> {this.props.item.estado} </Text>
                                 </Body>
                                 <Right style={{ alignSelf: 'center', flexDirection: 'row', marginTop: '1.9%' }}>
                                     <Text style={{ fontSize: 12, color: 'gray' }}> {this.props.item.desde + ' hs.'} </Text>
@@ -215,10 +159,6 @@ class FlatListItem extends Component {
                         </Swipeout>
                     );
                 }
-                
-            } else {
-                return null;
-            }
         }
     }
 }
@@ -381,7 +321,6 @@ export default class BasicFlatList extends Component {
                 turnos.push(turno);
             }
         });
-
         var turnosNuevos = turnos.filter((turno) => turno.estado !== 'No Disponible');
         if (turnosNuevos.length > 0) {
             if (reservas.length > 0) {
@@ -397,8 +336,26 @@ export default class BasicFlatList extends Component {
         } else {
             this.setState({ hayTurnos: false });
         }
-        this.setState({ flatListData: turnos });
+
+        this.setState({ flatListData: this.setParametersForList(turnos) });
     };
+
+    setParametersForList = (turnos) => {
+        turnos.map(item => {
+            if (item.estado == 'Disponible') {
+                item.color = 'green';
+            } else if (item.estado == 'Reservado') {
+                item.color = 'red'
+            } 
+            if (franjaAnterior === item.franja) {
+                item.esNuevaFranja = false ;
+            } else {
+                item.esNuevaFranja = true
+                franjaAnterior = item.franja
+            }
+        });
+        return turnos
+    }
 
     validarTurnos = (turnos) => {
         turnos.sort((a, b) => {
@@ -497,7 +454,7 @@ export default class BasicFlatList extends Component {
                             <FlatList
                                 data={this.state.flatListData}
                                 renderItem={({ item, index }) => {
-                                    return <FlatListItem franja={item.franja} item={item} index={index} parentFlatList={this} />;
+                                    return <FlatListItem esNuevaFranja= {item.esNuevaFranja} franja={item.franja} color={item.color} item={item} index={index} parentFlatList={this} />;
                                 }}
                             />
 
