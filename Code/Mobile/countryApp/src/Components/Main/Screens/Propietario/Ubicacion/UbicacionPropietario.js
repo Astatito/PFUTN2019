@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import Share from 'react-native-share';
-import RNFetchBlob from 'rn-fetch-blob';
 import { Text, Button, Root, Toast } from 'native-base';
 import { Database, Storage } from '../../../../DataBase/Firebase';
 import { LocalStorage } from '../../../../DataBase/Storage';
@@ -55,50 +54,18 @@ class MiUbicacion extends Component {
 
     shareImage = async () => {
         try {
-            const resp = await RNFetchBlob
-            .config({
-                useDownloadManager : true, 
-                fileCache : true
-            }) 
-            .fetch('GET', urlImagen);
-            let base64image = resp.data;
-            const url = 'data:image/png;base64,' + base64image
             let shareOptions = {
                 title: 'Compartir',
-                url: url,
+                url: urlImagen,
                 message: 'Hola! Aquí te envío el mapa del country ' + nombreCountry + ' .',
-                subject: 'Mapa del country - MartinDale',
+                subject: 'Mapa del country ' + nombreCountry + ' .',
             };
             this.setState({showSpinner: false})
             await Share.open(shareOptions);
         } catch (error) {
-            console.log(error)
+            console.log('Error', error)
         } 
     };
-
-    getUrlForModal = async () => {
-        try {
-            const resp = await RNFetchBlob
-            .config({
-                useDownloadManager : true, 
-                fileCache : true
-            }) 
-            .fetch('GET', urlImagen);
-            let base64image = resp.data;
-            const url = 'data:image/png;base64,' + base64image
-            
-        } catch (error) {
-            Toast.show({
-                text: 'Lo siento, ocurrió un error inesperado.',
-                buttonText: 'Aceptar',
-                duration: 3000,
-                position: 'bottom',
-                type: 'danger',
-            });
-        } finally {
-            this.setState({showSpinner: false});
-        }
-    }
 
     render() {
         return (
@@ -115,7 +82,6 @@ class MiUbicacion extends Component {
                                 block
                                 onPress={async () => {
                                     this.setState({showSpinner: true}, async () => {
-                                        url = await this.getUrlForModal();
                                         this.props.navigation.navigate('ModalForImage', { visible: true, url: urlImagen });
                                     })
                                 }}>
