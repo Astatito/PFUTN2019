@@ -79,7 +79,7 @@ class Propietario extends Component {
 
     static navigationOptions = ({ navigation }) => {
         return {
-            title: 'Home',
+            title: 'Inicio',
             headerRight: (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: 100 }}>
                     <MaterialIcons
@@ -108,7 +108,7 @@ class Propietario extends Component {
             <Content>
                 <View style={styles.container}>
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                    <Text style={styles.header}> Bienvenido de nuevo !</Text>
+                    <Text style={styles.header}>¡Bienvenido de nuevo !</Text>
                     <View style={{ height: 340, width: 340, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
                         <Image
                             source={require('../../../../assets/Images/LogoTransparente.png')}
