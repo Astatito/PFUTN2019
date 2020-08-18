@@ -108,7 +108,7 @@ class Propietario extends Component {
             <Content>
                 <View style={styles.container}>
                     <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                    <Text style={styles.header}>¡Bienvenido de nuevo !</Text>
+                    <Text style={styles.header}>¡Bienvenido de nuevo!</Text>
                     <View style={{ height: 340, width: 340, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
                         <Image
                             source={require('../../../../assets/Images/LogoTransparente.png')}

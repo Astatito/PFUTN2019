@@ -314,7 +314,7 @@ class ModificarInvitado extends Component {
                             <Text style={styles.header}> Modificar invitado </Text>
 
                             <View style={styles.name}>
-                                <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '3%' }}>
+                                <Text style={{ alignSelf: 'center', color: '#8F8787', paddingHorizontal: '2%' }}>
                                     {this.state.nombre + ' ' + this.state.apellido}
                                 </Text>
                             </View>
