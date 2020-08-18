@@ -74,7 +74,7 @@ class DatosReserva extends Component {
     };
 
     onToastClosed = (reason) => {
-        this.props.navigation.navigate('MisReservas');
+        this.props.navigation.navigate('Mis Invitados');
     }
 
     modificarReserva = async () => {
