@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Alert, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail, Button, Content, Toast, Root } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
@@ -190,7 +190,6 @@ export default class BasicFlatList extends Component {
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
-
         refInvitados
             .where(
                 'IdPropietario',
@@ -225,7 +224,7 @@ export default class BasicFlatList extends Component {
             .catch((error) => {
                 this.setState({ showSpinner: false });
                 Toast.show({
-                    text: 'No se pudo traer las invitaciones.',
+                    text: 'Lo siento, ocurrió un error inesperado.',
                     buttonText: 'Aceptar',
                     duration: 3000,
                     position: 'bottom',
@@ -243,29 +242,38 @@ export default class BasicFlatList extends Component {
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc(this.state.reserva.key);
         var refInvitados = refReserva.collection('Invitados');
-
-        refInvitados.onSnapshot((snapshot) => {
-            if (!snapshot.empty) {
-                //El propietario tiene invitaciones
-                var tempArray = [];
-                for (var i = 0; i < snapshot.docs.length; i++) {
-                    var invitado = {
-                        key: snapshot.docs[i].id,
-                        nombre: snapshot.docs[i].data().Nombre,
-                        apellido: snapshot.docs[i].data().Apellido,
-                        estado: snapshot.docs[i].data().Estado,
-                        documento: snapshot.docs[i].data().Documento,
-                        tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
-                        reserva: this.state.reserva.key,
-                    };
-                    tempArray.push(invitado);
+        try {
+            refInvitados.onSnapshot((snapshot) => {
+                if (!snapshot.empty) {
+                    //El propietario tiene invitaciones
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        var invitado = {
+                            key: snapshot.docs[i].id,
+                            nombre: snapshot.docs[i].data().Nombre,
+                            apellido: snapshot.docs[i].data().Apellido,
+                            estado: snapshot.docs[i].data().Estado,
+                            documento: snapshot.docs[i].data().Documento,
+                            tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                            reserva: this.state.reserva.key,
+                        };
+                        tempArray.push(invitado);
+                    }
+                    tempArray.sort((a, b) => a.estado - b.estado);
+                    this.setState({ invitadosReserva: tempArray });
+                } else {
+                    this.setState({ invitadosReserva: tempArray });
                 }
-                tempArray.sort((a, b) => a.estado - b.estado);
-                this.setState({ invitadosReserva: tempArray });
-            } else {
-                this.setState({ invitadosReserva: tempArray });
-            }
-        });
+            });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     agregarInvitados = async () => {

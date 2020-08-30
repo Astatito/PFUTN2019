@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image, StatusBar } from 'react-native';
-import { Text, Content } from 'native-base';
+import { Text, Content, Root, Toast } from 'native-base';
 import { LocalStorage } from '../../../DataBase/Storage';
 import call from 'react-native-phone-call';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -18,7 +18,8 @@ class Propietario extends Component {
         })
             .then((usuario) => {
                 this.setState({ usuario }, () => {
-                    var doc = Database.collection('Country')
+                    try {
+                        var doc = Database.collection('Country')
                         .doc(this.state.usuario.country)
                         .get()
                         .then((doc) => {
@@ -27,6 +28,15 @@ class Propietario extends Component {
                                 number = celular;
                             }
                         });
+                    } catch (error) {
+                        Toast.show({
+                            text: 'Lo siento, ocurrió un error inesperado.',
+                            buttonText: 'Aceptar',
+                            duration: 3000,
+                            position: 'bottom',
+                            type: 'danger',
+                        });
+                    }
                 });
                 this.props.navigation.setParams({ iconColor: withoutNotifications });
                 this.obtenerNotificaciones();
@@ -61,7 +71,8 @@ class Propietario extends Component {
     obtenerNotificaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refNotificaciones = refCountry.collection('Notificaciones');
-        this.snapshotNotificaciones = refNotificaciones
+        try {
+            this.snapshotNotificaciones = refNotificaciones
             .where(
                 'IdPropietario',
                 '==',
@@ -75,6 +86,15 @@ class Propietario extends Component {
                     this.props.navigation.setParams({ iconColor: withoutNotifications });
                 }
             });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     static navigationOptions = ({ navigation }) => {
@@ -105,17 +125,19 @@ class Propietario extends Component {
 
     render() {
         return (
-            <Content>
-                <View style={styles.container}>
-                    <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                    <Text style={styles.header}>¡Bienvenido de nuevo!</Text>
-                    <View style={{ height: 340, width: 340, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image
-                            source={require('../../../../assets/Images/LogoTransparente.png')}
-                            style={{ height: 340, width: 340 }}></Image>
+            <Root>
+                <Content>
+                    <View style={styles.container}>
+                        <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                        <Text style={styles.header}>¡Bienvenido de nuevo!</Text>
+                        <View style={{ height: 340, width: 340, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+                            <Image
+                                source={require('../../../../assets/Images/LogoTransparente.png')}
+                                style={{ height: 340, width: 340 }}></Image>
+                        </View>
                     </View>
-                </View>
-            </Content>
+                </Content>
+            </Root>
         );
     }
 }

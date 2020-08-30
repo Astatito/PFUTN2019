@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { FlatList, StyleSheet, View, Alert } from 'react-native';
 import { ListItem, Left, Body, Text, Thumbnail, Toast, Root } from 'native-base';
 import Swipeout from 'react-native-swipeout';
-import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
 import IconEntypo from 'react-native-vector-icons/Entypo';
@@ -19,18 +18,21 @@ class FlatListItem extends Component {
 
     descartarInvitado = async (invitado) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
-        console.log(invitado);
         // TODO: Tanto la eliminacion de la autorización como el invitado de la reserva forman parte de una transaccion
-        if (invitado.estado == true) {
-            // Elimina la autorización para ingresar
-            var refInvitacionesEventos = refCountry.collection('InvitacionesEventos');
-            var snapshot = await refInvitacionesEventos
-                .where('Documento', '==', invitado.documento)
-                .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + invitado.tipoDocumento))
-                .where('IdReserva', '==', Database.doc(invitado.reserva.idReservaServicio))
-                .get();
-            var refInvitacion = refInvitacionesEventos.doc(snapshot.docs[0].id);
-            await refInvitacion.delete();
+        try {
+            if (invitado.estado == true) {
+                // Elimina la autorización para ingresar
+                var refInvitacionesEventos = refCountry.collection('InvitacionesEventos');
+                var snapshot = await refInvitacionesEventos
+                    .where('Documento', '==', invitado.documento)
+                    .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + invitado.tipoDocumento))
+                    .where('IdReserva', '==', Database.doc(invitado.reserva.idReservaServicio))
+                    .get();
+                var refInvitacion = refInvitacionesEventos.doc(snapshot.docs[0].id);
+                await refInvitacion.delete();
+            }
+        } catch (error) {
+            return 1
         }
 
         // Elimina el invitado de la reserva
@@ -50,26 +52,34 @@ class FlatListItem extends Component {
 
         // TODO: Tanto la invitacion al evento como el update del estado forman parte de una transaccion
         var refInvitados = refCountry.collection('Invitados');
-        var snapshot = await refInvitados
+        try {
+            var snapshot = await refInvitados
             .where('Documento', '==', invitado.documento)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + invitado.tipoDocumento))
             .get();
+        } catch (error) {
+            return 1;
+        }
 
-        if (snapshot.empty) {
-            var nuevoInvitado = {
-                Nombre: '',
-                Apellido: '',
-                Estado: false,
-                FechaAlta: new Date(),
-                FechaDesde: new Date(),
-                FechaHasta: new Date(),
-                Grupo: '',
-                IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
-                Documento: invitado.documento,
-                TipoDocumento: Database.doc('TipoDocumento/' + invitado.tipoDocumento),
-            };
-
-            refInvitados.add(nuevoInvitado);
+        try {
+            if (snapshot.empty) {
+                var nuevoInvitado = {
+                    Nombre: '',
+                    Apellido: '',
+                    Estado: false,
+                    FechaAlta: new Date(),
+                    FechaDesde: new Date(),
+                    FechaHasta: new Date(),
+                    Grupo: '',
+                    IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
+                    Documento: invitado.documento,
+                    TipoDocumento: Database.doc('TipoDocumento/' + invitado.tipoDocumento),
+                };
+    
+                refInvitados.add(nuevoInvitado);
+            }
+        } catch (error) {
+            return 1;
         }
 
         // Crea la invitación al evento
@@ -81,7 +91,12 @@ class FlatListItem extends Component {
             TipoDocumento: Database.doc('TipoDocumento/' + invitado.tipoDocumento),
             IdReserva: Database.doc(invitado.reserva.idReservaServicio),
         };
-        await refInvitacionesEventos.add(invitacionEvento);
+
+        try {
+            await refInvitacionesEventos.add(invitacionEvento);
+        } catch (error) {
+            return 1;
+        }
 
         // Actualiza el estado del invitado a la reserva
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
@@ -379,29 +394,38 @@ export default class BasicFlatList extends Component {
         var refPropietario = refCountry.collection('Propietarios').doc(this.state.usuario.datos);
         var refReserva = refPropietario.collection('Reservas').doc(this.state.reserva.key);
         var refInvitados = refReserva.collection('Invitados');
-
-        this.snapshotInvitados = refInvitados.onSnapshot((snapshot) => {
-            if (!snapshot.empty) {
-                //El propietario tiene invitaciones
-                var tempArray = [];
-                for (var i = 0; i < snapshot.docs.length; i++) {
-                    var invitado = {
-                        key: snapshot.docs[i].id,
-                        nombre: snapshot.docs[i].data().Nombre,
-                        apellido: snapshot.docs[i].data().Apellido,
-                        estado: snapshot.docs[i].data().Estado,
-                        documento: snapshot.docs[i].data().Documento,
-                        tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
-                        reserva: this.state.reserva,
-                    };
-                    tempArray.push(invitado);
+        try {
+            this.snapshotInvitados = refInvitados.onSnapshot((snapshot) => {
+                if (!snapshot.empty) {
+                    //El propietario tiene invitaciones
+                    var tempArray = [];
+                    for (var i = 0; i < snapshot.docs.length; i++) {
+                        var invitado = {
+                            key: snapshot.docs[i].id,
+                            nombre: snapshot.docs[i].data().Nombre,
+                            apellido: snapshot.docs[i].data().Apellido,
+                            estado: snapshot.docs[i].data().Estado,
+                            documento: snapshot.docs[i].data().Documento,
+                            tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                            reserva: this.state.reserva,
+                        };
+                        tempArray.push(invitado);
+                    }
+                    tempArray.sort((a, b) => a.estado - b.estado);
+                    this.setState({ showSpinner: false, flatListData: tempArray });
+                } else {
+                    this.setState({ showSpinner: false, flatListData: [] });
                 }
-                tempArray.sort((a, b) => a.estado - b.estado);
-                this.setState({ showSpinner: false, flatListData: tempArray });
-            } else {
-                this.setState({ showSpinner: false, flatListData: [] });
-            }
-        });
+            });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     render() {

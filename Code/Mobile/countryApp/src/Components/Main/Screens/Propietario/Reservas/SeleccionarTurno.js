@@ -301,7 +301,13 @@ export default class BasicFlatList extends Component {
             }
             this.actualizarTurnos(reservas);
         } catch (error) {
-            Alert.alert('Atención', 'Ocurrió un error: ', error);
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
         } 
     };
 
