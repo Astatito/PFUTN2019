@@ -57,25 +57,34 @@ class EgresoManual extends Component {
     generarNotificacionEgreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refIngresos = refCountry.collection('Ingresos');
-
-        var ingreso = await refIngresos
+        try {
+            var ingreso = await refIngresos
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
             .orderBy('Fecha', 'desc')
             .limit(1)
             .get();
 
-        var refNotificaciones = refCountry.collection('Notificaciones');
-        var notificacion = {
-            Fecha: new Date(),
-            Tipo: 'Egreso',
-            Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
-            IdPropietario: Database.doc(
-                'Country/' + this.state.usuario.country + '/Propietarios/' + ingreso.docs[0].data().IdPropietario.id
-            ),
-            Visto: false,
-        };
-        await refNotificaciones.add(notificacion);
+            var refNotificaciones = refCountry.collection('Notificaciones');
+            var notificacion = {
+                Fecha: new Date(),
+                Tipo: 'Egreso',
+                Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
+                IdPropietario: Database.doc(
+                    'Country/' + this.state.usuario.country + '/Propietarios/' + ingreso.docs[0].data().IdPropietario.id
+                ),
+                Visto: false,
+            };
+            await refNotificaciones.add(notificacion);
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     //Graba el egreso en Firestore
@@ -116,17 +125,15 @@ class EgresoManual extends Component {
     buscarInvitacionesEventos = async (tipoDoc, numeroDoc, invitacionPersonal = undefined) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitaciones = refCountry.collection('InvitacionesEventos');
-
-        const invitaciones = await refInvitaciones
+        try {
+            const invitaciones = await refInvitaciones
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
             .where('Estado', '==', true)
             .get();
         if (!invitaciones.empty) {
-            console.log('Tiene invitaciones a eventos');
             var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
             if (invitacion != -1) {
-                console.log('Tiene una invitacion a eventos valida');
                 var result = await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
                 if (result == 0) {
                     return 0;
@@ -138,12 +145,20 @@ class EgresoManual extends Component {
                 return 2;
             }
         } else {
-            console.log('No tiene ninguna invitacion a eventos');
             var result = invitacionPersonal == undefined ? 3 : 2;
             if (result == 2) {
                 await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
             }
             return result;
+        } 
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
         }
     };
 
