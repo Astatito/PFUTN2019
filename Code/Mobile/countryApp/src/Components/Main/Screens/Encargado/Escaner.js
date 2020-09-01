@@ -87,9 +87,10 @@ class Escaner extends Component {
                 ingreso.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
                 this.generarNotificacionIngreso(idPropietario, nombre, apellido);
             }
-            await refIngresos.add();
+            await refIngresos.add(ingreso);
             return 0;
         } catch (error) {
+            console.log(error);
             return 1;
         }
     };
@@ -169,6 +170,7 @@ class Escaner extends Component {
     };
 
     registrarIngreso = async (persona) => {
+        console.log('Escaneado:', persona);
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
@@ -187,8 +189,10 @@ class Escaner extends Component {
                     persona.Documento
                 );
                 if (result == 0) {
+                    console.log('Result: Propietario 0');
                     return 0;
                 } else {
+                    console.log('Result: Propietario 1');
                     return 1;
                 }
             } else {
@@ -216,8 +220,10 @@ class Escaner extends Component {
                                     invitaciones[0].IdPropietario.id
                                 );
                                 if (result == 0) {
+                                    console.log('Result: Invitado 0');
                                     return 0;
                                 } else {
+                                    console.log('Result: Invitado 1');
                                     return 1;
                                 }
                             } else {
@@ -250,8 +256,10 @@ class Escaner extends Component {
                             snapshot.docs[0].data().Apellido
                         );
                         if (result == 4) {
+                            console.log('Result: 3');
                             return 3;
                         }
+                        console.log('Result: ', result);
                         return result;
                     }
                 } else {
@@ -375,6 +383,7 @@ class Escaner extends Component {
 
     //Registra el egreso según tipo y número de documento
     registrarEgreso = async (persona) => {
+        console.log('Escaneado:', persona);
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');

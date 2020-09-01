@@ -344,7 +344,7 @@ export default class BasicFlatList extends Component {
                         name="share"
                         size={23}
                         onPress={() => {
-                            let link = 'http://livesafe.com.ar/invitado/' + idCountry + '/' + idPropietario + '/' + idReserva;
+                            let link = 'https://livesafeweb.web.app/#/invitado/' + idCountry + '/' + idPropietario + '/' + idReserva;
                             let shareOptions = {
                                 title: 'Compartir',
                                 message:

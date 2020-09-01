@@ -9,7 +9,7 @@ import { Database } from '../../../DataBase/Firebase';
 
 var number = '';
 const withNotifications = '#FCCB00';
-const withoutNotifications = '#0E4275'; 
+const withoutNotifications = '#0E4275';
 
 class Propietario extends Component {
     componentWillMount() {
@@ -125,6 +125,7 @@ class Propietario extends Component {
 
     render() {
         return (
+<<<<<<< Updated upstream
             <Root>
                 <Content>
                     <View style={styles.container}>
@@ -135,6 +136,16 @@ class Propietario extends Component {
                                 source={require('../../../../assets/Images/LogoTransparente.png')}
                                 style={{ height: 340, width: 340 }}></Image>
                         </View>
+=======
+            <Content>
+                <View style={styles.container}>
+                    <StatusBar backgroundColor="#1e90ff"></StatusBar>
+                    <Text style={styles.header}>¡Bienvenido de nuevo!</Text>
+                    <View style={{ height: 340, width: 340, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+                        <Image
+                            source={require('../../../../assets/Images/LogoTransparente.png')}
+                            style={{ height: 340, width: 340 }}></Image>
+>>>>>>> Stashed changes
                     </View>
                 </Content>
             </Root>

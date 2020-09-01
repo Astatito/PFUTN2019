@@ -10,14 +10,14 @@ LocalStorage.save({
         usuario: 'encargado@countryapp.com',
         tipoUsuario: 'Encargado',
         country: 'nkB2OpDMe6znzVkQRCRf',
-        datos: 'j6cHI1TEPzYTN4l6vTUU'
-    }
+        datos: 'j6cHI1TEPzYTN4l6vTUU',
+    },
 });
 //FIN DEL TODO
 
 class Encargado extends Component {
     static navigationOptions = {
-        title: 'Inicio'
+        title: 'Inicio',
     };
 
     render() {
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#fff',
         paddingLeft: '5%',
-        paddingRight: '5%'
+        paddingRight: '5%',
     },
     header: {
         fontSize: 30,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         marginTop: '15%',
         color: '#08477A',
         fontWeight: 'normal',
-        fontStyle: 'normal'
-    }
+        fontStyle: 'normal',
+    },
 });
 export default Encargado;
