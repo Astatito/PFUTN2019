@@ -225,8 +225,8 @@ export default class BasicFlatList extends Component {
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
-
-        this.snapshotInvitados = refInvitados
+        try {
+            this.snapshotInvitados = refInvitados
             .where(
                 'IdPropietario',
                 '==',
@@ -254,6 +254,15 @@ export default class BasicFlatList extends Component {
                     this.setState({ showSpinner: false, flatListData: [] });
                 }
             });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     refreshFlatList = (deletedKey) => {

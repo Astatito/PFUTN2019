@@ -22,8 +22,18 @@ class MiUbicacion extends Component {
             key: 'UsuarioLogueado',
         })
             .then(async (usuario) => {
-                const path = await this.obtenerPath(usuario.country);
-                urlImagen = await Storage.ref().child(path).getDownloadURL()
+                try {
+                    const path = await this.obtenerPath(usuario.country);
+                    urlImagen = await Storage.ref().child(path).getDownloadURL()  
+                } catch (error) {
+                    Toast.show({
+                        text: 'Lo siento, ocurrió un error inesperado.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'danger',
+                    });
+                }  
             })
             .catch((error) => {
                 Toast.show({

@@ -74,22 +74,31 @@ class MiPerfil extends Component {
     obtenerDatosPersonales = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-
-        refPropietarios.doc(this.state.usuario.datos).onSnapshot((doc) => {
-            if (doc.exists) {
-                var propietario = doc.data();
-                this.setState({
-                    nombre: propietario.Nombre,
-                    apellido: propietario.Apellido,
-                    documento: propietario.Documento,
-                    picker: propietario.TipoDocumento.id,
-                    celular: propietario.Celular,
-                    fechaNacimiento: moment.unix(propietario.FechaNacimiento.seconds),
-                });
-                datosPropietario = propietario;
-                this.setState({ showSpinner: false });
-            }
-        });
+        try {
+            refPropietarios.doc(this.state.usuario.datos).onSnapshot((doc) => {
+                if (doc.exists) {
+                    var propietario = doc.data();
+                    this.setState({
+                        nombre: propietario.Nombre,
+                        apellido: propietario.Apellido,
+                        documento: propietario.Documento,
+                        picker: propietario.TipoDocumento.id,
+                        celular: propietario.Celular,
+                        fechaNacimiento: moment.unix(propietario.FechaNacimiento.seconds),
+                    });
+                    datosPropietario = propietario;
+                    this.setState({ showSpinner: false });
+                }
+            });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     actualizarDatos = async () => {

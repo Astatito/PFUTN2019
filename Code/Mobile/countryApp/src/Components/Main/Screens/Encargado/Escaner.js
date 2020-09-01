@@ -54,7 +54,17 @@ class Escaner extends Component {
             IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario),
             Visto: false,
         };
-        await refNotificaciones.add(notificacion);
+        try {
+            await refNotificaciones.add(notificacion);
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     //Graba el ingreso en Firestore
@@ -122,36 +132,39 @@ class Escaner extends Component {
     buscarInvitacionesEventos = async (tipoDoc, numeroDoc, autenticado = undefined, nombre = undefined, apellido = undefined) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitaciones = refCountry.collection('InvitacionesEventos');
-        const invitaciones = await refInvitaciones
+        try {
+            const invitaciones = await refInvitaciones
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
             .get();
-        if (!invitaciones.empty) {
-            console.log('Tiene invitaciones a eventos');
-            var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
-            if (invitacion != -1) {
-                console.log('Tiene una invitacion a eventos valida');
-                console.log('Está autenticado:', autenticado);
-                if (autenticado) {
-                    console.log('Esta autenticado');
-                    var result = await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
-                    if (result == 0) {
-                        return 0;
+            if (!invitaciones.empty) {
+                var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
+                if (invitacion != -1) {
+                    if (autenticado) {
+                        var result = await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
+                        if (result == 0) {
+                            return 0;
+                        } else {
+                            return 1;
+                        }
                     } else {
-                        return 1;
+                        this.setState({ invitacionId: invitacion.id });
+                        return 2;
                     }
                 } else {
-                    console.log('No está autenticado');
-                    this.setState({ invitacionId: invitacion.id });
-                    return 2;
+                    return 3;
                 }
             } else {
-                console.log('No tiene invitaciones validas para un evento');
-                return 3;
-            }
-        } else {
-            console.log('No tiene ninguna invitacion a eventos');
-            return 4;
+                return 4;
+            }  
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
         }
     };
 
@@ -271,25 +284,34 @@ class Escaner extends Component {
     generarNotificacionEgreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refIngresos = refCountry.collection('Ingresos');
-
-        var ingreso = await refIngresos
+        try {
+            var ingreso = await refIngresos
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
             .orderBy('Fecha', 'desc')
             .limit(1)
             .get();
 
-        var refNotificaciones = refCountry.collection('Notificaciones');
-        var notificacion = {
-            Fecha: new Date(),
-            Tipo: 'Egreso',
-            Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
-            IdPropietario: Database.doc(
-                'Country/' + this.state.usuario.country + '/Propietarios/' + ingreso.docs[0].data().IdPropietario.id
-            ),
-            Visto: false,
-        };
-        await refNotificaciones.add(notificacion);
+            var refNotificaciones = refCountry.collection('Notificaciones');
+            var notificacion = {
+                Fecha: new Date(),
+                Tipo: 'Egreso',
+                Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
+                IdPropietario: Database.doc(
+                    'Country/' + this.state.usuario.country + '/Propietarios/' + ingreso.docs[0].data().IdPropietario.id
+                ),
+                Visto: false,
+            };
+            await refNotificaciones.add(notificacion);
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            }); 
+        }
     };
 
     //Graba el egreso en Firestore
@@ -315,33 +337,39 @@ class Escaner extends Component {
     buscarInvitacionesEventosEgreso = async (tipoDoc, numeroDoc, invitacionPersonal = undefined) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitaciones = refCountry.collection('InvitacionesEventos');
-
-        const invitaciones = await refInvitaciones
+        try {
+            const invitaciones = await refInvitaciones
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
             .get();
-        if (!invitaciones.empty) {
-            console.log('Tiene invitaciones a eventos');
-            var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
-            if (invitacion != -1) {
-                console.log('Tiene una invitacion a eventos valida');
-                var result = await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
-                if (result == 0) {
-                    return 0;
+            if (!invitaciones.empty) {
+                var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
+                if (invitacion != -1) {
+                    var result = await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                    if (result == 0) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
                 } else {
-                    return 1;
+                    await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                    return 2;
                 }
             } else {
-                await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
-                return 2;
+                var result = invitacionPersonal == undefined ? 3 : 2;
+                if (result == 2) {
+                    await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                }
+                return result;
             }
-        } else {
-            console.log('No tiene ninguna invitacion a eventos');
-            var result = invitacionPersonal == undefined ? 3 : 2;
-            if (result == 2) {
-                await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
-            }
-            return result;
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            }); 
         }
     };
 

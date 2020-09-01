@@ -174,7 +174,17 @@ class RegistroVisitante extends Component {
             IdPropietario: idPropietario,
             Visto: false,
         };
-        await refNotificaciones.add(notificacion);
+        try {
+            await refNotificaciones.add(notificacion); 
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            }); 
+        }
     };
 
     //Graba el ingreso en Firestore

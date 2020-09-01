@@ -177,8 +177,8 @@ export default class BasicFlatList extends Component {
     obtenerReservas = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refReservas = refCountry.collection('Propietarios').doc(this.state.usuario.datos).collection('Reservas');
-
-        this.snapshotReservas = refReservas
+        try {
+            this.snapshotReservas = refReservas
             .where('Cancelado', '==', false)
             .where('FechaDesde', '>=', new Date())
             .orderBy('FechaDesde')
@@ -202,6 +202,15 @@ export default class BasicFlatList extends Component {
                     this.setState({ showSpinner: false, flatListData: [] });
                 }
             });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     render() {

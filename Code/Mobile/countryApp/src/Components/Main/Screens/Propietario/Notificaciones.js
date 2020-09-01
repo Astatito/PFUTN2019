@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, StyleSheet, View, Alert } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Thumbnail, Root, Toast, Right } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -106,7 +106,8 @@ export default class BasicFlatList extends Component {
     obtenerNotificaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refNotificaciones = refCountry.collection('Notificaciones');
-        this.snapshotNotificaciones = refNotificaciones
+        try {
+            this.snapshotNotificaciones = refNotificaciones
             .where(
                 'IdPropietario',
                 '==',
@@ -137,20 +138,38 @@ export default class BasicFlatList extends Component {
                     this.setState({ showSpinner: false, flatListData: [] });
                 }
             });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     actualizarNotificaciones = async (notificaciones) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refNotificaciones = refCountry.collection('Notificaciones');
-
-        for (var i = 0; i < notificaciones.length; i++) {
-            var refNotificacion = refNotificaciones.doc(notificaciones[i].key);
-            await refNotificacion.set(
-                {
-                    Visto: true,
-                },
-                { merge: true }
-            );
+        try {
+            for (var i = 0; i < notificaciones.length; i++) {
+                var refNotificacion = refNotificaciones.doc(notificaciones[i].key);
+                await refNotificacion.set(
+                    {
+                        Visto: true,
+                    },
+                    { merge: true }
+                );
+            }
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
         }
     };
 

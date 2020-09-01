@@ -66,8 +66,8 @@ class NuevoInvitado extends Component {
     obtenerInvitaciones = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
-
-        this.snapshotInvitados = refInvitados
+        try {
+            this.snapshotInvitados = refInvitados
             .where(
                 'IdPropietario',
                 '==',
@@ -95,6 +95,15 @@ class NuevoInvitado extends Component {
                     this.setState({ invitados: [], showSpinner: false });
                 }
             });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     onBlur() {
@@ -150,13 +159,12 @@ class NuevoInvitado extends Component {
     registrarNuevoInvitado = async (tipoDoc, numeroDoc) => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refInvitados = refCountry.collection('Invitados');
-
-        var invitaciones = await refInvitados
+        try {
+            var invitaciones = await refInvitados
             .where('Documento', '==', numeroDoc)
             .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
             .get();
 
-        try {
             var nuevoInvitado = {
                 Nombre: '',
                 Apellido: '',
@@ -174,11 +182,9 @@ class NuevoInvitado extends Component {
                 nuevoInvitado.Nombre = invitaciones.docs[0].data().Nombre;
                 nuevoInvitado.FechaNacimiento = moment.unix(invitaciones.docs[0].data().FechaNacimiento.seconds).toDate();
             }
-            console.log(this.state.invitados);
             let invitadoExistente = this.state.invitados.find(
                 (inv) => inv.tipoDocumento == nuevoInvitado.TipoDocumento.id && inv.documento == nuevoInvitado.Documento
             );
-            console.log(invitadoExistente);
             if (!invitadoExistente) {
                 await refInvitados.add(nuevoInvitado);
                 return 0;

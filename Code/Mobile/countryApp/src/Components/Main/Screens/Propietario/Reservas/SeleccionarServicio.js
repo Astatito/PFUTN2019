@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, StyleSheet, View, TextInput } from 'react-native';
-import { ListItem, Left, Body, Text, Thumbnail, Root, Button, Toast } from 'native-base';
+import { ListItem, Left, Body, Text, Thumbnail, Root, Button, Toast, Content } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
 import { Database } from '../../../../DataBase/Firebase';
@@ -154,7 +154,7 @@ export default class BasicFlatList extends Component {
     render() {
         return (
             <Root>
-                <View>
+                <Content>
                     <Spinner visible={this.state.showSpinner} textContent={'Loading...'} textStyle={styles.spinnerTextStyle} />
                     <TextInput
                         style={styles.textInput}
@@ -233,7 +233,7 @@ export default class BasicFlatList extends Component {
                             </Button>
                         </View>
                     </View>
-                </View>
+                </Content>
             </Root>
         );
     }
@@ -257,6 +257,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '40%',
-        marginTop: '7%',
+        marginTop: '5%',
+        marginBottom: '15%'
     },
 });

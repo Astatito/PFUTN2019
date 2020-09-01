@@ -114,7 +114,17 @@ export default class BasicFlatList extends Component {
             IdPropietario: idPropietario,
             Visto: false,
         };
-        await refNotificaciones.add(notificacion);
+        try {
+            await refNotificaciones.add(notificacion);
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     grabarIngreso = async (invitado, idPropietario) => {
@@ -176,16 +186,26 @@ export default class BasicFlatList extends Component {
         var refPropietarios = refCountry.collection('Propietarios');
         //Reemplazar por la lógica que corresponda.
         var tempArray = [];
-        for (const key of propietarios) {
-            prop = await refPropietarios.doc(key).get();
-            var aux = {
-                key: key,
-                nombre: prop.data().Nombre,
-                apellido: prop.data().Apellido,
-            };
-            tempArray.push(aux);
+        try {
+            for (const key of propietarios) {
+                prop = await refPropietarios.doc(key).get();
+                var aux = {
+                    key: key,
+                    nombre: prop.data().Nombre,
+                    apellido: prop.data().Apellido,
+                };
+                tempArray.push(aux);
+            }
+            this.setState({ flatListData: tempArray , showSpinner: false});   
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
         }
-        this.setState({ flatListData: tempArray , showSpinner: false});
     };
 
     render() {

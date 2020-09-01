@@ -75,29 +75,37 @@ class MiPerfil extends Component {
     obtenerDatosPersonales = () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refEncargados = refCountry.collection('Encargados');
-
-        refEncargados.doc(this.state.usuario.datos).onSnapshot((doc) => {
-            if (doc.exists) {
-                var encargado = doc.data();
-                this.setState({
-                    nombre: encargado.Nombre,
-                    apellido: encargado.Apellido,
-                    legajo: encargado.Legajo,
-                    documento: encargado.Documento,
-                    picker: encargado.TipoDocumento.id,
-                    celular: encargado.Celular,
-                    fechaNacimiento: moment.unix(encargado.FechaNacimiento.seconds),
-                });
-                datosEncargado = encargado;
-                this.setState({ showSpinner: false });
-            }
-        });
+        try {
+            refEncargados.doc(this.state.usuario.datos).onSnapshot((doc) => {
+                if (doc.exists) {
+                    var encargado = doc.data();
+                    this.setState({
+                        nombre: encargado.Nombre,
+                        apellido: encargado.Apellido,
+                        legajo: encargado.Legajo,
+                        documento: encargado.Documento,
+                        picker: encargado.TipoDocumento.id,
+                        celular: encargado.Celular,
+                        fechaNacimiento: moment.unix(encargado.FechaNacimiento.seconds),
+                    });
+                    datosEncargado = encargado;
+                    this.setState({ showSpinner: false });
+                }
+            });
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
     };
 
     actualizarDatos = async () => {
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refEncargado = refCountry.collection('Encargados').doc(this.state.usuario.datos);
-
         try {
             await refEncargado.set(
                 {
