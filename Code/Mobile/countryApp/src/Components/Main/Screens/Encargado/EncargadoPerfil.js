@@ -10,7 +10,6 @@ import { NavigationActions } from 'react-navigation';
 import moment from 'moment';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 
-
 const LIGHT_GRAY = '#D3D3D3';
 
 let datosEncargado = {};
@@ -82,7 +81,6 @@ class MiPerfil extends Component {
                     this.setState({
                         nombre: encargado.Nombre,
                         apellido: encargado.Apellido,
-                        legajo: encargado.Legajo,
                         documento: encargado.Documento,
                         picker: encargado.TipoDocumento.id,
                         celular: encargado.Celular,
@@ -111,7 +109,6 @@ class MiPerfil extends Component {
                 {
                     Nombre: this.state.nombre,
                     Apellido: this.state.apellido,
-                    Legajo: this.state.legajo,
                     Celular: this.state.celular,
                     FechaNacimiento: this.state.fechaNacimiento.toDate(),
                 },
@@ -129,7 +126,6 @@ class MiPerfil extends Component {
         this.setState({
             nombre: datosEncargado.Nombre,
             apellido: datosEncargado.Apellido,
-            legajo: datosEncargado.Legajo,
             documento: datosEncargado.Documento,
             picker: datosEncargado.TipoDocumento.id,
             celular: datosEncargado.Celular,
@@ -140,7 +136,7 @@ class MiPerfil extends Component {
     onBlur() {
         this.setState({ isFocused: false });
     }
-    
+
     onFocus() {
         this.setState({ isFocused: true });
     }
@@ -190,7 +186,6 @@ class MiPerfil extends Component {
     };
 
     render() {
-        
         return (
             <Root>
                 <ScrollView>
@@ -289,12 +284,7 @@ class MiPerfil extends Component {
                                         style={{ paddingHorizontal: '5%' }}
                                         onPress={async () => {
                                             this.setState({ showSpinner: true }, async () => {
-                                                const textInputs = await this.verificarTextInputs([
-                                                    'legajo',
-                                                    'nombre',
-                                                    'apellido',
-                                                    'celular',
-                                                ]);
+                                                const textInputs = await this.verificarTextInputs(['nombre', 'apellido', 'celular']);
                                                 if (textInputs == true) {
                                                     return false;
                                                 }

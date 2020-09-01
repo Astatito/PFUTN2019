@@ -20,14 +20,14 @@ class Propietario extends Component {
                 this.setState({ usuario }, () => {
                     try {
                         var doc = Database.collection('Country')
-                        .doc(this.state.usuario.country)
-                        .get()
-                        .then((doc) => {
-                            if (doc.exists) {
-                                var celular = doc.data().Celular;
-                                number = celular;
-                            }
-                        });
+                            .doc(this.state.usuario.country)
+                            .get()
+                            .then((doc) => {
+                                if (doc.exists) {
+                                    var celular = doc.data().Celular;
+                                    number = celular;
+                                }
+                            });
                     } catch (error) {
                         Toast.show({
                             text: 'Lo siento, ocurrió un error inesperado.',
@@ -73,19 +73,19 @@ class Propietario extends Component {
         var refNotificaciones = refCountry.collection('Notificaciones');
         try {
             this.snapshotNotificaciones = refNotificaciones
-            .where(
-                'IdPropietario',
-                '==',
-                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
-            )
-            .where('Visto', '==', false)
-            .onSnapshot((snapshot) => {
-                if (!snapshot.empty) {
-                    this.props.navigation.setParams({ iconColor: withNotifications });
-                } else {
-                    this.props.navigation.setParams({ iconColor: withoutNotifications });
-                }
-            });
+                .where(
+                    'IdPropietario',
+                    '==',
+                    Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
+                )
+                .where('Visto', '==', false)
+                .onSnapshot((snapshot) => {
+                    if (!snapshot.empty) {
+                        this.props.navigation.setParams({ iconColor: withNotifications });
+                    } else {
+                        this.props.navigation.setParams({ iconColor: withoutNotifications });
+                    }
+                });
         } catch (error) {
             Toast.show({
                 text: 'Lo siento, ocurrió un error inesperado.',
@@ -125,7 +125,6 @@ class Propietario extends Component {
 
     render() {
         return (
-<<<<<<< Updated upstream
             <Root>
                 <Content>
                     <View style={styles.container}>
@@ -136,16 +135,6 @@ class Propietario extends Component {
                                 source={require('../../../../assets/Images/LogoTransparente.png')}
                                 style={{ height: 340, width: 340 }}></Image>
                         </View>
-=======
-            <Content>
-                <View style={styles.container}>
-                    <StatusBar backgroundColor="#1e90ff"></StatusBar>
-                    <Text style={styles.header}>¡Bienvenido de nuevo!</Text>
-                    <View style={{ height: 340, width: 340, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image
-                            source={require('../../../../assets/Images/LogoTransparente.png')}
-                            style={{ height: 340, width: 340 }}></Image>
->>>>>>> Stashed changes
                     </View>
                 </Content>
             </Root>

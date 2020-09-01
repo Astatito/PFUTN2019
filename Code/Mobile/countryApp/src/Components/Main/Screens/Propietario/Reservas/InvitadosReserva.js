@@ -32,7 +32,7 @@ class FlatListItem extends Component {
                 await refInvitacion.delete();
             }
         } catch (error) {
-            return 1
+            return 1;
         }
 
         // Elimina el invitado de la reserva
@@ -54,9 +54,9 @@ class FlatListItem extends Component {
         var refInvitados = refCountry.collection('Invitados');
         try {
             var snapshot = await refInvitados
-            .where('Documento', '==', invitado.documento)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + invitado.tipoDocumento))
-            .get();
+                .where('Documento', '==', invitado.documento)
+                .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + invitado.tipoDocumento))
+                .get();
         } catch (error) {
             return 1;
         }
@@ -70,12 +70,11 @@ class FlatListItem extends Component {
                     FechaAlta: new Date(),
                     FechaDesde: new Date(),
                     FechaHasta: new Date(),
-                    Grupo: '',
                     IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
                     Documento: invitado.documento,
                     TipoDocumento: Database.doc('TipoDocumento/' + invitado.tipoDocumento),
                 };
-    
+
                 refInvitados.add(nuevoInvitado);
             }
         } catch (error) {

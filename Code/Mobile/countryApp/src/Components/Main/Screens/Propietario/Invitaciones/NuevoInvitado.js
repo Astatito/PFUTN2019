@@ -68,33 +68,33 @@ class NuevoInvitado extends Component {
         var refInvitados = refCountry.collection('Invitados');
         try {
             this.snapshotInvitados = refInvitados
-            .where(
-                'IdPropietario',
-                '==',
-                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
-            )
-            .onSnapshot((snapshot) => {
-                if (!snapshot.empty) {
-                    //El propietario tiene invitaciones
-                    var tempArray = [];
-                    for (var i = 0; i < snapshot.docs.length; i++) {
-                        var invitado = {
-                            key: snapshot.docs[i].id,
-                            nombre: snapshot.docs[i].data().Nombre,
-                            apellido: snapshot.docs[i].data().Apellido,
-                            documento: snapshot.docs[i].data().Documento,
-                            tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
-                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
-                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
-                            estado: snapshot.docs[i].data().Estado,
-                        };
-                        tempArray.push(invitado);
+                .where(
+                    'IdPropietario',
+                    '==',
+                    Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
+                )
+                .onSnapshot((snapshot) => {
+                    if (!snapshot.empty) {
+                        //El propietario tiene invitaciones
+                        var tempArray = [];
+                        for (var i = 0; i < snapshot.docs.length; i++) {
+                            var invitado = {
+                                key: snapshot.docs[i].id,
+                                nombre: snapshot.docs[i].data().Nombre,
+                                apellido: snapshot.docs[i].data().Apellido,
+                                documento: snapshot.docs[i].data().Documento,
+                                tipoDocumento: snapshot.docs[i].data().TipoDocumento.id,
+                                fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
+                                fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
+                                estado: snapshot.docs[i].data().Estado,
+                            };
+                            tempArray.push(invitado);
+                        }
+                        this.setState({ invitados: tempArray, showSpinner: false });
+                    } else {
+                        this.setState({ invitados: [], showSpinner: false });
                     }
-                    this.setState({ invitados: tempArray, showSpinner: false });
-                } else {
-                    this.setState({ invitados: [], showSpinner: false });
-                }
-            });
+                });
         } catch (error) {
             Toast.show({
                 text: 'Lo siento, ocurrió un error inesperado.',
@@ -161,9 +161,9 @@ class NuevoInvitado extends Component {
         var refInvitados = refCountry.collection('Invitados');
         try {
             var invitaciones = await refInvitados
-            .where('Documento', '==', numeroDoc)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
-            .get();
+                .where('Documento', '==', numeroDoc)
+                .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+                .get();
 
             var nuevoInvitado = {
                 Nombre: '',
@@ -172,7 +172,6 @@ class NuevoInvitado extends Component {
                 FechaAlta: new Date(),
                 FechaDesde: this.state.fechaDesde.toDate(),
                 FechaHasta: this.state.fechaHasta.toDate(),
-                Grupo: '',
                 IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos),
                 Documento: numeroDoc,
                 TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc),

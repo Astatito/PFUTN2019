@@ -74,7 +74,6 @@ export default class BasicFlatList extends Component {
                 this.setState({ usuario: response });
                 this.obtenerNotificaciones();
                 this.createListeners();
-                this.actualizarNotificaciones(this.state.flatListData);
             })
             .catch((error) => {
                 this.setState({ showSpinner: false });
@@ -108,36 +107,36 @@ export default class BasicFlatList extends Component {
         var refNotificaciones = refCountry.collection('Notificaciones');
         try {
             this.snapshotNotificaciones = refNotificaciones
-            .where(
-                'IdPropietario',
-                '==',
-                Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
-            )
-            .orderBy('Fecha', 'desc')
-            .limit(8)
-            .onSnapshot((snapshot) => {
-                if (!snapshot.empty) {
-                    // El propietario tiene notificaciones
-                    var tempArray = [];
-                    for (var i = 0; i < snapshot.docs.length; i++) {
-                        var notificacion = {
-                            key: snapshot.docs[i].id,
-                            texto: snapshot.docs[i].data().Texto,
-                            tipo: snapshot.docs[i].data().Tipo,
-                            visto: snapshot.docs[i].data().Visto,
-                            fecha: moment.unix(snapshot.docs[i].data().Fecha.seconds).format('D/M/YYYY HH:mm'),
-                        };
-                        tempArray.push(notificacion);
+                .where(
+                    'IdPropietario',
+                    '==',
+                    Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos)
+                )
+                .orderBy('Fecha', 'desc')
+                .limit(8)
+                .onSnapshot((snapshot) => {
+                    if (!snapshot.empty) {
+                        // El propietario tiene notificaciones
+                        var tempArray = [];
+                        for (var i = 0; i < snapshot.docs.length; i++) {
+                            var notificacion = {
+                                key: snapshot.docs[i].id,
+                                texto: snapshot.docs[i].data().Texto,
+                                tipo: snapshot.docs[i].data().Tipo,
+                                visto: snapshot.docs[i].data().Visto,
+                                fecha: moment.unix(snapshot.docs[i].data().Fecha.seconds).format('D/M/YYYY HH:mm'),
+                            };
+                            tempArray.push(notificacion);
+                        }
+                        this.setState({ showSpinner: false, flatListData: tempArray });
+                        var aux = tempArray.filter((notif) => !notif.visto);
+                        if (aux.length > 0) {
+                            this.actualizarNotificaciones(aux);
+                        }
+                    } else {
+                        this.setState({ showSpinner: false, flatListData: [] });
                     }
-                    this.setState({ showSpinner: false, flatListData: tempArray });
-                    var aux = tempArray.filter((notif) => !notif.visto);
-                    if (aux.length > 0) {
-                        this.actualizarNotificaciones(aux);
-                    }
-                } else {
-                    this.setState({ showSpinner: false, flatListData: [] });
-                }
-            });
+                });
         } catch (error) {
             Toast.show({
                 text: 'Lo siento, ocurrió un error inesperado.',
