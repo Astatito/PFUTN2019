@@ -141,7 +141,7 @@ class NuevoInvitado extends Component {
     };
 
     verificarFechaCorrecta = async () => {
-        const now = moment().subtract(1, 'minutes');
+        const now = moment().subtract(5, 'minutes');
         const desde = this.state.fechaDesde;
         const hasta = this.state.fechaHasta;
         if (desde.isBefore(hasta) && desde.isAfter(now)) {
