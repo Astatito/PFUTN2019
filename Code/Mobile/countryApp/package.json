@@ -26,6 +26,7 @@
         "react-native-ionicons": "^4.6.1",
         "react-native-loading-spinner-overlay": "^1.0.1",
         "react-native-modal-datetime-picker": "^7.5.0",
+        "react-native-phone-call": "^1.0.9",
         "react-native-picker-select": "^6.3.0",
         "react-native-share": "^1.2.0",
         "react-native-slideable-calendar-strip": "^0.4.0",

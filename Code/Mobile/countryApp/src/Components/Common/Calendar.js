@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import CalendarStrip from 'react-native-calendar-strip';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import moment from 'moment';
+
+let datesBlacklist = [{
+    start: moment('1950-01-01', 'YYYY-MM-DD'), 
+    end: moment().subtract(1, 'days') 
+  }];
 
 class Calendar extends Component {
-
+    
+    shouldComponentUpdate() {
+        return false
+    }
+    
     render() {
         return(
             <CalendarStrip
@@ -22,9 +32,10 @@ class Calendar extends Component {
                     dateNumberStyle={{ color: 'white' }}
                     highlightDateNameStyle={{ color: '#1e90ff' }}
                     highlightDateNumberStyle={{ color: '#1e90ff' }}
-                    disabledDateNameStyle={{ color: '#82BFDB' }}
-                    disabledDateNumberStyle={{ color: '#82BFDB'}}
+                    disabledDateNameStyle={{ color: '#EDF2F4' }}
+                    disabledDateNumberStyle={{ color: '#EDF2F4' }}
                     maxDayComponentSize={60}
+                    datesBlacklist={datesBlacklist}
                     iconContainer={{ flex: 0.1 }}
                     leftSelector={
                     <Ionicons name="ios-arrow-back" color="white" size={25} />

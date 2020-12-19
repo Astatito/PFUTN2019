@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Database } from '../../../DataBase/Firebase';
+import { Root, Toast } from 'native-base';
+
 import { LocalStorage } from '../../../DataBase/Storage';
 import moment from 'moment';
 
@@ -9,11 +11,11 @@ class Escaner extends Component {
     state = { usuario: {}, ingreso: false };
     shouldScan = true;
 
-    capitalize = string => {
+    capitalize = (string) => {
         return string
             .toLowerCase()
             .split(' ')
-            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+            .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
             .join(' ');
     };
 
@@ -26,28 +28,51 @@ class Escaner extends Component {
 
     componentDidMount() {
         LocalStorage.load({
-            key: 'UsuarioLogueado'
+            key: 'UsuarioLogueado',
         })
-            .then(usuario => {
+            .then((usuario) => {
                 this.setState({ usuario });
             })
-            .catch(error => {
-                switch (error.name) {
-                    case 'NotFoundError':
-                        console.log('La key solicitada no existe.');
-                        break;
-                    default:
-                        console.warn('Error inesperado: ', error.message);
-                }
+            .catch((error) => {
+                Toast.show({
+                    text: 'La key solicitada no existe.',
+                    buttonText: 'Aceptar',
+                    duration: 3000,
+                    position: 'bottom',
+                    type: 'danger',
+                });
             });
     }
 
+    generarNotificacionIngreso = async (idPropietario, nombre, apellido) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refNotificaciones = refCountry.collection('Notificaciones');
+        var notificacion = {
+            Fecha: new Date(),
+            Tipo: 'Ingreso',
+            Texto: nombre + ' ' + apellido + ' ha ingresado al complejo.',
+            IdPropietario: Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario),
+            Visto: false,
+        };
+        try {
+            await refNotificaciones.add(notificacion);
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
+    };
+
     //Graba el ingreso en Firestore
-    grabarIngreso = (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarIngreso = async (nombre, apellido, tipoDoc, numeroDoc, idPropietario) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refIngresos = refCountry.collection('Ingresos');
-            refIngresos.add({
+            var ingreso = {
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
@@ -56,32 +81,36 @@ class Escaner extends Component {
                 Egreso: true,
                 Estado: true,
                 Fecha: new Date(),
-                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos)
-            });
-
+                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
+            };
+            if (idPropietario) {
+                ingreso.IdPropietario = Database.doc('Country/' + this.state.usuario.country + '/Propietarios/' + idPropietario);
+                this.generarNotificacionIngreso(idPropietario, nombre, apellido);
+            }
+            await refIngresos.add(ingreso);
             return 0;
         } catch (error) {
-            return error;
+            console.log(error);
+            return 1;
         }
     };
 
     //Devuelve la primer invitación válida a partir de un conjunto de invitaciones
-    obtenerInvitacionValida = invitaciones => {
+    obtenerInvitacionValida = (invitaciones) => {
         var now = moment().unix(); //Se obtiene la fecha actual en formato Timestamp para facilitar la comparación
-
+        var result = [];
         for (var i = 0; i < invitaciones.length; i++) {
             var docInvitacion = invitaciones[i].data();
             if (now >= docInvitacion.FechaDesde.seconds && now <= docInvitacion.FechaHasta.seconds) {
                 docInvitacion.id = invitaciones[i].id;
-                return docInvitacion;
+                result.push(docInvitacion);
             }
         }
-
-        return -1;
+        return result;
     };
 
     //Verifica si el visitante está autenticado o no
-    estaAutenticado = invitacion => {
+    estaAutenticado = (invitacion) => {
         return invitacion.Nombre != '' && invitacion.Apellido != '';
     };
 
@@ -96,202 +125,338 @@ class Escaner extends Component {
             apellido: persona.Apellido,
             fechaNacimiento: persona.FechaNacimiento,
             usuario: usuario,
-            invitacion: invitacion
+            invitacion: invitacion,
+            propietarios: propietarios,
         });
     };
 
-    //Registra el ingreso según tipo y número de documento
-    registrarIngreso = persona => {
+    buscarInvitacionesEventos = async (tipoDoc, numeroDoc, autenticado = undefined, nombre = undefined, apellido = undefined) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitaciones = refCountry.collection('InvitacionesEventos');
+        try {
+            const invitaciones = await refInvitaciones
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .get();
+            if (!invitaciones.empty) {
+                var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
+                if (invitacion != -1) {
+                    if (autenticado) {
+                        var result = await this.grabarIngreso(nombre, apellido, tipoDoc, numeroDoc);
+                        if (result == 0) {
+                            return 0;
+                        } else {
+                            return 1;
+                        }
+                    } else {
+                        this.setState({ invitacionId: invitacion.id });
+                        return 2;
+                    }
+                } else {
+                    return 3;
+                }
+            } else {
+                return 4;
+            }  
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            });
+        }
+    };
+
+    registrarIngreso = async (persona) => {
+        console.log('Escaneado:', persona);
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-        this.setState({ showSpinner: true });
-        refPropietarios
-            .where('Documento', '==', persona.Documento)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
-            .get()
-            .then(snapshot => {
-                if (!snapshot.empty) {
-                    //Si existe el propietario, registra el ingreso.
-                    var docPropietario = snapshot.docs[0].data();
-
-                    var result = this.grabarIngreso(
-                        docPropietario.Nombre,
-                        docPropietario.Apellido,
-                        persona.TipoDocumento,
-                        persona.Documento
-                    );
-                    if (result == 0) {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'El ingreso se registró correctamente. (PROPIETARIO)');
-                        this.props.navigation.navigate('Ingreso');
-                    } else {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
-                    }
+        try {
+            const snapshot = await refPropietarios
+                .where('Documento', '==', persona.Documento)
+                .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
+                .get();
+            if (!snapshot.empty) {
+                //Si existe el propietario, registra el ingreso.
+                var docPropietario = snapshot.docs[0].data();
+                var result = await this.grabarIngreso(
+                    docPropietario.Nombre,
+                    docPropietario.Apellido,
+                    persona.TipoDocumento,
+                    persona.Documento
+                );
+                if (result == 0) {
+                    console.log('Result: Propietario 0');
+                    return 0;
                 } else {
-                    //Si no existe el propietario, busca si tiene invitaciones.
-                    var refInvitados = refCountry.collection('Invitados');
-
-                    refInvitados
-                        .where('Documento', '==', persona.Documento)
-                        .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
-                        .get()
-                        .then(snapshot => {
-                            if (!snapshot.empty) {
-                                //Si tiene invitaciones, verifica que haya alguna invitación válida.
-
-                                var invitacion = this.obtenerInvitacionValida(snapshot.docs);
-                                if (invitacion != -1) {
-                                    //Si hay una invitación válida, verifica que esté autenticado.
-
-                                    if (this.estaAutenticado(invitacion)) {
-                                        //Si está autenticado, registra el ingreso.
-                                        var result = this.grabarIngreso(
-                                            invitacion.Nombre,
-                                            invitacion.Apellido,
-                                            persona.TipoDocumento,
-                                            persona.Documento
-                                        );
-                                        if (result == 0) {
-                                            this.setState({ showSpinner: false });
-                                            Alert.alert(
-                                                'Atención',
-                                                'El ingreso se registró correctamente. (VISITANTE AUTENTICADO CON INVITACIÓN VÁLIDA)'
-                                            );
-                                            this.props.navigation.navigate('Ingreso');
-                                        } else {
-                                            this.setState({ showSpinner: false });
-                                            Alert.alert('Atención', 'Ocurrió un error: ' + result);
-                                        }
-                                    } else {
-                                        //Si no está autenticado, se debe autenticar.
-                                        console.log('El visitante no está autenticado, se debe autenticar primero.');
-                                        console.log(invitacion);
-                                        this.autenticarVisitante(persona, this.state.usuario, invitacion.id);
-                                        this.setState({ showSpinner: false });
-                                    }
+                    console.log('Result: Propietario 1');
+                    return 1;
+                }
+            } else {
+                //Si no existe el propietario, busca si tiene invitaciones.
+                var refInvitados = refCountry.collection('Invitados');
+                const snapshot = await refInvitados
+                    .where('Documento', '==', persona.Documento)
+                    .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
+                    .where('Estado', '==', true)
+                    .get();
+                if (!snapshot.empty) {
+                    //Si tiene invitaciones, verifica que haya alguna invitación válida.
+                    var invitaciones = this.obtenerInvitacionValida(snapshot.docs);
+                    if (invitaciones.length > 0) {
+                        //Si hay una invitación válida, verifica que esté autenticado.
+                        var autenticado = this.estaAutenticado(invitaciones[0]);
+                        if (autenticado) {
+                            //Si está autenticado, registra el ingreso.
+                            if (invitaciones.length == 1) {
+                                var result = await this.grabarIngreso(
+                                    invitacion.Nombre,
+                                    invitacion.Apellido,
+                                    persona.TipoDocumento,
+                                    persona.Documento,
+                                    invitaciones[0].IdPropietario.id
+                                );
+                                if (result == 0) {
+                                    console.log('Result: Invitado 0');
+                                    return 0;
                                 } else {
-                                    // Existe pero no tiene invitaciones válidas, TODO:se debe generar una nueva invitación por ese día.
-                                    console.log('No hay ninguna invitación válida.');
-                                    this.setState({ showSpinner: false });
-                                    Alert.alert('Atención', 'No se encontró ninguna invitación válida.');
+                                    console.log('Result: Invitado 1');
+                                    return 1;
                                 }
                             } else {
-                                //La persona no existe , TODO:se debe generar una nueva invitación por ese día.
-                                console.log('No tiene invitaciones.');
-                                this.setState({ showSpinner: false });
-                                Alert.alert('Atención', 'La persona no existe.');
+                                propietarios = invitaciones.map((inv) => {
+                                    return inv.IdPropietario.id;
+                                });
+                                var inv = {
+                                    nombre: invitaciones[0].Nombre,
+                                    apellido: invitaciones[0].Apellido,
+                                    tipoDoc: tipoDoc,
+                                    numeroDoc: numeroDoc,
+                                };
+                                this.setState({ invitado: inv, propietarios: propietarios });
+                                return 5;
                             }
-                        });
+                        } else {
+                            //Si no está autenticado, se debe autenticar.
+                            propietarios = invitaciones.map((inv) => {
+                                return inv.IdPropietario.id;
+                            });
+                            this.setState({ invitacionId: invitacion.id });
+                            return 2;
+                        }
+                    } else {
+                        var result = await this.buscarInvitacionesEventos(
+                            persona.TipoDocumento,
+                            persona.Documento,
+                            this.estaAutenticado(snapshot.docs[0].data()),
+                            snapshot.docs[0].data().Nombre,
+                            snapshot.docs[0].data().Apellido
+                        );
+                        if (result == 4) {
+                            console.log('Result: 3');
+                            return 3;
+                        }
+                        console.log('Result: ', result);
+                        return result;
+                    }
+                } else {
+                    var result = await this.buscarInvitacionesEventos(persona.TipoDocumento, persona.Documento);
+                    return result;
                 }
-            })
-            .catch(error => {
-                Alert.alert('Atención', 'Ocurrió un error: ', error);
-                this.setState({ showSpinner: false });
-            });
+            }
+        } catch (error) {
+            return 1;
+        } finally {
+            this.setState({ showSpinner: false });
+        }
+    };
+
+    onToastClosedIngreso = (reason) => {
+        this.props.navigation.navigate('Ingreso');
+    };
+
+    autenticarToast = (persona) => {
+        this.autenticarVisitante(persona, this.state.usuario, this.state.invitacionId);
+    };
+
+    propietariosToast = (reason) => {
+        this.props.navigation.navigate('ListaDePropietarios', {
+            invitado: this.state.invitado,
+            propietarios: this.state.propietarios,
+        });
+    };
+
+    generarNotificacionEgreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refIngresos = refCountry.collection('Ingresos');
+        try {
+            var ingreso = await refIngresos
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .orderBy('Fecha', 'desc')
+            .limit(1)
+            .get();
+
+            var refNotificaciones = refCountry.collection('Notificaciones');
+            var notificacion = {
+                Fecha: new Date(),
+                Tipo: 'Egreso',
+                Texto: nombre + ' ' + apellido + ' ha salido del complejo.',
+                IdPropietario: Database.doc(
+                    'Country/' + this.state.usuario.country + '/Propietarios/' + ingreso.docs[0].data().IdPropietario.id
+                ),
+                Visto: false,
+            };
+            await refNotificaciones.add(notificacion);
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            }); 
+        }
     };
 
     //Graba el egreso en Firestore
-    grabarEgreso = (nombre, apellido, tipoDoc, numeroDoc) => {
+    grabarEgreso = async (nombre, apellido, tipoDoc, numeroDoc) => {
         try {
             var refCountry = Database.collection('Country').doc(this.state.usuario.country);
             var refEgresos = refCountry.collection('Egresos');
-            refEgresos.add({
+            await refEgresos.add({
                 Nombre: nombre,
                 Apellido: apellido,
                 Documento: numeroDoc,
                 TipoDocumento: Database.doc('TipoDocumento/' + tipoDoc),
                 Descripcion: '',
                 Fecha: new Date(),
-                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos)
+                IdEncargado: Database.doc('Country/' + this.state.usuario.country + '/Encargados/' + this.state.usuario.datos),
             });
-
             return 0;
         } catch (error) {
-            return error;
+            return 1;
+        }
+    };
+
+    buscarInvitacionesEventosEgreso = async (tipoDoc, numeroDoc, invitacionPersonal = undefined) => {
+        var refCountry = Database.collection('Country').doc(this.state.usuario.country);
+        var refInvitaciones = refCountry.collection('InvitacionesEventos');
+        try {
+            const invitaciones = await refInvitaciones
+            .where('Documento', '==', numeroDoc)
+            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + tipoDoc))
+            .get();
+            if (!invitaciones.empty) {
+                var invitacion = this.obtenerInvitacionValida(invitaciones.docs);
+                if (invitacion != -1) {
+                    var result = await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                    if (result == 0) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                    return 2;
+                }
+            } else {
+                var result = invitacionPersonal == undefined ? 3 : 2;
+                if (result == 2) {
+                    await this.grabarEgreso(invitacionPersonal.Nombre, invitacionPersonal.Apellido, tipoDoc, numeroDoc);
+                }
+                return result;
+            }
+        } catch (error) {
+            Toast.show({
+                text: 'Lo siento, ocurrió un error inesperado.',
+                buttonText: 'Aceptar',
+                duration: 3000,
+                position: 'bottom',
+                type: 'danger',
+            }); 
         }
     };
 
     //Registra el egreso según tipo y número de documento
-    registrarEgreso = persona => {
+    registrarEgreso = async (persona) => {
+        console.log('Escaneado:', persona);
         //Busca si es un propietario
         var refCountry = Database.collection('Country').doc(this.state.usuario.country);
         var refPropietarios = refCountry.collection('Propietarios');
-        this.setState({ showSpinner: true });
-        refPropietarios
-            .where('Documento', '==', persona.Documento)
-            .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
-            .get()
-            .then(snapshot => {
+        try {
+            const snapshot = await refPropietarios
+                .where('Documento', '==', persona.Documento)
+                .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
+                .get();
+            if (!snapshot.empty) {
+                //Si existe el propietario, registra el egreso.
+                var docPropietario = snapshot.docs[0].data();
+                var result = await this.grabarEgreso(
+                    docPropietario.Nombre,
+                    docPropietario.Apellido,
+                    persona.TipoDocumento,
+                    persona.Documento
+                );
+                if (result == 0) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else {
+                //Si no existe el propietario, busca si tiene invitaciones.
+                var refInvitados = refCountry.collection('Invitados');
+                const snapshot = await refInvitados
+                    .where('Documento', '==', persona.Documento)
+                    .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
+                    .where('Estado', '==', true)
+                    .get();
                 if (!snapshot.empty) {
-                    //Si existe el propietario, registra el egreso.
-                    var docPropietario = snapshot.docs[0].data();
-
-                    var result = this.grabarEgreso(
-                        docPropietario.Nombre,
-                        docPropietario.Apellido,
-                        persona.TipoDocumento,
-                        persona.Documento
-                    );
-                    if (result == 0) {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'El egreso se registró correctamente. (PROPIETARIO)');
-                        this.props.navigation.navigate('Egreso');
+                    //Si tiene invitaciones, verifica que haya alguna invitación válida.
+                    var invitacion = this.obtenerInvitacionValida(snapshot.docs);
+                    if (invitacion != -1) {
+                        //Si hay una invitación válida, registra el egreso.
+                        var notif = await this.generarNotificacionEgreso(
+                            invitacion.Nombre,
+                            invitacion.Apellido,
+                            persona.TipoDocumento,
+                            persona.Documento
+                        );
+                        var result = await this.grabarEgreso(
+                            invitacion.Nombre,
+                            invitacion.Apellido,
+                            persona.TipoDocumento,
+                            persona.Documento
+                        );
+                        if (result == 0) {
+                            return 0;
+                        } else {
+                            return 1;
+                        }
                     } else {
-                        this.setState({ showSpinner: false });
-                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
+                        var result = await this.buscarInvitacionesEventosEgreso(tipoDoc, numeroDoc, snapshot.docs[0].data());
+                        return result;
                     }
                 } else {
-                    //Si no existe el propietario, busca si tiene invitaciones.
-                    var refInvitados = refCountry.collection('Invitados');
-
-                    refInvitados
-                        .where('Documento', '==', persona.Documento)
-                        .where('TipoDocumento', '==', Database.doc('TipoDocumento/' + persona.TipoDocumento))
-                        .get()
-                        .then(snapshot => {
-                            if (!snapshot.empty) {
-                                //Si tiene invitaciones, verifica que haya alguna invitación válida.
-
-                                var invitacion = this.obtenerInvitacionValida(snapshot.docs);
-                                if (invitacion != -1) {
-                                    //Si hay una invitación válida, registra el egreso.
-
-                                    var result = this.grabarEgreso(
-                                        invitacion.Nombre,
-                                        invitacion.Apellido,
-                                        persona.TipoDocumento,
-                                        persona.Documento
-                                    );
-                                    if (result == 0) {
-                                        this.setState({ showSpinner: false });
-                                        Alert.alert('Atención', 'El egreso se registró correctamente. (VISITANTE)');
-                                        this.props.navigation.navigate('Egreso');
-                                    } else {
-                                        this.setState({ showSpinner: false });
-                                        Alert.alert('Atención', 'Ocurrió un error: ' + result);
-                                    }
-                                } else {
-                                    //Si no tiene invitaciones, emitir alerta.
-                                    this.setState({ showSpinner: false });
-                                    Alert.alert('Atención', 'ESA PERSONA NO DEBERÍA ESTAR ADENTRO.');
-                                }
-                            } else {
-                                //Si no es propietario ni visitante, emitir alerta.
-                                this.setState({ showSpinner: false });
-                                Alert.alert('Atención', 'ESA PERSONA ES UN FANTASMA .');
-                            }
-                        });
+                    var result = await this.buscarInvitacionesEventosEgreso(tipoDoc, numeroDoc);
+                    return result;
                 }
-            })
-            .catch(error => {
-                this.setState({ showSpinner: false });
-                Alert.alert('Atención', 'Ocurrió un error: ', error);
-            });
+            }
+        } catch (error) {
+            return 1;
+        } finally {
+            this.setState({ showSpinner: false });
+        }
     };
 
-    onBarCodeRead = barcodes => {
+    onToastClosedEgreso = (reason) => {
+        this.props.navigation.navigate('Egreso');
+    };
+
+    onBarCodeRead = async (barcodes) => {
         if (this.shouldScan) {
             this.shouldScan = false;
             var data = barcodes[0].rawData.split('@');
@@ -300,46 +465,138 @@ class Escaner extends Component {
                 Nombre: this.capitalize(data[2]),
                 Documento: data[4],
                 TipoDocumento: 'DocumentoDeIdentidad',
-                FechaNacimiento: data[6]
+                FechaNacimiento: data[6],
             };
 
-            console.log(persona);
-
             if (this.state.ingreso) {
-                this.registrarIngreso(persona);
+                const result = await this.registrarIngreso(persona);
+                if (result == 0) {
+                    Toast.show({
+                        text: 'Ingreso registrado exitosamente.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'success',
+                        onClose: this.onToastClosedIngreso.bind(this),
+                    });
+                } else if (result == 1) {
+                    Toast.show({
+                        text: 'Lo siento, ocurrió un error inesperado.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'danger',
+                        onClose: this.onToastClosedIngreso.bind(this),
+                    });
+                } else if (result == 2) {
+                    Toast.show({
+                        text: 'El visitante no está autenticado, se debe autenticar primero.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'warning',
+                        onClose: this.autenticarToast(persona),
+                    });
+                } else if (result == 3) {
+                    Toast.show({
+                        text: 'El invitado tiene vencida su invitación.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'warning',
+                        onClose: this.onToastClosedIngreso.bind(this),
+                    });
+                } else if (result == 4) {
+                    Toast.show({
+                        text: 'La persona no se encuentra registrada en el sistema.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'warning',
+                        onClose: this.onToastClosedIngreso.bind(this),
+                    });
+                } else if (result == 5) {
+                    Toast.show({
+                        text: 'Debe seleccionar el propietario a visitar.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'warning',
+                        onClose: this.propietariosToast.bind(this),
+                    });
+                }
             } else {
-                this.registrarEgreso(persona);
+                const result = await this.registrarEgreso(persona);
+                if (result == 0) {
+                    Toast.show({
+                        text: 'Egreso registrado exitosamente.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'success',
+                        onClose: this.onToastClosedEgreso.bind(this),
+                    });
+                } else if (result == 1) {
+                    Toast.show({
+                        text: 'Lo siento, ocurrió un error inesperado.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'danger',
+                        onClose: this.onToastClosedEgreso.bind(this),
+                    });
+                } else if (result == 2) {
+                    Toast.show({
+                        text: 'Egreso registrado exitosamente (Invitación vencida).',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'success',
+                        onClose: this.onToastClosedEgreso.bind(this),
+                    });
+                } else if (result == 3) {
+                    Toast.show({
+                        text: 'La persona no se encuentra registrada en el sistema.',
+                        buttonText: 'Aceptar',
+                        duration: 3000,
+                        position: 'bottom',
+                        type: 'warning',
+                        onClose: this.onToastClosedEgreso.bind(this),
+                    });
+                }
             }
         }
     };
 
     render() {
         return (
-            <View style={styles.container}>
-                <RNCamera
-                    ref={ref => {
-                        this.camera = ref;
-                    }}
-                    style={styles.preview}
-                    type={RNCamera.Constants.Type.back}
-                    flashMode={RNCamera.Constants.FlashMode.on}
-                    androidCameraPermissionOptions={{
-                        title: 'Permission to use camera',
-                        message: 'We need your permission to use your camera',
-                        buttonPositive: 'Ok',
-                        buttonNegative: 'Cancel'
-                    }}
-                    androidRecordAudioPermissionOptions={{
-                        title: 'Permission to use audio recording',
-                        message: 'We need your permission to use your audio',
-                        buttonPositive: 'Ok',
-                        buttonNegative: 'Cancel'
-                    }}
-                    onGoogleVisionBarcodesDetected={({ barcodes }) => {
-                        this.onBarCodeRead(barcodes);
-                    }}
-                />
-            </View>
+            <Root>
+                <View style={styles.container}>
+                    <RNCamera
+                        ref={(ref) => {
+                            this.camera = ref;
+                        }}
+                        style={styles.preview}
+                        type={RNCamera.Constants.Type.back}
+                        flashMode={RNCamera.Constants.FlashMode.on}
+                        androidCameraPermissionOptions={{
+                            title: 'Permission to use camera',
+                            message: 'We need your permission to use your camera',
+                            buttonPositive: 'Ok',
+                            buttonNegative: 'Cancel',
+                        }}
+                        androidRecordAudioPermissionOptions={{
+                            title: 'Permission to use audio recording',
+                            message: 'We need your permission to use your audio',
+                            buttonPositive: 'Ok',
+                            buttonNegative: 'Cancel',
+                        }}
+                        onGoogleVisionBarcodesDetected={({ barcodes }) => {
+                            this.onBarCodeRead(barcodes);
+                        }}
+                    />
+                </View>
+            </Root>
         );
     }
 }
@@ -348,12 +605,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'black'
+        backgroundColor: 'black',
     },
     preview: {
         flex: 1,
         justifyContent: 'flex-end',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     capture: {
         flex: 0,
@@ -362,8 +619,8 @@ const styles = StyleSheet.create({
         padding: 15,
         paddingHorizontal: 20,
         alignSelf: 'center',
-        margin: 20
-    }
+        margin: 20,
+    },
 });
 
 export default Escaner;

@@ -8,10 +8,11 @@ const firebaseConfig = {
     projectId: 'countryapp-f0ce1',
     storageBucket: 'countryapp-f0ce1.appspot.com',
     messagingSenderId: '810428216960',
-    appId: '1:810428216960:web:ffe81dcac50290a2'
+    appId: '1:810428216960:web:ffe81dcac50290a2',
 };
 
 const Firebase = firebase.initializeApp(firebaseConfig);
 const Database = firebase.firestore();
+const Storage = firebase.storage();
 
-export { Firebase, Database };
+export { Firebase, Database, Storage };

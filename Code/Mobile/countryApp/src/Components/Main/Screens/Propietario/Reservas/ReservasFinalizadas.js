@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Alert, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { ListItem, Left, Body, Text, Right, Thumbnail, Root, Toast } from 'native-base';
 import Swipeout from 'react-native-swipeout';
 import { LocalStorage } from '../../../../DataBase/Storage';
@@ -14,98 +14,16 @@ class FlatListItem extends Component {
         this.setState({ usuario: this.props.usuario });
     }
 
-    eliminarReserva = async (reserva) => {
-        var refReservaPropietario = Database.doc(
-            'Country/' + this.state.usuario.country + '/Propietarios/' + this.state.usuario.datos + '/Reservas/' + reserva.key
-        );
-        var refReservaServicio = Database.doc(reserva.idReservaServicio);
-        try {
-            await refReservaPropietario.set({ Cancelado: true }, { merge: true });
-            await refReservaServicio.set({ Cancelado: true }, { merge: true });
-            return 0;
-        } catch (error) {
-            return 1;
-        }
-    };
-
     render() {
         const swipeOutSettings = {
-            autoClose: true,
             style: { backgroundColor: '#fff' },
-            onClose: (secId, rowId, direction) => {
-                if (this.state.activeRowKey != null) {
-                    this.setState({ activeRowKey: null });
-                }
-            },
-            onOpen: (secId, rowId, direction) => {
-                this.setState({ activeRowKey: this.props.item.key });
-            },
-            right: [
-                {
-                    text: 'Eliminar',
-                    type: 'delete',
-                    onPress: () => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Está seguro que desea eliminar la reserva ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: async () => {
-                                        const result = await this.eliminarReserva(this.props.item);
-                                        if (result == 0) {
-                                            Toast.show({
-                                                text: 'Reserva eliminada exitosamente.',
-                                                buttonText: 'Aceptar',
-                                                duration: 3000,
-                                                position: 'bottom',
-                                                type: 'success',
-                                            });
-                                        } else if (result == 1) {
-                                            Toast.show({
-                                                text: 'Lo siento, ocurrió un error inesperado.',
-                                                buttonText: 'Aceptar',
-                                                duration: 3000,
-                                                position: 'bottom',
-                                                type: 'danger',
-                                            });
-                                        }
-                                    },
-                                },
-                            ],
-                            { cancelable: true }
-                        );
-                    },
-                },
-            ],
             rowId: this.props.index,
             sectionId: 1,
         };
 
         return (
             <Swipeout {...swipeOutSettings}>
-                <ListItem
-                    avatar
-                    onPress={() => {
-                        Alert.alert(
-                            'Atención',
-                            '¿ Desea modificar esta reserva ? ',
-                            [
-                                { text: 'Cancelar', onPress: () => console.log('Cancel pressed'), style: 'cancel' },
-                                {
-                                    text: 'Aceptar',
-                                    onPress: () => {
-                                        this.props.navigation.navigate('InformacionReserva', {
-                                            usuario: this.state.usuario,
-                                            reserva: this.props.item,
-                                        });
-                                    },
-                                },
-                            ],
-                            { cancelable: true }
-                        );
-                    }}>
+                <ListItem avatar>
                     <Left>
                         <Thumbnail source={require('../../../../../assets/Images/reservas.png')} />
                     </Left>
@@ -114,8 +32,8 @@ class FlatListItem extends Component {
                         <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.servicio} </Text>
                     </Body>
                     <Right style={{ alignSelf: 'center', marginTop: '1.3%' }}>
-                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde.format('D/M/YYYY HH:mm')} </Text>
-                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta.format('D/M/YYYY HH:mm')} </Text>
+                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaDesde} </Text>
+                        <Text style={{ fontSize: 11, color: 'gray' }}> {this.props.item.fechaHasta} </Text>
                     </Right>
                 </ListItem>
             </Swipeout>
@@ -180,7 +98,7 @@ export default class BasicFlatList extends Component {
         try {
             this.snapshotReservas = refReservas
             .where('Cancelado', '==', false)
-            .where('FechaDesde', '>=', new Date())
+            .where('FechaDesde', '<', new Date())
             .orderBy('FechaDesde')
             .onSnapshot((snapshot) => {
                 if (!snapshot.empty) {
@@ -190,8 +108,8 @@ export default class BasicFlatList extends Component {
                         var reserva = {
                             key: snapshot.docs[i].id,
                             nombre: snapshot.docs[i].data().Nombre,
-                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds),
-                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds),
+                            fechaDesde: moment.unix(snapshot.docs[i].data().FechaDesde.seconds).format('D/M/YYYY HH:mm'),
+                            fechaHasta: moment.unix(snapshot.docs[i].data().FechaHasta.seconds).format('D/M/YYYY HH:mm'),
                             idReservaServicio: snapshot.docs[i].data().IdReservaServicio.path,
                             servicio: snapshot.docs[i].data().Servicio,
                         };
@@ -218,7 +136,7 @@ export default class BasicFlatList extends Component {
             return (
                 <Root>
                     <View>
-                        <Text style={styles.textDefault}> No hay ninguna reserva activa. </Text>
+                        <Text style={styles.textDefault}> No hay reservas finalizadas. </Text>
                     </View>
                 </Root>
             );
